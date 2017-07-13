@@ -1,0 +1,289 @@
+<div class="animated fadeIn">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-11">
+                <div class="card-group mb-0">
+                    <div class="card p-2">
+                        <div class="card-block"> 
+                            <h3><i class="icon-wrench"></i> Pengaturan SPPD</h3>
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#home3" role="tab" aria-controls="home"><i class="icon-paper-clip"></i> Tanda Tangan</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="biaya2Tab" class="nav-link tabAjax" data-toggle="tab" href="#biaya2Tabchild" role="tab" aria-controls="biaya2Tabchild"><i class="icon-wallet"></i> Biaya-Biaya</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="tiketPesawatTab" class="nav-link tabAjax" data-toggle="tab" href="#tiketPesawatTabchild" role="tab" aria-controls="tiketPesawatTabchild"><i class="icon-plane"></i> Biaya Tiket</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="home3" role="tabpanel">
+                                    <div class="col-md-5">   
+                                        <div class="form-group row">
+                                        <h6><i class="icon-user-follow"></i> Penanda Tangan Surat Tugas</h6> 
+                                            <div class="input-group">
+                                                <input id="inp-ttd-surat-tugas" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" required>
+                                                <span class="input-group-btn">
+                                                    <button id="btn-ttd-surat-tugas" class="btn btn-primary">+</button>
+                                                </span>
+                                            </div>                                    
+                                        </div>
+                                    </div>                           
+                                    <table id="tbl-ttd-st" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Nama</th>
+                                                <th>NIP</th>
+                                                <th>Pilihan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>                                            
+                                        {{#each setting.ttd_st}}
+                                            <tr>
+                                                <td>{{nama}}</td>
+                                                <td>{{_id}}</td>
+                                                <td>
+                                                    <button type="button" class="btn-st-default" {{#if_eq _id ../setting.ttd_st_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
+                                                    <button type="button" class="btn-st-del"><i class="icon-close"></i></button>
+                                                </td>
+                                            </tr>
+                                        {{/each}}  
+                                        </tbody>
+                                    </table>  
+
+                                    <div class="col-md-5">   
+                                        <div class="form-group row">
+                                            <h6><i class="icon-user-follow"></i> Penanda Tangan Legalitas</h6>
+                                            <div class="input-group">
+                                                <input id="inp-ttd-legalitas" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" required>
+                                                <span class="input-group-btn">
+                                                    <button id="btn-ttd-legalitas" type="submit" class="btn btn-primary">+</button>
+                                                </span>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                            <table id="tbl-ttd-leg" class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Nama</th>
+                                                        <th>NIP</th>
+                                                        <th>Pilihan</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {{#each setting.ttd_leg}}
+                                                    <tr>
+                                                        <td>{{nama}}</td>
+                                                        <td>{{_id}}</td>
+                                                        <td>
+                                                            <button type="button" class="btn-leg-default" {{#if_eq _id ../setting.ttd_leg_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
+                                                            <button type="button" class="btn-leg-del"><i class="icon-close"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                {{/each}}                                            
+                                                </tbody>
+                                            </table>
+                                    <div class="col-md-5">   
+                                        <div class="form-group row">
+                                            <h6><i class="icon-user"></i> Pejabat Pembuat Komitmen</h6>
+                                            <div class="input-group">
+                                                <input type="text" id="inp-ppk" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.ppk}}{{nama}}{{/with}}" required>
+                                                <span class="input-group-btn">
+                                                    <button id="btn-set-ppk" type="submit" class="btn btn-primary">Set</button>
+                                                </span>
+                                            </div> 
+                                        </div>
+                                    </div> 
+                                    <div class="col-md-5">   
+                                        <div class="form-group row">
+                                            <h6><i class="icon-user"></i> Bendahara Pengeluaran STIS</h6>
+                                            <div class="input-group">
+                                                <input type="text" id="inp-bend" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.bendahara}}{{nama}}{{/with}}" required>
+                                                <span class="input-group-btn">
+                                                    <button id="btn-set-bend" type="submit" class="btn btn-primary">Set</button>
+                                                </span>
+                                            </div> 
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="tab-pane" id="jabPegTabchild" role="tabpanel">
+                                </div>
+                                <div class="tab-pane" id="biaya2Tabchild" role="tabpanel">
+                                </div>
+                                <div class="tab-pane" id="tiketPesawatTabchild" role="tabpanel">
+                                </div>
+                            </div>                                               
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/.row-->
+</div>
+
+<script type="text/javascript">
+    socket = io.connect($(location).attr('host'));
+    loadCSS("/css/typeahead.css");
+
+    $(document).ready(function(){
+        //init state id peg umum
+        var selected_peg_id = '';
+        //register auto complete
+        $('.pegawai-autocomplete').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('penerima_list', {'query': q, 'type': 'pegawai_only'}, function (data) {
+                                return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        //update id peg
+        $(".pegawai-autocomplete").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+            selected_peg_id = datum._id;
+        });
+
+        $('#btn-ttd-surat-tugas').click(function(){
+            socket.emit('add_ttd_st', {_id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil ditambahkan.');
+                        $('#tbl-ttd-st tbody').append(
+                                '<tr>'
+                                +'<td>'+$('#inp-ttd-surat-tugas').val()+'</td>'
+                                +'<td>'+selected_peg_id+'</td>'
+                                +'<td><button type="button" class="btn-st-default">'
+                                +'<i class="icon-pin"></i></button> '
+                                +'<button type="button" class="btn-st-del"><i class="icon-close"></i></button></td>'
+                                +'</tr>'
+                            );
+                        $('#inp-ttd-surat-tugas').val('');
+                    } else {
+                        generalAlert('Gagal ditambahkan. Hubungi Admin.');
+                    }
+            })
+        })
+
+        $('#btn-ttd-legalitas').click(function(){
+            socket.emit('add_ttd_leg', {_id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil ditambahkan.');
+                        $('#tbl-ttd-leg tbody').append(
+                                '<tr>'
+                                +'<td>'+$('#inp-ttd-legalitas').val()+'</td>'
+                                +'<td>'+selected_peg_id+'</td>'
+                                +'<td><button type="button" class="btn-leg-default">'
+                                +'<i class="icon-pin"></i></button> '
+                                +'<button type="button" class="btn-leg-del"><i class="icon-close"></i></button></td>'
+                                +'</tr>'
+                            );
+                        $('#inp-ttd-legalitas').val('');
+                    } else {
+                        generalAlert('Gagal ditambahkan. Hubungi Admin.');
+                    }
+            })
+        })
+
+        $('#btn-set-ppk').click(function(){
+            socket.emit('set_ppk', {nama: $('#inp-ppk').val(), _id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+
+        $('#btn-set-bend').click(function(){
+            socket.emit('set_bend', {nama: $('#inp-bend').val(), _id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+
+        //tombol ttd st
+        $('#tbl-ttd-st').on('click', '.btn-st-default', function(){
+            var element = $(this);
+            var prev = element.closest('tr').siblings().find("[disabled='disabled']");
+            socket.emit('set_default_ttd_st', {_id: $(this).closest('tr').find('td:eq(1)').text()}, 
+                function(status){
+                    if(status == 'sukses'){
+                        element.attr('disabled', 'disabled');
+                        prev.removeAttr('disabled');
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+        $('#tbl-ttd-st').on('click', '.btn-st-del', function(){
+            var element = $(this).closest('tr');
+            socket.emit('ttd_st_remove', $(this).closest('tr').find('td:eq(1)').text(), 
+                function(status){
+                    if(status == 'sukses'){
+                        element.remove();
+                        generalAlert('Berhasil diubah.');
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+
+        //tombol ttd leg
+        $('#tbl-ttd-leg').on('click', '.btn-leg-default', function(){
+            var element = $(this);
+            var prev = element.closest('tr').siblings().find("[disabled='disabled']");
+            socket.emit('set_default_ttd_leg', {_id: $(this).closest('tr').find('td:eq(1)').text()}, 
+                function(status){
+                    if(status == 'sukses'){
+                        element.attr('disabled', 'disabled');
+                        prev.removeAttr('disabled');
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+        $('#tbl-ttd-leg').on('click', '.btn-leg-del', function(){
+            var element = $(this).closest('tr');
+            socket.emit('ttd_leg_remove', $(this).closest('tr').find('td:eq(1)').text(), 
+                function(status){
+                    if(status == 'sukses'){
+                        element.remove();
+                        generalAlert('Berhasil dihapus.');
+                    } else {
+                        generalAlert('Gagal dihapus. Hubungi Admin.');
+                    }
+            })
+        })
+
+        function generalAlert(message){
+            $.toast({
+                text: message,
+                textAlign: 'left', 
+                hideAfter: 4000,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
+    })
+</script>

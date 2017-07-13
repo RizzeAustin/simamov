@@ -1,0 +1,309 @@
+<div class="animated fadeIn">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card-group mb-0">
+                    <div class="card p-2">
+                        <div class="card-block">
+                        <div class="row">
+                            <h3><i class="icon-plane"></i> Surat Tugas</h3>
+                        </div>
+                            <form id="suratTugas" action="/sppd/surat_tugas" method="POST">  
+                                <div class="form-group row">
+                                    <label for="nomor">Nomor Surat</label>
+                                    <input type="text" id="nomor" name="nomor" class="form-control" placeholder="Nomor surat" value="{{last_nomor}}/SPD/STIS/{{fullYear}}" readonly="readonly">
+                                </div>                          
+                                <div class="form-group row">
+                                    <label for="search">Nama<span> *</span></label>
+                                    <input id="nama_lengkap" type="text" name="nama_lengkap" class="form-control" required autofocus>
+                                </div>                      
+                                <div class="form-group row">
+                                    <label for="pok_output">Output/Komponen<span> *</span></label>
+                                    <div class="form-group row">
+                                        <div class="col-md-9">
+                                            <input id="pok_output" type="text" name="output" class="form-control" required>
+                                            <span class="help-block text-muted">uraian</span> 
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input id="kode_output" type="text" name="kode_output" class="form-control">
+                                            <span class="help-block text-muted">kode</span> 
+                                        </div>
+                                    </div>
+                                </div>                                 
+                                <div class="form-group row">
+                                    <label for="detail_tugas">Tujuan/Tugas<span> *</span></label>
+                                    <input id="detail_tugas" type="text" name="tugas" class="form-control" required>
+                                </div>                        
+                                <div class="form-group row">
+                                    <label for="provinsi">Lokasi</label>
+                                    <div class="form-group row">
+                                            <label class="col-md-3" for="provinsi">Provinsi<span> *</span></label>
+                                            <div class="col-md-9" style="margin-bottom: 2px">
+                                                <input id="provinsi" type="text" name="prov" class="form-control" required="">
+                                            </div>
+                                            <label class="col-md-3" for="kabupaten">Kabupaten</label>
+                                            <div class="col-md-9" style="margin-bottom: 2px">
+                                                <input id="kabupaten" type="text" name="kab" class="form-control">
+                                            </div>
+                                            <label class="col-md-3" for="organisasi">Organisasi</label>
+                                            <div class="col-md-9">
+                                                <input id="organisasi" type="text" name="org" class="form-control">
+                                            </div>
+                                    </div>
+                                </div>                                                         
+                                <div class="form-group row">
+                                    <label for="tgl_berangkat">Waktu<span> *</span></label>
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <input type='text-input' class="form-control date" name="tgl_berangkat" id="tgl_berangkat" required>
+                                            <span class="help-block text-muted">berangkat</span> 
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type='text-input' class="form-control date" name="tgl_kembali" id="tgl_kembali" required>
+                                            <span class="help-block text-muted">kembali</span> 
+                                            <input style="display: none;" type="text" id="jumlah_hari" name="jumlah_hari" value="">
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="form-group row">
+                                    <label for="jenis_ang">Angkutan<span> *</span></label>
+                                    <div style="margin-left: 15px">
+                                        <label for="radio1" class="radio-inline">
+                                            <input type="radio" id="radio1" name="jenis_ang" value="Plane" checked="checked">  Plane
+                                        </label>
+                                        <label for="radio2" class="radio-inline">
+                                            <input type="radio" id="radio2" name="jenis_ang" value="Kereta Api">  Kereta Api
+                                        </label>
+                                        <label for="radio3" class="radio-inline">
+                                            <input type="radio" id="radio3" name="jenis_ang" value="Kendaraan Umum">  Kendaraan Umum
+                                        </label>
+                                        <label for="radio4" class="radio-inline">
+                                            <input type="radio" id="radio4" name="jenis_ang" value="Kendaraan Dinas">  Kendaraan Dinas
+                                        </label>
+                                    </div>
+                                </div>                             
+                                <div class="form-group row">
+                                    <label for="ttd_legalitas">Penanda Tangan Legalitas</label>
+                                    <select list="ttd_legalitasb"  id="ttd_legalitas" name="ttd_legalitas" class="form-control input-lg" size="1">
+                                        {{#each setting.ttd_st}}
+                                            <option value="{{_id}}" {{#if_eq _id ../setting.ttd_st_default}}selected{{/if_eq}}>{{nama}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>                                                                                  
+                                <div class="form-group row">
+                                    <label for="ttd_surat_tugas">Penanda Tangan Surat Tugas</label>
+                                    <select id="ttd_surat_tugas" name="ttd_surat_tugas" class="form-control input-lg" size="1">
+                                        {{#each setting.ttd_leg}}
+                                            <option value="{{_id}}" {{#if_eq _id ../setting.ttd_leg_default}}selected{{/if_eq}}>{{nama}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>                                    
+                                <div class="form-group row">     
+                                    <div class="col-md-6" style="padding-left: 0">    
+                                        <label for="tgl_ttd_st">Tanggal Tanda Tangan</label>
+                                        <input type="text-input" id="tgl_ttd_st" class="form-control date tgl_ttd" name="tgl_ttd_st" value="">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <button id="generateLetter" type="submit" class="px-2">Buat Surat</button><span><pre> </pre></span>
+                                    <button id="reset" class="px-2">Reset</button>
+                                </div>                         
+                            </form>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <iframe id="realTimeView" class="preview-pane" type="application/pdf" width="100%" height="690" frameborder="0" style="position:relative;z-index:999;" src=""></iframe>
+            </div>
+        </div>
+    </div>
+    <!--/.row-->
+</div>
+
+<script src="/js/bootstrap-tokenfield.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/bootstrap-tokenfield.css"));
+
+        //function
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+        var SPPD = {};
+    
+        //Inisialisasi pdf viewer
+        $("#realTimeView").attr("src", 'http://'+location.host+'/result/surat_tugas.pdf');
+
+        //Inisialisasi input tgl Brgkt & Kembali
+        $('#tgl_berangkat').datetimepicker({
+                locale: 'id',
+                format: 'D MMMM YYYY'
+            });
+        $('#tgl_kembali').datetimepicker({
+            locale: 'id',
+            format: 'D MMMM YYYY',
+            useCurrent: false //Important! See issue #1075
+        });
+        $('.tgl_ttd').datetimepicker({
+            locale: 'id',
+            format: 'D MMMM YYYY',
+            useCurrent: false
+        });
+
+        //Input tgl sekarang utk ttd
+        $(".tgl_ttd").val(moment().format('D MMMM YYYY'));
+
+        //Disable tgl sblm tgl berangkat pd input tgl kembali
+        $("#tgl_berangkat").on("dp.change", function (e) {
+            $('#tgl_kembali').data("DateTimePicker").minDate(e.date);
+        });
+
+        //Jumlah hari berangkat
+        $(".date").on("dp.change", function (e) {
+            $("#jumlah_hari").val(moment($('#tgl_kembali').val(), "DD MMMM YYYY").diff(moment($('#tgl_berangkat').val(), "DD MMMM YYYY"), 'days')+1);
+        });
+
+        $('#reset').click(function(){
+
+            $('#suratTugasMenu').trigger('click');
+
+        })
+        //Autocomplete
+        $('#nama_lengkap').tokenfield({
+          typeahead: [null, { source: function(q, p){
+            {
+                socket.emit('penerima_list', {'query': q, 'type': 'pegawai_and_bps'}, function (data) {
+                    return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                });
+            }
+          }}]
+        });
+        $('#nama_lengkap-tokenfield').focus();
+
+        var nama_sppd = [];
+        $("#nama_lengkap").on("tokenfield:createdtoken", function(e) {
+            delete e.attrs.label;
+            nama_sppd.push(e.attrs)
+        });
+        $("#nama_lengkap").on("tokenfield:removetoken", function(e) {
+            nama_sppd = _.without(nama_sppd, _.findWhere(nama_sppd, {
+              _id: e.attrs._id
+            }));
+        });
+
+        //Reload pdf viewer
+        $('#suratTugas').on('submit', function(e) {
+            e.preventDefault();
+            $('#generateLetter').prop('disabled', true);
+            $("#generateLetter").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>'+$("#generateLetter").text());
+
+            var data = $('#suratTugas').serializeObject();
+            data.nama_lengkap = nama_sppd;
+
+            console.log(data);
+            socket.emit('surat_tugas', data, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Surat dibuat.');
+                    } else {
+                        generalAlert('Gagal buat surat. Hubungi Admin.');
+                    }
+            })
+
+
+            $("#generateLetter").html('Buat Surat');
+            $('#generateLetter').prop('disabled', false);
+        });
+
+        $('#pok_output').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('komponen_list', q, function (data) {
+                                return p(_.map(data, function(peg){ return {kdkmpnen: peg.kdkmpnen, value: peg.urkmpnen}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $("#pok_output").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+            $("#kode_output").val(datum.kdkmpnen);
+            $("#detail_tugas").val(datum.value);
+        });
+
+        $('#kabupaten').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('kab_list', q, function (data) {
+                                return p(_.map(data, function(kab){ return {_id: kab._id, value: kab.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $('#provinsi').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('prov_list', q, function (data) {
+                                return p(_.map(data, function(prov){ return {_id: prov._id, value: prov.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $('#organisasi').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('org_list', q, function (data) {
+                                return p(_.map(data, function(org){ return {_id: org._id, value: org.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        function generalAlert(message){
+            $.toast({
+                text: message,
+                textAlign: 'left', 
+                hideAfter: 4000,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
+    });
+</script>
