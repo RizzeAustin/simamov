@@ -62,10 +62,8 @@ var handlebars = require('express-handlebars').create({defaultLayout: 'main',
 	helpers:{
 		if_eq: function(a, b, opts) {
 		    if (a == b) {
-		    	// console.log('booooooooooom')
 		        return opts.fn(this);
 		    } else {
-		    	// console.log('sssssssssssss booooooooooom')
 		        return opts.inverse(this);
 		    }
 		},

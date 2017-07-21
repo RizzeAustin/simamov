@@ -70,7 +70,11 @@
           content: counter(Serial); /* Display the counter */
         }
 
-        #pok_table_entry th, #pok_table_entry td { white-space: nowrap; }
+        #pok_table_entry th, #pok_table_entry td, #pok_table_edit td:nth-child(8) { white-space: nowrap; }
+
+        /*.DTFC_LeftBodyLiner{
+            overflow-y: hidden !important;
+        }*/
 
         div#pok_table_entry_wrapper.dataTables_wrapper {
             width: 1200px;
@@ -209,7 +213,7 @@
         </div>
 
         <!-- Main content -->
-        <main class="main">
+        <main id="main-view" class="main">
 
             <!-- Breadcrumb -->
             <ol class="breadcrumb">
@@ -250,18 +254,21 @@
 
     <script src="/js/jquery.toast.min.js"></script>
 
-    <script src="/js/jquery.dataTables.js"></script>
+    <script src="/js/jquery.dataTables.min.js"></script>
 
     <script src="/js/dataTables.fixedColumns.min.js"></script>
 
     <script src="/js/typeahead.bundle.min.js"></script>
 
     <script src="/js/moment.min.js"></script>
-    <script src="/js/id.js"></script>
+    <script src="/js/locale/id.js"></script>
     <script src="/js/bootstrap-datetimepicker.js"></script>
+    <script src="/js/spin.min.js"></script>
 
     <script type="text/javascript">
         var socket = io.connect($(location).attr('host'));
+
+        moment.locale('id');
 
         if(!socket) location.reload();
 

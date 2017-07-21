@@ -6,7 +6,9 @@ var KabSchema = new Schema({
     "_id" : String,
     "id_kab": String,
     "nama" : String,
-    "id_propinsi": { type: String, ref: 'Prov' }
+    "id_propinsi": { type: String, ref: 'Prov' },
+    "tiket_jkt_b": Number,
+    "tiket_jkt_e": Number
 }, { collection: 'kab'});
 
 KabSchema.methods.isExist = function(cb) {

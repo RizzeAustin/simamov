@@ -20,12 +20,10 @@ const XlsxPopulate = require('xlsx-populate');
 //Xlsx to Pdf
 var msopdf = require('node-msoffice-pdf');
 
-//Xlsx to Pdf
-var msopdf = require('node-msoffice-pdf');
-
 var Pegawai = require(__dirname+"/../model/Pegawai.model");
 
 var CustomEntity = require(__dirname+"/../model/CustomEntity.model");
+var SettingSPPD = require(__dirname+"/../model/SettingSPPD.model");
 
 //Short syntax tool
 var _ = require("underscore");
@@ -55,6 +53,7 @@ spj.get('/honor', function(req, res){
 spj.post('/honor', function(req, res){
 	var form = new formidable.IncomingForm();
 	var csv_name, file_path, tgl_buat_surat, data = [];
+	var setting = {};
 
 	var file_name = Math.round(new Date().getTime()/1000)+' Honor';
 
@@ -104,9 +103,11 @@ spj.post('/honor', function(req, res){
 				})
 			},
 			function(cb){
-				// var honor = new HonorDosen(data, cb, res);
-				cb(null, 'end');				
-			}
+				SettingSPPD.findOne({}, 'ppk bendahara').populate('ppk bendahara').exec(function(err, result){
+					setting = result;
+					cb(null, '');
+				})
+			},
 		], function(err, final){
 			// Load an existing workbook
 			XlsxPopulate.fromFileAsync("./template/HonorTemplate.xlsx")
@@ -207,17 +208,20 @@ spj.post('/honor', function(req, res){
 		    		[,,,,,,],
 		    		[,,,,,,],
 		    		[,,,,,,],
-		    		['(ARY WAHYUNI, SST)',,'(INDRA,SSi.)',,,,'(SOFYAN AYATULLOH, SST)'],
-		    		['NIP. 198301022200701007',,'NIP. 196103181986011001',,,,'NIP. 197208221994121001'],
+		    		['('+setting.bendahara.nama.capitalize()+')',,'('+setting.ppk.nama.capitalize()+')',,,,'(SOFYAN AYATULLOH, SST)'],
+		    		['NIP. '+setting.bendahara._id.capitalize(),,'NIP. '+setting.ppk._id.capitalize(),,,,'NIP. 197208221994121001'],
 		    		]);
 		    	r.style('fontSize', 11)
+
+		    	workbook.sheet(0).range('B'+(row+7)+':H'+(row+7)).style('underline', true);
+		    	workbook.sheet(0).range('B'+(row+8)+':H'+(row+8)).style('underline', false);
 
 		    	workbook.definedName("periode").value(periode)	        
 		        return workbook.toFileAsync('./temp_file/'+file_name+'.xlsx');
 		    }).then(data => {
 		    	msopdf(null, function(error, office) {
 					var input = './temp_file/'+file_name+'.xlsx';//__dirname + '/../temp_file/'+file_name+'.xlsx';
-					var output = './template/output/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
+					var output = './template/output/spj/honor/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
 
 					office.excel({'input': input, 'output': output}, function(error, pdf) {
 				    	if (err) {
@@ -261,6 +265,7 @@ spj.get('/transport', function(req, res){
 spj.post('/transport', function(req, res){
 	var form = new formidable.IncomingForm();
 	var csv_name, file_path, tgl_buat_surat, data = [];
+	var setting = {};
 
 	var file_name = Math.round(new Date().getTime()/1000)+' Transport';
 
@@ -305,9 +310,11 @@ spj.post('/transport', function(req, res){
 				})
 			},
 			function(cb){
-				// var honor = new HonorDosen(data, cb, res);
-				cb(null, 'end');				
-			}
+				SettingSPPD.findOne({}, 'ppk bendahara').populate('ppk bendahara').exec(function(err, result){
+					setting = result;
+					cb(null, '');
+				})
+			},
 		], function(err, final){
 			// Load an existing workbook
 			XlsxPopulate.fromFileAsync("./template/TransportTemplate.xlsx")
@@ -316,6 +323,9 @@ spj.post('/transport', function(req, res){
 		    	var nmr = 1;
 		    	var sum_pos = 12;
 		    	_.each(data, function(item, index, list){
+		    		if(list.length > 43 && nmr == 42){
+		    			row += 14;
+		    		}
 		    		var r = workbook.sheet(0).range('A'+row+':H'+row);
 		    		if(row  == 33 || row == 61 || (row > 89 && (row % 29 == 3))){
 		    			r.value([['',
@@ -383,6 +393,7 @@ spj.post('/transport', function(req, res){
 	    			'', 
 	    			''
 	    		]]);
+
 	    		workbook.sheet(0).cell('D'+row).formula('SUM(D'+sum_pos+':D'+(row-1)+')').style('horizontalAlignment', 'center');
 	    		workbook.sheet(0).cell('E'+row).formula('SUM(E'+sum_pos+':E'+(row-1)+')');
 	    		workbook.sheet(0).cell('F'+row).formula('SUM(F'+sum_pos+':F'+(row-1)+')');
@@ -411,8 +422,8 @@ spj.post('/transport', function(req, res){
 		    		[,,,,],
 		    		[,,,,],
 		    		[,,,,],
-		    		['(ARY WAHYUNI, SST)','(INDRA,SSi.)',,,'(SOFYAN AYATULLOH, SST)'],
-		    		['NIP. 198301022200701007','NIP. 196103181986011001',,,'NIP. 197208221994121001'],
+		    		['('+setting.bendahara.nama.capitalize()+')','('+setting.ppk.nama.capitalize()+')',,,'(SOFYAN AYATULLOH, SST)'],
+		    		['NIP. '+setting.bendahara._id+'','NIP. '+setting.bendahara._id+'',,,'NIP. 197208221994121001'],
 		    		]);
 		    	r.style('fontSize', 11);
 
@@ -421,7 +432,19 @@ spj.post('/transport', function(req, res){
 		    	workbook.sheet(0).range('C'+(row+7)+':E'+(row+7)).merged(true);
 		    	workbook.sheet(0).range('C'+(row+8)+':E'+(row+8)).merged(true);
 
+		    	workbook.sheet(0).range('F'+(row+2)+':H'+(row+2)).merged(true);
+		    	workbook.sheet(0).range('F'+(row+3)+':H'+(row+3)).merged(true);
+		    	workbook.sheet(0).range('F'+(row+7)+':H'+(row+7)).merged(true);
+		    	workbook.sheet(0).range('F'+(row+8)+':H'+(row+8)).merged(true);
+
 		    	workbook.sheet(0).range('C'+(row+2)+':C'+(row+8)).style('horizontalAlignment', 'center');
+		    	workbook.sheet(0).range('F'+(row+2)+':F'+(row+8)).style('horizontalAlignment', 'center');
+
+		    	workbook.sheet(0).range('B'+(row+7)+':F'+(row+7)).style('underline', true);
+
+		    	if(data.length > 43){
+	    			workbook.sheet(0).range('A55:H68').style({'leftBorder': false, 'rightBorder': false, 'bottomBorder': false, 'topBorder': false});
+	    		}
 
 
 		    	workbook.definedName("periode").value(periode)	        
@@ -429,7 +452,7 @@ spj.post('/transport', function(req, res){
 		    }).then(data => {
 		    	msopdf(null, function(error, office) {
 					var input = './temp_file/'+file_name+'.xlsx';//__dirname + '/../temp_file/'+file_name+'.xlsx';
-					var output = './template/output/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
+					var output = './template/output/spj/transport/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
 
 					office.excel({'input': input, 'output': output}, function(error, pdf) {
 				    	if (err) {
@@ -547,10 +570,12 @@ function terbilang(bilangan) {
   }
   kaLimat = kaLimat.replace(/\s+/g, " ") + "Rupiah";
 
-  // kaLimat = kaLimat.replace(/\s+Rupiah$/, " Rupiah")
-
   return kaLimat.replace(/^\s/g, "");
 }
+
+String.prototype.capitalize = function() {
+    return this.replace(/\w/g, function(l){ return l.toUpperCase() })
+};
 
 function errorHandler(username, message){
 	if(_.isString(username)) pok.connections[username].emit('messages', message)
@@ -563,74 +588,3 @@ function sendNotification(username, message){
 }
 
 module.exports = spj;
-
-// var honor_wb = new xl.Workbook({
-// 				defaultFont: {
-// 			        size: 9
-// 			    }
-// 			});
-			 
-// 			// Add Worksheets to the workbook 
-// 			var ws = honor_wb.addWorksheet('Honor', {
-// 				'pageSetup': {
-// 					'orientation': 'landscape',
-// 					'paperSize': 'LETTER_PAPER'
-// 				}
-// 			});
-			 
-// 			// Create a reusable style 
-// 			var kop = honor_wb.createStyle({
-// 			    font: {
-// 			        size: 11
-// 			    }, 
-// 			    alignment: {
-// 			        wrapText: true,
-// 			        horizontal: 'left',
-// 			        vertical: 'center'
-// 			    }
-// 			    // border: {
-// 			    // 	left: {
-// 			    // 		style: 'thin'
-// 			    // 	},
-// 			    // 	right: {
-// 			    // 		style: 'thin'
-// 			    // 	},
-// 			    // 	top: {
-// 			    // 		style: 'thin'
-// 			    // 	},
-// 			    // 	bottom: {
-// 			    // 		style: 'thin'
-// 			    // 	},
-// 			    // }
-// 			});
-
-// 			//width
-// 			ws.column(1).setWidth(5);
-// 			ws.column(2).setWidth(28);
-// 			ws.column(3).setWidth(4);
-// 			ws.column(4).setWidth(10);
-// 			ws.column(5).setWidth(14);
-// 			ws.column(6).setWidth(15);
-// 			ws.column(7).setWidth(15);
-// 			ws.column(8).setWidth(15);
-// 			ws.column(9).setWidth(16);
-// 			ws.column(10).setWidth(17);
-
-// 			//kop
-// 			ws.cell(1,2).string('DAFTAR').style(kop);
-// 			ws.cell(1,3, 1, 10, true).string('HONORARIUM DOSEN DAN ASISTEN DOSEN SEKOLAH TINGGI ILMU STATISTIK SEMESTER GENAP TAHUN 2016/2017 (STIS)').style(kop);
-// 			// ws.cell(4,2).string('uraian').style(kop);
-// 			// ws.cell(4,3).string('vol').style(kop);
-// 			// ws.cell(4,4).string('sat').style(kop);
-// 			// ws.cell(4,5).string('hargasat').style(kop);
-// 			// ws.cell(4,6).string('jumlah').style(kop);
-// 			// ws.cell(4,7).string('PENGELUARAN').style(kop);
-// 			// ws.cell(4,8, 5, 8, true).string('REALISASI BULAN LALU').style(kop);
-// 			// ws.cell(4, 9, 4, 10, true).string('REALISASI S/D BULAN INI').style(kop);
-// 			// ws.cell(5,9).string('(Rp)').style(kop);
-// 			// ws.cell(5,10).string('%').style(kop);
-// 			// ws.cell(4,11, 5, 11, true).string('SISA DANA (RP)').style(kop);
-
-// 			var file_name = Math.round(new Date().getTime()/1000)+' Honor';
-
-// 			honor_wb.write(file_name+'.xlsx', res)

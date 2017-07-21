@@ -12,9 +12,18 @@ var SuratTugasSchema = new Schema({
     "output" : String,
     "kode_output" : String,
 
-    "org" : String,
-    "prov" : String,
-    "kab" : String,
+    "org" : {
+        type: 'String',
+        ref: 'CustomEntity'
+    },
+    "prov" : {
+        type: String,
+        ref: 'Prov'
+    },
+    "kab" : {
+        type: String,
+        ref: 'Kab'
+    },
 
     "tgl_berangkat" : String,
     "tgl_kembali" : String,
@@ -22,63 +31,62 @@ var SuratTugasSchema = new Schema({
 
     "jenis_ang" : String,
 
-    "ttd_surat_tugas" : String,
-    "ttd_legalitas" : String,
+    "ttd_surat_tugas" : {
+        type: String,
+        ref: 'Pegawai'
+    },
+    "ttd_legalitas" : {
+        type: String,
+        ref: 'Pegawai'
+    },
     "tgl_ttd_st" : String,
-    "tgl_ttd_ppk" : String,
 
-    "ttd_surat_tugas_jabatan" : String,
-    "ttd_surat_tugas_nip" : String,
-
-    "ppk_nip" : String,
-    "ppk_nama" : String,
-
-    "ttd_legalitas_jabatan" : String,
-    "ttd_legalitas_nip" : String,
-
-    "nama_lengkap" : String,
-    "jabatan" : String,
-    "gol" : String,
-    "nip" : String,
-    "created_date": {
-        type: Date,
-        default: Date.now,
-        
+    "nama_lengkap" : {
+        type: String,
+        ref: 'Pegawai'
+    },
+    "timestamp": {
+        type: Number,
+        default: Math.round(new Date().getTime()/1000),
     }
 }, { collection: 'surat_tugas' });
 
 SuratTugasSchema.virtual('nomor_surat').get(function () {
-  return this._id + '/SPD/STIS/' + this.tahun;
+  return this._id + '/SPD/STIS/' + this.tgl_berangkat.match(/\d{4}$/)[0];
 });
 
 SuratTugasSchema.virtual('atas_nama_ketua_stis').get(function () {
     var atas_nama_ketua_stis = "";
 
-    if(this.ttd_surat_tugas_jabatan !== "Ketua STIS"){
-        atas_nama_ketua_stis = "A.n. Ketua Sekolah Tinggi Ilmu Statistik";
+    if(this.ttd_surat_tugas.jabatan == "Ketua STIS" || this.ttd_surat_tugas.jabatan == "Ketua Sekolah Tinggi Ilmu Statistik"){
+        atas_nama_ketua_stis = "Ketua Sekolah Tinggi Ilmu Statistik";
+        this.ttd_surat_tugas.jabatan = '';
     } else{
-        this.ttd_surat_tugas_jabatan = "Ketua Sekolah Tinggi Ilmu Statistik";
+        atas_nama_ketua_stis = "A.n. Ketua Sekolah Tinggi Ilmu Statistik";
+        this.ttd_surat_tugas.jabatan = this.ttd_surat_tugas.jabatan+',';
     }
     return atas_nama_ketua_stis;
 });
 
 SuratTugasSchema.virtual('lokasi').get(function () {
 
-    var lokasi_ = [];
+    // this.populate('prov kab org', function(err, result){
+        var lokasi_ = [];
 
-    if(this.org){
-        lokasi_.push(this.org);
-    }
+        if(this.org){
+            lokasi_.push(this.org.nama);
+        }
 
-    if (this.kab) {
-        lokasi_.push(this.kab)
-    }
+        if (this.kab) {
+            lokasi_.push(this.kab.nama)
+        }
 
-    if (this.prov) {
-        lokasi_.push(this.prov)
-    }
+        if (this.prov) {
+            lokasi_.push(this.prov.nama)
+        }
 
-    return lokasi_.join(", ");
+        return lokasi_.join(", ");
+    // })
 
 });
 
@@ -88,8 +96,6 @@ SuratTugasSchema.statics.getAll = function(cb) {
 
 SuratTugasSchema.methods.getSurat = function () {
     var sppdTemplate = fs.readFileSync(__dirname+"/../template/surat_tugas.docx","binary");
-
-
     return fileName;
 }
 

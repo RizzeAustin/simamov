@@ -14,7 +14,7 @@ index.get('/', function(req, res){
 index.get('/home', function(req, res){
 	Setting.findOne({type:'pok'}, function(err, pok_setting){
 		if(pok_setting) res.render('pok/pok', {layout: false, pok_name: pok_setting.toObject().name, title: "Home"});
-			else res.render('pok/pok', {layout: false, pok_name: 'Noname', title: "Home"});
+			else res.render('pok/pok', {layout: false, pok_name: 'POK', title: "Home"});
 	})
 });
 

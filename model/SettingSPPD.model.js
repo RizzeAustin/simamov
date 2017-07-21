@@ -20,7 +20,8 @@ var SettingSPPDSchema = new Schema({
     bendahara: {
     	type: String, 
     	ref: 'Pegawai'
-    }
+    },
+    last_nmr_surat:Number
 }, { collection: 'setting_sppd', strict: false });
 
 module.exports = mongoose.model('SettingSPPD', SettingSPPDSchema);

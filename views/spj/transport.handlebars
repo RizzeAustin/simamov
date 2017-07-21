@@ -11,7 +11,7 @@
                                     <p class="text-muted">Buat SPJ Transport Dosen</p>
                                 </div>
                             </div> 
-                            <div class="form-group row">
+                            <!-- <div class="form-group row">
                                 <div class="col-md-12">
                                     <label class="radio-inline" for="import_radio" style="margin-left: 10px">
                                         <input type="radio" id="import_radio" name="data_source" value="0" checked="checked">Import Data
@@ -20,7 +20,7 @@
                                         <input id="sipadu_radio" type="radio" name="data_source" value="1">SIPADU
                                     </label>
                                 </div>
-                            </div>  
+                            </div> -->  
                             <div class="form-group row">
                                 <div class="col-md-12">
                                     <form id="form_upload_csv" enctype="multipart/form-data" method="post" action="/spj/transport">
@@ -79,7 +79,7 @@
                 data: formData,
                 async: false,
                 success: function (data) {
-                    $("#realTimeView").attr("src", 'http://'+location.host+'/result/'+data);
+                    $("#realTimeView").attr("src", 'http://'+location.host+'/result/spj/transport/'+data);
                     $("#unggah_xlsx_button").prop("disabled",false);
                     $("#unggah_xlsx_button").html('Buat Surat');
                 },

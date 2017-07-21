@@ -1,11 +1,9 @@
 <div class="animated fadeIn">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-11">
-                <div class="card-group mb-0">
-                    <div class="card p-2">
-                        <div class="card-block"> 
-                            <h3><i class="icon-wrench"></i> Pengaturan SPPD</h3>
+    <div class="card" id="new">
+        <div class="card-header"><i class="icon-wrench"></i> Pengaturan SPPD</div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-md-12">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" data-toggle="tab" href="#home3" role="tab" aria-controls="home"><i class="icon-paper-clip"></i> Tanda Tangan</a>
@@ -108,20 +106,63 @@
                                         </div>
                                     </div> 
                                 </div>
-                                <div class="tab-pane" id="jabPegTabchild" role="tabpanel">
-                                </div>
                                 <div class="tab-pane" id="biaya2Tabchild" role="tabpanel">
+                                    <table id="tbl-biaya-biaya" class="table table-bordered" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="2">Id</th>
+                                                <th width="5%" rowspan="2" class="text-center" style="vertical-align: middle">No.</th>
+                                                <th width="20%" rowspan="2" class="text-center" style="vertical-align: middle">Provinsi</th>
+                                                <th width="10%" rowspan="2" class="text-center" style="vertical-align: middle">Taksi</th>
+                                                <th width="25%" colspan="3" scope="colgroup" class="text-center">Uang Harian</th>
+                                                <th width="35%" colspan="5" scope="colgroup" class="text-center">Tarif Hotel</th>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-center">Luar kota</th>
+                                                <th class="text-center">Dalam kota > 8 jam</th>
+                                                <th class="text-center" style="vertical-align: middle">Diklat</th>
+                                                <th class="text-center" style="vertical-align: middle">Eselon I</th>
+                                                <th class="text-center" style="vertical-align: middle">Eselon II</th>
+                                                <th class="text-center">Eselon III/Gol. IV</th>
+                                                <th class="text-center">Eselon IV/Gol. III</th>
+                                                <th class="text-center" style="vertical-align: middle">Gol. I/II</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>                                           
+                                        </tbody>
+                                    </table>
                                 </div>
                                 <div class="tab-pane" id="tiketPesawatTabchild" role="tabpanel">
+                                    <table id="tiket" class="table table-bordered" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th rowspan="2">Id</th>
+                                                <th width="2%" rowspan="2" class="text-center" style="vertical-align: middle">No.</th>
+                                                <th width="40%" rowspan="2" class="text-center" style="vertical-align: middle">Kota</th>
+                                                <th width="55%" colspan="2" class="text-center">Pesawat (dari Jakarta)</th>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-center">Bisnis</th>
+                                                <th class="text-center">Ekonomi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {{#each kota}}             
+                                            <tr name="{{name}}">
+                                                <td>{{label}}</td>
+                                                <td jenis="tiket_jkt_b" class="money">{{tiket_jkt_b}}</td>
+                                                <td jenis="tiket_jkt_e" class="money">{{tiket_jkt_e}}</td>
+                                            </tr>
+                                        {{/each}}                                            
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>                                               
-                        </div>
+                            </div> 
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!--/.row-->
 </div>
 
 <script type="text/javascript">
@@ -275,6 +316,300 @@
                     }
             })
         })
+
+        //############ biaya-biaya
+
+
+        $('#tbl-biaya-biaya').DataTable({
+            columnDefs: [
+                {
+                    "targets": [ 0 ],
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            paging: false,
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(0)').attr('class', 'text-center');
+                $( row ).find('td:eq(2)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(3)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(4)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(5)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(6)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(7)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(8)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(9)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(10)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(11)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+            }
+        });
+
+        $("#biaya2Tab").click(function(){
+            socket.emit('biaya2_list', '', 
+                function(response){
+                    $('#tbl-biaya-biaya').DataTable().clear();
+                    _.each(response, function(prov, i, list){
+                        var row = [
+                            prov._id,
+                            i+1,
+                            prov.nama,
+                            prov.taksi_dn || 0,
+                            prov.har_dn_lk || 0,
+                            prov.har_dn_dk || 0,
+                            prov.har_dn_dik || 0,
+                            prov.inap_dn_es1 || 0,
+                            prov.inap_dn_es2 || 0,
+                            prov.inap_dn_es3_g4 || 0,
+                            prov.inap_dn_es4_g3 || 0,
+                            prov.inap_dn_g12 || 0
+                        ]
+                        $('#tbl-biaya-biaya').DataTable().row.add( row );
+                    });
+                    $('#tbl-biaya-biaya').DataTable().draw(false);
+            })
+        })
+
+        //Inline editor tabel biaya2
+        var state_active_editor_entry = false;
+        var editor_entry;
+        var active_entry;
+        $("#tbl-biaya-biaya").on('dblclick', 'tr td', function () {
+            active_entry = $(this);
+            if(state_active_editor_entry || active_entry.is(':nth-child(1)')){
+                $.toast({
+                    text: 'Anda tidak dapat mengedit sel tersebut.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                })
+                return;
+            }
+            state_active_editor_entry = true;
+            var cloneProperties = ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+                          'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+                          'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
+
+            if(active_entry.hasClass('format-uang')){
+                editor_entry = $('<input type="text" class="format-uang">').val(getNumber(active_entry.text())).hide().appendTo(active_entry.parent());
+            } else {
+                editor_entry = $('<textarea></textarea>').val(active_entry.text()).hide().appendTo(active_entry.parent());
+            }
+
+            editor_entry.css('position', 'absolute');
+            editor_entry
+                .show()
+                .offset(active_entry.offset())
+                .css(active_entry.css(cloneProperties))
+                .width(active_entry.width())
+                .height(active_entry.height())
+                .focus();
+            editor_entry.select();
+        });
+
+        $("#tbl-biaya-biaya").on('blur keydown', 'input,textarea', function (e) {
+            //jika enter anggap blur (krn klo tidak, di fired 2 kali)
+            if (e.which === 13){
+                $(this).blur();
+            } else if (e.which === 0){//jika blur ==> keycode nya 0
+                if(editor_entry.val() !== active_entry.text()){
+                    if(editor_entry.val() == ''){
+                        editor_entry.val(0);
+                    }
+                    var row = $("#tbl-biaya-biaya").DataTable().row(active_entry.closest('tr'));
+                    var data = {};
+
+                    if(active_entry.is(':nth-child(2)')){
+                        data.nama = editor_entry.val();
+                    } else if(active_entry.is(':nth-child(3)')){
+                        data.taksi_dn = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(4)')){
+                        data.har_dn_lk = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(5)')){
+                        data.har_dn_dk = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(6)')){
+                        data.har_dn_dik = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(7)')){
+                        data.inap_dn_es1 = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(8)')){
+                        data.inap_dn_es2 = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(9)')){
+                        data.inap_dn_es3_g4 = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(10)')){
+                        data.inap_dn_es4_g3 = getNumber(editor_entry.val());
+                    } else {
+                        data.inap_dn_g12 = getNumber(editor_entry.val());
+                    }
+
+                    socket.emit('prov_biaya2_edit', {'_id': row.data()[0], 'data': data}, function(status){
+                            if(status === 'sukses'){
+                                $("#tbl-biaya-biaya").DataTable()
+                                    .cell(active_entry)
+                                    .data(editor_entry.val())
+                                    .draw(false);
+                                generalAlert('Berhasil diedit.');
+                                active_entry = null;
+                                state_active_editor_entry = false;
+                                editor_entry.hide(); 
+                            } else {
+                                generalAlert('Gagal diedit. Hubungi admin.');
+                            }
+                    });                     
+                } else {
+                    active_entry = null;
+                    state_active_editor_entry = false;
+                    editor_entry.hide();  
+                }
+            } else if(e.which === 27){
+                active_entry = null;
+                state_active_editor_entry = false;
+                editor_entry.hide();
+            }
+        });
+
+        //############ tiket
+        $('#tiket').DataTable({
+            columnDefs: [
+                {
+                    "targets": [ 0 ],
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            pageLength: 50,
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(0)').attr('class', 'text-center');
+                $( row ).find('td:eq(2)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(3)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+            }
+        });
+
+        $("#tiketPesawatTab").click(function(){
+            socket.emit('tiket_list', '', 
+                function(response){
+                    $('#tiket').DataTable().clear();
+                    _.each(response, function(kab, i, list){
+                        var row = [
+                            kab._id,
+                            i+1,
+                            kab.nama,
+                            kab.tiket_jkt_b || 0,
+                            kab.tiket_jkt_e || 0
+                        ]
+                        $('#tiket').DataTable().row.add( row );
+                    });
+                    $('#tiket').DataTable().draw(false);
+            })
+        })
+
+        var Tiket = {};
+
+        //Inline editor tabel biaya2
+        Tiket.state_active_editor_entry = false;
+        Tiket.editor_entry;
+        Tiket.active_entry;
+        $("#tiket").on('dblclick', 'tr td', function () {
+            Tiket.active_entry = $(this);
+            if(Tiket.state_active_editor_entry || Tiket.active_entry.is(':nth-child(1)')){
+                $.toast({
+                    text: 'Anda tidak dapat mengedit sel tersebut.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                })
+                return;
+            }
+            Tiket.state_active_editor_entry = true;
+            var cloneProperties = ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+                          'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+                          'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
+
+            if(Tiket.active_entry.hasClass('format-uang')){
+                Tiket.editor_entry = $('<input type="text" class="format-uang">').val(getNumber(Tiket.active_entry.text())).hide().appendTo(Tiket.active_entry.parent());
+            } else {
+                Tiket.editor_entry = $('<textarea></textarea>').val(Tiket.active_entry.text()).hide().appendTo(Tiket.active_entry.parent());
+            }
+
+            Tiket.editor_entry.css('position', 'absolute');
+            Tiket.editor_entry
+                .show()
+                .offset(Tiket.active_entry.offset())
+                .css(Tiket.active_entry.css(cloneProperties))
+                .width(Tiket.active_entry.width())
+                .height(Tiket.active_entry.height())
+                .focus();
+            Tiket.editor_entry.select();
+        });
+
+        $("#tiket").on('blur keydown', 'input,textarea', function (e) {
+            //jika enter anggap blur (krn klo tidak, di fired 2 kali)
+            if (e.which === 13){
+                $(this).blur();
+            } else if (e.which === 0){//jika blur ==> keycode nya 0
+                if(Tiket.editor_entry.val() !== Tiket.active_entry.text()){
+                    if(Tiket.editor_entry.val() == ''){
+                        Tiket.editor_entry.val(0);
+                    }
+                    var row = $("#tiket").DataTable().row(Tiket.active_entry.closest('tr'));
+                    var data = {};
+
+                    if(Tiket.active_entry.is(':nth-child(2)')){
+                        data.nama = Tiket.editor_entry.val();
+                    } else if(Tiket.active_entry.is(':nth-child(3)')){
+                        data.tiket_jkt_b = getNumber(Tiket.editor_entry.val());
+                    } else{
+                        data.tiket_jkt_e = getNumber(Tiket.editor_entry.val());
+                    }
+
+                    socket.emit('kab_tiket_edit', {'_id': row.data()[0], 'data': data}, function(status){
+                            if(status === 'sukses'){
+                                $("#tiket").DataTable()
+                                    .cell(Tiket.active_entry)
+                                    .data(Tiket.editor_entry.val())
+                                    .draw(false);
+                                generalAlert('Berhasil diedit.');
+                                Tiket.active_entry = null;
+                                Tiket.state_active_editor_entry = false;
+                                Tiket.editor_entry.hide(); 
+                            } else {
+                                generalAlert('Gagal diedit. Hubungi admin.');
+                            }
+                    });                     
+                } else {
+                    Tiket.active_entry = null;
+                    Tiket.state_active_editor_entry = false;
+                    Tiket.editor_entry.hide();  
+                }
+            } else if(e.which === 27){
+                Tiket.active_entry = null;
+                Tiket.state_active_editor_entry = false;
+                Tiket.editor_entry.hide();
+            }
+        });
+
+
+        function getNumber(obj){
+            if(!obj || obj == '-' || obj == '') return 0;
+            if (typeof obj === 'string' || obj instanceof String) return +obj.replace(/\D/g, '');
+            return +obj;
+        }
+
+        function getNumber(obj){
+            if(!obj || obj == '-' || obj == '') return 0;
+            if (typeof obj === 'string' || obj instanceof String) return +obj.replace(/\D/g, '');
+            return +obj;
+        }
 
         function generalAlert(message){
             $.toast({

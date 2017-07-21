@@ -57,7 +57,7 @@
                                 </div>
                                 <div id="main_section" class="row">
                                     <div class="col-md-12" style="padding-left: 0;">                                    
-                                    <table id="pok_table_entry" class="table" cellspacing="0" width="100%">
+                                    <table id="pok_table_entry" class="table table-bordered" width="100%">
                                         <thead>
                                             <tr>
                                                 <th rowspan="2">Id</th>
@@ -123,7 +123,7 @@
                                 </div>
                                 <div id="main_section" class="row">
                                     <div class="col-md-12" style="padding-left: 0;">                                    
-                                        <table id="pok_table_edit" class="table" cellspacing="0" width="100%">
+                                        <table id="pok_table_edit" class="table table-bordered" width="100%">
                                             <thead>
                                                 <tr>
                                                     <th>Id</th>
@@ -508,7 +508,7 @@
         //search & sort
         //tabel pok entry
         tabel_pok_entry.DataTable({
-            scrollY:        '500px',
+            scrollY:        '800px',
             scrollX:        true,
             scrollCollapse: true,
             fixedColumns:   {
@@ -1320,19 +1320,19 @@
                         continue;
                     }
                     if(isNotSaveable(data[i].tgl)){
-                        generalAlert('Kolom '+(i+1)+': Tanggal blm terisi.')
+                        generalAlert('Baris '+(i+1)+': Tanggal blm terisi.')
                         $("#entri_submit").html('Simpan');
                         $("#entri_submit").prop("disabled",false);
                         return;
                     }
                     if(isNotSaveable(data[i].penerima_nama)){
-                        generalAlert('Kolom '+(i+1)+': Penerima blm terisi')
+                        generalAlert('Baris '+(i+1)+': Penerima blm terisi')
                         $("#entri_submit").html('Simpan');
                         $("#entri_submit").prop("disabled",false);
                         return;
                     }
                     if(isNotSaveable(data[i].jumlah)){
-                        generalAlert('Kolom '+(i+1)+': Jumlah kosong/nol')
+                        generalAlert('Baris '+(i+1)+': Jumlah kosong/nol')
                         $("#entri_submit").html('Simpan');
                         $("#entri_submit").prop("disabled",false);
                         return;
@@ -1533,45 +1533,45 @@
                 if(type == 'program'){
                     if(!detail_id_target_riwayat){
                         options +='<option value="'+item._id+'">'
-                                +   item.kdprogram+' '+item.uraian
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
                                 + '</option>';
                     } else if(item._id !== child_row.data()[0][1]){
                         options +='<option value="'+item._id+'">'
-                                +   item.kdprogram+' '+item.uraian
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
                                 + '</option>';
                     } else {
                         options +='<option value="'+item._id+'" selected="selected">'
-                                +   item.kdprogram+' '+item.uraian
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
                                 + '</option>';
                         detail_id_target_riwayat = item._id;
                     }                    
                 } else if(type == 'kegiatan'){
                     if(!detail_id_target_riwayat){
                         options +='<option value="'+item._id+'">'
-                                +   item.kdgiat+' '+item.uraian
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
                                 + '</option>';
                     } else if(item._id !== child_row.data()[0][1]){
                         options +='<option value="'+item._id+'">'
-                                +   item.kdgiat+' '+item.uraian
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
                                 + '</option>';
                     } else {
                         options +='<option value="'+item._id+'" selected="selected">'
-                                +   item.kdgiat+' '+item.uraian
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
                                 + '</option>';
                         detail_id_target_riwayat = item._id;
                     }                    
                 } else if(type == 'output'){
                     if(!detail_id_target_riwayat){
                         options +='<option value="'+item._id+'">'
-                                +   item.kdoutput+' '+item.uraian
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
                                 + '</option>';
                     } else if(item._id !== child_row.data()[0][1]){
                         options +='<option value="'+item._id+'">'
-                                +   item.kdoutput+' '+item.uraian
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
                                 + '</option>';
                     } else {
                         options +='<option value="'+item._id+'" selected="selected">'
-                                +   item.kdoutput+' '+item.uraian
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
                                 + '</option>';
                         detail_id_target_riwayat = item._id;
                     }                    
@@ -1624,15 +1624,15 @@
                 } else if(type == 'akun'){
                     if(!detail_id_target_riwayat){
                         options +='<option value="'+item._id+'">'
-                            +   item.kdakun+' '+item.uraian
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
                             + '</option>';
                     } else if(item._id !== child_row.data()[0][1]){
                         options +='<option value="'+item._id+'">'
-                            +   item.kdakun+' '+item.uraian
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
                             + '</option>';
                     } else {
                         options +='<option value="'+item._id+'" selected="selected">'
-                            +   item.kdakun+' '+item.uraian
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
                             + '</option>';
                         detail_id_target_riwayat = item._id;
                     }
@@ -2930,9 +2930,35 @@
         ////////////////Object & Sockets
 
         //Server sockets response
+        var opts = {
+              lines: 13 // The number of lines to draw
+            , length: 28 // The length of each line
+            , width: 14 // The line thickness
+            , radius: 42 // The radius of the inner circle
+            , scale: 0.25 // Scales overall size of the spinner
+            , corners: 1 // Corner roundness (0..1)
+            , color: '#000' // #rgb or #rrggbb or array of colors
+            , opacity: 0.25 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 1 // Rounds per second
+            , trail: 60 // Afterglow percentage
+            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: 'spinner' // The CSS class to assign to the spinner
+            , top: '50%' // Top position relative to parent
+            , left: '50%' // Left position relative to parent
+            , shadow: false // Whether to render a shadow
+            , hwaccel: false // Whether to use hardware acceleration
+            , position: 'absolute' // Element positioning
+        }
+        var target = document.getElementById('main-view')
+        var spinner = new Spinner(opts).spin(target);
+
         socket.emit('pok_row_init', 'entry');
 
         $('#pok_edit_tab').one('click', function(e) {
+            spinner.spin(target);
             socket.emit('pok_row_init', 'edit');
         })
 
@@ -2954,22 +2980,6 @@
                 .to$()
                 .find('td.format-uang')
                 .autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
-            // if(data.tabel == 'edit'){
-                
-            // } else{
-            //     tabel_pok_entry.DataTable().row.add( data.row );
-            //     cb();
-            //     var prt_row = tabel_pok_edit.DataTable()
-            //                     .rows( function ( idx, dataa, node ) {
-            //                         return dataa[0] == data.row[0] ?
-            //                             true : false;
-            //                     } );
-            //     prt_row
-            //         .nodes()
-            //         .to$()
-            //         .find('td.format-uang')
-            //         .autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
-            // }
         })
 
         socket.on('pok_edit_update_jlh', function(data) {
@@ -3012,7 +3022,7 @@
         socket.on('pok_datatable_apply', function(tabel) {
             if(tabel == 'edit') $('#pok_table_edit').DataTable().draw(false)
                 else $('#pok_table_entry').DataTable().draw(false);
-            
+            spinner.stop();
         })
 
         socket.on('title_change', function(new_pok_name) {

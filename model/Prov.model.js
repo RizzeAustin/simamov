@@ -4,7 +4,16 @@ var Schema = mongoose.Schema;
 
 var ProvSchema = new Schema({
     "_id" : String,
-    "nama" : String
+    "nama" : String,
+    taksi_dn: Number,
+    har_dn_lk: Number,
+    har_dn_dk: Number,
+    har_dn_dik: Number,
+    inap_dn_es1: Number,
+    inap_dn_es2: Number,
+    inap_dn_es3_g4: Number,
+    inap_dn_es4_g3: Number,
+    inap_dn_g12: Number
 }, { collection: 'prov'});
 
 ProvSchema.methods.isExist = function(cb) {

@@ -49,6 +49,8 @@ var CustomEntity = require(__dirname+"/../model/CustomEntity.model");
 //Short syntax tool
 var _ = require("underscore");
 
+var levenshtein = require('fast-levenshtein');
+
 //modul sql utk koneksi db mysql sipadu
 var mysql = require('mysql');
 var sipadu_db = mysql.createConnection({
@@ -1144,27 +1146,52 @@ pok.socket = function(io, connections){
 	    client.on('penerima_list', function (q, cb){
 	    	if(q.type == 'custom_bps_only'){
 	    		CustomEntity.find({"nama": new RegExp(q.query, "i"), type: 'Penerima', unit: 'BPS'}, 'nama', function(err, custs){
-	    			console.log('ijijia')
+	    			_.each(custs, function(item, index, list){
+		    			custs[index].d = levenshtein.get(q.query, item.nama);
+		    		})
+		    		custs = _.sortBy(custs, function(o) { return o.d; })
 		    		cb(custs);
 		    	})
 	    	} else if(q.type == 'custom_non_only'){
 	    		CustomEntity.find({"nama": new RegExp(q.query, "i"), type: 'Penerima', unit: {$ne: 'BPS'}}, 'nama', function(err, custs){
+		    		_.each(custs, function(item, index, list){
+		    			custs[index].d = levenshtein.get(q.query, item.nama);
+		    		})
+		    		custs = _.sortBy(custs, function(o) { return o.d; })
 		    		cb(custs);
 		    	})
 	    	} else if(q.type == 'pegawai_only'){
 	    		Pegawai.find({"nama": new RegExp(q.query, "i")}, 'nama', function(err, pegs){
+		    		_.each(pegs, function(item, index, list){
+		    			pegs[index].d = levenshtein.get(q.query, item.nama);
+		    		})
+		    		pegs = _.sortBy(pegs, function(o) { return o.d; })
 		    		cb(pegs);
 		    	})
 	    	} else if(q.type == 'pegawai_and_bps'){
 	    		Pegawai.find({"nama": new RegExp(q.query, "i")}, 'nama', function(err, pegs){
 		    		CustomEntity.find({"nama": new RegExp(q.query, "i"), type: 'Penerima', unit: 'BPS'}, 'nama', function(err, custs){
-			    		cb(pegs.concat(custs));
+			    		_.each(pegs, function(item, index, list){
+			    			pegs[index].d = levenshtein.get(q.query, item.nama);
+			    		})
+			    		_.each(custs, function(item, index, list){
+			    			custs[index].d = levenshtein.get(q.query, item.nama);
+			    		})
+			    		entity = _.sortBy(pegs.concat(custs), function(o) { return o.d; })
+			    		cb(entity);
 			    	})
 		    	})
 	    	} else {
 	    		Pegawai.find({"nama": new RegExp(q || q.query, "i")}, 'nama', function(err, pegs){
 		    		CustomEntity.find({"nama": new RegExp(q || q.query, "i"), type: 'Penerima'}, 'nama', function(err, custs){
-			    		cb(pegs.concat(custs));
+			    		_.each(pegs, function(item, index, list){
+			    			pegs[index].d = levenshtein.get(q.query, item.nama);
+			    		})
+			    		_.each(custs, function(item, index, list){
+			    			custs[index].d = levenshtein.get(q.query, item.nama);
+			    		})
+			    		entity = _.sortBy(pegs.concat(custs), function(o) { return o.d; })
+			    		cb(entity);
 			    	})
 		    	})
 	    	}
@@ -1540,7 +1567,7 @@ function getRealisasiSum(client, lower_ts, upper_ts, bypass){
 pok.get('/', function(req, res){
 	Setting.findOne({type:'pok'}, function(err, pok_setting){
 		if(pok_setting) res.render('pok/pok', {layout: false, pok_name: pok_setting.toObject().name});
-			else res.render('pok/pok', {layout: false, pok_name: 'Noname'});
+			else res.render('pok/pok', {layout: false, pok_name: 'POK'});
 	})
 })
 

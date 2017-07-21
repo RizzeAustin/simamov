@@ -28,9 +28,10 @@ use simamov;
 // db.pegawai.drop()
 // db.setting.drop()
 
-// db.custom_entity.find().pretty()
+// db.kab.find().pretty()
 // db.pegawai.find({}).length()
-db.setting_sppd.find().pretty()
+db.perhitungan.find().pretty()
+// db.setting_sppd.find().pretty()
 // db.pok_uraian_akun.find().pretty()
 // db.pok_detailBelanja.findOne()
 // db.pok_akun.findOne({'kdkmpnen': '002'})
