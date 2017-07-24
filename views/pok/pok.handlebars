@@ -612,6 +612,8 @@
 
 <script type="text/javascript">
     socket = io.connect($(location).attr('host'));
+
+    //untuk hak akses
     var user_aktiv = '{{username}}';
 
 
@@ -839,7 +841,7 @@
                     'lower_ts': lower_ts, 'upper_ts': upper_ts});
             } else {
                 tabel_riwayat.DataTable().clear().draw(false);
-                var selected = $(this).val();
+                var selected = $('#bulan_realisasi_modal').val();
                 if(selected == 'none') return;
                 socket.emit('riwayat_init', {'detail_id': $('#tbh_entry_detail').val(), 'init': false, 
                     'month': selected});
@@ -2369,16 +2371,16 @@
                 })
 
                 $('#realisasi-bulan-ini').html(formatUang(realisasi_bulan_ini).replace(/\-$/g,''));
-                $('#realisasi-bulan-ini-percent').html(' ('+((getNumber(realisasi_bulan_ini)/pagu)*100).toFixed(0)+'%)');
+                $('#realisasi-bulan-ini-percent').html(' ('+((getNumber(realisasi_bulan_ini)/pagu)*100).toFixed(2)+'%)');
 
                 $('#realisasi-bulan-lalu').html(formatUang(realisasi_bulan_lalu).replace(/\-$/g,''));
-                $('#realisasi-bulan-lalu-percent').html(' ('+((getNumber(realisasi_bulan_lalu)/pagu)*100).toFixed(0)+'%)');
+                $('#realisasi-bulan-lalu-percent').html(' ('+((getNumber(realisasi_bulan_lalu)/pagu)*100).toFixed(2)+'%)');
 
                 $('#sampai-bln-ini').html(formatUang(sampai_bln_ini).replace(/\-$/g,''));
-                $('#sampai-bln-ini-percent').html(' ('+((getNumber(sampai_bln_ini)/pagu)*100).toFixed(0)+'%)');
+                $('#sampai-bln-ini-percent').html(' ('+((getNumber(sampai_bln_ini)/pagu)*100).toFixed(2)+'%)');
 
                 $('#sisa-dana').html(formatUang(sisa_dana).replace(/\-$/g,''));
-                $('#sisa-dana-percent').html(' ('+((getNumber(sisa_dana)/pagu)*100).toFixed(0)+'%)');
+                $('#sisa-dana-percent').html(' ('+((getNumber(sisa_dana)/pagu)*100).toFixed(2)+'%)');
             }
         }
 
@@ -3331,7 +3333,7 @@
             var formData = new FormData($(this)[0]);
 
             $.ajax({
-                url: 'http://localhost:3000/pok/unggah_pok', 
+                url: 'http://'+window.location.host+'/pok/unggah_pok', 
                 type: 'POST',
                 data: formData,
                 async: false,
@@ -3566,7 +3568,30 @@
 
         socket.on('pok_datatable_apply', function(tabel) {
             if(tabel == 'edit') $('#pok_table_edit').DataTable().draw(false)
-                else $('#pok_table_entry').DataTable().draw(false);
+            else {
+                $('#pok_table_entry').DataTable().draw(false);
+                var prt_row = tabel_pok_entry.DataTable()
+                        .rows( function ( idx, data, node ) {
+                            return data[2] == '<span class="badge badge-default">program</span>' ?
+                                true : false;
+                        } );
+
+                var sampai_bln_ini = 0;
+                var sisa_dana = 0;
+
+                var pagu = 0;
+
+                _.each(prt_row.data(), function(program, index, list){
+                    sampai_bln_ini += program[11];
+                    sisa_dana += program[13];
+
+                    pagu += program[8];
+                })
+                if(sisa_dana == '0--'){
+                    $('#sisa-dana').html(formatUang(pagu).replace(/\-$/g,''));
+                    $('#sisa-dana-percent').html(' ('+((getNumber(pagu)/pagu)*100).toFixed(0)+'%)');
+                }                
+            }
             spinner.stop();
         })
 
@@ -3741,6 +3766,14 @@
                 generalAlert('Baru: '+'['+type+'] '+item[element]);
             })    
         });
+
+        // jQuery('.tabbable').bind( "tabsshow", function(event, ui) {
+        //     var table = $.fn.dataTable.fnTables(true);
+        //     if ( table.length > 0 ) {
+        //         $(table).dataTable().fnAdjustColumnSizing();
+        //     }
+        // });
+
 
         function updateCell(row, index, new_value, format_uang){
             var target_td = row

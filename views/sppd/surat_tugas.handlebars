@@ -270,8 +270,8 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="username">NIP/Nomor Identitas</label>
-                        <input type="text" class="form-control" id="tbh_id" name='tbh_id'>
+                        <label for="username">NIP/Nomor Identitas <span>*</span></label>
+                        <input type="text" class="form-control" id="tbh_id" name='tbh_id' required>
                     </div>
                     <div class="form-group row">
                         <label for="username">Golongan</label>
@@ -285,7 +285,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                <button id="btn-tambah-pegawai" class="btn btn-primary">Simpan</button>
+                <button id="btn-tambah-pegawai" type="button" class="btn btn-primary">Simpan</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -297,6 +297,8 @@
 <script src="/js/bootstrap-tokenfield.js"></script>
 
 <script type="text/javascript">
+    socket = io.connect($(location).attr('host'));
+
     $(document).ready(function(){
         $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/bootstrap-tokenfield.css"));
 
@@ -363,7 +365,13 @@
         $('#nama_lengkap').tokenfield({
           typeahead: [null, { source: function(q, p){
             {
-                socket.emit('penerima_list', {'query': q, 'type': 'pegawai_and_bps'}, function (data) {
+                socket.emit('penerima_list', {'query': q, 'type': 'sppd'}, function (data) {
+                    if($('#nama_lengkap').val()){
+                        var regEx = new RegExp(q+"$");
+                        if(regEx.test($('#nama_lengkap').val())){
+                            return p([]);
+                        }
+                    }
                     return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
                 });
             }
@@ -418,6 +426,10 @@
 
             socket.emit('entry_pegawai_baru', {'data': data, 'collection': collection}, 
                 function(_id){
+                    if(!_id){
+                        generalAlert('Gagal menyimpan.');
+                        return;
+                    }
                     is_saved = true;
                     var current = $('#nama_lengkap').tokenfield('getTokens', false);
                     $('#nama_lengkap').tokenfield('setTokens', _.map(current, function(o){

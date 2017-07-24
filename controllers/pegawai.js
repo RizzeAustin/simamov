@@ -128,7 +128,7 @@ pegawai.socket = function(io, connections){
 				});
 				
 			} else {
-				CustomEntity.find({type: 'Penerima', unit: { $exists: false }}).sort('nama').exec(function(err, custs){
+				CustomEntity.find({type: 'Penerima', unit: { $ne: 'BPS' }}).sort('nama').exec(function(err, custs){
 					_.each(custs, function(cust, i, list){
 						var ket = '-';
 						if(cust.unit) ket = 'Dosen '+(cust.unit||'Luar');
@@ -164,16 +164,23 @@ pegawai.socket = function(io, connections){
 					cb(peg._id);
 				});
 			} else if(data.collection == 'bps'){
+				data.data.nip = data.data._id;
+				delete data.data._id;
+				data.data.type = 'Penerima';
+				data.data.unit = 'BPS';
 				var cs = new CustomEntity(data.data);
-				cs.type = 'Penerima';
-				cs.unit = 'BPS';
 				cs.save(function(err, res){
+					console.log(err,res)
 					cb(cs._id);
 				});
 			} else if(data.collection == 'custom_entity'){
+				data.data.nip = data.data._id;
+				delete data.data._id;
+				data.data.type = 'Penerima';
+				data.data.unit = 'Non STIS/BPS';
 				var cs = new CustomEntity(data.data);
-				cs.type = 'Penerima';
 				cs.save(function(err, res){
+					console.log(err,res)
 					cb(cs._id);
 				});
 			}

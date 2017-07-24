@@ -229,17 +229,54 @@ sppd.socket = function(io, connections){
     		var lower_ts = data.lower_ts || Math.round(new Date(y, m, 1).getTime()/1000)
     		var upper_ts = data.upper_ts || Math.round(new Date(y, +m + 1, 0).getTime()/1000) + 86399
     		Model.find({ "timestamp": {$gte : lower_ts, $lte : upper_ts}}).sort({'_id': -1}).populate('nama_lengkap').exec(function(err, surats){
-    			cb(surats);
+    			var tasks = [];
+    			_.each(surats, function(srt, index, list){
+    				tasks.push(
+    					function(cb){
+    						if(!srt.nama_lengkap){
+    							Model.findOne({_id: srt._id}, 'nama_lengkap', function(err, res){
+    								CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
+										srt.nama_lengkap = peg.toObject();
+										cb(null, '')
+									})
+    							})
+		    				} else {
+		    					cb(null, '')
+		    				}
+    					}
+    				)
+    			})
+    			async.series(tasks, function(err, final){
+    				cb(surats);
+    			})
     		})
 	    })
 	    client.on('get_surat_tugas', function (data, cb){
 	    	if(data.type == 'surat_tugas'){
 	    		SuratTugas.findOne({ "_id": data.nomor}).populate('nama_lengkap prov kab org').exec(function(err, surat){
-	    			cb(surat);
+	    			if(!surat.nama_lengkap){
+						SuratTugas.findOne({_id: surat._id}, 'nama_lengkap', function(err, res){
+							CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
+								surat.nama_lengkap = peg.toObject();
+								cb(surat);
+							})
+						})
+    				} else {
+    					cb(surat);
+    				}
 	    		})
 	    	} else {
 	    		SuratTugasBiasa.findOne({ "_id": data.nomor}).populate('nama_lengkap lokasi').exec(function(err, surat){
-	    			cb(surat);
+	    			if(!surat.nama_lengkap){
+						SuratTugasBiasa.findOne({_id: surat._id}, 'nama_lengkap', function(err, res){
+							CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
+								surat.nama_lengkap = peg.toObject();
+								cb(surat);
+							})
+						})
+    				} else {
+    					cb(surat);
+    				}
 	    		})
 	    	}
 	    })
@@ -455,35 +492,49 @@ function handleSuratTugas(data, cb, res){
 					st.save(function(err, result){
 						st.populate('nama_lengkap ttd_legalitas ttd_surat_tugas prov kab org', function(err2){
 							// console.log(data.nama_lengkap.length)
-							console.log(st._id)
-							if(list.length == 1){
-								if(!st._id) st._id = data._id;
-								outputDocx = __dirname+"/../template/output/sppd/"+current_timestamp+"_"+st._id+"-SPD-STIS-"
-											+(st.tgl_berangkat.match(/\d{4}$/)[0])+"-"
-											+st.nama_lengkap.nama+".docx";
-							} else {
-								if(index == 0) outputDocx = __dirname+"/../template/output/sppd/"+current_timestamp+"_Surat Tugas No. "+st._id;
-									else if (index == list.length - 1) outputDocx += ' - '+st._id+'.docx';
-							}
-							function assignData(){
-								data.yang_bepergian.push({nomor_surat: st.nomor_surat, nama: st.nama_lengkap.nama
-									, _id: st.nama_lengkap._id, gol: st.nama_lengkap.gol, jabatan: st.nama_lengkap.jabatan})
-								data.ttd_surat_tugas = st.ttd_surat_tugas;
-								data.ttd_legalitas = st.ttd_legalitas;
-								data.lokasi = st.lokasi;
-								data.atas_nama_ketua_stis = st.atas_nama_ketua_stis;
-								//end
-								cb(null, '');
-							}
-							//update nomor surat
-							if(list.length == 1 && data.nomor.match(/^\d*/)[0] != last_nmr_surat){
-								assignData();
-							} else {
-								SettingSPPD.update({}, { $inc: { last_nmr_surat: 1 }}, function(err, status){
-									last_nmr_surat ++;
+							//cek apakah dari tabel Pegawai
+							async.series([
+								function(cb){
+									if(!st.nama_lengkap){
+										CustomEntity.findOne({_id: pegawai._id}, function(err, peg){
+											st.nama_lengkap = peg.toObject();
+											cb(null, '')
+										})
+									} else {
+										cb(null, '')
+									}
+								}
+
+							], function(err, finish){
+								if(list.length == 1){
+									if(!st._id) st._id = data._id;
+									outputDocx = __dirname+"/../template/output/sppd/"+current_timestamp+"_"+st._id+"-SPD-STIS-"
+												+(st.tgl_berangkat.match(/\d{4}$/)[0])+"-"
+												+st.nama_lengkap.nama+".docx";
+								} else {
+									if(index == 0) outputDocx = __dirname+"/../template/output/sppd/"+current_timestamp+"_Surat Tugas No. "+st._id;
+										else if (index == list.length - 1) outputDocx += ' - '+st._id+'.docx';
+								}
+								function assignData(){
+									data.yang_bepergian.push({nomor_surat: st.nomor_surat, nama: st.nama_lengkap.nama
+										, _id: st.nama_lengkap._id, gol: st.nama_lengkap.gol, jabatan: st.nama_lengkap.jabatan})
+									data.ttd_surat_tugas = st.ttd_surat_tugas;
+									data.ttd_legalitas = st.ttd_legalitas;
+									data.lokasi = st.lokasi;
+									data.atas_nama_ketua_stis = st.atas_nama_ketua_stis;
+									//end
+									cb(null, '');
+								}
+								//update nomor surat
+								if(list.length == 1 && data.nomor.match(/^\d*/)[0] != last_nmr_surat){
 									assignData();
-								});
-							}
+								} else {
+									SettingSPPD.update({}, { $inc: { last_nmr_surat: 1 }}, function(err, status){
+										last_nmr_surat ++;
+										assignData();
+									});
+								}
+							})
 						})
 					})
 				})

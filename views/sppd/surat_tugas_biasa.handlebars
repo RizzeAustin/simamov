@@ -250,6 +250,12 @@
           typeahead: [null, { source: function(q, p){
             {
                 socket.emit('penerima_list', {'query': q, 'type': 'pegawai_and_bps'}, function (data) {
+                    if($('#anggota').val()){
+                        var regEx = new RegExp(q+"$");
+                        if(regEx.test($('#anggota').val())){
+                            return p([]);
+                        }
+                    }
                     return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
                 });
             }

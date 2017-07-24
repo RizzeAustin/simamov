@@ -1309,6 +1309,19 @@ pok.socket = function(io, connections){
 			    		cb(entity);
 			    	})
 		    	})
+	    	} else if(q.type == 'sppd') {
+	    		Pegawai.find({"nama": new RegExp(q.query || q, "i")}, 'nama', function(err, pegs){
+		    		CustomEntity.find({"nama": new RegExp(q.query || q, "i"), type: 'Penerima', unit: { $exists: true }}, 'nama', function(err, custs){
+			    		_.each(pegs, function(item, index, list){
+			    			pegs[index].d = levenshtein.get(q.query || q, item.nama);
+			    		})
+			    		_.each(custs, function(item, index, list){
+			    			custs[index].d = levenshtein.get(q.query || q, item.nama);
+			    		})
+			    		entity = _.sortBy(pegs.concat(custs), function(o) { return o.d; })
+			    		cb(entity);
+			    	})
+		    	})
 	    	} else {
 	    		Pegawai.find({"nama": new RegExp(q.query || q, "i")}, 'nama', function(err, pegs){
 		    		CustomEntity.find({"nama": new RegExp(q.query || q, "i"), type: 'Penerima'}, 'nama', function(err, custs){
