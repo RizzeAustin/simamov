@@ -105,13 +105,13 @@
         #tbl_riwayat .twitter-typeahead .tt-dropdown-menu{
           top: 35px !important;
           left: auto !important;
-          right: 600px !important;
+          right: 750px !important;
         }
 
         #tbl_tambah_penerima .twitter-typeahead .tt-dropdown-menu{
           top: 35px !important;
           left: auto !important;
-          right: 565px !important;
+          right: 750px !important;
         }
     </style>
 
@@ -147,15 +147,20 @@
                 <a class="nav-link navbar-toggler sidebar-toggler" href="#">&#9776;</a>
             </li>
         </ul>
+        <ul class="nav navbar-nav ml-auto">
+            <li class="nav-item">
+                <span class="text-muted">Anggaran</span> <span id="tahun_anggaran" class="badge badge-default">{{tahun_anggaran}}</span>
+            </li>
+        </ul>
         <ul class="nav navbar-nav ml-auto">            
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <img src="/img/avatars/6.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+                    <img src="/img/avatars/6.png" class="img-avatar" alt="admin@bootstrapmaster.com">
                     <span class="hidden-md-down">{{display_name}}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right">
                     <div class="dropdown-header text-center">
-                        <strong>Settings</strong>
+                        <strong>Pilihan</strong>
                     </div>
                     <a class="dropdown-item" href="logout" target="_top"><i class="fa fa-lock"></i> Logout</a>
                 </div>
@@ -186,9 +191,11 @@
                             <li class="nav-item">
                                 <a id="perhitunganSTMenu" class="nav-link" href="sppd/perhitungan"><i class="icon-check"></i> Perhitungan</a>
                             </li>
+                            {{#if admin}}
                             <li class="nav-item">
                                 <a id="pengaturanSPPD" class="nav-link" href="sppd/pengaturan"><i class="icon-wrench"></i> Pengaturan</a>
                             </li>
+                            {{/if}}
                         </ul>
                     </li>
                     <li class="nav-item nav-dropdown">
@@ -202,12 +209,14 @@
                             </li>
                         </ul>
                     </li>
+                    {{#if admin}}
                     <li class="nav-item">
                         <a class="nav-link" href="pegawai" id="pegawai_menu"><i class="icon-people"></i> Pegawai</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="admin"><i class="icon-lock-open"></i> Administrator</a>
                     </li>
+                    {{/if}}
                 </ul>
             </nav>
         </div>
@@ -217,10 +226,7 @@
 
             <!-- Breadcrumb -->
             <ol class="breadcrumb">
-                <li class="breadcrumb-item">Home</li>
-                <li class="breadcrumb-item"><a href="#">Admin</a>
-                </li>
-                <li class="breadcrumb-item active"><span id="level3">Monitoring</span></li>
+                <li class="breadcrumb-item active"><span id="level3"></span></li>
             </ol>
             <div class="container-fluid">
                 <div id="ui-view"></div>

@@ -12,6 +12,12 @@ var PerhitunganSchema = new Schema({
         ref: 'SuratTugas'
     },
 
+    "akun": String,
+    "detail": String,
+
+    "jenis_pgw": String,
+    "representasi": Number,
+
     "jumlah_menginap": Number,
     "biaya_inap": Number,
     "totalb_inap": Number,
@@ -97,6 +103,10 @@ PerhitunganSchema.path('b_inap_price').set(function (x) {
     return parseInt(x.replace(/\D/g, ""));
 });
 PerhitunganSchema.path('hotel_biaya_maks').set(function (x) {
+    if(!x) x = '0';
+    return parseInt(x.replace(/\D/g, ""));
+});
+PerhitunganSchema.path('representasi').set(function (x) {
     if(!x) x = '0';
     return parseInt(x.replace(/\D/g, ""));
 });

@@ -5,6 +5,7 @@ var express = require('express');
 var crypto = require('crypto');
 //load model User
 var User = require(__dirname+"/../model/User.model");
+var Program = require(__dirname+"/../model/Program.model");
 //buat router khusus login
 var login = express.Router();
 //route GET /login
@@ -13,7 +14,17 @@ login.get('/', function(req, res){
 	if(req.query.href){
 		href = '?href='+req.query.href;
 	}
-	res.render('login', {layout: false, href: href});
+	Program.findOne().sort({'thang': 1}).exec(function(error, programs) {
+		var thang = [];
+		if(!programs){
+			thang = [{thang: new Date().getFullYear()}];
+		} else {
+			for (var i = (programs.thang); i < new Date().getFullYear()+1; i++) {
+				thang.push({thang: i});
+			}
+		}
+		res.render('login', {layout: false, href: href, 'thang': thang, 'this_year': new Date().getFullYear()});
+	})
 });
 //route POST /login
 login.post('/', function(req, res){
@@ -32,12 +43,24 @@ login.post('/', function(req, res){
 			if(req.query.href){
 				href = '?href='+req.query.href;
 			}
-			res.render('login', {layout: false, href: href, message: 'User atau password salah'});
+
+			Program.findOne().sort({'thang': 1}).exec(function(error, programs) {
+				var thang = [];
+				if(!programs){
+					thang = [{thang: new Date().getFullYear()}];
+				} else {
+					for (var i = (programs.thang); i < new Date().getFullYear()+1; i++) {
+						thang.push({thang: i});
+					}
+				}
+				res.render('login', {layout: false, href: href, message: 'User atau password salah', 'thang': thang, 'this_year': new Date().getFullYear()});
+			})
 			return;
 		}
 		//simpan session utk nama & tahun anggaran
 		req.session.username = req.body.username;
 		req.session.tahun_anggaran = req.body.tahun_anggaran;
+		req.session.jenis = user.jenis;
 		//ke home
 		if(!req.query.href) req.query.href = ''
 			else req.query.href = '#'+req.query.href

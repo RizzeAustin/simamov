@@ -3,6 +3,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var KegiatanSchema = new Schema({
+    'thang': {
+        type: Number,
+        default: new Date().getFullYear()
+    },
     'kdprogram': String,
     'kdgiat': String,
     uraian: String,
@@ -12,11 +16,15 @@ var KegiatanSchema = new Schema({
         default: true,
         type: Boolean
     },
-    old: []
+    old: [],
+    pengentry: {
+        type: String,
+        ref: 'User'
+    }
 }, { collection: 'pok_kegiatan' });
 
 KegiatanSchema.methods.isExist = function(cb) {
-    return this.model('Kegiatan').findOne({ 'kdprogram': this.kdprogram, 'kdgiat': this.kdgiat }, cb);
+    return this.model('Kegiatan').findOne({ thang: this.thang, 'kdprogram': this.kdprogram, 'kdgiat': this.kdgiat }, cb);
 };
 
 KegiatanSchema.statics.getAll = function(cb) {

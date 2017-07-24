@@ -6,7 +6,6 @@ var Schema = mongoose.Schema;
 
 var SuratTugasBiasaSchema = new Schema({
     "_id" : Number,
-    "tahun" : Number,
 
     "anggota": [{
         _id: String,

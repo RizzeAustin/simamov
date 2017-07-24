@@ -51,8 +51,9 @@
                                     <span class="input-group-addon"><i class="icon-clock"></i>
                                     </span>
                                     <select data-toggle="tooltip" title="Tahun anggaran" id="tahun_anggaran" name="tahun_anggaran" class="form-control" size="1">
-                                            <option value="2017">2017</option>
-                                            <option value="2018">2018</option>
+                                        {{#each thang}}
+                                            <option value="{{thang}}" {{#if_eq thang ../this_year}}selected{{/if_eq}}>{{thang}}</option>
+                                        {{/each}}  
                                     </select>
                                 </div>
                                 <div class="row">

@@ -157,6 +157,28 @@ pegawai.socket = function(io, connections){
 			})
 		})
 
+		client.on('entry_pegawai_baru', function (data, cb) {
+			if(data.collection == 'pegawai'){
+				var peg = new Pegawai(data.data);
+				peg.save(function(err, res){
+					cb(peg._id);
+				});
+			} else if(data.collection == 'bps'){
+				var cs = new CustomEntity(data.data);
+				cs.type = 'Penerima';
+				cs.unit = 'BPS';
+				cs.save(function(err, res){
+					cb(cs._id);
+				});
+			} else if(data.collection == 'custom_entity'){
+				var cs = new CustomEntity(data.data);
+				cs.type = 'Penerima';
+				cs.save(function(err, res){
+					cb(cs._id);
+				});
+			}
+		})
+
 		client.on('gol_list', function (data, cb) {
 			Pegawai.find().distinct('gol', function(error, gols) {
 				cb(gols);

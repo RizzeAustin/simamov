@@ -12,7 +12,7 @@
                                     <a id="biaya2Tab" class="nav-link tabAjax" data-toggle="tab" href="#biaya2Tabchild" role="tab" aria-controls="biaya2Tabchild"><i class="icon-wallet"></i> Biaya-Biaya</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a id="tiketPesawatTab" class="nav-link tabAjax" data-toggle="tab" href="#tiketPesawatTabchild" role="tab" aria-controls="tiketPesawatTabchild"><i class="icon-plane"></i> Biaya Tiket</a>
+                                    <a id="tiketPesawatTab" class="nav-link tabAjax" data-toggle="tab" href="#tiketPesawatTabchild" role="tab" aria-controls="tiketPesawatTabchild"><i class="icon-plane"></i> Tiket</a>
                                 </li>
                             </ul>
 
@@ -107,6 +107,32 @@
                                     </div> 
                                 </div>
                                 <div class="tab-pane" id="biaya2Tabchild" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6 class="text-center pok-title">
+                                                Tabel Representasi
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    <table id="tbl-representasi" class="table table-bordered" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th class="text-center" style="vertical-align: middle">Uraian</th>
+                                                <th class="text-center" style="vertical-align: middle">Luar Kota</th>
+                                                <th class="text-center" style="vertical-align: middle">Dalam Kota > 8 jam</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>                                           
+                                        </tbody>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6 class="text-center pok-title">
+                                                Tabel Uang Harian
+                                            </h6>
+                                        </div>
+                                    </div>
                                     <table id="tbl-biaya-biaya" class="table table-bordered" width="100%">
                                         <thead>
                                             <tr>
@@ -133,6 +159,13 @@
                                     </table>
                                 </div>
                                 <div class="tab-pane" id="tiketPesawatTabchild" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6 class="text-center pok-title">
+                                                Tabel Satuan Biaya Tiket
+                                            </h6>
+                                        </div>
+                                    </div>
                                     <table id="tiket" class="table table-bordered" width="100%">
                                         <thead>
                                             <tr>
@@ -320,6 +353,25 @@
         //############ biaya-biaya
 
 
+        $('#tbl-representasi').DataTable({
+            columnDefs: [
+                {
+                    "targets": [ 0 ],
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            paging: false,
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(1)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(2)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+            }
+        });
+
         $('#tbl-biaya-biaya').DataTable({
             columnDefs: [
                 {
@@ -352,7 +404,8 @@
             socket.emit('biaya2_list', '', 
                 function(response){
                     $('#tbl-biaya-biaya').DataTable().clear();
-                    _.each(response, function(prov, i, list){
+                    $('#tbl-representasi').DataTable().clear();
+                    _.each(response.prov, function(prov, i, list){
                         var row = [
                             prov._id,
                             i+1,
@@ -370,8 +423,107 @@
                         $('#tbl-biaya-biaya').DataTable().row.add( row );
                     });
                     $('#tbl-biaya-biaya').DataTable().draw(false);
+
+                    _.each(response.reps, function(rep, i, list){
+                        console.log(rep)
+                        var row = [
+                            rep._id,
+                            rep.uraian,
+                            rep.luar_kota || 0,
+                            rep.dalam_kota || 0
+                        ]
+                        $('#tbl-representasi').DataTable().row.add( row );
+                    });
+                    $('#tbl-representasi').DataTable().draw(false);
             })
         })
+
+        var Representasi = {};
+
+        //Inline editor tabel biaya2
+        Representasi.state_active_editor_entry = false;
+        Representasi.editor_entry;
+        Representasi.active_entry;
+        $("#tbl-representasi").on('dblclick', 'tr td', function () {
+            Representasi.active_entry = $(this);
+            if(Representasi.state_active_editor_entry){
+                $.toast({
+                    text: 'Anda tidak dapat mengedit sel tersebut.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                })
+                return;
+            }
+            Representasi.state_active_editor_entry = true;
+            var cloneProperties = ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+                          'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+                          'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
+
+            if(Representasi.active_entry.hasClass('format-uang')){
+                Representasi.editor_entry = $('<input type="text" class="format-uang">').val(getNumber(Representasi.active_entry.text())).hide().appendTo(Representasi.active_entry.parent());
+            } else {
+                Representasi.editor_entry = $('<textarea></textarea>').val(Representasi.active_entry.text()).hide().appendTo(Representasi.active_entry.parent());
+            }
+
+            Representasi.editor_entry.css('position', 'absolute');
+            Representasi.editor_entry
+                .show()
+                .offset(Representasi.active_entry.offset())
+                .css(Representasi.active_entry.css(cloneProperties))
+                .width(Representasi.active_entry.width())
+                .height(Representasi.active_entry.height())
+                .focus();
+            Representasi.editor_entry.select();
+        });
+
+        $("#tbl-representasi").on('blur keydown', 'input,textarea', function (e) {
+            //jika enter anggap blur (krn klo tidak, di fired 2 kali)
+            if (e.which === 13){
+                $(this).blur();
+            } else if (e.which === 0){//jika blur ==> keycode nya 0
+                if(Representasi.editor_entry.val() !== Representasi.active_entry.text()){
+                    if(Representasi.editor_entry.val() == ''){
+                        Representasi.editor_entry.val(0);
+                    }
+                    var row = $("#tbl-representasi").DataTable().row(Representasi.active_entry.closest('tr'));
+                    var data = {};
+
+                    if(Representasi.active_entry.is(':nth-child(1)')){
+                        data.uraian = Representasi.editor_entry.val();
+                    } else if(Representasi.active_entry.is(':nth-child(2)')){
+                        data.luar_kota = getNumber(Representasi.editor_entry.val());
+                    } else{
+                        data.dalam_kota = getNumber(Representasi.editor_entry.val());
+                    }
+
+                    socket.emit('representasi_edit', {'_id': row.data()[0], 'data': data}, function(status){
+                            if(status === 'sukses'){
+                                $("#tbl-representasi").DataTable()
+                                    .cell(Representasi.active_entry)
+                                    .data(Representasi.editor_entry.val())
+                                    .draw(false);
+                                generalAlert('Berhasil diedit.');
+                                Representasi.active_entry = null;
+                                Representasi.state_active_editor_entry = false;
+                                Representasi.editor_entry.hide(); 
+                            } else {
+                                generalAlert('Gagal diedit. Hubungi admin.');
+                            }
+                    });                     
+                } else {
+                    Representasi.active_entry = null;
+                    Representasi.state_active_editor_entry = false;
+                    Representasi.editor_entry.hide();  
+                }
+            } else if(e.which === 27){
+                Representasi.active_entry = null;
+                Representasi.state_active_editor_entry = false;
+                Representasi.editor_entry.hide();
+            }
+        });
 
         //Inline editor tabel biaya2
         var state_active_editor_entry = false;
@@ -493,7 +645,33 @@
             }
         });
 
+        var opts = {
+              lines: 13 // The number of lines to draw
+            , length: 28 // The length of each line
+            , width: 14 // The line thickness
+            , radius: 42 // The radius of the inner circle
+            , scale: 0.25 // Scales overall size of the spinner
+            , corners: 1 // Corner roundness (0..1)
+            , color: '#000' // #rgb or #rrggbb or array of colors
+            , opacity: 0.25 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 1 // Rounds per second
+            , trail: 60 // Afterglow percentage
+            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: 'spinner' // The CSS class to assign to the spinner
+            , top: '50%' // Top position relative to parent
+            , left: '50%' // Left position relative to parent
+            , shadow: false // Whether to render a shadow
+            , hwaccel: false // Whether to use hardware acceleration
+            , position: 'absolute' // Element positioning
+        }
+        var target = document.getElementById('new')
+        var spinner = new Spinner(opts)
+
         $("#tiketPesawatTab").click(function(){
+            spinner.spin(target);
             socket.emit('tiket_list', '', 
                 function(response){
                     $('#tiket').DataTable().clear();
@@ -508,6 +686,7 @@
                         $('#tiket').DataTable().row.add( row );
                     });
                     $('#tiket').DataTable().draw(false);
+                    spinner.stop();
             })
         })
 

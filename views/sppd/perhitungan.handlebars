@@ -66,6 +66,28 @@
                                             <span class="help-block text-muted">total</span>                                           
                                         </div> 
                                     </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="jenis_pgw">Representasi<span> *</span></label>
+                                    <div class="col-md-12">
+                                        <label class="radio-inline" for="jenis_pgw1">
+                                            <input id="jenis_pgw1" type="radio" name="jenis_pgw" value="none" checked="checked">Lainnya
+                                        </label>
+                                        <label class="radio-inline" for="jenis_pgw2" style="margin-left: 10px">
+                                            <input type="radio" id="jenis_pgw2" name="jenis_pgw" value="pejabat_negara">Pejabat Negara
+                                        </label>
+                                        <label class="radio-inline" for="jenis_pgw3" style="margin-left: 10px">
+                                            <input type="radio" id="jenis_pgw3" name="jenis_pgw" value="eselon1">Eselon I
+                                        </label>
+                                        <label class="radio-inline" for="jenis_pgw4" style="margin-left: 10px">
+                                            <input type="radio" id="jenis_pgw4" name="jenis_pgw" value="eselon2">Eselon II
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-6" style="padding-left: 0">                               
+                                        <input type="text" id="representasi" class="form-control input-group format-uang" name="representasi" readonly="readonly">
+                                    </div>
                                 </div>                                                                   
                                 <div class="form-group row">
                                     <div class="col-md-6" style="padding-left: 0">    
@@ -125,7 +147,30 @@
                                         <label for="nomor">Total Perincian</label>                             
                                         <input type="text" id="total_rincian" name="total_rincian" class="form-control format-uang" readonly="readonly">
                                     </div>
-                                </div> 
+                                </div>
+                                <div class="form-group row">
+                                    <label for="akun" class="col-md-12" style="padding-left: 0">Realisasi<span> *</span></label>
+                                    <div class="form-group row">
+                                        <div class="form-group col-md-6">                                                
+                                            <select id="akun" name="akun" class="form-control">
+                                            </select>
+                                            <span class="help-block text-muted">akun</span>  
+                                        </div> 
+                                        <div class="form-group col-md-6">                                                
+                                            <select id="detail" name="detail" class="form-control">
+                                            </select>
+                                            <span class="help-block text-muted">detail</span>
+                                        </div> 
+                                        <!-- <div class="form-group col-md-6">                                                
+                                            <input type="text" id="spm_no" name="spm_no" class="form-control">
+                                            <span class="help-block text-muted">nmr. SPM</span>  
+                                        </div> 
+                                        <div class="form-group col-md-6">                                                
+                                            <input type="text" id="bukti_no" name="bukti_no" class="form-control">
+                                            <span class="help-block text-muted">nmr. bukti</span>
+                                        </div>  -->
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <div class="col-md-6" style="padding-left: 0">
                                         <label for="tgl_buat_perhit">Tanggal Pembuatan Pehitungan<span> *</span></label>  
@@ -134,6 +179,7 @@
                                 </div>
                                 <div class="row">
                                     <button id="generateLetter" type="submit" class="px-2">Buat Surat</button><span><pre> </pre></span>
+                                    {{#if admin}}
                                     <div class="input-group-btn">
                                         <button id="download" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download
                                             <span class="caret"></span>
@@ -143,6 +189,7 @@
                                             <a id="unduh_pdf" class="dropdown-item" href="#">PDF</a>
                                         </div>
                                     </div>
+                                    {{/if}}
                                 </div>
                             </form>                        
                         </div>
@@ -297,9 +344,44 @@
 
         $("#w_dari_t4_tujuan").focus();
 
+        function populate_realisasi(kdkmpnen){
+            socket.emit('populate_akun', kdkmpnen.match(/\d*$/)[0], 
+                function(response){
+                    akun_opt = '';
+                    console.log(response)
+                    _.each(response, function(akun, i, list){
+                        akun_opt += '<option value='+akun.kdakun+' '+(kdakun == akun.kdakun ? "selected" : "")+'>' + akun.kdakun + ' ' + (akun.uraian || 'uraian blm ada') + '</option>'
+                    })
+                    $('#akun').html(akun_opt);
+                    socket.emit('populate_detail', {kdkmpnen: kdkmpnen.match(/\d*$/)[0], kdakun: $('#akun').val()}, 
+                        function(response){
+                            detail_opt = '';
+                            _.each(response, function(detail, i, list){
+                                detail_opt += '<option value='+detail._id+' '+(noitem == detail._id ? "selected" : "")+'>' + detail.noitem + ' ' + (detail.nmitem || 'uraian blm ada') + '</option>'
+                            })
+                            $('#detail').html(detail_opt);
+                    })
+            })
+        }
+
+        $('#akun').change(function(){
+            socket.emit('populate_detail', {kdkmpnen: kode_output.match(/\d*$/)[0], kdakun: $('#akun').val()}, 
+                function(response){
+                    detail_opt = '';
+                    _.each(response, function(detail, i, list){
+                        detail_opt += '<option value='+detail._id+'>' + detail.noitem + ' ' + (detail.nmitem || 'uraian blm ada') + '</option>'
+                    })
+                    $('#detail').html(detail_opt);
+            })
+        })
+
         var dki_jkt = {{prov.taksi_dn}};
         var current_gol = '{{st.nama_lengkap.gol}}';
         var current_jumlah_hari = '{{st.jumlah_hari}}';
+        var posisi_kota = '{{st.posisi_kota}}';
+        var kode_output = '{{st.kode_output}}';
+        var kdakun, noitem;
+        populate_realisasi(kode_output)
         $("#w_dari_t4_tujuan").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
             if(datum.data._id == '31'){
                 $("#t_dari_t4_tujuan").val(formatUang(+datum.data.taksi_dn/2));
@@ -327,16 +409,16 @@
                 $("#maks-hotel").text(formatUang(datum.data.inap_dn_g12));
                 $("#hotel_biaya").autoNumeric("update", {maximumValue: datum.data.inap_dn_g12});
             }
-            // $("#jumlah_menginap").val(0);
+            $("#jumlah_menginap").val(0);
             $("#jumlah_menginap").change();
 
-            // $("#hotel_biaya").val(0);
+            $("#hotel_biaya").val(0);
 
             $("#harian_hari").val(current_jumlah_hari);
             $("#harian_biaya").val(formatUang(+datum.data.har_dn_lk));
             $("#harian_total").change();
 
-            // $("#hotel_hari").val(0);
+            $("#hotel_hari").val(0);
             $("#hotel_total").change();
             
         });
@@ -353,7 +435,8 @@
         $("#total_riil").on("change", function(){
             $("#total_riil").val(formatUang($("#t_dari_t4_asal").autoNumeric('getNumber') 
                                     + $("#t_dari_t4_tujuan").autoNumeric('getNumber')
-                                    + $("#totalb_inap").autoNumeric('getNumber')));
+                                    + $("#totalb_inap").autoNumeric('getNumber')
+                                    + $("#representasi").autoNumeric('getNumber')));
             $("#total_rincian").change();
         })
 
@@ -407,9 +490,18 @@
 
         $("#w_tiket_tujuan").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
             $('#harga_tiket').val('');
-            $('#harga_tiket').autoNumeric("update", {maximumValue: datum.data.tiket_jkt_b});
-            $("#maks-tiket").text(formatUang(datum.data.tiket_jkt_b));
+            $('#harga_tiket').autoNumeric("update", {maximumValue: datum.data.tiket_jkt_e});
+            $("#maks-tiket").text(formatUang(datum.data.tiket_jkt_e));
         });
+
+        $("input[name='jenis_pgw']").change(function(e){
+            var selected = $(this).val();
+            socket.emit('representasi_biaya', {'jenis_pgw': selected, 'posisi_kota': posisi_kota}, 
+                function(response){
+                    $('#representasi').autoNumeric('set', response);
+                    $("#total_riil").change();
+            })
+        })
 
         function checkInput(){
             if($('#w_dari_t4_tujuan').val()=='' || $('#jumlah_menginap').val()=='' || $('#harian_hari').val()==''
@@ -426,7 +518,7 @@
         $('#suratTugas').on('submit', function(e) {
             var total_hari = $("#jumlah_menginap").autoNumeric('getNumber') + $("#hotel_hari").autoNumeric('getNumber');
             if(total_hari > current_jumlah_hari){
-                generalAlert('Jumlah hari penginapan + hotel > total hari spd.')
+                generalAlert('Jumlah hari penginapan + hotel harus <= '+current_jumlah_hari)
                 e.preventDefault();
                 return;
             }
@@ -638,6 +730,9 @@
             $('#biaya_inap').val('');
             $('#totalb_inap').val('');
 
+            $("input[name='jenis_pgw'][value='none']").prop('checked', true);
+            $('#representasi').val('');
+
             $('#total_riil').val('');
 
             $('#w_tiket_tujuan').val('');
@@ -666,6 +761,10 @@
                     $("#nama_lengkap").val(response.st.nama_lengkap.nama);
                     current_gol = response.st.nama_lengkap.gol;
                     current_jumlah_hari = response.st.jumlah_hari;
+                    posisi_kota = response.st.posisi_kota;
+                    kode_output = response.st.kode_output;
+
+                    if(!response.perhit) return;
 
                     $('#w_dari_t4_tujuan').val(response.perhit.w_dari_t4_tujuan || '');
 
@@ -674,6 +773,9 @@
                     $('#jumlah_menginap').val(response.perhit.jumlah_menginap || 0);
                     $('#biaya_inap').autoNumeric('set', response.perhit.biaya_inap || 0);
                     $('#totalb_inap').autoNumeric('set', response.perhit.totalb_inap || 0);
+
+                    $("input[name='jenis_pgw'][value='"+response.perhit.jenis_pgw+"']").prop('checked', true);
+                    $('#representasi').autoNumeric('set', response.perhit.representasi || 0);
 
                     $('#total_riil').autoNumeric('set', response.perhit.total_riil || 0);
 
@@ -692,6 +794,11 @@
                     $('#hotel_total').autoNumeric('set', response.perhit.hotel_total || 0);
 
                     $('#total_rincian').autoNumeric('set', response.perhit.total_rincian || 0);
+
+                    kdakun = response.perhit.akun;
+                    noitem = response.perhit.detail;
+
+                    populate_realisasi(kode_output);
 
                     $('#tgl_buat_perhit').val(response.perhit.tgl_buat_perhit || '');
             })

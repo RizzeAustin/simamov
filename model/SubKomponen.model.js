@@ -3,6 +3,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var SubKompSchema = new Schema({
+    'thang': {
+        type: Number,
+        default: new Date().getFullYear()
+    },
     'kdprogram': String,
     'kdgiat': String,
     'kdoutput': String,
@@ -16,11 +20,15 @@ var SubKompSchema = new Schema({
         default: true,
         type: Boolean
     },
-    old: []
+    old: [],
+    pengentry: {
+        type: String,
+        ref: 'User'
+    }
 }, { collection: 'pok_sub_komponen' });
 
 SubKompSchema.methods.isExist = function(cb) {
-    return this.model('SubKomponen').findOne({ 'kdprogram': this.kdprogram, 'kdgiat': this.kdgiat, 'kdoutput': this.kdoutput, 
+    return this.model('SubKomponen').findOne({ thang: this.thang, 'kdprogram': this.kdprogram, 'kdgiat': this.kdgiat, 'kdoutput': this.kdoutput, 
         'kdsoutput': this.kdsoutput, 'kdkmpnen': this.kdkmpnen, 'kdskmpnen': this.kdskmpnen }, cb);
 };
 

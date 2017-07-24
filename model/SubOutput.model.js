@@ -3,6 +3,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var SubOutputSchema = new Schema({
+    'thang': {
+        type: Number,
+        default: new Date().getFullYear()
+    },
     'kdprogram': String,
     'kdgiat': String,
     'kdoutput': String,
@@ -14,11 +18,15 @@ var SubOutputSchema = new Schema({
         default: true,
         type: Boolean
     },
-    old: []
+    old: [],
+    pengentry: {
+        type: String,
+        ref: 'User'
+    }
 }, { collection: 'pok_sub_output' });
 
 SubOutputSchema.methods.isExist = function(cb) {
-    return this.model('SubOutput').findOne({ 'kdprogram': this.kdprogram, 'kdgiat': this.kdgiat, 'kdoutput': this.kdoutput, 
+    return this.model('SubOutput').findOne({ thang: this.thang, 'kdprogram': this.kdprogram, 'kdgiat': this.kdgiat, 'kdoutput': this.kdoutput, 
         'kdsoutput': this.kdsoutput }, cb);
 };
 

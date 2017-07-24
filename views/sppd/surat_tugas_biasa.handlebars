@@ -73,6 +73,7 @@
                                 </div>
                                 <div class="row">
                                     <button id="generateLetter" type="submit" class="px-2">Buat Surat</button><span><pre> </pre></span>
+                                    {{#if admin}}
                                     <div class="input-group-btn">
                                         <button id="download" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download
                                             <span class="caret"></span>
@@ -82,6 +83,7 @@
                                             <a id="unduh_pdf" class="dropdown-item" href="#">PDF</a>
                                         </div>
                                     </div>
+                                    {{/if}}
                                 </div>                         
                             </form>                            
                         </div>

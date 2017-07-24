@@ -8,11 +8,6 @@ var io = require('socket.io')(server);
 //clients connection
 var connections = {};
 
-// //Redis utk cache request client
-// var redis = require('redis');
-// //creates a new client
-// var client = redis.createClient(); 
-
 require('dotenv').config();
 
 //Security
@@ -44,6 +39,7 @@ var url = 'mongodb://127.0.0.1:27017/simamov';
 var mongoose = require('mongoose');
 
 mongoose.connect(url);
+var Program = require(__dirname+"/model/Program.model");
 
 //modul session utk tracking visitor
 var session = require('express-session')({
@@ -102,12 +98,21 @@ app.use('/login', login); //root menggunakan dialihkan ke index.js
 
 //cek login, urutan harus di bawah route login
 var login_check = function (req, res, next) {
-	// if(!req.session.username){
-
-	// 	res.set('login', '0')
-	// 	res.render('login', {layout: false});
-	// 	return;
-	// }
+	if(!req.session.username){
+		Program.findOne().sort({'thang': 1}).exec(function(error, programs) {
+			var thang = [];
+			if(!programs){
+				thang = [{thang: new Date().getFullYear()}];
+			} else {
+				for (var i = (programs.thang); i < new Date().getFullYear()+1; i++) {
+					thang.push({thang: i});
+				}
+			}
+			res.set('login', '0')
+			res.render('login', {layout: false, 'thang': thang, 'this_year': new Date().getFullYear()});
+		})
+		return;
+	}
 	io.on('connection', function(client) {
 		if(req.session)
 			connections[req.session.username] = client;
@@ -140,6 +145,7 @@ pok.socket(io, connections);
 app.use('/pok', pok);
 //ADMIN
 var admin = require('./controllers/admin.js');
+admin.socket(io, connections);
 app.use('/admin', admin);
 //LOGOUT
 var logout = require('./controllers/logout.js');
@@ -164,12 +170,12 @@ server.listen(process.env.PORT || 3000, function(){
 
 io.on('connection', function(client) {
 
-	// if(!client.handshake.session.username){
+	if(!client.handshake.session.username){
 
-	// 	client.emit('login_required', 'Anda harus login.');
-	// 	return;
+		client.emit('login_required', 'Anda harus login.');
+		return;
 
-	// }
+	}
 
 	client.on('join', function(data) {
     	console.log(data);

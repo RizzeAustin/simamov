@@ -21,6 +21,7 @@ var pdftkPath = 'C:\\Program Files (x86)\\PDFtk Server\\bin\\pdftk.exe';
 //Docx to Pdf
 var msopdf = require('node-msoffice-pdf');
 
+var ObjectId = require('mongoose').Types.ObjectId;
 var Komponen = require(__dirname+"/../model/Komponen.model");
 
 var Prov = require(__dirname+"/../model/Prov.model");
@@ -30,8 +31,11 @@ var SettingSPPD = require(__dirname+"/../model/SettingSPPD.model");
 var SuratTugas = require(__dirname+"/../model/SuratTugas.model");
 var SuratTugasBiasa = require(__dirname+"/../model/SuratTugasBiasa.model");
 var Perhitungan = require(__dirname+"/../model/Perhitungan.model");
+var Representasi = require(__dirname+"/../model/Representasi.model");
 
 var CustomEntity = require(__dirname+"/../model/CustomEntity.model");
+var Akun = require(__dirname+"/../model/Akun.model");
+var DetailBelanja = require(__dirname+"/../model/DetailBelanja.model");
 
 var _ = require("underscore");
 
@@ -50,8 +54,12 @@ sppd.socket = function(io, connections){
 	sppd.io = io;
 
 	io.sockets.on('connection', function (client) {
+		var thang = client.handshake.session.tahun_anggaran;
+		var user_aktiv = client.handshake.session.username || 'dummy user';
+
+
 		client.on('komponen_list', function (q, cb){
-	    	Komponen.find({"urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdoutput kdkmpnen urkmpnen', function(err, custs){
+	    	Komponen.find({"thang": thang, "urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdoutput kdkmpnen urkmpnen', function(err, custs){
 	    		_.each(custs, function(item, index, list){
 	    			custs[index].d = levenshtein.get(q, item.urkmpnen);
 	    		})
@@ -60,7 +68,7 @@ sppd.socket = function(io, connections){
 	    	})
 	    })
 		client.on('komponen_list_extra', function (q, cb){
-	    	Komponen.find({"urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdkmpnen urkmpnen', function(err, custs1){
+	    	Komponen.find({"thang": thang, "urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdkmpnen urkmpnen', function(err, custs1){
 	    		CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'komp'}, function(err, custs2){
 		    		_.each(custs1, function(item, index, list){
 		    			custs1[index].d = levenshtein.get(q, item.urkmpnen);
@@ -74,7 +82,7 @@ sppd.socket = function(io, connections){
 	    	})
 	    })
 		client.on('lokasi_list', function (q, cb){
-	    	CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'lokasi'}, function(err, custs){
+	    	CustomEntity.find({"thang": thang, "nama": new RegExp(q, "i"), 'type': 'lokasi'}, function(err, custs){
 	    		_.each(custs, function(item, index, list){
 	    			custs[index].d = levenshtein.get(q, item.nama);
 	    		})
@@ -207,7 +215,7 @@ sppd.socket = function(io, connections){
 			handleSuratTugasBiasa(data, cb, null);
 	    })
 		client.on('perhitungan', function (data, cb){
-			handlePerhitungan(data, cb, null);
+			handlePerhitungan(data, cb, null, user_aktiv);
 	    })
 	    client.on('riwayat_surat_tugas', function (data, cb){
 	    	var Model = {};
@@ -252,7 +260,9 @@ sppd.socket = function(io, connections){
 	    })
 	    client.on('biaya2_list', function (data, cb){
     		Prov.find({}).exec(function(err, result){
-				cb(result);
+    			Representasi.find({}).exec(function(err, reps){
+					cb({'prov': result, 'reps': reps});
+				})
 			})
 	    })
 	    client.on('prov_biaya2_edit', function (data, cb){
@@ -271,6 +281,35 @@ sppd.socket = function(io, connections){
 				cb('sukses');
 			})
 	    })
+	    client.on('representasi_edit', function (data, cb){
+    		Representasi.update({_id: data._id},{$set: data.data}, {upsert: true}).exec(function(err, result){
+    			console.log(err, result)
+				cb('sukses');
+			})
+	    })
+	    client.on('representasi_biaya', function (data, cb){
+    		Representasi.findOne({_id: data.jenis_pgw}, data.posisi_kota).exec(function(err, result){
+				if(result) cb(result[data.posisi_kota])
+					else cb(0);
+			})
+	    })
+	    client.on('populate_akun', function (kdkmpnen, cb){
+	    	if(kdkmpnen == ''){
+	    		Akun.find({'thang': thang}).sort('kdakun').exec(function(err, akuns){
+					cb(akuns || [])
+				})
+	    	} else {
+	    		Akun.find({'kdkmpnen': kdkmpnen, 'thang': thang}).sort('kdakun').exec(function(err, akuns){
+	    			console.log(kdkmpnen)
+					cb(akuns || [])
+				})
+	    	}
+	    })
+	    client.on('populate_detail', function (kode, cb){
+    		DetailBelanja.find({'kdkmpnen': kode.kdkmpnen, "kdakun": kode.kdakun, 'thang': thang}).sort('noitem').exec(function(err, details){
+				cb(details || {})
+			})
+	    })
 	})
 
 };
@@ -280,10 +319,10 @@ sppd.get('/surat_tugas', function(req, res){
 		if(!result.last_nmr_surat){
 			SettingSPPD.update({}, {last_nmr_surat: 1}, {upsert: true}, function(err, last){
 				result.last_nmr_surat = 1;
-				res.render('sppd/surat_tugas', {layout: false,  setting: result});
+				res.render('sppd/surat_tugas', {layout: false,  setting: result, admin: req.session.jenis});
 			})
 		} else {
-			res.render('sppd/surat_tugas', {layout: false,  setting: result});
+			res.render('sppd/surat_tugas', {layout: false,  setting: result, admin: req.session.jenis});
 		}		
 	})
 });
@@ -297,10 +336,10 @@ sppd.get('/surat_tugas_biasa', function(req, res){
 		if(!result.last_nmr_surat){
 			SettingSPPD.update({}, {last_nmr_surat: 1}, {upsert: true}, function(err, last){
 				result.last_nmr_surat = 1;
-				res.render('sppd/surat_tugas_biasa', {layout: false,  setting: result});
+				res.render('sppd/surat_tugas_biasa', {layout: false,  setting: result, admin: req.session.jenis});
 			})
 		} else {
-			res.render('sppd/surat_tugas_biasa', {layout: false,  setting: result});
+			res.render('sppd/surat_tugas_biasa', {layout: false,  setting: result, admin: req.session.jenis});
 		}		
 	})
 });
@@ -312,13 +351,13 @@ sppd.post('/surat_tugas_biasa', function(req, res){
 sppd.get('/perhitungan', function(req, res){
 	SuratTugas.findOne({}).sort({'_id': -1}).populate('nama_lengkap').exec( function(err, st) {
 		Prov.findOne({_id: '31'}, function(err, prov){
-			res.render('sppd/perhitungan', {layout: false, 'st': st, 'prov': prov});
+			res.render('sppd/perhitungan', {layout: false, 'st': st, 'prov': prov, admin: req.session.jenis});
 		})
 	});
 });
 
 sppd.post('/perhitungan', function(req, res){
-	handlePerhitungan(req.body, null, res);
+	handlePerhitungan(req.body, null, res, req.session.username || 'dummy user');
 });
 
 sppd.get('/perhitungan-old', function(req, res){
@@ -617,7 +656,7 @@ function handleSuratTugasBiasa(data, cb, res){
 	);
 }
 
-function handlePerhitungan(data, cb, res){
+function handlePerhitungan(data, cb, res, username){
 	var current_timestamp = Math.round(new Date().getTime()/1000);
 	var sppd_template = fs.readFileSync(__dirname+"/../template/sppd_perhitungan.docx","binary");
 	var outputDocx = '';
@@ -750,12 +789,68 @@ function handlePerhitungan(data, cb, res){
 								"no":no,
 								"label":"B. Penginapan "+data.jumlah_menginap+" hari @ "+data.b_inap_price+" × 30%",
 								"jumlah": data.totalb_inap
+							});
+
+							no += 1;
+						}
+
+						if(st.representasi > 0){
+							data.tabel_riil.push({
+								"no":no,
+								"label":"B. Representasi",
+								"jumlah": data.representasi
 							})
 						}
 
 						//end
-						console.log(data)
 						cb(null, '');
+						// var a = {"_id" : ObjectId("5973b31207c40e1e4894beb0"),
+						// "pengentry" : "ade",
+						// "ket" : "boom",
+						// "bukti_no" : "0000215",
+						// "spm_no" : "0011451",
+						// "penerima_nama" : "Setia Pramana, S.Si., Ph.D.",
+						// "tgl" : "23 Juli 2017",
+						// "tgl_timestamp" : 1500754636,
+						// "penerima_id" : "19770722 200003 1 002",
+						// "jumlah" : 1250000,
+						// "timestamp" : 1500754706}
+						//jika atomic entry
+				    	//cek jk sdh pernah dientry
+				    	var thang = st.tgl_buat_perhit.match(/\d{4}$/)[0];
+				    	DetailBelanja.findOne({'thang': thang, '_id': st.detail, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': st.total_rincian, 'penerima_id': data.surtug.nama_lengkap._id, 
+							'tgl': data.tgl_buat_perhit}).exec(function(err, result){
+								//jika blm pernah
+								if(!result){
+									//init total, user
+						    		var total_sampai_bln_ini = 0;
+							    	var new_entry = {};
+							    	new_entry.pengentry = 	username;
+							    	new_entry.ket = 'SPPD No. '+st._id+': '+data.surtug.tugas;
+							    	new_entry.bukti_no = data.bukti_no || '';
+							    	new_entry.spm_no = data.spm_no || '';
+							    	new_entry.penerima_nama = data.nama_lengkap;
+							    	new_entry.tgl = data.surtug.tgl_ttd_st;
+							    	new_entry.tgl_timestamp = data.surtug.timestamp;
+							    	new_entry.penerima_id = data.surtug.nama_lengkap._id;
+							    	new_entry.jumlah = st.total_rincian;
+							    	new_entry.timestamp = current_timestamp;
+							    	// console.log(new_entry)
+							    	DetailBelanja.update({'thang': thang, "_id": data.detail}, {$push: {"realisasi": new_entry}}, {new: true}, function(err, result){
+							    		if (err) {
+							    			console.log(err)
+							    			sendNotification(username, 'Gagal menyimpan.')
+							    			return
+							    		}
+							    		sendNotification(username, 'Realisasi berhasil diupdate.')
+							    		// var total_sampai_bln_ini = new_entry.jumlah;
+							    		// sppd.io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': data.detail, 'realisasi': new_entry.jumlah, 
+							    				// 'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini});
+							    	})
+								} else {
+									sendNotification(username, 'SPPD sudah pernah tercatat di realisasi.')
+								}
+						})
 				})
 			})
 		},
@@ -892,6 +987,12 @@ function terbilang(bilangan) {
   // kaLimat = kaLimat.replace(/\s+Rupiah$/, " Rupiah")
 
   return kaLimat.replace(/^\s*/g, "");
+}
+
+function sendNotification(username, message){
+	if(!username) return;
+	if(_.isString(username)) sppd.connections[username].emit('messages', message)
+		else username.emit('messages', message)
 }
 
 module.exports = sppd;

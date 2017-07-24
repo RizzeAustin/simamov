@@ -6,14 +6,13 @@ var Schema = mongoose.Schema;
 
 var SuratTugasSchema = new Schema({
     "_id" : Number,
-    "tahun" : Number,
 
     "tugas" : String,
     "output" : String,
     "kode_output" : String,
 
     "org" : {
-        type: 'String',
+        type: String,
         ref: 'CustomEntity'
     },
     "prov" : {
@@ -24,6 +23,8 @@ var SuratTugasSchema = new Schema({
         type: String,
         ref: 'Kab'
     },
+
+    "posisi_kota": String,
 
     "tgl_berangkat" : String,
     "tgl_kembali" : String,

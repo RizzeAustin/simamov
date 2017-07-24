@@ -148,6 +148,10 @@
                                                 <th>Tanggal</th>
                                                 <th>Detail</th>
                                                 <th>Jumlah</th>
+                                                <th>PPh 21</th>
+                                                <th>PPh 22</th>
+                                                <th>PPh 23</th>
+                                                <th>PPn</th>
                                                 <th>Nmr SPM</th>
                                                 <th>Nmr Bukti</th>
                                                 <th>Ket</th>
@@ -486,14 +490,30 @@
                 if(!data[8]){
                     $( row ).find('td:eq(6)').text('-');
                 }
+                if(!data[9]){
+                    $( row ).find('td:eq(7)').text('-');
+                }
+                if(!data[10]){
+                    $( row ).find('td:eq(8)').text('-');
+                }
+                if(!data[11]){
+                    $( row ).find('td:eq(9)').text('-');
+                }
+                if(!data[12]){
+                    $( row ).find('td:eq(10)').text('-');
+                }
                 $( row ).find('td:eq(0)').attr('class', 'text-center').text(dataIndex+1);
                 $( row ).find('td:eq(1)').attr('class', 'text-center');
                 $( row ).find('td:eq(3)').attr('class', 'format-uang');
                 $( row ).find('td:eq(3)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
-                $( row ).find('td:eq(4)').attr('class', 'text-center');
-                $( row ).find('td:eq(5)').attr('class', 'text-center');
-                $( row ).find('td:eq(7)').attr('class', 'text-center');
+                $( row ).find('td:eq(4)').attr('class', 'format-uang');
+                $( row ).find('td:eq(5)').attr('class', 'format-uang');
+                $( row ).find('td:eq(6)').attr('class', 'format-uang');
+                $( row ).find('td:eq(7)').attr('class', 'format-uang');
                 $( row ).find('td:eq(8)').attr('class', 'text-center');
+                $( row ).find('td:eq(9)').attr('class', 'text-center');
+                $( row ).find('td:eq(10)').attr('class', 'text-center');
+                $( row ).find('td:eq(11)').attr('class', 'text-center');
             }
         });
 
@@ -652,8 +672,8 @@
             //ingat td terklik
             active_rp = $(this);
             //cek kondisi saat td tdk bisa diedit
-            if(state_active_editor_r || active_rp.is(':nth-child(1)') || active_rp.is(':nth-child(3)') || active_rp.is(':nth-child(8)')
-                 || active_rp.is(':nth-child(9)')){
+            if(state_active_editor_r || active_rp.is(':nth-child(1)') || active_rp.is(':nth-child(3)') || active_rp.is(':nth-child(12)')
+                 || active_rp.is(':nth-child(13)')){
                 $.toast({
                     text: 'Anda tidak dapat mengedit sel tersebut.',
                     textAlign: 'left', 
@@ -736,11 +756,43 @@
                                 return;
                             }
                             data = {'realisasi.$.jumlah': getNumber(new_value)}
-                        } else if(active_rp.is(':nth-child(5)')){
+                        }  else if(active_rp.is(':nth-child(5)')){
+                            if(new_value == '-' || new_value == ''){
+                                active_rp = null;
+                                state_active_editor_r = false;
+                                editor_rp.hide();
+                                return;
+                            }
+                            data = {'realisasi.$.pph21': getNumber(new_value)}
+                        }  else if(active_rp.is(':nth-child(6)')){
+                            if(new_value == '-' || new_value == ''){
+                                active_rp = null;
+                                state_active_editor_r = false;
+                                editor_rp.hide();
+                                return;
+                            }
+                            data = {'realisasi.$.pph22': getNumber(new_value)}
+                        }  else if(active_rp.is(':nth-child(7)')){
+                            if(new_value == '-' || new_value == ''){
+                                active_rp = null;
+                                state_active_editor_r = false;
+                                editor_rp.hide();
+                                return;
+                            }
+                            data = {'realisasi.$.pph23': getNumber(new_value)}
+                        }  else if(active_rp.is(':nth-child(8)')){
+                            if(new_value == '-' || new_value == ''){
+                                active_rp = null;
+                                state_active_editor_r = false;
+                                editor_rp.hide();
+                                return;
+                            }
+                            data = {'realisasi.$.ppn': getNumber(new_value)}
+                        } else if(active_rp.is(':nth-child(9)')){
                             data = {'realisasi.$.spm_no': new_value}
-                        } else if(active_rp.is(':nth-child(6)')){
+                        } else if(active_rp.is(':nth-child(10)')){
                             data = {'realisasi.$.bukti_no': new_value}
-                        } else if(active_rp.is(':nth-child(7)')){
+                        } else if(active_rp.is(':nth-child(11)')){
                             data = {'realisasi.$.ket': new_value}
                         }
                         data['realisasi.$.timestamp'] = Math.round(new Date().getTime()/1000);

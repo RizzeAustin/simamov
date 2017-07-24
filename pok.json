@@ -12,7 +12,7 @@
           "xsd:choice": {
             "-maxOccurs": "unbounded",
             "xsd:element": {
-              "-name": "c_soutput",
+              "-name": "c_nprogram",
               "-minOccurs": "0",
               "-maxOccurs": "unbounded",
               "xsd:complexType": {
@@ -24,24 +24,6 @@
                         "xsd:restriction": {
                           "-base": "xsd:string",
                           "xsd:maxLength": { "-value": "4" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "kdjendok",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "2" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "kdsatker",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "6" }
                         }
                       }
                     },
@@ -73,142 +55,20 @@
                       }
                     },
                     {
-                      "-name": "kdgiat",
+                      "-name": "spoutcome",
                       "xsd:simpleType": {
                         "xsd:restriction": {
                           "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "4" }
+                          "xsd:maxLength": { "-value": "2147483647" }
                         }
                       }
                     },
                     {
-                      "-name": "kdoutput",
+                      "-name": "pppdpt",
                       "xsd:simpleType": {
                         "xsd:restriction": {
                           "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "3" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "kdlokasi",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "2" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "kdkabkota",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "2" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "kddekon",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "1" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "kdsoutput",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "3" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "ursoutput",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "250" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "sbmkvol",
-                      "-minOccurs": "0",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:decimal",
-                          "xsd:totalDigits": { "-value": "10" },
-                          "xsd:fractionDigits": { "-value": "0" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "sbmksat",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "25" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "sbmkmin1",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:decimal",
-                          "xsd:totalDigits": { "-value": "10" },
-                          "xsd:fractionDigits": { "-value": "0" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "sbmkket",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "250" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "kdsb",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "1" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "volsout",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:decimal",
-                          "xsd:totalDigits": { "-value": "19" },
-                          "xsd:fractionDigits": { "-value": "4" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "volsbk",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:decimal",
-                          "xsd:totalDigits": { "-value": "19" },
-                          "xsd:fractionDigits": { "-value": "4" }
-                        }
-                      }
-                    },
-                    {
-                      "-name": "kdib",
-                      "xsd:simpleType": {
-                        "xsd:restriction": {
-                          "-base": "xsd:string",
-                          "xsd:maxLength": { "-value": "2" }
+                          "xsd:maxLength": { "-value": "2147483647" }
                         }
                       }
                     }
@@ -223,88 +83,6 @@
           }
         }
       }
-    },
-    "c_soutput": [
-      {
-        "thang": "2016",
-        "kdjendok": "01",
-        "kdsatker": "690332",
-        "kddept": "054",
-        "kdunit": "01",
-        "kdprogram": "01",
-        "kdgiat": "2888",
-        "kdoutput": "004",
-        "kdlokasi": "01",
-        "kdkabkota": "00",
-        "kddekon": "1",
-        "kdsoutput": "001",
-        "ursoutput": "tanpa sub output",
-        "sbmkvol": "0",
-        "sbmkmin1": "0",
-        "volsout": "12",
-        "volsbk": "0",
-        "kdib": "00"
-      },
-      {
-        "thang": "2016",
-        "kdjendok": "01",
-        "kdsatker": "690332",
-        "kddept": "054",
-        "kdunit": "01",
-        "kdprogram": "01",
-        "kdgiat": "2888",
-        "kdoutput": "994",
-        "kdlokasi": "01",
-        "kdkabkota": "55",
-        "kddekon": "1",
-        "kdsoutput": "001",
-        "ursoutput": "tanpa sub output",
-        "sbmkvol": "0",
-        "sbmkmin1": "0",
-        "volsout": "12",
-        "volsbk": "0",
-        "kdib": "00"
-      },
-      {
-        "thang": "2016",
-        "kdjendok": "01",
-        "kdsatker": "690332",
-        "kddept": "054",
-        "kdunit": "01",
-        "kdprogram": "02",
-        "kdgiat": "2890",
-        "kdoutput": "996",
-        "kdlokasi": "01",
-        "kdkabkota": "55",
-        "kddekon": "1",
-        "kdsoutput": "001",
-        "ursoutput": "tanpa sub output",
-        "sbmkvol": "0",
-        "sbmkmin1": "0",
-        "volsout": "71",
-        "volsbk": "0",
-        "kdib": "00"
-      },
-      {
-        "thang": "2016",
-        "kdjendok": "01",
-        "kdsatker": "690332",
-        "kddept": "054",
-        "kdunit": "01",
-        "kdprogram": "02",
-        "kdgiat": "2890",
-        "kdoutput": "997",
-        "kdlokasi": "01",
-        "kdkabkota": "55",
-        "kddekon": "1",
-        "kdsoutput": "001",
-        "ursoutput": "tanpa sub output",
-        "sbmkvol": "0",
-        "sbmkmin1": "0",
-        "volsout": "3",
-        "volsbk": "0",
-        "kdib": "00"
-      }
-    ]
+    }
   }
 }

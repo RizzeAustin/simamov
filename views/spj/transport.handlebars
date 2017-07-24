@@ -6,7 +6,7 @@
                     <div class="card p-2">
                         <div class="card-block">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12" style="padding-left: 0">
                                     <h3><i class="fa fa-bus fa-lg mt-2"></i> SPJ Transport Dosen</h3>
                                     <p class="text-muted">Buat SPJ Transport Dosen</p>
                                 </div>
@@ -25,15 +25,35 @@
                                 <div class="col-md-12">
                                     <form id="form_upload_csv" enctype="multipart/form-data" method="post" action="/spj/transport">
                                         <div class="form-group row">
-                                            <label for="nomor">Tanggal Pembuatan Surat</label>
+                                            <label for="nomor">Tanggal Pembuatan Surat<span> *</span></label>
                                             <input type="text" id="tgl_buat_surat" name="tgl_buat_surat" class="form-control" required>
+                                            <input id="transport_detail_id" style="display: none;" type="text" name="transport_detail_id" value="{{transport_detail_id}}">
                                         </div> 
                                         <div class="form-group row">
-                                            <label for="nomor">File csv</label>
-                                            <input name="pok_file" type="file" class="form-control" required/>
+                                            <label for="nomor">File csv<span> *</span></label>
+                                            <input id="csv_file" name="pok_file" type="file" class="form-control" accept=".csv" required/>
                                         </div> 
+                                        <div class="form-group row">
+                                            <label for="akun" class="col-md-12" style="padding-left: 0">Realisasi<span> *</span></label>
+                                            <div class="form-group row">
+                                                <div class="form-group col-md-12">                                                
+                                                    <span>Detail: </span><span id="detail_label">[Belum ada detail]</span> <a id="link-ganti-detail" href="#"><i class="fa fa-pencil fa-sm mt-2"></i>ganti</a>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="row">
-                                            <button id="unggah_xlsx_button" class="px-2" type="submit">Buat Surat</button>
+                                            <button id="unggah_xlsx_button" class="px-2" type="submit">Buat Surat</button><span><pre> </pre></span>
+                                            {{#if admin}}
+                                            <div class="input-group-btn dropdown">
+                                                <button id="download" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a id="xlsx" class="dropdown-item download" href="#">Xlsx</a>
+                                                    <a id="pdf" class="dropdown-item download" href="#">PDF</a>
+                                                </div>
+                                            </div>
+                                            {{/if}}
                                         </div>
                                     </form>
                                 </div>
@@ -50,11 +70,86 @@
     <!--/.row-->
 </div>
 
+
+<div class="modal fade" id="ubah_detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Ubah Detail</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="padding: 15px">
+                    <div class="col-md-12" style="padding: 0">
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_program">Program</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_program" name="tbh_entry_program" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_kegiatan">Kegiatan</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_kegiatan" name="tbh_entry_kegiatan" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_output">Output</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_output" name="tbh_entry_output" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_s_output">Sub Output</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_soutput" name="tbh_entry_s_output" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_komponen">Komponen</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_komponen" name="tbh_entry_komponen" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_s_komponen">Sub Komponen</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_skomponen" name="tbh_entry_s_komponen" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_akun">Akun</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_akun" name="tbh_entry_akun" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_d_blnj">Detail Belanja</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_detail" name="tbh_entry_d_blnj" class="form-control" size="1"></select>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button id="btn-ubah-detail-submit" type="button" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
 <script type="text/javascript">
     $(document).ready(function(){
         //Inisialisasi pdf viewer
         $("#realTimeView").attr("src", 'http://'+location.host+'/result/SPJHonor.pdf');
-
+        
         $("#tgl_buat_surat").val(moment().format('D MMMM YYYY'));
         $('#tgl_buat_surat').datetimepicker({
             locale: 'id',
@@ -67,10 +162,27 @@
         });
 
         // submit unggah csv
+        var download_surat = false;
         $('#form_upload_csv').on('submit', function(e) {
-            e.preventDefault();
+            if(!$("#transport_detail_id").val()){
+                generalAlert('Detail untuk realisasi belum dipilih.');
+                $('#ubah_detail').modal('show');
+                $('#xlsx_file').remove();
+                $('#pdf_file').remove();
+                download_surat = false;
+                return false;
+            }
+            if(download_surat){
+                download_surat = false;
+                return true;
+            }
             $("#unggah_xlsx_button").prop("disabled",true);
             $("#unggah_xlsx_button").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#unggah_xlsx_button").text());
+
+            $('#xlsx_file').remove();
+            $('#pdf_file').remove();
+
+            e.preventDefault();
             var formData = new FormData($(this)[0]);
 
             $.ajax({
@@ -88,5 +200,301 @@
                 processData: false
             });
         });
+        $('.download').click(function(){
+            console.log($('#csv_file').val())
+
+            if(!$('#csv_file').val()){
+                generalAlert('File csv belum dipilih.');
+                return;
+            }
+            var ext = $(this).attr('id')+'_file';
+
+            $('#xlsx_file').remove();
+            $('#pdf_file').remove();
+            
+            $('<input />').attr('type', 'hidden')
+              .attr('name', ext)
+              .attr('id', ext)
+              .attr('value', true)
+              .appendTo('#form_upload_csv');
+
+            download_surat = true;
+
+            $('#form_upload_csv').submit();
+        })
+
+        var detail_id_target_riwayat = '{{transport_detail_id}}';
+        if(detail_id_target_riwayat){
+            socket.emit('riwayat_init', {'detail_id': detail_id_target_riwayat, 'init': true}, function (data) {
+                populateSelect(data.details, 'detail');
+                $('#detail_label').text($('#tbh_entry_detail option:selected').text().match(/(\d\s)(.*)/)[2])
+                populateSelect(data.akuns, 'akun');
+                populateSelect(data.skomps, 'skomponen');
+                populateSelect(data.komps, 'komponen');
+                populateSelect(data.souts, 'soutput');
+                populateSelect(data.outs, 'output');
+                populateSelect(data.kegs, 'kegiatan');
+                populateSelect(data.progs, 'program');
+            });
+        } else {
+            socket.emit('pok_list', {'type': '', 'syarat': {}, 'sortby': 'kdprogram', 'for': 'riwayat'});
+        }
+        $('#link-ganti-detail').click(function(){
+            if(!$('#tbh_entry_detail').val()) socket.emit('pok_list', {'type': '', 'syarat': {}, 'sortby': 'kdprogram', 'for': 'riwayat'});
+            $('#ubah_detail').modal('show');
+        })
+
+        $('.pok-entry-dropdown').change(function(){
+            detail_id_target_riwayat = null;
+
+            var type = $(this).attr('id').match(/tbh_entry_(.*)/)[1];
+
+            var kode;
+            if(!$("#tbh_entry_"+type+" option:selected").text().match(/\s?\w+(?=\s)/)) return;
+
+            if(type != 'skomponen') kode = $("#tbh_entry_"+type+" option:selected").text().match(/\d+(?=\s)/)[0]
+                else kode = $("#tbh_entry_"+type+" option:selected").text().match(/\s?\w+(?=\s)/)[0]
+
+            var syarat = {};
+            var sortby;
+
+            if(type == 'program'){
+                syarat.kdprogram = kode;
+                sortby = 'kdgiat';
+                $('#tbh_entry_kegiatan').empty();
+                $('#tbh_entry_output').empty();
+                $('#tbh_entry_soutput').empty();
+                $('#tbh_entry_komponen').empty();
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'kegiatan'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = kode;
+                sortby = 'kdoutput';
+                $('#tbh_entry_output').empty();
+                $('#tbh_entry_soutput').empty();
+                $('#tbh_entry_komponen').empty();
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'output'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = kode;
+                sortby = 'kdsoutput';
+                $('#tbh_entry_soutput').empty();
+                $('#tbh_entry_komponen').empty();
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'soutput'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#tbh_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = kode;
+                sortby = 'kdkmpnen';
+                $('#tbh_entry_komponen').empty();
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'komponen'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#tbh_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = $("#tbh_entry_soutput option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdkmpnen = kode;
+                sortby = 'kdskmpnen';
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'skomponen'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#tbh_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = $("#tbh_entry_soutput option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdkmpnen = $("#tbh_entry_komponen option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdskmpnen = kode;
+                sortby = 'kdakun';
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'akun'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#tbh_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = $("#tbh_entry_soutput option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdkmpnen = $("#tbh_entry_komponen option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdskmpnen = $("#tbh_entry_skomponen option:selected").text().match(/\s?\w+(?=\s)/)[0];
+                syarat.kdakun = kode
+                sortby = 'noitem'
+                $('#tbh_entry_detail').empty();
+            }
+
+            socket.emit('pok_list', {'type': type, 'syarat': syarat, 'sortby': sortby, 'for': 'riwayat'});
+        })
+
+        //tambah list
+        socket.on('pok_list_for_riwayat', function(data) {
+            populateSelect(data.items, data.type);
+        })
+
+        //fungsi umum tambah list
+        var parent_code;
+        function populateSelect(lists, type){
+            var options ='<option>'
+                        +   '--pilih--'
+                        +'</option>';
+            
+            _.each(lists, function(item, index, list){
+                if(type == 'program'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else if(item.kdprogram !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    }                    
+                } else if(type == 'kegiatan'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else if(item.kdgiat !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                        parent_code = item.kdprogram;
+                    }                    
+                } else if(type == 'output'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else if(item.kdoutput !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                        parent_code = item.kdgiat;
+                    }                    
+                } else if(type == 'soutput'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdsoutput+' '+item.ursoutput
+                                + '</option>';
+                    } else if(lists.length == 1 || item.kdsoutput == parent_code){
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdsoutput+' '+item.ursoutput
+                                + '</option>';
+                        parent_code = item.kdoutput;
+                    } else {
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdsoutput+' '+item.ursoutput
+                                + '</option>';
+                    }
+                } else if(type == 'komponen'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdkmpnen+' '+item.urkmpnen
+                                + '</option>';
+                    } else if(item.kdkmpnen !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdkmpnen+' '+item.urkmpnen
+                                + '</option>';
+                    } else{
+                        options +='<option value="'+item.kdkmpnen+'" selected="selected">'
+                                +   item.kdkmpnen+' '+item.urkmpnen
+                                + '</option>';
+                        parent_code = item.kdsoutput;
+                    }
+                    
+                } else if(type == 'skomponen'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdskmpnen+' '+item.urskmpnen
+                            + '</option>';
+                    } else if(lists.length == 1 || item.kdskmpnen == parent_code){
+                        options +='<option value="'+item._id+'" selected="selected">'
+                            +   item.kdskmpnen+' '+item.urskmpnen
+                            + '</option>';
+                        parent_code = item.kdkmpnen;
+                    } else{
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdskmpnen+' '+item.urskmpnen
+                            + '</option>';
+                    }
+                } else if(type == 'akun'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
+                            + '</option>';
+                    } else if(item.kdakun !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
+                            + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
+                            + '</option>';
+                        parent_code = item.kdskmpnen;
+                    }
+                } else if(type == 'detail'){
+                    if(!detail_id_target_riwayat){
+                        options +='<option value="'+item._id+'">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                    } else if(item._id !== detail_id_target_riwayat){
+                        options +='<option value="'+item._id+'">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                        parent_code = item.kdakun;
+                    }
+                }
+            })
+            $('#tbh_entry_'+type).empty().append(options);
+        }
+        $('#btn-ubah-detail-submit').click(function(){
+            if($('#tbh_entry_detail').val() && $('#tbh_entry_detail option:selected').text() != '--pilih--'){
+                $('#transport_detail_id').val($('#tbh_entry_detail').val())
+                $('#detail_label').text($('#tbh_entry_detail option:selected').text().match(/(\d\s)(.*)/)[2]);
+                detail_id_target_riwayat = $('#transport_detail_id').val();
+                socket.emit('set_transport_detail', {'transport_detail_id': detail_id_target_riwayat}, function (data) {
+                    if(data == 'sukses'){
+                        $('#ubah_detail').modal('toggle');
+                    } else {
+                        generalAlert('Gagal mengubah detail. Mohon hubungi admin.')
+                    }                    
+                });
+            }else {
+                generalAlert('Detail belum dipilih.');
+            }
+        })
+
+        function generalAlert(message){
+            $.toast({
+                text: message,
+                textAlign: 'left', 
+                hideAfter: 4000,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
     })
 </script>

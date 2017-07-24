@@ -10,8 +10,27 @@ var User = require(__dirname+"/../model/User.model");
 //load crypto utk hashing password
 var crypto = require('crypto');
 
+//Short syntax tool
+var _ = require("underscore");
+
+//Socket.io
+admin.connections;
+
+admin.io;
+
+admin.socket = function(io, connections){
+	admin.connections = connections;
+
+	admin.io = io;
+}
+
 //route GET /admin
 admin.get('/', function(req, res){
+	if(!req.session.jenis){
+		sendNotification(req.session.username, 'Maaf, Anda tidak memiliki hak akses.');
+		res.send(200);
+		return;
+	}
 	User.find({jenis: 1}, null, {sort: {username:1}}, function(err, adm_user){
 		User.find({jenis: 0}, null, {sort: {username:1}}, function(err, editor_user){
 			res.render('admin', {layout: false, adm_user: adm_user, editor_user: editor_user});
@@ -76,5 +95,11 @@ admin.post('/edit/:username', function(req, res){
 	    }
 	);
 });
+
+function sendNotification(username, message){
+	if(!admin.connections[username]) return;
+	if(_.isString(username)) admin.connections[username].emit('messages', message)
+		else username.emit('messages', message)
+}
 
 module.exports = admin;

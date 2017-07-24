@@ -3,6 +3,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var KomponenSchema = new Schema({
+    'thang': {
+        type: Number,
+        default: new Date().getFullYear()
+    },
     'kdprogram': String,
     'kdgiat': String,
     'kdoutput': String,
@@ -15,11 +19,15 @@ var KomponenSchema = new Schema({
         default: true,
         type: Boolean
     },
-    old: []
+    old: [],
+    pengentry: {
+        type: String,
+        ref: 'User'
+    }
 }, { collection: 'pok_komponen' });
 
 KomponenSchema.methods.isExist = function(cb) {
-    return this.model('Komponen').findOne({ 'kdprogram': this.kdprogram, 'kdgiat': this.kdgiat, 'kdoutput': this.kdoutput, 
+    return this.model('Komponen').findOne({ thang: this.thang, 'kdprogram': this.kdprogram, 'kdgiat': this.kdgiat, 'kdoutput': this.kdoutput, 
         'kdsoutput': this.kdsoutput, 'kdkmpnen': this.kdkmpnen }, cb);
 };
 
