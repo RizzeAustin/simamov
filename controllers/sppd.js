@@ -281,12 +281,24 @@ sppd.socket = function(io, connections){
 	    	}
 	    })
 	    client.on('get_perhitungan', function (nomor, cb){
+	    	var data = {};
 	    	Perhitungan.findOne({ "_id": nomor}).exec(function(err, perhit){
-    			SuratTugas.findOne({ "_id": nomor}).populate('nama_lengkap prov kab org').exec(function(err, st){
-    				var data = {};
-    				data.st = st;
-    				data.perhit = perhit;
-	    			cb(data);
+    			SuratTugas.findOne({ "_id": nomor}).populate('prov kab org').exec(function(err, st){
+    				var temp_id = st.nama_lengkap;
+    				st.populate('nama_lengkap', function(err){
+    					if(!st.nama_lengkap){
+    						CustomEntity.findOne({_id: temp_id}, function(err, peg){
+								st.nama_lengkap = peg.toObject();
+								data.st = st;
+			    				data.perhit = perhit;
+				    			cb(data);
+							})
+    					}else {
+    						data.st = st;
+		    				data.perhit = perhit;
+			    			cb(data);
+    					}
+    				})
 	    		})
     		})
 	    })
@@ -387,9 +399,23 @@ sppd.post('/surat_tugas_biasa', function(req, res){
 
 sppd.get('/perhitungan', function(req, res){
 	SuratTugas.findOne({}).sort({'_id': -1}).populate('nama_lengkap').exec( function(err, st) {
-		Prov.findOne({_id: '31'}, function(err, prov){
-			res.render('sppd/perhitungan', {layout: false, 'st': st, 'prov': prov, admin: req.session.jenis});
-		})
+		if(!st.nama_lengkap){
+			SuratTugas.findOne({_id: st._id}, function(err, sutu) {
+				console.log(sutu)
+				CustomEntity.findOne({_id: sutu.nama_lengkap}, function(err, ce){
+					st.nama_lengkap = ce.toObject();
+					Prov.findOne({_id: '31'}, function(err, prov){
+						prov.taksi_dn = +prov.taksi_dn*2;
+						res.render('sppd/perhitungan', {layout: false, 'st': st, 'prov': prov, admin: req.session.jenis});
+					})
+				})
+			})
+		} else {
+			Prov.findOne({_id: '31'}, function(err, prov){
+				prov.taksi_dn = +prov.taksi_dn*2;
+				res.render('sppd/perhitungan', {layout: false, 'st': st, 'prov': prov, admin: req.session.jenis});
+			})
+		}
 	});
 });
 
@@ -753,7 +779,22 @@ function handlePerhitungan(data, cb, res, username){
 			st.save(function(err, result){
 				st.populate({path: 'surtug', populate: { path: 'nama_lengkap prov kab org'}}, function(err2){
 
-					outputDocx = __dirname+"/../template/output/perhitungan/"+current_timestamp+" Perhitungan "+st._id+"-"
+					async.series([
+						function(cb){
+							if(!st.surtug.nama_lengkap){
+								SuratTugas.findOne({_id: st.surtug._id}, 'nama_lengkap', function(err, sutu){
+									CustomEntity.findOne({_id: sutu.nama_lengkap}, function(err, ce){
+										st.surtug.nama_lengkap = ce.toObject();
+										st.surtug.nama_lengkap._id = st.surtug.nama_lengkap.nip;
+										cb(null, '');
+									})
+								})
+							} else {
+								cb(null, '');
+							}
+						}
+					], function(err, final){
+						outputDocx = __dirname+"/../template/output/perhitungan/"+current_timestamp+" Perhitungan "+st._id+"-"
 									+(st.tgl_buat_perhit.match(/\d{4}$/)[0])+"-"
 									+st.surtug.nama_lengkap.nama+".docx";
 
@@ -902,6 +943,7 @@ function handlePerhitungan(data, cb, res, username){
 									sendNotification(username, 'SPPD sudah pernah tercatat di realisasi.')
 								}
 						})
+					})
 				})
 			})
 		},

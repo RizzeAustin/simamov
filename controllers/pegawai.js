@@ -52,7 +52,7 @@ pegawai.socket = function(io, connections){
 							_.each(dosens, function(dos, i, list){
 								var row = [
 									nomor,
-									dos.nama,
+									dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang,
 									dos.kode_dosen,
 									dos.pangkat || '-',
 									dos.gol_pajak || '-',
@@ -93,16 +93,15 @@ pegawai.socket = function(io, connections){
 						var row = [
 							i+1,
 							peg.nama,
-							peg._id,
+							peg.get('nip') || peg._id,
 							peg.jabatan || '-',
 							peg.gol || '-',
-							peg.ket || '-',
 							'<button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
 							+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-							peg.kode_dosen || 'none'
+							peg.kode_dosen || peg._id || 'none'
 						]
 						client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
-						if(i == custs.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
+						if(i == list.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
 					});
 					console.log(kode_dosen)
 					sipadu_db.query(query, ['BPS', kode_dosen], function (err, dosens, fields) {
@@ -113,10 +112,10 @@ pegawai.socket = function(io, connections){
 						_.each(dosens, function(dos, i, list){
 							var row = [
 								i+1,
-								dos.nama,
+								dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang,
 								dos.kode_dosen,
-								dos.pangkat,
-								dos.gol_pajak,
+								dos.pangkat || '-',
+								dos.gol_pajak || '-',
 								'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
 								+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
 								dos.kode_dosen || 'none'

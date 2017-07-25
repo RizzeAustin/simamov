@@ -377,17 +377,19 @@
 
         var dki_jkt = {{prov.taksi_dn}};
         var current_gol = '{{st.nama_lengkap.gol}}';
+        console.log('{{st.nama_lengkap.gol}}')
         var current_jumlah_hari = '{{st.jumlah_hari}}';
         var posisi_kota = '{{st.posisi_kota}}';
         var kode_output = '{{st.kode_output}}';
         var kdakun, noitem;
         populate_realisasi(kode_output)
         $("#w_dari_t4_tujuan").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+            console.log(current_gol)
             if(datum.data._id == '31'){
-                $("#t_dari_t4_tujuan").val(formatUang(+datum.data.taksi_dn/2));
-                $("#t_dari_t4_asal").val(formatUang(+datum.data.taksi_dn/2));
+                $("#t_dari_t4_tujuan").val(formatUang(+datum.data.taksi_dn));
+                $("#t_dari_t4_asal").val(formatUang(+datum.data.taksi_dn));
             } else {
-                $("#t_dari_t4_tujuan").val(formatUang(datum.data.taksi_dn));
+                $("#t_dari_t4_tujuan").val(formatUang(+datum.data.taksi_dn*2));
                 $("#t_dari_t4_asal").val(formatUang(dki_jkt));
             }
             if(/iv/i.test(current_gol)){
@@ -402,7 +404,8 @@
                 $("#b_inap_price").text(formatUang(datum.data.inap_dn_es4_g3));
                 $("#maks-hotel").text(formatUang(datum.data.inap_dn_es4_g3));
                 $("#hotel_biaya").autoNumeric("update", {maximumValue: datum.data.inap_dn_es4_g3});
-            } else if(/[i|ii]/i.test(current_gol)){
+            } else if(/i|ii/i.test(current_gol)){
+                console.log('asldjslakdjlsadalksdn')
                 $("#biaya_inap").val(formatUang(+datum.data.inap_dn_g12*0.3));
                 $("#b_inap_price_form").val(formatUang(datum.data.inap_dn_g12));
                 $("#b_inap_price").text(formatUang(datum.data.inap_dn_g12));

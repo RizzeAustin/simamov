@@ -365,7 +365,7 @@ spj.post('/honor', function(req, res){
 							    		var total_sampai_bln_ini = 0;
 								    	var new_entry = {};
 								    	new_entry.pengentry = req.session.username;
-								    	new_entry.ket = 'SPJ Honor Dosen';
+								    	new_entry.ket = 'SPJ Honor Dosen periode '+periode;
 								    	new_entry.pph21 = data[i]['pph'];
 								    	// new_entry.bukti_no = '';// data.bukti_no || '';
 								    	// new_entry.spm_no = '';// data.spm_no || '';
@@ -386,9 +386,11 @@ spj.post('/honor', function(req, res){
 								    		// 		'sum': false, 'total_sampai_bln_ini': 0, 'broadcast': true});
 								    	})
 									} else {
+										console.log(i,'aaaaaaaaaa')
 										sendNotification(req.session.username, 'Honor tsb untuk '+data[i]['nama']+' pernah tercatat di realisasi.')
 									}
 							})
+								// console.log(i)
 			    		})
 					})
 				})

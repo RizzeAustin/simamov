@@ -456,6 +456,23 @@
                                                 <th>Pilihan</th>
                                             </tr>
                                         </thead>
+                                        <tfoot>
+                                          <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th class="format-uang"></th>
+                                            <th class="format-uang"></th>
+                                            <th class="format-uang"></th>
+                                            <th class="format-uang"></th>
+                                            <th class="format-uang"></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                          </tr>
+                                        </tfoot>
                                         <tbody>
                                         </tbody>
                                     </table>
@@ -660,7 +677,7 @@
         //search & sort
         //tabel pok entry
         tabel_pok_entry.DataTable({
-            scrollY:        '800px',
+            scrollY:        '500px',
             scrollX:        true,
             scrollCollapse: true,
             fixedColumns:   {
@@ -766,6 +783,79 @@
                 $( row ).find('td:eq(9)').attr('class', 'text-center');
                 $( row ).find('td:eq(11)').attr('class', 'text-center');
                 $( row ).find('td:eq(12)').attr('class', 'text-center');
+            },
+            "footerCallback": function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+     
+                // Remove the formatting to get integer data for summation
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+     
+                // Total over all pages
+                total4 = api
+                    .column( 4 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+                total5 = api
+                    .column( 5 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+                total6 = api
+                    .column( 6 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+                total7 = api
+                    .column( 7 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+                total8 = api
+                    .column( 8 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+
+                console.log(row, data, start, end, display)
+     
+                // Total over this page
+                // pageTotal4 = api
+                //     .column( 4, { page: 'current'} )
+                //     .data()
+                //     .reduce( function (a, b) {
+                //         return intVal(a) + intVal(b);
+                //     }, 0 );
+     
+                // Update footer
+                $( api.column( 1 ).footer() ).html(
+                    'Total'
+                );
+                $( api.column( 4 ).footer() ).html(
+                    formatUang(total4)
+                );
+                $( api.column( 5 ).footer() ).html(
+                    formatUang(total5)
+                );
+                $( api.column( 6 ).footer() ).html(
+                    formatUang(total6)
+                );
+                $( api.column( 7 ).footer() ).html(
+                    formatUang(total7)
+                );
+                $( api.column( 8 ).footer() ).html(
+                    formatUang(total8)
+                );
             }
         });
 
@@ -1292,7 +1382,7 @@
                   startCols: 10,
                   minCols: 10,
                   maxCols: 10,
-                  colWidths: [70, 150, 100, 75, 75, 75, 75, 75, 75, 100],
+                  colWidths: [70, 200, 93, 93, 93, 93, 93, 93, 93, 95],
                   manualColumnResize: true,
                   minSpareRows: 1,
                   colHeaders: ["Tanggal", "Penerima", "Jumlah", "PPh 21", "PPh 22", "PPh 23", "PPn", "Nmr SPM", "Nmr Bukti", "Ket"],
@@ -2002,6 +2092,19 @@
             active_entry = $(this);
             // console.log(active_entry.closest('tr').find('td:eq(7)').text(),'dksldsf', user_aktiv)
             if({{#unless admin}}active_entry.closest('tr').find('td:eq(7)').text()!= user_aktiv || {{/unless}}state_active_editor_entry || active_entry.is(':nth-child(1)') || active_entry.is(':nth-child(12)') || active_entry.is(':nth-child(13)')){
+                {{#unless admin}}
+                if(active_entry.closest('tr').find('td:eq(7)').text()!= user_aktiv){
+                    $.toast({
+                        text: 'Maaf Anda tidak dapat mengedit entrian pengguna lain.',
+                        textAlign: 'left', 
+                        hideAfter: 1000,
+                        loader: false,
+                        position: 'bottom-right',
+                        allowToastClose: false
+                    })
+                    return;
+                }
+                {{/unless}}
                 $.toast({
                     text: 'Anda tidak dapat mengedit sel tersebut.',
                     textAlign: 'left', 
@@ -2173,9 +2276,15 @@
         });
 
         tabel_riwayat.on('click', '.del-riwayat-tbl', function (e) {
+            {{#unless admin}}
+            if($(this).closest('tr').find('td:eq(7)').text()!= user_aktiv){
+                generalAlert('Maaf, Anda tidak memiliki hak akses.')
+                return;
+            }
+            {{/unless}}
             var temp = $(this).html();
             $(this).html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>');
-            var row = tabel_riwayat.DataTable().row((this).closest('tr'));
+            var row = tabel_riwayat.DataTable().row($(this).closest('tr'));
             var parent_id = $("#tbh_entry_detail").val();
             socket.emit('del_riwayat', {'parent_id': parent_id, 'target_id': row.data()[0], 
                 'month': $('#bulan_realisasi').val()}, function(status){
@@ -2200,7 +2309,7 @@
                             .nodes()
                             .to$();
 
-            if(!target_row) location.reload();
+            if(target_row.length == 0) return;
 
             //init nilai pengeluaran
             var new_value = 0;
@@ -3499,13 +3608,14 @@
             , hwaccel: false // Whether to use hardware acceleration
             , position: 'absolute' // Element positioning
         }
-        var target = document.getElementById('new')
+        var target = document.getElementById('entrychild')
+        var target2 = document.getElementById('utamachild')
         var spinner = new Spinner(opts).spin(target);
 
         socket.emit('pok_row_init', 'entry');
 
         $('#pok_edit_tab').one('click', function(e) {
-            spinner.spin(target);
+            spinner.spin(target2);
             socket.emit('pok_row_init', 'edit');
         })
 
@@ -3767,12 +3877,13 @@
             })    
         });
 
-        // jQuery('.tabbable').bind( "tabsshow", function(event, ui) {
-        //     var table = $.fn.dataTable.fnTables(true);
-        //     if ( table.length > 0 ) {
-        //         $(table).dataTable().fnAdjustColumnSizing();
-        //     }
-        // });
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            console.log('sahdbasbskjnkjasbdkj')
+            var table = $.fn.dataTable.fnTables(true);
+            if ( table.length > 0 ) {
+                $(table).dataTable().fnAdjustColumnSizing();
+            }
+        });
 
 
         function updateCell(row, index, new_value, format_uang){

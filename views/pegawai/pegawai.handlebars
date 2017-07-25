@@ -17,8 +17,8 @@
                         </ul> 
                         <div id="all-table-container" class="tab-content">
                             <div class="tab-pane active" id="pegawai_stis" role="tabpanel">
-                                <h3 class="text-center">Dosen/ Pegawai STIS</h3>
-                                <table id="tbl_pegawai_stis" class="table" cellspacing="0" width="100%">
+                                <h6 class="text-center">Dosen/ Pegawai STIS</h3>
+                                <table id="tbl_pegawai_stis" class="table table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
@@ -35,13 +35,13 @@
                                 </table>
                             </div>
                             <div class="tab-pane" id="pegawai_bps" role="tabpanel">
-                                <h3 class="text-center">Pegawai BPS</h3>
-                                <table id="tbl_pegawai_bps" class="table" cellspacing="0" width="100%">
+                                <h6 class="text-center">Pegawai BPS</h3>
+                                <table id="tbl_pegawai_bps" class="table table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
                                             <th>Nama</th>
-                                            <th>Kode Dosen</th>
+                                            <th>NIP/Kode Dosen</th>
                                             <th>Jabatan</th>
                                             <th>Golongan</th>
                                             <th>Pilihan</th>
@@ -53,13 +53,13 @@
                                 </table>
                             </div>
                             <div class="tab-pane" id="non_stis_bps" role="tabpanel">
-                                <h3 class="text-center">Non STIS/BPS</h3>
-                                <table id="tbl_non_stis_bps" class="table" cellspacing="0" width="100%">
+                                <h6 class="text-center">Non STIS/BPS</h3>
+                                <table id="tbl_non_stis_bps" class="table table-bordered" cellspacing="0" width="100%">
                                     <thead>
                                         <tr>
                                             <th>No.</th>
                                             <th>Nama</th>
-                                            <th>ID</th>
+                                            <th>NIP/ID</th>
                                             <th>Jabatan</th>
                                             <th>Golongan</th>
                                             <th>Keterangan</th>
@@ -159,6 +159,23 @@
                                                 <th>Pilihan</th>
                                             </tr>
                                         </thead>
+                                        <tfoot>
+                                          <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th class="format-uang"></th>
+                                            <th class="format-uang"></th>
+                                            <th class="format-uang"></th>
+                                            <th class="format-uang"></th>
+                                            <th class="format-uang"></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                          </tr>
+                                        </tfoot>
                                         <tbody>
                                         </tbody>
                                     </table>
@@ -510,10 +527,87 @@
                 $( row ).find('td:eq(5)').attr('class', 'format-uang');
                 $( row ).find('td:eq(6)').attr('class', 'format-uang');
                 $( row ).find('td:eq(7)').attr('class', 'format-uang');
+                $( row ).find('td:eq(4)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(5)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(6)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(7)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
                 $( row ).find('td:eq(8)').attr('class', 'text-center');
                 $( row ).find('td:eq(9)').attr('class', 'text-center');
                 $( row ).find('td:eq(10)').attr('class', 'text-center');
                 $( row ).find('td:eq(11)').attr('class', 'text-center');
+            },
+            "footerCallback": function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+     
+                // Remove the formatting to get integer data for summation
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+     
+                // Total over all pages
+                total5 = api
+                    .column( 5 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+                total6 = api
+                    .column( 6 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+                total7 = api
+                    .column( 7 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+                total8 = api
+                    .column( 8 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+                total9 = api
+                    .column( 9 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+
+                console.log(row, data, start, end, display)
+     
+                // Total over this page
+                // pageTotal5 = api
+                //     .column( 5, { page: 'current'} )
+                //     .data()
+                //     .reduce( function (a, b) {
+                //         return intVal(a) + intVal(b);
+                //     }, 0 );
+     
+                // Update footer
+                $( api.column( 2 ).footer() ).html(
+                    'Total'
+                );
+                $( api.column( 5 ).footer() ).html(
+                    formatUang(total5)
+                );
+                $( api.column( 6 ).footer() ).html(
+                    formatUang(total6)
+                );
+                $( api.column( 7 ).footer() ).html(
+                    formatUang(total7)
+                );
+                $( api.column( 8 ).footer() ).html(
+                    formatUang(total8)
+                );
+                $( api.column( 9 ).footer() ).html(
+                    formatUang(total9)
+                );
             }
         });
 
@@ -881,6 +975,10 @@
             if(!obj || obj == '-' || obj == '') return 0;
             if (typeof obj === 'string' || obj instanceof String) return +obj.replace(/\D/g, '');
             return +obj;
+        }
+
+        function formatUang(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
     })
 </script>
