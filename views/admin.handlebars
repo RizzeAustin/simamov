@@ -191,6 +191,7 @@
             type: "POST",
             data: $(this).serialize(),
             success: function (data) {
+                $('#editModal').modal('toggle');
                 generalAlert('Pengguna berhasil diedit.');
             },
             error: function (jXHR, textStatus, errorThrown) {

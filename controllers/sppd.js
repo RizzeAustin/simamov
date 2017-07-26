@@ -236,8 +236,12 @@ sppd.socket = function(io, connections){
     						if(!srt.nama_lengkap){
     							Model.findOne({_id: srt._id}, 'nama_lengkap', function(err, res){
     								CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
-										srt.nama_lengkap = peg.toObject();
-										cb(null, '')
+    									if(!peg){
+    										return;
+    									} else {
+    										srt.nama_lengkap = peg.toObject();
+											cb(null, '')
+    									}
 									})
     							})
 		    				} else {
@@ -365,6 +369,13 @@ sppd.socket = function(io, connections){
 
 sppd.get('/surat_tugas', function(req, res){
 	SettingSPPD.findOne({}).populate('ttd_st ttd_leg bendahara ppk').exec(function(err, result){
+		if(!result){
+			SettingSPPD.update({}, {last_nmr_surat: 1}, {upsert: true}, function(err, last){
+				result.last_nmr_surat = 1;
+				res.render('sppd/surat_tugas', {layout: false,  setting: result, admin: req.session.jenis});
+			})
+			return;
+		}
 		if(!result.last_nmr_surat){
 			SettingSPPD.update({}, {last_nmr_surat: 1}, {upsert: true}, function(err, last){
 				result.last_nmr_surat = 1;
@@ -382,6 +393,13 @@ sppd.post('/surat_tugas', function(req, res){
 
 sppd.get('/surat_tugas_biasa', function(req, res){
 	SettingSPPD.findOne({}).populate('ttd_st ttd_leg bendahara ppk').exec(function(err, result){
+		if(!result){
+			SettingSPPD.update({}, {last_nmr_surat: 1}, {upsert: true}, function(err, last){
+				result.last_nmr_surat = 1;
+				res.render('sppd/surat_tugas_biasa', {layout: false,  setting: result, admin: req.session.jenis});
+			})
+			return;
+		}
 		if(!result.last_nmr_surat){
 			SettingSPPD.update({}, {last_nmr_surat: 1}, {upsert: true}, function(err, last){
 				result.last_nmr_surat = 1;
@@ -399,15 +417,26 @@ sppd.post('/surat_tugas_biasa', function(req, res){
 
 sppd.get('/perhitungan', function(req, res){
 	SuratTugas.findOne({}).sort({'_id': -1}).populate('nama_lengkap').exec( function(err, st) {
+		if(!st){
+			Prov.findOne({_id: '31'}, function(err, prov){
+				prov.taksi_dn = +prov.taksi_dn*2;
+				res.render('sppd/perhitungan', {layout: false, 'st': st, 'prov': prov, admin: req.session.jenis});
+			})
+			return;
+		}
 		if(!st.nama_lengkap){
 			SuratTugas.findOne({_id: st._id}, function(err, sutu) {
 				console.log(sutu)
 				CustomEntity.findOne({_id: sutu.nama_lengkap}, function(err, ce){
-					st.nama_lengkap = ce.toObject();
-					Prov.findOne({_id: '31'}, function(err, prov){
-						prov.taksi_dn = +prov.taksi_dn*2;
-						res.render('sppd/perhitungan', {layout: false, 'st': st, 'prov': prov, admin: req.session.jenis});
-					})
+					if(!ce){
+						res.render('sppd/perhitungan', {layout: false, admin: req.session.jenis});
+					} else {
+						st.nama_lengkap = ce.toObject();
+						Prov.findOne({_id: '31'}, function(err, prov){
+							prov.taksi_dn = +prov.taksi_dn*2;
+							res.render('sppd/perhitungan', {layout: false, 'st': st, 'prov': prov, admin: req.session.jenis});
+						})
+					}
 				})
 			})
 		} else {

@@ -424,11 +424,13 @@ pok.socket = function(io, connections){
 																						var parent_var = 'kdsoutput';
 																						var parent_kd = soutput.kdsoutput;
 																						var parent_id = soutput._id;
-																						if(soutput.ursoutput == 'tanpa sub output'){
+																						if(soutput.ursoutput.match(/tanpa sub output/i)){
 																							soutput_row = '';
 																							parent_var = 'kdoutput';
 																							parent_kd = output.kdoutput;
 																							parent_id = output._id;
+																						} else {
+																							console.log(soutput.ursoutput);
 																						}
 																						data.row = soutput_row
 																						client.emit('pok_row_init_response', data, function () {
@@ -545,7 +547,7 @@ pok.socket = function(io, connections){
 																																var parent_var = 'kdskmpnen';
 																																var parent_kd = skomponen.kdskmpnen;
 																																var parent_id = skomponen._id;
-																																if(skomponen.urskmpnen == 'tanpa sub komponen'){
+																																if(skomponen.urskmpnen.match(/tanpa sub komponen/i)){
 																																	skomponen_row = '';
 																																	parent_var = 'kdkmpnen';
 																																	parent_kd = komponen.kdkmpnen;
@@ -2583,7 +2585,7 @@ function proses_xml(xml_stream, roots_var, var_array, current_timestamp, Model, 
 						var item = new Model({timestamp: current_timestamp});
 						for (var i = 0; i < var_array.length; i++) {
 							if(value[ var_array[ i ] ]){
-								item[ var_array[ i ] ] = value[ var_array[ i ] ][ 0 ]
+								item[ var_array[ i ] ] = value[ var_array[ i ] ][ 0 ].replace(/^\s+|\s+$/g,'')
 							}
 						}
 
