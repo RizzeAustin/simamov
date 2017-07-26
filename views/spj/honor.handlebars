@@ -250,6 +250,7 @@
             var type = $(this).attr('id').match(/tbh_entry_(.*)/)[1];
 
             var kode;
+            console.log($("#tbh_entry_"+type+" option:selected").text())
             if(!$("#tbh_entry_"+type+" option:selected").text().match(/\s?\w+(?=\s)/)) return;
 
             if(type != 'skomponen') kode = $("#tbh_entry_"+type+" option:selected").text().match(/\d+(?=\s)/)[0]

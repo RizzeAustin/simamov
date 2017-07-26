@@ -1192,9 +1192,12 @@ pok.socket = function(io, connections){
 	    })
 
 	    client.on('pok_list', function (data) {
+	    	console.log(data)
+	    	//init Model, Parent Model, dan tipe parent
 	    	var Model;
 	    	var ParentModel;
 	    	var parent_type = data.type;
+	    	//jika kosong, maka program
 	    	if(data.type == ''){
 	    		Model = Program;
 	    		data.type = 'program';
@@ -1227,41 +1230,48 @@ pok.socket = function(io, connections){
 	    		ParentModel = Akun;
 	    		data.type = 'detail';
 	    	}
+	    	//set tambahan syarat
 	    	data.syarat.active = true;
 	    	data.syarat.thang = thang;
 
 	    	Model.find(data.syarat).sort(data.sortby).exec(function(err, items){
+	    		console.log(items)
 	    		if(data.type != 'program'){
 	    			ParentModel.findOne(data.syarat, function(err, parent){
-	    				if(data.type == 'akun'){
-	    					if(parent.urskmpnen == 'tanpa sub komponen'){
-	    						delete data.syarat.kdskmpnen;
-	    						Komponen.findOne(data.syarat, function(err, parent){
-	    							if(data.for == 'riwayat'){
-	    								client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
-	    							} else {
-	    								client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
-	    							}
-	    						})
-	    					}
-	    				} else if(data.type == 'komponen'){
-	    					if(parent.ursoutput == 'tanpa sub output'){
-	    						delete data.syarat.kdsoutput;
-	    						Output.findOne(data.syarat, function(err, parent){
-	    							if(data.for == 'riwayat'){
-	    								client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
-	    							} else {
-	    								client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
-	    							}
-	    						})
-	    					}
-	    				} else {
-	    					if(data.for == 'riwayat'){
-	    						client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
-							} else {
-								client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
-							}
-	    				}
+	    		// 		if(data.type == 'akun'){
+	    		// 			if(parent.urskmpnen == 'tanpa sub komponen'){
+	    		// 				delete data.syarat.kdskmpnen;
+	    		// 				Komponen.findOne(data.syarat, function(err, parent){
+	    		// 					if(data.for == 'riwayat'){
+	    		// 						client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
+	    		// 					} else {
+	    		// 						client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
+	    		// 					}
+	    		// 				})
+	    		// 			}
+	    		// 		} else if(data.type == 'komponen'){
+	    		// 			if(parent.ursoutput == 'tanpa sub output'){
+	    		// 				delete data.syarat.kdsoutput;
+	    		// 				Output.findOne(data.syarat, function(err, parent){
+	    		// 					if(data.for == 'riwayat'){
+	    		// 						client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
+	    		// 					} else {
+	    		// 						client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
+	    		// 					}
+	    		// 				})
+	    		// 			}
+	    		// 		} else {
+	    		// 			if(data.for == 'riwayat'){
+	    		// 				client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
+							// } else {
+							// 	client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
+							// }
+	    		// 		}
+	    				if(data.for == 'riwayat'){
+    						client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
+						} else {
+							client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
+						}
 	    			})
 	    		} else {
 	    			if(data.for == 'riwayat'){
