@@ -566,6 +566,8 @@
             
             data.pelaksanaan = [];
 
+            moment.locale('id');
+
             while (currentDate <= end) {
                 if(new Date(currentDate).getDay() > 0 && new Date(currentDate).getDay() < 6) data.pelaksanaan.push({tgl: moment(new Date(currentDate)).format("D MMMM YYYY")});
                 currentDate.setDate(currentDate.getDate() + 1);
@@ -617,6 +619,8 @@
                 currentDate = new Date(start),
                 pelaksanaan = [];
 
+            moment.locale('id');
+
             while (currentDate <= end) {
                 if(new Date(currentDate).getDay() > 0 && new Date(currentDate).getDay() < 6) pelaksanaan.push({tgl: moment(new Date(currentDate)).format("D MMMM YYYY")});
                 currentDate.setDate(currentDate.getDate() + 1);
@@ -659,6 +663,8 @@
                 end = $("#tgl_kembali").data('DateTimePicker').date()._d,
                 currentDate = new Date(start),
                 pelaksanaan = [];
+
+            moment.locale('id');
 
             while (currentDate <= end) {
                 if(new Date(currentDate).getDay() > 0 && new Date(currentDate).getDay() < 6) pelaksanaan.push({tgl: moment(new Date(currentDate)).format("D MMMM YYYY")});

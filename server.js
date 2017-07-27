@@ -91,6 +91,7 @@ app.use('/js', express.static(__dirname + '/js'));
 app.use('/fonts', express.static(__dirname + '/fonts'));
 app.use('/img', express.static(__dirname + '/img'));
 app.use('/result', express.static(__dirname + '/template/output'));
+app.use('/template', express.static(__dirname + '/template'));
 
 //====== ROUTES ======//
 var login = require('./controllers/login.js'); //route index

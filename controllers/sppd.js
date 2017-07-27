@@ -43,6 +43,9 @@ var moment = require('moment');
 
 var levenshtein = require('fast-levenshtein');
 
+//modul formidable utk parse POST gambar
+var formidable = require('formidable');
+
 //Socket.io
 sppd.connections;
 
@@ -362,6 +365,19 @@ sppd.socket = function(io, connections){
 				cb(details || {})
 			})
 	    })
+	    client.on('pulihkan_template', function (jenis, cb){
+	    	var path = __dirname+'/../template/';
+    		if(jenis == 'st'){
+    			fs.createReadStream(path + 'cadangan/surat_tugas.docx').pipe(fs.createWriteStream(path + 'surat_tugas.docx'));
+    			cb('sukses');
+    		} else if(jenis == 'stb'){
+    			fs.createReadStream(path + 'cadangan/surat_tugas_biasa.docx').pipe(fs.createWriteStream(path + 'surat_tugas_biasa.docx'));
+    			cb('sukses');
+    		} else {
+    			fs.createReadStream(path + 'cadangan/sppd_perhitungan.docx').pipe(fs.createWriteStream(path + 'sppd_perhitungan.docx'));
+    			cb('sukses');
+    		}
+	    })
 	})
 
 };
@@ -458,6 +474,38 @@ sppd.get('/pengaturan', function(req, res){
 	SettingSPPD.findOne({}).populate('ttd_st ttd_leg bendahara ppk').exec(function(err, result){
 		res.render('sppd/pengaturan', {layout: false, setting: result});
 	})	
+});
+
+sppd.post('/pengaturan/unggah_template/:type', function(req, res){
+	var form = new formidable.IncomingForm();
+	var file_path;
+
+	async.waterfall([
+			function(callback){
+				form.parse(req, function(err, fields, file){
+					if(err){
+						errorHandler(req.session.username, 'Form parse Error. Mohon hubungi admin.');
+						return;
+					}
+					callback(null, 'File parsed')
+				});
+
+				form.on('fileBegin', function (name, file){
+					var type = req.params.type;
+					file.path = __dirname+'/../template/';
+					if(type == 'st'){
+						file.path += 'surat_tugas.docx';
+					} else if(type == 'stb'){
+						file.path += 'surat_tugas_biasa.docx';
+					} else {
+						file.path += 'sppd_perhitungan.docx';
+					}
+				})
+			} 
+		], function(err, final){
+			res.send('sukses');
+		}
+	)
 });
 
 function toTitleCase(str)

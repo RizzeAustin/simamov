@@ -67,6 +67,16 @@ spj.socket = function(io, connections){
 					else cb('sukses')
 			})
 		})
+	    client.on('spj_pulihkan_template', function (jenis, cb){
+	    	var path = __dirname+'/../template/';
+    		if(jenis == 'honor'){
+    			fs.createReadStream(path + 'cadangan/HonorTemplate.xlsx').pipe(fs.createWriteStream(path + 'HonorTemplate.xlsx'));
+    			cb('sukses');
+    		} else if(jenis == 'transport'){
+    			fs.createReadStream(path + 'cadangan/TransportTemplate.xlsx').pipe(fs.createWriteStream(path + 'TransportTemplate.xlsx'));
+    			cb('sukses');
+    		}
+	    })
 	})
 
 }
@@ -780,6 +790,40 @@ spj.post('/transport', function(req, res){
 
 
 			// res.send('ok');
+		}
+	)
+});
+
+spj.get('/pengaturan', function(req, res){
+	res.render('spj/pengaturan', {layout: false});
+});
+
+spj.post('/pengaturan/unggah_template/:type', function(req, res){
+	var form = new formidable.IncomingForm();
+	var file_path;
+
+	async.waterfall([
+			function(callback){
+				form.parse(req, function(err, fields, file){
+					if(err){
+						errorHandler(req.session.username, 'Form parse Error. Mohon hubungi admin.');
+						return;
+					}
+					callback(null, 'File parsed')
+				});
+
+				form.on('fileBegin', function (name, file){
+					var type = req.params.type;
+					file.path = __dirname+'/../template/';
+					if(type == 'honor'){
+						file.path += 'HonorTemplate.xlsx';
+					} else if(type == 'transport'){
+						file.path += 'TransportTemplate.xlsx';
+					}
+				})
+			} 
+		], function(err, final){
+			res.send('sukses');
 		}
 	)
 });

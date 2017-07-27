@@ -36,7 +36,7 @@ use simamov;
 // db.pok_uraian_akun.find({thang: '2017'})
 // db.representasi.find().pretty()
 // db.perhitungan.find().pretty()
-db.surat_tugas.find().pretty()
+// db.surat_tugas.find().pretty()
 // db.setting.find().pretty()
 // db.pok_uraian_akun.update({}, {$set: {thang: 2016}}, {multi: true})
 // db.pok_detailBelanja.find().pretty()

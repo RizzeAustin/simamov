@@ -4,193 +4,293 @@
             <div class="card-block">
                 <div class="row">
                     <div class="col-md-12">
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#home3" role="tab" aria-controls="home"><i class="icon-paper-clip"></i> Tanda Tangan</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="biaya2Tab" class="nav-link tabAjax" data-toggle="tab" href="#biaya2Tabchild" role="tab" aria-controls="biaya2Tabchild"><i class="icon-wallet"></i> Biaya-Biaya</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="tiketPesawatTab" class="nav-link tabAjax" data-toggle="tab" href="#tiketPesawatTabchild" role="tab" aria-controls="tiketPesawatTabchild"><i class="icon-plane"></i> Tiket</a>
-                                </li>
-                            </ul>
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#home3" role="tab" aria-controls="home"><i class="icon-paper-clip"></i> Tanda Tangan</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="biaya2Tab" class="nav-link" data-toggle="tab" href="#biaya2Tabchild" role="tab" aria-controls="biaya2Tabchild"><i class="icon-wallet"></i> Biaya-Biaya</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="tiketPesawatTab" class="nav-link" data-toggle="tab" href="#tiketPesawatTabchild" role="tab" aria-controls="tiketPesawatTabchild"><i class="icon-plane"></i> Tiket</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="templateTab" class="nav-link" data-toggle="tab" href="#templateTabchild" role="tab" aria-controls="templateTabchild"><i class="icon-doc"></i> Template</a>
+                            </li>
+                        </ul>
 
-                            <div class="tab-content">
-                                <div class="tab-pane active" id="home3" role="tabpanel">
-                                    <div class="col-md-5">   
-                                        <div class="form-group row">
-                                        <h6><i class="icon-user-follow"></i> Penanda Tangan Surat Tugas</h6> 
-                                            <div class="input-group">
-                                                <input id="inp-ttd-surat-tugas" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" required>
-                                                <span class="input-group-btn">
-                                                    <button id="btn-ttd-surat-tugas" class="btn btn-primary">+</button>
-                                                </span>
-                                            </div>                                    
-                                        </div>
-                                    </div>                           
-                                    <table id="tbl-ttd-st" class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Nama</th>
-                                                <th>NIP</th>
-                                                <th>Pilihan</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>                                            
-                                        {{#each setting.ttd_st}}
-                                            <tr>
-                                                <td>{{nama}}</td>
-                                                <td>{{_id}}</td>
-                                                <td>
-                                                    <button type="button" class="btn-st-default" {{#if_eq _id ../setting.ttd_st_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
-                                                    <button type="button" class="btn-st-del"><i class="icon-close"></i></button>
-                                                </td>
-                                            </tr>
-                                        {{/each}}  
-                                        </tbody>
-                                    </table>  
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="home3" role="tabpanel">
+                                <div class="col-md-5">   
+                                    <div class="form-group row">
+                                    <h6><i class="icon-user-follow"></i> Penanda Tangan Surat Tugas</h6> 
+                                        <div class="input-group">
+                                            <input id="inp-ttd-surat-tugas" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-ttd-surat-tugas" class="btn btn-primary">+</button>
+                                            </span>
+                                        </div>                                    
+                                    </div>
+                                </div>                           
+                                <table id="tbl-ttd-st" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama</th>
+                                            <th>NIP</th>
+                                            <th>Pilihan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                            
+                                    {{#each setting.ttd_st}}
+                                        <tr>
+                                            <td>{{nama}}</td>
+                                            <td>{{_id}}</td>
+                                            <td>
+                                                <button type="button" class="btn-st-default" {{#if_eq _id ../setting.ttd_st_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
+                                                <button type="button" class="btn-st-del"><i class="icon-close"></i></button>
+                                            </td>
+                                        </tr>
+                                    {{/each}}  
+                                    </tbody>
+                                </table>  
 
-                                    <div class="col-md-5">   
-                                        <div class="form-group row">
-                                            <h6><i class="icon-user-follow"></i> Penanda Tangan Legalitas</h6>
-                                            <div class="input-group">
-                                                <input id="inp-ttd-legalitas" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" required>
-                                                <span class="input-group-btn">
-                                                    <button id="btn-ttd-legalitas" type="submit" class="btn btn-primary">+</button>
-                                                </span>
-                                            </div> 
-                                        </div>
+                                <div class="col-md-5">   
+                                    <div class="form-group row">
+                                        <h6><i class="icon-user-follow"></i> Penanda Tangan Legalitas</h6>
+                                        <div class="input-group">
+                                            <input id="inp-ttd-legalitas" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-ttd-legalitas" type="submit" class="btn btn-primary">+</button>
+                                            </span>
+                                        </div> 
                                     </div>
-                                            <table id="tbl-ttd-leg" class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Nama</th>
-                                                        <th>NIP</th>
-                                                        <th>Pilihan</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                {{#each setting.ttd_leg}}
-                                                    <tr>
-                                                        <td>{{nama}}</td>
-                                                        <td>{{_id}}</td>
-                                                        <td>
-                                                            <button type="button" class="btn-leg-default" {{#if_eq _id ../setting.ttd_leg_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
-                                                            <button type="button" class="btn-leg-del"><i class="icon-close"></i></button>
-                                                        </td>
-                                                    </tr>
-                                                {{/each}}                                            
-                                                </tbody>
-                                            </table>
-                                    <div class="col-md-5">   
-                                        <div class="form-group row">
-                                            <h6><i class="icon-user"></i> Pejabat Pembuat Komitmen</h6>
-                                            <div class="input-group">
-                                                <input type="text" id="inp-ppk" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.ppk}}{{nama}}{{/with}}" required>
-                                                <span class="input-group-btn">
-                                                    <button id="btn-set-ppk" type="submit" class="btn btn-primary">Set</button>
-                                                </span>
-                                            </div> 
-                                        </div>
-                                    </div> 
-                                    <div class="col-md-5">   
-                                        <div class="form-group row">
-                                            <h6><i class="icon-user"></i> Bendahara Pengeluaran STIS</h6>
-                                            <div class="input-group">
-                                                <input type="text" id="inp-bend" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.bendahara}}{{nama}}{{/with}}" required>
-                                                <span class="input-group-btn">
-                                                    <button id="btn-set-bend" type="submit" class="btn btn-primary">Set</button>
-                                                </span>
-                                            </div> 
-                                        </div>
-                                    </div> 
                                 </div>
-                                <div class="tab-pane" id="biaya2Tabchild" role="tabpanel">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h6 class="text-center pok-title">
-                                                Tabel Representasi
-                                            </h6>
-                                        </div>
+                                        <table id="tbl-ttd-leg" class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama</th>
+                                                    <th>NIP</th>
+                                                    <th>Pilihan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#each setting.ttd_leg}}
+                                                <tr>
+                                                    <td>{{nama}}</td>
+                                                    <td>{{_id}}</td>
+                                                    <td>
+                                                        <button type="button" class="btn-leg-default" {{#if_eq _id ../setting.ttd_leg_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
+                                                        <button type="button" class="btn-leg-del"><i class="icon-close"></i></button>
+                                                    </td>
+                                                </tr>
+                                            {{/each}}                                            
+                                            </tbody>
+                                        </table>
+                                <div class="col-md-5">   
+                                    <div class="form-group row">
+                                        <h6><i class="icon-user"></i> Pejabat Pembuat Komitmen</h6>
+                                        <div class="input-group">
+                                            <input type="text" id="inp-ppk" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.ppk}}{{nama}}{{/with}}" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-set-ppk" type="submit" class="btn btn-primary">Set</button>
+                                            </span>
+                                        </div> 
                                     </div>
-                                    <table id="tbl-representasi" class="table table-bordered" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th>Id</th>
-                                                <th class="text-center" style="vertical-align: middle">Uraian</th>
-                                                <th class="text-center" style="vertical-align: middle">Luar Kota</th>
-                                                <th class="text-center" style="vertical-align: middle">Dalam Kota > 8 jam</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>                                           
-                                        </tbody>
-                                    </table>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h6 class="text-center pok-title">
-                                                Tabel Uang Harian
-                                            </h6>
-                                        </div>
+                                </div> 
+                                <div class="col-md-5">   
+                                    <div class="form-group row">
+                                        <h6><i class="icon-user"></i> Bendahara Pengeluaran STIS</h6>
+                                        <div class="input-group">
+                                            <input type="text" id="inp-bend" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.bendahara}}{{nama}}{{/with}}" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-set-bend" type="submit" class="btn btn-primary">Set</button>
+                                            </span>
+                                        </div> 
                                     </div>
-                                    <table id="tbl-biaya-biaya" class="table table-bordered" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th rowspan="2">Id</th>
-                                                <th width="5%" rowspan="2" class="text-center" style="vertical-align: middle">No.</th>
-                                                <th width="20%" rowspan="2" class="text-center" style="vertical-align: middle">Provinsi</th>
-                                                <th width="10%" rowspan="2" class="text-center" style="vertical-align: middle">Taksi</th>
-                                                <th width="25%" colspan="3" scope="colgroup" class="text-center">Uang Harian</th>
-                                                <th width="35%" colspan="5" scope="colgroup" class="text-center">Tarif Hotel</th>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-center">Luar kota</th>
-                                                <th class="text-center">Dalam kota > 8 jam</th>
-                                                <th class="text-center" style="vertical-align: middle">Diklat</th>
-                                                <th class="text-center" style="vertical-align: middle">Eselon I</th>
-                                                <th class="text-center" style="vertical-align: middle">Eselon II</th>
-                                                <th class="text-center">Eselon III/Gol. IV</th>
-                                                <th class="text-center">Eselon IV/Gol. III</th>
-                                                <th class="text-center" style="vertical-align: middle">Gol. I/II</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>                                           
-                                        </tbody>
-                                    </table>
+                                </div> 
+                            </div>
+                            <div class="tab-pane" id="biaya2Tabchild" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="text-center pok-title">
+                                            Tabel Representasi
+                                        </h6>
+                                    </div>
                                 </div>
-                                <div class="tab-pane" id="tiketPesawatTabchild" role="tabpanel">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h6 class="text-center pok-title">
-                                                Tabel Satuan Biaya Tiket
-                                            </h6>
+                                <table id="tbl-representasi" class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th class="text-center" style="vertical-align: middle">Uraian</th>
+                                            <th class="text-center" style="vertical-align: middle">Luar Kota</th>
+                                            <th class="text-center" style="vertical-align: middle">Dalam Kota > 8 jam</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                           
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="text-center pok-title">
+                                            Tabel Uang Harian
+                                        </h6>
+                                    </div>
+                                </div>
+                                <table id="tbl-biaya-biaya" class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Id</th>
+                                            <th width="5%" rowspan="2" class="text-center" style="vertical-align: middle">No.</th>
+                                            <th width="20%" rowspan="2" class="text-center" style="vertical-align: middle">Provinsi</th>
+                                            <th width="10%" rowspan="2" class="text-center" style="vertical-align: middle">Taksi</th>
+                                            <th width="25%" colspan="3" scope="colgroup" class="text-center">Uang Harian</th>
+                                            <th width="35%" colspan="5" scope="colgroup" class="text-center">Tarif Hotel</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center">Luar kota</th>
+                                            <th class="text-center">Dalam kota > 8 jam</th>
+                                            <th class="text-center" style="vertical-align: middle">Diklat</th>
+                                            <th class="text-center" style="vertical-align: middle">Eselon I</th>
+                                            <th class="text-center" style="vertical-align: middle">Eselon II</th>
+                                            <th class="text-center">Eselon III/Gol. IV</th>
+                                            <th class="text-center">Eselon IV/Gol. III</th>
+                                            <th class="text-center" style="vertical-align: middle">Gol. I/II</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                           
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="tiketPesawatTabchild" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="text-center pok-title">
+                                            Tabel Satuan Biaya Tiket
+                                        </h6>
+                                    </div>
+                                </div>
+                                <table id="tiket" class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Id</th>
+                                            <th width="2%" rowspan="2" class="text-center" style="vertical-align: middle">No.</th>
+                                            <th width="40%" rowspan="2" class="text-center" style="vertical-align: middle">Kota</th>
+                                            <th width="55%" colspan="2" class="text-center">Pesawat (dari Jakarta)</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center">Bisnis</th>
+                                            <th class="text-center">Ekonomi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{#each kota}}             
+                                        <tr name="{{name}}">
+                                            <td>{{label}}</td>
+                                            <td jenis="tiket_jkt_b" class="money">{{tiket_jkt_b}}</td>
+                                            <td jenis="tiket_jkt_e" class="money">{{tiket_jkt_e}}</td>
+                                        </tr>
+                                    {{/each}}                                            
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="templateTabchild" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6>Surat Tugas</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button id="btn-st-template" type="button">Download Template</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px;">
+                                            <div class="col-md-6">
+                                                <form id="form-surat-tugas" enctype="multipart/form-data" method="post" action="/sppd/pengaturan/unggah_template/st" class="form-template">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <input id="template_file" name="template_file" type="file" accept=".docx" required/>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="row" style="margin-top: 10px">
+                                                        <div class="col-md-12">
+                                                            <button id="btn-form-surat-tugas" type="submit">Unggah</button> 
+                                                            <button jenis="st" class="pulihkan-template" type="button">Pulihkan</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
-                                    <table id="tiket" class="table table-bordered" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th rowspan="2">Id</th>
-                                                <th width="2%" rowspan="2" class="text-center" style="vertical-align: middle">No.</th>
-                                                <th width="40%" rowspan="2" class="text-center" style="vertical-align: middle">Kota</th>
-                                                <th width="55%" colspan="2" class="text-center">Pesawat (dari Jakarta)</th>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-center">Bisnis</th>
-                                                <th class="text-center">Ekonomi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        {{#each kota}}             
-                                            <tr name="{{name}}">
-                                                <td>{{label}}</td>
-                                                <td jenis="tiket_jkt_b" class="money">{{tiket_jkt_b}}</td>
-                                                <td jenis="tiket_jkt_e" class="money">{{tiket_jkt_e}}</td>
-                                            </tr>
-                                        {{/each}}                                            
-                                        </tbody>
-                                    </table>
                                 </div>
-                            </div> 
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6>Surat Tugas Biasa</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button id="btn-stb-template" type="button">Download Template</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px;">
+                                            <div class="col-md-6">
+                                                <form id="form-surat-tugas-biasa" enctype="multipart/form-data" method="post" action="/sppd/pengaturan/unggah_template/stb" class="form-template">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <input id="template_file" name="template_file" type="file" accept=".docx" required/>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="row" style="margin-top: 10px">
+                                                        <div class="col-md-12">
+                                                            <button id="btn-form-surat-tugas-biasa" type="submit">Unggah</button> 
+                                                            <button jenis="stb" class="pulihkan-template" type="button">Pulihkan</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6>Surat Perhitungan</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button id="btn-sp-template" type="button">Download Template</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px;">
+                                            <div class="col-md-6">
+                                                <form id="form-surat-perhitungan" enctype="multipart/form-data" method="post" action="/sppd/pengaturan/unggah_template/sp" class="form-template">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <input id="template_file" name="template_file" type="file" accept=".docx" required/>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="row" style="margin-top: 10px">
+                                                        <div class="col-md-12">
+                                                            <button id="btn-form-surat-perhitungan" type="submit">Unggah</button> 
+                                                            <button jenis="sp" class="pulihkan-template" type="button">Pulihkan</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
                     </div>
                 </div>
             </div>
@@ -775,6 +875,61 @@
                 Tiket.state_active_editor_entry = false;
                 Tiket.editor_entry.hide();
             }
+        });
+
+        $("#btn-st-template").click(function(){
+            location.href = 'http://'+window.location.host+'/template/surat_tugas.docx';
+        })
+
+        $("#btn-stb-template").click(function(){
+            location.href = 'http://'+window.location.host+'/template/surat_tugas_biasa.docx';
+        })
+
+        $("#btn-sp-template").click(function(){
+            location.href = 'http://'+window.location.host+'/template/sppd_perhitungan.docx';
+        })
+
+        $(".pulihkan-template").click(function(){
+            socket.emit('pulihkan_template', $(this).attr('jenis'), function(status){
+                    if(status === 'sukses'){
+                        generalAlert('Berhasil dipulihkan.');
+                    } else {
+                        generalAlert('Gagal dipulihkan. Mohon hubungi admin.');
+                    }
+            });  
+        })
+
+        //submit unggah pok
+        $('.form-template').on('submit', function(e) {
+            e.preventDefault();
+            var id = $(this).attr('id');
+            var url = $(this).attr('action');
+            $("#btn"+id).prop("disabled",true);
+            $("#btn"+id).html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#btn"+id).text());
+            var formData = new FormData($(this)[0]);
+
+            $.ajax({
+                url: 'http://'+window.location.host+url,
+                type: 'POST',
+                data: formData,
+                async: false,
+                error: function(){
+                    $("#pok_unggah_button").prop("disabled",false);
+                    $("#pok_unggah_button").html('Unggah');
+                },
+                success: function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Template berhasil diupdate');
+                    } else {
+                        generalAlert('Gagal diupdate. Mohon hubungi admin.');
+                    }
+                    $("#btn"+id).prop("disabled",false);
+                    $("#btn"+id).html('Unggah');
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
         });
 
 

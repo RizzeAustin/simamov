@@ -723,16 +723,16 @@
                 $( row ).find('td:eq(9)').attr('class', 'format-uang');
                 $( row ).find('td:eq(10)').attr('class', 'format-uang');
                 $( row ).find('td:eq(11)').attr('class', 'format-uang');
-            },
-            "footerCallback": function ( row, data, start, end, display ) {
-                calcSum('akun', data, 'pok_table_entry')
-                calcSum('skomponen', data, 'pok_table_entry')
-                calcSum('komponen', data, 'pok_table_entry')
-                calcSum('soutput', data, 'pok_table_entry')
-                calcSum('output', data, 'pok_table_entry')
-                calcSum('kegiatan', data, 'pok_table_entry')
-                calcSum('program', data, 'pok_table_entry');
             }
+            // "footerCallback": function ( row, data, start, end, display ) {
+                // calcSum('akun', data, 'pok_table_entry')
+                // calcSum('skomponen', data, 'pok_table_entry')
+                // calcSum('komponen', data, 'pok_table_entry')
+                // calcSum('soutput', data, 'pok_table_entry')
+                // calcSum('output', data, 'pok_table_entry')
+                // calcSum('kegiatan', data, 'pok_table_entry')
+                // calcSum('program', data, 'pok_table_entry');
+            // }
         });
 
         function calcSum(type, data, tab_id){
@@ -3671,37 +3671,37 @@
             // $("#pok_table tbody").append(data);
             $('#pok_table_'+data.tabel).DataTable().row.add( data.row );
             cb();
-            // var prt_row = $('#pok_table_'+data.tabel).DataTable()
-            //                 .rows( function ( idx, dataa, node ) {
-            //                     return dataa[0] == data.row[0] ?
-            //                         true : false;
-            //                 } );
-            // prt_row
-            //     .nodes()
-            //     .to$()
-            //     .find('td.format-uang')
-            //     .autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+            var prt_row = $('#pok_table_'+data.tabel).DataTable()
+                            .rows( function ( idx, dataa, node ) {
+                                return dataa[0] == data.row[0] ?
+                                    true : false;
+                            } );
+            prt_row
+                .nodes()
+                .to$()
+                .find('td.format-uang')
+                .autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
         })
 
         socket.on('pok_edit_update_jlh', function(data) {
-            // var prt_row = $('#pok_table_'+data.tabel).DataTable()
-            //                     .rows( function ( idx, dataa, node ) {
-            //                         return dataa[0] == data.parent_id ?
-            //                             true : false;
-            //                     } );
-            // //ambil parent td
-            // var parent_jumlah_td = prt_row
-            //                         .nodes()
-            //                         .to$()
-            //                         .find('td:eq(6)');
+            var prt_row = $('#pok_table_'+data.tabel).DataTable()
+                                .rows( function ( idx, dataa, node ) {
+                                    return dataa[0] == data.parent_id ?
+                                        true : false;
+                                } );
+            //ambil parent td
+            var parent_jumlah_td = prt_row
+                                    .nodes()
+                                    .to$()
+                                    .find('td:eq(6)');
 
-            // if(parent_jumlah_td.length == 0) return;
+            if(parent_jumlah_td.length == 0) return;
 
-            // $('#pok_table_'+data.tabel).DataTable()
-            //     .cell(parent_jumlah_td)
-            //     .data(data.new_jumlah);
+            $('#pok_table_'+data.tabel).DataTable()
+                .cell(parent_jumlah_td)
+                .data(data.new_jumlah);
 
-            // setAutoNumeric(parent_jumlah_td, data.new_jumlah);
+            setAutoNumeric(parent_jumlah_td, data.new_jumlah);
         })
 
         socket.on('pok_item_deleted', function(id) {
