@@ -4,7 +4,10 @@ var Schema = mongoose.Schema;
 
 var CustomEntitySchema = new Schema({
     "type" : String,
-    "nama" : String
+    "nama" : String,
+    "nip" : String,
+    "jabatan" : String,
+    "gol" : String
 }, { collection: 'custom_entity', strict: false});
 
 CustomEntitySchema.methods.isExist = function(cb) {

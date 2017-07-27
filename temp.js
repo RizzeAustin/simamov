@@ -3,7 +3,7 @@ use simamov;
 // db.user.remove({jenis:0})
 // db.user.find({})
 // db.user.insert({_id: 'admin', password: '9a9e0d33fa0d884224f816e2e9691ee9267208399d18d17095253555791fa975', display_name: "Admin"})
-// db.surat_tugas.findOne();
+// db.surat_tugas_biasa.findOne();
 
 // db.old_pok_detailBelanja.drop()
 // db.old_pok_akun.drop()
@@ -31,19 +31,19 @@ use simamov;
 // db.perhitungan.drop()
 // db.surat_tugas.drop()
 
-// db.custom_entity.find({nama: 'gsdfggsdg'}).pretty()
+// db.custom_entity.find({nama: 'Lukman Azhari, SST'}).pretty()
 // db.kab.find().pretty()
 // db.pok_uraian_akun.find({thang: '2017'})
 // db.representasi.find().pretty()
 // db.perhitungan.find().pretty()
-// db.surat_tugas.find().pretty()
+db.surat_tugas.find().pretty()
 // db.setting.find().pretty()
 // db.pok_uraian_akun.update({}, {$set: {thang: 2016}}, {multi: true})
 // db.pok_detailBelanja.find().pretty()
 // db.pok_akun.findOne()
 // db.pok_sub_komponen.findOne()
 // db.pok_komponen.findOne()
-db.pok_sub_output.findOne()
+// db.pok_sub_output.findOne()
 // db.pok_output.findOne()
 // db.pok_kegiatan.find()
 // db.pok_program.findOne()

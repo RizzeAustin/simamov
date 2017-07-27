@@ -270,15 +270,24 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="username">NIP/Nomor Identitas <span>*</span></label>
+                        <label for="tbh_id">NIP/Nomor Identitas <span>*</span></label>
                         <input type="text" class="form-control" id="tbh_id" name='tbh_id' required>
                     </div>
                     <div class="form-group row">
-                        <label for="username">Golongan <span>*</span></label>
-                        <input type="text" list="gol" class="form-control" id="tbh_gol" name='tbh_gol' required>
+                        <label for="tbh_gol">Golongan <span>*</span></label>
+                        <select id="tbh_gol" name="tbh_gol" class="form-control input-lg" size="1">
+                            <!-- <option value="none">Tidak ada</option> -->
+                            <option value="I">I</option>
+                            <option value="II">II</option>
+                            <option value="III">III</option>
+                            <option value="IV">IV</option>
+                            <option value="Eselon I">Eselon I</option>
+                            <option value="Eselon II">Eselon II</option>
+                            <option value="Pejabat Negara">Pejabat Negara</option>
+                        </select>
                     </div>
                     <div class="form-group row">
-                        <label for="username">Jabatan <span>*</span></label>
+                        <label for="tbh_jabatan">Jabatan <span>*</span></label>
                         <input type="text" list="jabatan" class="form-control" id="tbh_jabatan" name='tbh_jabatan' required>
                     </div>
                 </div>
@@ -392,14 +401,14 @@
                     $('#tbh_jabatan').after(datalist);
                 });
 
-                socket.emit('gol_list', 'ok', function(gols){
-                    var datalist = '<datalist id="gol">'
-                    _.each(gols, function(gol, index, list){
-                        datalist += '<option value="'+gol+'">';
-                    });
-                    datalist += '</datalist>';
-                    $('#tbh_gol').after(datalist);
-                });
+                // socket.emit('gol_list', 'ok', function(gols){
+                //     var datalist = '<datalist id="gol">'
+                //     _.each(gols, function(gol, index, list){
+                //         datalist += '<option value="'+gol+'">';
+                //     });
+                //     datalist += '</datalist>';
+                //     $('#tbh_gol').after(datalist);
+                // });
 
                 $('#tambah_pegawai').modal('show');
                 return;
@@ -422,6 +431,14 @@
             data.gol = $('#tbh_gol').val();
             data.jabatan = $('#tbh_jabatan').val();
 
+            if(data._id == ''){
+                generalAlert('NIP/ID wajib diisi.');
+                return;
+            } else if (data.jabatan == '') {
+                generalAlert('Jabatan wajib diisi.');
+                return;
+            }
+
             var collection = $('input[name=tbh_jenis_pgw]:checked').val();
 
             socket.emit('entry_pegawai_baru', {'data': data, 'collection': collection}, 
@@ -439,6 +456,7 @@
                             return o; 
                         })
                     );
+                    generalAlert('Berhasil ditambahkan.')
                     $('#tambah_pegawai').modal('toggle');
             })
         })
@@ -512,15 +530,17 @@
                 function(response){
                     $('#tbl_riwayat').DataTable().clear();
                     _.each(response, function(surat, i, list){
-                        var row = [
-                            surat._id,
-                            surat.nama_lengkap.nama,
-                            surat.tugas,
-                            surat.tgl_berangkat,
-                            surat.tgl_kembali,
-                            '<button type="button" class="edit-surat"><i class="icon-pencil"></i></button>'
-                        ]
-                        $('#tbl_riwayat').DataTable().row.add( row );
+                        if(surat && surat.nama_lengkap){
+                            var row = [
+                                surat._id,
+                                surat.nama_lengkap.nama,
+                                surat.tugas,
+                                surat.tgl_berangkat,
+                                surat.tgl_kembali,
+                                '<button type="button" class="edit-surat"><i class="icon-pencil"></i></button>'
+                            ]
+                            $('#tbl_riwayat').DataTable().row.add( row );
+                        }
                     });
                     $('#tbl_riwayat').DataTable().draw(false);
             })

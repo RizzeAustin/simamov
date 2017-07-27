@@ -436,7 +436,7 @@ pok.socket = function(io, connections){
 																						client.emit('pok_row_init_response', data, function () {
 																							//jika sudah  append, iterasi tiap output
 																							Komponen.find({'thang': thang, 'kdprogram': program.kdprogram, 'kdgiat': kegiatan.kdgiat,
-																							[parent_var]: parent_kd, active: true}).sort('kdkmpnen').exec(function(err, komponens){
+																							'kdoutput': soutput.kdsoutput, 'kdoutput': output.kdoutput, active: true}).sort('kdkmpnen').exec(function(err, komponens){
 																								//notif user jika ada error
 																								if(err){
 																									errorHandler(client, 'Database Error. Mohon hubungi admin.');
@@ -557,7 +557,7 @@ pok.socket = function(io, connections){
 																																client.emit('pok_row_init_response', data, function () {
 																																	//jika sudah  append, iterasi tiap output
 																																	Akun.find({'thang': thang, 'kdprogram': program.kdprogram, 'kdgiat': kegiatan.kdgiat,'kdoutput': output.kdoutput, 
-																																	'kdsoutput': soutput.kdsoutput, 'kdkmpnen': komponen.kdkmpnen, [parent_var]: parent_kd, active: true}).sort('kdakun').exec(function(err, akuns){
+																																	'kdsoutput': soutput.kdsoutput, 'kdkmpnen': komponen.kdkmpnen, 'kdskmpnen': skomponen.kdskmpnen, active: true}).sort('kdakun').exec(function(err, akuns){
 																																		//notif user jika ada error
 																																		if(err){
 																																			errorHandler(client, 'Database Error. Mohon hubungi admin.');
@@ -613,7 +613,7 @@ pok.socket = function(io, connections){
 																																					client.emit('pok_row_init_response', data, function () {
 																																						//jika sudah  append, iterasi tiap output
 																																						DetailBelanja.find({'thang': thang, 'kdprogram': program.kdprogram, 'kdgiat': kegiatan.kdgiat,'kdoutput': output.kdoutput, 
-																																						'kdsoutput': soutput.kdsoutput, [parent_var]: parent_kd, 'kdakun': akun.kdakun, active: true}).sort('noitem').exec(function(err, details){
+																																						'kdsoutput': soutput.kdsoutput, 'kdkmpnen': komponen.kdkmpnen, 'kdskmpnen': skomponen.kdskmpnen, 'kdakun': akun.kdakun, active: true}).sort('noitem').exec(function(err, details){
 																																							//notif user jika ada error
 																																							if(err){
 																																								errorHandler(client, 'Database Error. Mohon hubungi admin.');

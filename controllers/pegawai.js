@@ -52,13 +52,13 @@ pegawai.socket = function(io, connections){
 							_.each(dosens, function(dos, i, list){
 								var row = [
 									nomor,
-									dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang,
-									dos.kode_dosen,
+									dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
+									dos.kode_dosen || '-',
 									dos.pangkat || '-',
 									dos.gol_pajak || '-',
 									'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
 									+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-									dos.kode_dosen
+									dos.kode_dosen || '-'
 								]
 								nomor++;
 								client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
@@ -67,10 +67,10 @@ pegawai.socket = function(io, connections){
 							_.each(pegs, function(peg, i, list){
 								var row = [
 									nomor,
-									peg.nama,
-									peg._id,
-									peg.jabatan,
-									peg.gol,
+									peg.nama || '-',
+									peg._id || '-',
+									peg.jabatan || '-',
+									peg.gol || '-',
 									'<button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
 									+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
 									peg.kode_dosen || 'none'
@@ -83,27 +83,28 @@ pegawai.socket = function(io, connections){
 
 				});
 			} else if(tab == 'bps'){
+				var nomor = 1;
 				var query = 'SELECT * ' +
 							'FROM dosen ' +
 							'WHERE unit = ? AND kode_dosen NOT IN (?)';
 				CustomEntity.find({type: 'Penerima', unit: 'BPS'}).sort('nama').exec(function(err, bpspeg){
 					var kode_dosen = ['init'];
 					_.each(bpspeg, function(peg, i, list){
-						if(peg.kode_dosen) kode_dosen.push(peg.kode_dosen);
+						if(peg.get('kode_dosen')) kode_dosen.push(peg.get('kode_dosen'));
 						var row = [
-							i+1,
-							peg.nama,
-							peg.get('nip') || peg._id,
-							peg.jabatan || '-',
-							peg.gol || '-',
+							nomor++,
+							peg.nama || '-',
+							peg.get('nip') || '-',
+							peg.get('jabatan') || '-',
+							peg.get('gol') || '-',
 							'<button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
 							+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-							peg.kode_dosen || peg._id || 'none'
+							peg.get('kode_dosen') || 'none',
+							peg._id || 'none'
 						]
 						client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
 						if(i == list.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
 					});
-					console.log(kode_dosen)
 					sipadu_db.query(query, ['BPS', kode_dosen], function (err, dosens, fields) {
 						if (err){
 						  	console.log(err)
@@ -111,14 +112,15 @@ pegawai.socket = function(io, connections){
 						}
 						_.each(dosens, function(dos, i, list){
 							var row = [
-								i+1,
-								dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang,
-								dos.kode_dosen,
+								nomor++,
+								dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
+								dos.kode_dosen || '-',
 								dos.pangkat || '-',
 								dos.gol_pajak || '-',
 								'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
 								+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-								dos.kode_dosen || 'none'
+								dos.kode_dosen || 'none',
+								'none'
 							]
 							client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
 							if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
@@ -134,13 +136,14 @@ pegawai.socket = function(io, connections){
 						var row = [
 							i+1,
 							cust.nama,
-							cust._id,
+							cust.get('nip') || '-',
 							cust.jabatan || '-',
 							cust.gol || '-',
-							ket,
+							ket || '-',
 							'<button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
 							+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-							cust.kode_dosen || 'none'
+							cust.kode_dosen || 'none',
+							cust._id || 'none'
 						]
 						client.emit('pegawai_init_response', {'row': row, unit: 'non_stis_bps'});
 						if(i == custs.length - 1) client.emit('pegawai_init_finish', 'non_stis_bps');
@@ -192,7 +195,29 @@ pegawai.socket = function(io, connections){
 		})
 
 		client.on('edit_pegawai', function (data, cb) {
-			Pegawai.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
+			if(data.type == pegawai){
+				Pegawai.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
+					if (err) {
+		    			cb('gagal');
+		    			return
+		    		}
+					cb('sukses');
+				})
+			} else {
+				CustomEntity.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
+					console.log(err,status)
+					if (err) {
+		    			cb('gagal');
+		    			return
+		    		}
+					cb('sukses');
+				})
+			}
+			
+		})
+
+		client.on('edit_bps_ce', function (data, cb) {
+			CustomEntity.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
 				if (err) {
 	    			cb('gagal');
 	    			return
@@ -209,7 +234,8 @@ pegawai.socket = function(io, connections){
 	    		}
 
 	    		if(!status.result.n){
-	    			CustomEntity.remove({ type: 'Penerima' , $or: [{'_id': _id}, {'kode_dosen': _id}]}, function(err, status) {
+	    			CustomEntity.remove({'_id': _id}, function(err, status) {
+	    				console.log(err, status)
 	    				cb('sukses');
 	    			})
 	    		} else {

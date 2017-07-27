@@ -33,6 +33,7 @@
                                     <tbody>                            
                                     </tbody>
                                 </table>
+                                <button id="btn-tbh-pgw-stis">Tambah Pegawai</button>
                             </div>
                             <div class="tab-pane" id="pegawai_bps" role="tabpanel">
                                 <h6 class="text-center">Pegawai BPS</h3>
@@ -46,11 +47,13 @@
                                             <th>Golongan</th>
                                             <th>Pilihan</th>
                                             <th>Kode Dosen</th>
+                                            <th>id</th>
                                         </tr>
                                     </thead>
                                     <tbody>                            
                                     </tbody>
                                 </table>
+                                <button id="btn-tbh-pgw-bps">Tambah Pegawai BPS</button>
                             </div>
                             <div class="tab-pane" id="non_stis_bps" role="tabpanel">
                                 <h6 class="text-center">Non STIS/BPS</h3>
@@ -65,11 +68,13 @@
                                             <th>Keterangan</th>
                                             <th>Pilihan</th>
                                             <th>Kode Dosen</th>
+                                            <th>id</th>
                                         </tr>
                                     </thead>
                                     <tbody>                            
                                     </tbody>
                                 </table>
+                                <button id="btn-tbh-pgw-lainnya">Tambah Lainnya</button>
                             </div>
                         </div> 
                     </div>
@@ -230,6 +235,70 @@
 </div>
 <!-- /.modal -->
 
+
+<!-- /.modal -->
+<div class="modal fade" id="tambah_pegawai" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Tambah Pegawai/Yang Bepergian</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="padding: 15px">
+                    <div class="form-group row">
+                        <label for="username">Nama <span>*</span></label>
+                        <input type="text" class="form-control" id="tbh_nama" name='tbh_namanama'>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label class="radio-inline" for="tbh_jenis_pgw1">
+                                <input id="tbh_jenis_pgw1" type="radio" name="tbh_jenis_pgw" value="pegawai" checked="checked">Pegawai STIS
+                            </label>
+                            <label class="radio-inline" for="tbh_jenis_pgw2" style="margin-left: 10px">
+                                <input type="radio" id="tbh_jenis_pgw2" name="tbh_jenis_pgw" value="bps">BPS
+                            </label>
+                            <label class="radio-inline" for="tbh_jenis_pgw3" style="margin-left: 10px">
+                                <input type="radio" id="tbh_jenis_pgw3" name="tbh_jenis_pgw" value="custom_entity">Lainnya
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="tbh_id" id="nip">NIP/Nomor Identitas <span>*</span></label>
+                        <input type="text" class="form-control" id="tbh_id" name='tbh_id' required>
+                    </div>
+                    <div class="form-group row">
+                        <label for="tbh_gol" id="gol">Golongan <span>*</span></label>
+                        <select id="tbh_gol" name="tbh_gol" class="form-control input-lg" size="1">
+                            <option value="none">Tidak ada</option>
+                            <option value="I">I</option>
+                            <option value="II">II</option>
+                            <option value="III">III</option>
+                            <option value="IV">IV</option>
+                            <option value="Eselon I">Eselon I</option>
+                            <option value="Eselon II">Eselon II</option>
+                            <option value="Pejabat Negara">Pejabat Negara</option>
+                        </select>
+                    </div>
+                    <div class="form-group row">
+                        <label for="tbh_jabatan" id="jab">Jabatan <span>*</span></label>
+                        <input type="text" list="jabatan" class="form-control" id="tbh_jabatan" name='tbh_jabatan' required>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button id="btn-tambah-pegawai" type="button" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
 <script type="text/javascript">
     socket = io.connect($(location).attr('host'));
     
@@ -270,7 +339,7 @@
                 { width: 160, targets: [3] },
                 { width: 50, targets: [5] },
                 {
-                    "targets": [ 6 ],
+                    "targets": [ 6,7 ],
                     "visible": false,
                     "searchable": false
                 }
@@ -293,7 +362,7 @@
                 { width: 160, targets: [3] },
                 { width: 60, targets: [6] },
                 {
-                    "targets": [ 7 ],
+                    "targets": [ 7,8 ],
                     "visible": false,
                     "searchable": false
                 }
@@ -413,6 +482,9 @@
                 if(editor_tps.val() !== active_tps.text()){
                     if(editor_tps.val() == ''){
                         editor_tps.val('-');
+                        active_tps = null;
+                        state_active_editor = false;
+                        editor_tps.hide();
                     }else {
                         var edited = {};
                         if(active_tps.is(':nth-child(2)')) {
@@ -455,7 +527,147 @@
             }
         });
 
-        //hapus pegawai stis
+        //editable cell pegawai STIS
+        var BPS = {};
+        BPS.active_tps;
+        BPS.editor_tps;
+        BPS.state_active_editor = false;
+        $('#tbl_pegawai_bps').on('dblclick', 'tr td', function () {
+            //ingat td terklik
+            BPS.active_tps = $(this);
+            //cek kondisi saat td tdk bisa diedit
+            var row = BPS.active_tps.closest('tr').find('td:eq(2)');
+            if(BPS.state_active_editor || BPS.active_tps.is(':nth-child(1)') || BPS.active_tps.is(':nth-child(3)') || BPS.active_tps.is(':nth-child(6)')
+                || row.text() == $('#tbl_pegawai_bps').DataTable().row(row).data()[6]){
+                $.toast({
+                    text: 'Anda tidak dapat mengedit sel tersebut.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                });
+                return;
+            }
+            //set ada input yg aktif /spy tdk dobel
+            BPS.state_active_editor = true;
+            //css yg akan diclone
+            var cloneProperties = ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+                          'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+                          'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
+
+            if(BPS.active_tps.is(':nth-child(4)')) {
+                var datalist = '<input list="jabatan" name="jabatan">'
+                                +'<datalist id="jabatan">'
+                socket.emit('jab_list', 'ok', function(jabs){
+                    _.each(jabs, function(jab, index, list){
+                        datalist += '<option value="'+jab+'">';
+                    });
+                    datalist += '</datalist>';
+                    BPS.editor_tps = $(datalist).val(BPS.active_tps.text()).hide().appendTo(BPS.active_tps.parent());
+
+                    BPS.editor_tps.css('position', 'absolute');
+                    BPS.editor_tps
+                        .show()
+                        .offset(BPS.active_tps.offset())
+                        .css(BPS.active_tps.css(cloneProperties))
+                        .width(BPS.active_tps.width())
+                        .height(BPS.active_tps.height())
+                        .focus();
+                    BPS.editor_tps.select();
+                });
+                return;
+            } else if(BPS.active_tps.is(':nth-child(5)')) {
+                var datalist = '<input list="gol" name="gol">'
+                                +'<datalist id="gol">'
+                socket.emit('gol_list', 'ok', function(gols){
+                    _.each(gols, function(gol, index, list){
+                        datalist += '<option value="'+gol+'">';
+                    });
+                    datalist += '</datalist>';
+                    BPS.editor_tps = $(datalist).val(BPS.active_tps.text()).hide().appendTo(BPS.active_tps.parent());
+
+                    BPS.editor_tps.css('position', 'absolute');
+                    BPS.editor_tps
+                        .show()
+                        .offset(BPS.active_tps.offset())
+                        .css(BPS.active_tps.css(cloneProperties))
+                        .width(BPS.active_tps.width())
+                        .height(BPS.active_tps.height())
+                        .focus();
+                    BPS.editor_tps.select();
+                });
+                return;
+            } else {
+                BPS.editor_tps = $('<textarea></textarea>').val(BPS.active_tps.text()).hide().appendTo(BPS.active_tps.parent());
+            }
+            //set css editor
+            BPS.editor_tps.css('position', 'absolute');
+            BPS.editor_tps
+                .show()
+                .offset(BPS.active_tps.offset())
+                .css(BPS.active_tps.css(cloneProperties))
+                .width(BPS.active_tps.width())
+                .height(BPS.active_tps.height())
+                .focus();
+            //blok semua teks
+            BPS.editor_tps.select();
+        });
+
+        //saat editor diblur/ tekan enter
+        $('#tbl_pegawai_bps').on('blur keydown', 'input,textarea', function (e) {
+            //jika enter anggap blur (krn klo tidak, di fired 2 kali)
+            if (e.which === 13){
+                $(this).blur();
+            } else if (e.which === 0){//jika blur ==> keycode nya 0
+                //show kembali
+                if(BPS.editor_tps.val() !== BPS.active_tps.text()){
+                    if(BPS.editor_tps.val() == ''){
+                        BPS.editor_tps.val('-');
+                        BPS.active_tps = null;
+                        BPS.state_active_editor = false;
+                        BPS.editor_tps.hide();
+                    }else {
+                        var edited = {};
+                        edited._id = $('#tbl_pegawai_bps').DataTable().row(BPS.active_tps.closest('tr')).data()[7];
+                        if(BPS.active_tps.is(':nth-child(2)')) {
+                            edited.field = 'nama';
+                            edited.value = BPS.editor_tps.val();
+                        } else if(BPS.active_tps.is(':nth-child(4)')){
+                            edited.field = 'jabatan';
+                            edited.value = BPS.editor_tps.val();
+                        } else {
+                            edited.field = 'gol';
+                            edited.value = BPS.editor_tps.val();
+                        }
+                        socket.emit('edit_bps_ce', edited, function(status){
+                            if(status == 'sukses'){
+                                $('#tbl_pegawai_bps').DataTable()
+                                    .cell(BPS.active_tps)
+                                    .data(BPS.editor_tps.val())
+                                    .draw(false);
+                                BPS.active_tps = null;
+                                BPS.state_active_editor = false;
+                                BPS.editor_tps.hide();
+                                generalAlert('Berhasil diubah.')
+                            } else {
+                                generalAlert('Gagal diubah, mohon hub. admin.')
+                            }
+                        })
+                    }
+                } else {
+                    BPS.active_tps = null;
+                    BPS.state_active_editor = false;
+                    BPS.editor_tps.hide();
+                }
+            } else if(e.which === 27){
+                BPS.active_tps = null;
+                BPS.state_active_editor = false;
+                BPS.editor_tps.hide();
+            }
+        });
+
+        //hapus pegawai
         $('#all-table-container').on('click', '.hapus-pgw', function (e) {
             var btn = $(this);
             btn.html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>');
@@ -463,6 +675,11 @@
             console.log(table_id)
             var row = $(this).closest('tr');
             var _id = row.find('td:eq(2)').text();
+            if(table_id == 'tbl_pegawai_bps'){
+                _id = $('#'+table_id).DataTable().row(row).data()[7];
+            } else if(table_id == 'tbl_non_stis_bps'){
+                _id = $('#'+table_id).DataTable().row(row).data()[8];
+            }
             socket.emit('hapus_pegawai', _id, function(status){
                 if(status == 'sukses'){
                     btn.closest('table').DataTable().row( row )
@@ -673,20 +890,34 @@
              $('#nama_penerima_link_id').val(datum._id);
         });
 
+        //state kode dosen utk link
         var kode_dosen_active;
         var link_row_active;
         var active_table_id;
         $('#all-table-container').on('click', '.link-sipadu', function (e) {
+            //destroy utk auto complete yg beda2 tiap jenis pegawai
             $('#nama_penerima_link').typeahead('destroy');
-            var row = $(this).closest('tr');
+
             active_table_id = $(this).closest('table').attr('id');
+
+
+            //row utk mengambil kode dosen
+            var row = $(this).closest('tr');
+            var data = $('#'+active_table_id).DataTable().row(row).data();
+            kode_dosen_active = (active_table_id == 'tbl_non_stis_bps')?data[7]:data[6];
+
+            //utk remove row
             link_row_active = $(this).closest('tr');
-            kode_dosen_active = $('#'+active_table_id).DataTable().row(row).data()[6];
+
+            //tipe utk jenis pencarian pgw
             var type = '';
             if(active_table_id == 'tbl_pegawai_stis') type = 'pegawai_only'
                 else if(active_table_id == 'tbl_pegawai_bps') type = 'custom_bps_only'
                     else type = 'pegawai_and_bps';
-            $('#nama_penerima').val(row.find('td:eq(1)').text())
+            //assign nama ke fild
+            $('#nama_penerima').val(row.find('td:eq(1)').text());
+
+            //register typeahead
             $('#nama_penerima_link').typeahead({
                     hint: true,
                     highlight: true,
@@ -708,10 +939,22 @@
             e.preventDefault();
             $("#btn-link-sipadu-submit").prop("disabled",true);
             $("#btn-link-sipadu-submit").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#btn-link-sipadu-submit").text());
+
             var edited = {};
+            //id target link id
             edited._id = $('#nama_penerima_link_id').val();
+            //field tambahan utk db
             edited.field = 'kode_dosen';
+            //value utk kode dosen
             edited.value = kode_dosen_active;
+            if(active_table_id == 'tbl_pegawai_bps'){
+                edited.type = 'pegawai';
+            } else if(active_table_id == 'tbl_non_stis_bps'){
+                edited.type = 'ce';
+            } else{
+                edited.type = 'bps';
+            }
+
             var parent_row = $('#'+active_table_id).DataTable()
                 .rows( function ( idx, data, node ) {
                     return data[2] == edited._id ?
@@ -724,13 +967,27 @@
                 if(status == 'sukses'){
                     var parent_row = $('#'+active_table_id).DataTable()
                         .rows( function ( idx, data, node ) {
-                            return data[2] == edited._id ?
+                            var idx = 2
+                            if(active_table_id == 'tbl_pegawai_bps'){
+                                idx = 7;
+                            } else if(active_table_id == 'tbl_non_stis_bps'){
+                                idx = 8;
+                            }
+
+                            return data[idx] == edited._id ?
                                 true : false;
                         } )
                         .nodes()
                         .to$()
                     var target = $('#'+active_table_id).DataTable().row(parent_row);
-                    target.data()[6] = kode_dosen_active;
+
+                    var idx = 6
+                    if(active_table_id == 'tbl_non_stis_bps'){
+                        idx = 7;
+                    }
+
+                    target.data()[idx] = kode_dosen_active;
+
                     target.data(target.data()).draw(false);
                     $('#'+active_table_id).DataTable()
                         .row(link_row_active)
@@ -955,6 +1212,90 @@
             $('#tbl_non_stis_bps').DataTable().clear();
             //invoke data pegawai STIS
             socket.emit('pegawai_init', 'non');
+        })
+
+        function cekFieldTambahPeg(){
+            if($('#tbh_nama').val() == ''||$('#tbh_id').val() == ''||$('#tbh_jabatan').val() == '') return false;
+                else return true;
+        }
+
+        $('#btn-tbh-pgw-stis').click(function(){
+            $('#nip span, #gol span, #jab span').remove();
+            $('#nip').html($('#nip').html()+'<span>*</span>');
+            $('#gol').html($('#gol').html()+'<span>*</span>');
+            $('#jab').html($('#jab').html()+'<span>*</span>');
+            $("input[name=tbh_jenis_pgw][value='pegawai']").prop('checked', true);
+            $('#tambah_pegawai').modal('show');
+        });
+
+        $('#btn-tbh-pgw-bps').click(function(){
+            $('#nip span, #gol span, #jab span').remove();
+            $('#nip').html($('#nip').html()+'<span>*</span>');
+            $('#gol').html($('#gol').html()+'<span>*</span>');
+            $('#jab').html($('#jab').html()+'<span>*</span>');
+            $("input[name=tbh_jenis_pgw][value='bps']").prop('checked', true);
+            $('#tambah_pegawai').modal('show');
+        });
+
+        $('#btn-tbh-pgw-lainnya').click(function(){
+            $('#nip span, #gol span, #jab span').remove();
+            $("input[name=tbh_jenis_pgw][value='custom_entity']").prop('checked', true);
+            $('#tambah_pegawai').modal('show');
+        });
+
+        $('#tambah_pegawai').on('shown.bs.modal', function () {
+            $('#tbh_nama').focus();
+            socket.emit('jab_list', 'ok', function(jabs){
+                var datalist = '<datalist id="jabatan">'
+                _.each(jabs, function(jab, index, list){
+                    datalist += '<option value="'+jab+'">';
+                });
+                datalist += '</datalist>';
+                $('#tbh_jabatan').after(datalist);
+            });
+        });
+
+        $("#btn-tambah-pegawai").click(function(){
+            if($('input[name=tbh_jenis_pgw]:checked').val() == 'custom_entity'){
+                if($('#tbh_nama').val() == ''){
+                    generalAlert('Isian nama tidak boleh kosong.')
+                    return;
+                }
+            }else if(!cekFieldTambahPeg()){
+                generalAlert('Cek isian wajib.')
+                return
+            }
+            var data = {};
+            data.nama = $('#tbh_nama').val();
+            data._id = $('#tbh_id').val();
+            data.gol = $('#tbh_gol').val();
+            data.jabatan = $('#tbh_jabatan').val();
+
+            var collection = $('input[name=tbh_jenis_pgw]:checked').val();
+            if(data.gol == 'none' && (collection == 'pegawai' || collection == 'bps')){
+                generalAlert('Golongan harus ada.')
+                return
+            }
+
+            socket.emit('entry_pegawai_baru', {'data': data, 'collection': collection}, 
+                function(_id){
+                    if(!_id){
+                        generalAlert('Gagal menyimpan.');
+                        return;
+                    }
+                    if(collection == 'pegawai'){
+                        $('#tbl_pegawai_stis').DataTable().clear();
+                        socket.emit('pegawai_init', 'stis');
+                    } else if(collection == 'bps'){
+                        $('#tbl_pegawai_bps').DataTable().clear();
+                        socket.emit('pegawai_init', 'bps');
+                    } else {
+                        $('#tbl_non_stis_bps').DataTable().clear();
+                        socket.emit('pegawai_init', 'non');
+                    }
+                    $('#tambah_pegawai').modal('toggle');
+                    generalAlert('Pegawai berhasil disimpan.')
+            })
         })
 
         function generalAlert(message){

@@ -11,10 +11,7 @@ var SuratTugasBiasaSchema = new Schema({
         _id: String,
         value: String
     }],
-    "lokasi": {
-        type: String,
-        ref: 'CustomEntity'
-    },
+    "lokasi": String,
 
     "nama_lengkap" : {
         type: String,

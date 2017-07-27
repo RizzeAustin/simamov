@@ -723,8 +723,35 @@
                 $( row ).find('td:eq(9)').attr('class', 'format-uang');
                 $( row ).find('td:eq(10)').attr('class', 'format-uang');
                 $( row ).find('td:eq(11)').attr('class', 'format-uang');
+            },
+            "footerCallback": function ( row, data, start, end, display ) {
+                calcSum('akun', data, 'pok_table_entry')
+                calcSum('skomponen', data, 'pok_table_entry')
+                calcSum('komponen', data, 'pok_table_entry')
+                calcSum('soutput', data, 'pok_table_entry')
+                calcSum('output', data, 'pok_table_entry')
+                calcSum('kegiatan', data, 'pok_table_entry')
+                calcSum('program', data, 'pok_table_entry');
             }
         });
+
+        function calcSum(type, data, tab_id){
+            var arr = _.filter(data, function(col){ return col[2].match(new RegExp(type, "i"));});
+            _.each(arr, function(item, index, list){
+                var parent_row = $('#'+tab_id).DataTable()
+                                .rows( function ( idx, data, node ) {
+                                    return data[0] == item[0] ?
+                                        true : false;
+                                } )
+                                .nodes()
+                                .to$()
+                                .find('td:eq(6)');
+                var v = _.reduce(_.map(_.filter(data, function(row){ return row[1] == item[0]; }), function(arr){ return arr[8]; }), function(a, b){
+                         return a + b; }, 0);
+                // parent_row.text(v);
+                $('#'+tab_id).DataTable().cell(parent_row).data(v);
+            })
+        }
         tabel_riwayat.DataTable({
             // scrollY:        false,
             // scrollX:        true,
@@ -826,8 +853,6 @@
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
-
-                console.log(row, data, start, end, display)
      
                 // Total over this page
                 // pageTotal4 = api
@@ -1797,12 +1822,13 @@
             if(!obj || obj == '' || obj == 0 || obj == '0' || obj == {} || obj == []) return true;
                 else return false;
         }
-
-
-
+        var target = document.getElementById('entrychild');
+        var target2 = document.getElementById('utamachild');
+        var spinner = new Spinner(opts).spin(target);
         //Tombol riwayat
         var detail_id_target_riwayat;
         tabel_pok_entry.on('click', '.riwayat', function () {
+            spinner.spin(target);
             //clear semua row sblm ditambahkan
             tabel_riwayat.DataTable().clear().draw(false);
             var all_row_target_td = tabel_pok_entry.DataTable().row($(this).closest('tr')).data();
@@ -1818,6 +1844,7 @@
                 populateSelect(data.outs, 'output');
                 populateSelect(data.kegs, 'kegiatan');
                 populateSelect(data.progs, 'program');
+                spinner.stop();
             });
 
             $('.detail_blnj_riwayat').html(all_row_target_td[4])
@@ -2564,6 +2591,15 @@
                 $( row ).find('td:eq(5)').attr('class', 'format-uang');
                 $( row ).find('td:eq(6)').attr('class', 'format-uang');
                 $( row ).find('td:eq(7)').attr('class', 'text-center');
+            },
+            "footerCallback": function ( row, data, start, end, display ) {
+                calcSum('akun', data, 'pok_table_edit')
+                calcSum('skomponen', data, 'pok_table_edit')
+                calcSum('komponen', data, 'pok_table_edit')
+                calcSum('soutput', data, 'pok_table_edit')
+                calcSum('output', data, 'pok_table_edit')
+                calcSum('kegiatan', data, 'pok_table_edit')
+                calcSum('program', data, 'pok_table_edit');
             }
         });
 
@@ -2621,9 +2657,20 @@
         $('#btn-tambah-uraian-akun').click(function () {
             var _id = $('#eua_kode_akun').val()
             var uraian = $('#eua_uraian_akun').val();
+            if(_id == '' || uraian == ''){
+                generalAlert('Isian tidak boleh kosong.');
+                return;
+            }
             socket.emit('pok_uraian_akun_entry', {'_id': _id.replace(/\s/g, ''), 'uraian': uraian});
             $('#eua_kode_akun').val('');
             $('#eua_uraian_akun').val('');
+        });
+
+        $('#eua_kode_akun, #eua_uraian_akun').keyup(function(e){
+            if(e.keyCode == 13)
+            {
+                $('#btn-tambah-uraian-akun').click();
+            }
         });
 
         socket.on('pok_uraian_akun_get_response', function(uraianakuns) {
@@ -3608,9 +3655,6 @@
             , hwaccel: false // Whether to use hardware acceleration
             , position: 'absolute' // Element positioning
         }
-        var target = document.getElementById('entrychild')
-        var target2 = document.getElementById('utamachild')
-        var spinner = new Spinner(opts).spin(target);
 
         socket.emit('pok_row_init', 'entry');
 
@@ -3627,35 +3671,37 @@
             // $("#pok_table tbody").append(data);
             $('#pok_table_'+data.tabel).DataTable().row.add( data.row );
             cb();
-            var prt_row = $('#pok_table_'+data.tabel).DataTable()
-                            .rows( function ( idx, dataa, node ) {
-                                return dataa[0] == data.row[0] ?
-                                    true : false;
-                            } );
-            prt_row
-                .nodes()
-                .to$()
-                .find('td.format-uang')
-                .autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+            // var prt_row = $('#pok_table_'+data.tabel).DataTable()
+            //                 .rows( function ( idx, dataa, node ) {
+            //                     return dataa[0] == data.row[0] ?
+            //                         true : false;
+            //                 } );
+            // prt_row
+            //     .nodes()
+            //     .to$()
+            //     .find('td.format-uang')
+            //     .autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
         })
 
         socket.on('pok_edit_update_jlh', function(data) {
-            var prt_row = $('#pok_table_'+data.tabel).DataTable()
-                                .rows( function ( idx, dataa, node ) {
-                                    return dataa[0] == data.parent_id ?
-                                        true : false;
-                                } );
-            //ambil parent td
-            var parent_jumlah_td = prt_row
-                                    .nodes()
-                                    .to$()
-                                    .find('td:eq(6)');
+            // var prt_row = $('#pok_table_'+data.tabel).DataTable()
+            //                     .rows( function ( idx, dataa, node ) {
+            //                         return dataa[0] == data.parent_id ?
+            //                             true : false;
+            //                     } );
+            // //ambil parent td
+            // var parent_jumlah_td = prt_row
+            //                         .nodes()
+            //                         .to$()
+            //                         .find('td:eq(6)');
 
-            $('#pok_table_'+data.tabel).DataTable()
-                .cell(parent_jumlah_td)
-                .data(data.new_jumlah);
+            // if(parent_jumlah_td.length == 0) return;
 
-            setAutoNumeric(parent_jumlah_td, data.new_jumlah);
+            // $('#pok_table_'+data.tabel).DataTable()
+            //     .cell(parent_jumlah_td)
+            //     .data(data.new_jumlah);
+
+            // setAutoNumeric(parent_jumlah_td, data.new_jumlah);
         })
 
         socket.on('pok_item_deleted', function(id) {
@@ -3677,7 +3723,7 @@
         })
 
         socket.on('pok_datatable_apply', function(tabel) {
-            if(tabel == 'edit') $('#pok_table_edit').DataTable().draw(false)
+            if(tabel == 'edit') $('#pok_table_edit').DataTable().draw(false);
             else {
                 $('#pok_table_entry').DataTable().draw(false);
                 var prt_row = tabel_pok_entry.DataTable()
@@ -3703,6 +3749,9 @@
                 }                
             }
             spinner.stop();
+            $('td.format-uang').each (function() {
+                $(this).text(formatUang($(this).text()));
+            });
         })
 
         socket.on('title_change', function(new_pok_name) {
@@ -3878,7 +3927,6 @@
         });
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            console.log('sahdbasbskjnkjasbdkj')
             var table = $.fn.dataTable.fnTables(true);
             if ( table.length > 0 ) {
                 $(table).dataTable().fnAdjustColumnSizing();

@@ -375,7 +375,7 @@
             })
         })
 
-        var dki_jkt = {{prov.taksi_dn}};
+        var dki_jkt = '{{prov.taksi_dn}}';
         var current_gol = '{{st.nama_lengkap.gol}}';
         console.log('{{st.nama_lengkap.gol}}')
         var current_jumlah_hari = '{{st.jumlah_hari}}';
@@ -616,15 +616,17 @@
                 function(response){
                     $('#tbl_riwayat').DataTable().clear();
                     _.each(response, function(surat, i, list){
-                        var row = [
-                            surat._id,
-                            surat.nama_lengkap.nama,
-                            surat.tugas,
-                            surat.tgl_berangkat,
-                            surat.tgl_kembali,
-                            '<button type="button" class="hitung"><i class="icon-check"></i></button>'
-                        ]
-                        $('#tbl_riwayat').DataTable().row.add( row );
+                        if(surat && surat.nama_lengkap){
+                            var row = [
+                                surat._id,
+                                surat.nama_lengkap.nama,
+                                surat.tugas,
+                                surat.tgl_berangkat,
+                                surat.tgl_kembali,
+                                '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                            ]
+                            $('#tbl_riwayat').DataTable().row.add( row );
+                        }
                     });
                     $('#tbl_riwayat').DataTable().draw(false);
             })
@@ -641,15 +643,17 @@
                     function(response){
                         $('#tbl_riwayat').DataTable().clear();
                         _.each(response, function(surat, i, list){
-                            var row = [
-                                surat._id,
-                                surat.nama_lengkap.nama,
-                                surat.tugas,
-                                surat.tgl_berangkat,
-                                surat.tgl_kembali,
-                                '<button type="button" class="hitung"><i class="icon-check"></i></button>'
-                            ]
-                            $('#tbl_riwayat').DataTable().row.add( row );
+                            if(surat && surat.nama_lengkap){
+                                var row = [
+                                    surat._id,
+                                    surat.nama_lengkap.nama,
+                                    surat.tugas,
+                                    surat.tgl_berangkat,
+                                    surat.tgl_kembali,
+                                    '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                                ]
+                                $('#tbl_riwayat').DataTable().row.add( row );
+                            }
                         });
                         $('#tbl_riwayat').DataTable().draw(false);
                 })
@@ -660,15 +664,17 @@
                     function(response){
                         $('#tbl_riwayat').DataTable().clear();
                         _.each(response, function(surat, i, list){
-                            var row = [
-                                surat._id,
-                                surat.nama_lengkap.nama,
-                                surat.tugas,
-                                surat.tgl_berangkat,
-                                surat.tgl_kembali,
-                                '<button type="button" class="hitung"><i class="icon-check"></i></button>'
-                            ]
-                            $('#tbl_riwayat').DataTable().row.add( row );
+                            if(surat && surat.nama_lengkap){
+                                var row = [
+                                    surat._id,
+                                    surat.nama_lengkap.nama,
+                                    surat.tugas,
+                                    surat.tgl_berangkat,
+                                    surat.tgl_kembali,
+                                    '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                                ]
+                                $('#tbl_riwayat').DataTable().row.add( row );
+                            }
                         });
                         $('#tbl_riwayat').DataTable().draw(false);
                 })
@@ -683,15 +689,17 @@
                 function(response){
                     $('#tbl_riwayat').DataTable().clear();
                     _.each(response, function(surat, i, list){
-                        var row = [
-                            surat._id,
-                            surat.nama_lengkap.nama,
-                            surat.tugas,
-                            surat.tgl_berangkat,
-                            surat.tgl_kembali,
-                            '<button type="button" class="hitung"><i class="icon-check"></i></button>'
-                        ]
-                        $('#tbl_riwayat').DataTable().row.add( row );
+                        if(surat && surat.nama_lengkap){
+                            var row = [
+                                surat._id,
+                                surat.nama_lengkap.nama,
+                                surat.tugas,
+                                surat.tgl_berangkat,
+                                surat.tgl_kembali,
+                                '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                            ]
+                            $('#tbl_riwayat').DataTable().row.add( row );
+                        }
                     });
                     $('#tbl_riwayat').DataTable().draw(false);
             })
@@ -706,15 +714,17 @@
                     function(response){
                         $('#tbl_riwayat').DataTable().clear();
                         _.each(response, function(surat, i, list){
-                            var row = [
-                                surat._id,
-                                surat.nama_lengkap.nama,
-                                surat.tugas,
-                                surat.tgl_berangkat,
-                                surat.tgl_kembali,
-                                '<button type="button" class="hitung"><i class="icon-check"></i></button>'
-                            ]
-                            $('#tbl_riwayat').DataTable().row.add( row );
+                            if(surat && surat.nama_lengkap){
+                                var row = [
+                                    surat._id,
+                                    surat.nama_lengkap.nama,
+                                    surat.tugas,
+                                    surat.tgl_berangkat,
+                                    surat.tgl_kembali,
+                                    '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                                ]
+                                $('#tbl_riwayat').DataTable().row.add( row );
+                            }
                         });
                         $('#tbl_riwayat').DataTable().draw(false);
                 })

@@ -82,7 +82,7 @@ sppd.socket = function(io, connections){
 	    	})
 	    })
 		client.on('lokasi_list', function (q, cb){
-	    	CustomEntity.find({"thang": thang, "nama": new RegExp(q, "i"), 'type': 'lokasi'}, function(err, custs){
+	    	CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'lokasi'}, function(err, custs){
 	    		_.each(custs, function(item, index, list){
 	    			custs[index].d = levenshtein.get(q, item.nama);
 	    		})
@@ -237,7 +237,8 @@ sppd.socket = function(io, connections){
     							Model.findOne({_id: srt._id}, 'nama_lengkap', function(err, res){
     								CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
     									if(!peg){
-    										return;
+    										delete surats[index];
+    										cb(null, '');
     									} else {
     										srt.nama_lengkap = peg.toObject();
 											cb(null, '')
@@ -251,6 +252,7 @@ sppd.socket = function(io, connections){
     				)
     			})
     			async.series(tasks, function(err, final){
+    				console.log(surats)
     				cb(surats);
     			})
     		})
@@ -270,7 +272,7 @@ sppd.socket = function(io, connections){
     				}
 	    		})
 	    	} else {
-	    		SuratTugasBiasa.findOne({ "_id": data.nomor}).populate('nama_lengkap lokasi').exec(function(err, surat){
+	    		SuratTugasBiasa.findOne({ "_id": data.nomor}).populate('nama_lengkap').exec(function(err, surat){
 	    			if(!surat.nama_lengkap){
 						SuratTugasBiasa.findOne({_id: surat._id}, 'nama_lengkap', function(err, res){
 							CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
@@ -329,14 +331,12 @@ sppd.socket = function(io, connections){
 			})
 	    })
 	    client.on('kab_tiket_edit', function (data, cb){
-	    	console.log(data)
     		Kab.update({_id: data._id},{$set: data.data}, {upsert: true}).exec(function(err, result){
 				cb('sukses');
 			})
 	    })
 	    client.on('representasi_edit', function (data, cb){
     		Representasi.update({_id: data._id},{$set: data.data}, {upsert: true}).exec(function(err, result){
-    			console.log(err, result)
 				cb('sukses');
 			})
 	    })
@@ -353,7 +353,6 @@ sppd.socket = function(io, connections){
 				})
 	    	} else {
 	    		Akun.find({'kdkmpnen': kdkmpnen, 'thang': thang}).sort('kdakun').exec(function(err, akuns){
-	    			console.log(kdkmpnen)
 					cb(akuns || [])
 				})
 	    	}
@@ -426,7 +425,6 @@ sppd.get('/perhitungan', function(req, res){
 		}
 		if(!st.nama_lengkap){
 			SuratTugas.findOne({_id: st._id}, function(err, sutu) {
-				console.log(sutu)
 				CustomEntity.findOne({_id: sutu.nama_lengkap}, function(err, ce){
 					if(!ce){
 						res.render('sppd/perhitungan', {layout: false, admin: req.session.jenis});
@@ -601,6 +599,7 @@ function handleSuratTugas(data, cb, res){
 			})
 		}], 
 		function(err, finish){
+			console.log(data.tugas);
 			if(data.docx){
 				res.download(outputDocx);
 				res.on('finish', function() {
@@ -650,9 +649,9 @@ function handleSuratTugasBiasa(data, cb, res){
 		
 		function(cb){
 			if(!data.lokasi){
-				CustomEntity.create({ type: 'lokasi', nama: data.lokasi_label }, function (err, lok) {
+				CustomEntity.create({ type: 'lokasi', nama: data.lokasi }, function (err, lok) {
 				  if (err) return handleError(err);
-				  data.lokasi = lok._id;
+				  data.lokasi = lok.nama;
 				  cb(null, '')
 				})
 			} else {
@@ -701,8 +700,7 @@ function handleSuratTugasBiasa(data, cb, res){
 
 			//simpan db
 			st.save(function(err, result){
-				st.populate('nama_lengkap lokasi ttd_legalitas ttd_surat_tugas', function(err2){
-					// console.log(data.nama_lengkap.length)
+				st.populate('nama_lengkap ttd_legalitas ttd_surat_tugas', function(err2){
 					outputDocx = __dirname+"/../template/output/sppd_biasa/"+current_timestamp+"_02722."+st._id+"-"
 									+(st.tgl_berangkat.match(/\d{4}$/)[0])+"-"
 									+st.nama_lengkap.nama+".docx";
@@ -737,6 +735,11 @@ function handleSuratTugasBiasa(data, cb, res){
 			buatSurat(data, outputDocx, doc, cb);
 		}],
 		function(err, finish){
+			// CustomEntity.find({nama: data.detail_tugas}, function(err, res){
+			// 	if(!res){
+			// 		CustomEntity.create({nama: data.detail_tugas});
+			// 	}
+			// })
 			if(data.docx){
 				res.download(outputDocx);
 				res.on('finish', function() {
