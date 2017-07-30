@@ -326,6 +326,30 @@
             selected_peg_id = datum._id;
         });
 
+        $('#inp-ttd-surat-tugas').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-ttd-surat-tugas').click();
+            }
+        })
+
+        $('#inp-ttd-legalitas').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-ttd-legalitas').click();
+            }
+        })
+
+        $('#inp-ppk').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-set-ppk').click();
+            }
+        })
+
+        $('#inp-bend').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-set-bend').click();
+            }
+        })
+
         $('#btn-ttd-surat-tugas').click(function(){
             socket.emit('add_ttd_st', {_id: selected_peg_id}, 
                 function(status){

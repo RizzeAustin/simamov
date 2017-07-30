@@ -17,7 +17,7 @@
 
                                             <div class="form-group col-sm-2">
                                                 <label for="username">Nama Pengguna</label>
-                                                <input type="text" class="form-control" id="username" name='_id' autocomplete="off" required>
+                                                <input type="text" class="form-control" id="username" name='username' autocomplete="off" required>
                                             </div>
 
                                             <div class="form-group col-sm-2">
@@ -44,7 +44,7 @@
                                 <!--/.row-->    
                                 </form>
                                 <h5>Administrator</h5>
-                                <table id="adm_table" class="table table-bordered" style="width: 80%">
+                                <table id="adm_table" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th width="10%">Nama Pengguna</th>
@@ -56,19 +56,20 @@
                                     <tbody>                                            
                                     {{#each adm_user}}
                                         <tr>
-                                            <td class='username'>{{_id}}</td>
+                                            <td class="username">{{username}}</td>
                                             <td>{{ip_address}}</td>
                                             <td>{{last_login_time}}</td>
-                                            <td>
+                                            <td id="{{_id}}" class="text-center">
                                                 <button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button>
                                                 <button type="button" class="del"><i class="icon-user-unfollow"></i></button>
+                                                <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button>
                                             </td>
                                         </tr>
                                     {{/each}}  
                                     </tbody>
                                 </table> 
                                 <h5>Editor</h5>
-                                <table id="editor_table" class="table table-bordered" style="width: 80%">
+                                <table id="editor_table" class="table table-bordered">
                                     <thead>
                                         <tr>
                                             <th width="10%">Nama Pengguna</th>
@@ -80,12 +81,13 @@
                                     <tbody>                                            
                                     {{#each editor_user}}
                                         <tr>
-                                            <td class='username'>{{_id}}</td>
+                                            <td class='username'>{{username}}</td>
                                             <td>{{ip_address}}</td>
                                             <td>{{last_login_time}}</td>
-                                            <td>
+                                            <td id="{{_id}}" class="text-center">
                                                 <button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button>
                                                 <button type="button" class="del"><i class="icon-user-unfollow"></i></button>
+                                                <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button>
                                             </td>
                                         </tr>
                                     {{/each}}  
@@ -115,7 +117,7 @@
                     <div style="padding: 15px">
                         <div class="form-group row">
                             <label for="username">Nama Pengguna</label>
-                            <input type="text" class="form-control" id="username_edit" name='_id' disabled>
+                            <input type="text" class="form-control" id="username_edit" name='username' disabled>
                         </div>
 
                         <div class="form-group row">
@@ -146,7 +148,94 @@
 </div>
 <!-- /.modal -->
 
+<div class="modal fade" id="riwayat-user" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Riwayat User</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0 15px;">
+                <div style="padding: 15px; padding-bottom: 0">
+                    <div style="height: 510px;position:relative;">
+                        <div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">
+                            <div class="row" style="margin-bottom: 20px">
+                                <div class="col-md-12">  
+                                    <div class="row" style="margin-bottom: 5px">
+                                        <div class="col-md-12">
+                                            <strong>Berdasarkan waktu :</strong>
+                                        </div>
+                                    </div>
+                                    <form id="riwayat_form" method="post" action="/pok/riwayat_pengeluaran">
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <div class="radio">
+                                                    <label for="tampil-riwayat-by-range">
+                                                        <input type="radio" id="tampil-riwayat-by-range" name="tampil_riwayat" value="0"> Periode <input id="riwayat-lower_ts" type="text"> - <input id="riwayat-upper_ts" type="text">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <div class="radio">
+                                                    <label for="tampil-riwayat-by-month">
+                                                        <input type="radio" id="tampil-riwayat-by-month" name="tampil_riwayat" value="1" checked="checked"> Bulan 
+                                                        <select id="bulan_st_modal" name="bulan_st_modal" size="1">
+                                                            <option value="none">--pilih--</option>
+                                                            <option value="0">Januari</option>
+                                                            <option value="1">Februari</option>
+                                                            <option value="2">Maret</option>
+                                                            <option value="3">April</option>
+                                                            <option value="4">Mei</option>
+                                                            <option value="5">Juni</option>
+                                                            <option value="6">Juli</option>
+                                                            <option value="7">Agustus</option>
+                                                            <option value="8">September</option>
+                                                            <option value="9">Oktober</option>
+                                                            <option value="10">November</option>
+                                                            <option value="11">Desember</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="tbl_riwayat" class="table" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Waktu</th>
+                                                <th>Aktivitas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
 <script type="text/javascript">
+
     //tambah user
     $('#tambah_user').on('submit', function(e) {
         e.preventDefault();
@@ -155,18 +244,16 @@
             type: "POST",
             data: $(this).serialize(),
             success: function (data) {
-                if(data == 'added'){
-                    generalAlert('Pengguna berhasil dibuat.');
-                    if($('#jenis_user').val() == '1'){
-                        $('#adm_table > tbody:last-child').append('<tr><td class="username">'+$('#username').val()+'</td><td></td><td></td><td><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button></td></tr>');
-                    } else{
-                        $('#editor_table > tbody:last-child').append('<tr><td class="username">'+$('#username').val()+'</td><td></td><td></td><td><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button></td></tr>');
-                    }
-                    $('#tambah_user')[0].reset();
-                } else if(data == 'existed'){
+                if(data == 'existed'){
                     generalAlert('Pengguna sudah ada.');
                 } else{
-                    generalAlert(data);
+                    generalAlert('Pengguna berhasil dibuat.');
+                    if($('#jenis_user').val() == '1'){
+                        $('#adm_table > tbody:last-child').append('<tr><td class="username">'+$('#username').val()+'</td><td></td><td></td><td id="'+data+'" class="text-center"><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button> <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td></tr>');
+                    } else{
+                        $('#editor_table > tbody:last-child').append('<tr><td class="username">'+$('#username').val()+'</td><td></td><td></td><td id="'+data+'" class="text-center"><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button> <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td></tr>');
+                    }
+                    $('#tambah_user')[0].reset();
                 }
             },
             error: function (jXHR, textStatus, errorThrown) {
@@ -176,11 +263,19 @@
     });
 
     //edit user
+    var row_editing;
+    var row_editing_jenis_now;
     $('table').on('click', '.edit', function () {
-        if($(this).closest('table').attr('id') == 'adm_table') $('#jenis_user_edit').val(1)
-            else $('#jenis_user_edit').val(0);
+        row_editing = $(this).closest('tr');
+        if($(this).closest('table').attr('id') == 'adm_table'){
+            row_editing_jenis_now = 1;
+            $('#jenis_user_edit').val(1);
+        }else {
+            row_editing_jenis_now = 0;
+            $('#jenis_user_edit').val(0);
+        }
         var target = $(this).closest('tr');
-        $('#edit_user').attr('action', '/admin/edit/'+target.children('td.username').text())
+        $('#edit_user').attr('action', '/admin/edit/'+$(this).closest('td').attr('id'))
         $('#username_edit').val(target.children('td.username').text());
         $('#password_edit').val('');
     })
@@ -192,6 +287,13 @@
             data: $(this).serialize(),
             success: function (data) {
                 $('#editModal').modal('toggle');
+                if($('#jenis_user_edit').val() != row_editing_jenis_now){
+                    if($('#jenis_user_edit').val() == 0){
+                        $('#editor_table > tbody:last-child').append(row_editing)
+                    } else {
+                        $('#adm_table > tbody:last-child').append(row_editing)
+                    }
+                }
                 generalAlert('Pengguna berhasil diedit.');
             },
             error: function (jXHR, textStatus, errorThrown) {
@@ -201,19 +303,153 @@
     });
 
     //hapus user
+    var target_delete;
     $('table').on('click', '.del', function () {
-        var target = $(this).closest('tr');
-        $.ajax({
-            url: '/admin/hapus_user/'+target.children('td.username').text(),
-            type: 'DELETE',
-            success: function(data) {
-                generalAlert(data);
-                target.remove()
-            },
-            error: function (jXHR, textStatus, errorThrown) {
-                generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+        var state_undo = false;
+        var target = $(this);
+        target_delete = $(this).closest('tr');
+        target_delete.hide();
+        $.toast({
+            text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
+            textAlign: 'right', 
+            hideAfter: 4000,
+            loader: false,
+            stack: false,
+            position: 'bottom-right',
+            allowToastClose: false,
+            afterHidden: function () {
+                if(!state_undo){
+                    $.ajax({
+                        url: '/admin/hapus_user/'+target.closest('td').attr('id'),
+                        type: 'DELETE',
+                        success: function(data) {
+                            generalAlert(data);
+                            target_delete.remove()
+                        },
+                        error: function (jXHR, textStatus, errorThrown) {
+                            generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+                        }
+                    });
+                    target_delete = null;
+                }
             }
+        })
+        $('#undo_delete').click(function(){
+            row_to_delete = null;
+            state_undo = true;
+            target_delete.show();
+            $.toast().reset('all');
+        })
+    })
+
+
+    //init bulan
+    var current_month = new Date().getMonth()+1;
+    $('#bulan_st_modal option:eq('+current_month+')').prop('selected', true);
+
+    $('#tbl_riwayat').DataTable({
+        aaSorting: [],
+        rowReorder: {
+            enable: false
+        },
+        createdRow: function( row, data, dataIndex ) {
+            $( row ).find('td:eq(0)').attr('class', 'text-center');
+            $( row ).find('td:eq(1)').attr('class', 'text-center');
+        }
+    })
+
+    moment.locale('id');
+
+    $('#riwayat-lower_ts, #riwayat-upper_ts').datetimepicker({
+        locale: 'id',
+        format: 'D MMMM YYYY',
+        useCurrent: false,
+        widgetPositioning: {
+            horizontal: 'left',
+            vertical: 'bottom'
+        }
+    });
+
+    var current_id;
+    $('.track').click(function(){
+        $('#tbl_riwayat').DataTable().clear().draw(false);
+        var syarat = {};
+        syarat._id = $(this).closest('td').attr('id');
+        current_id = syarat._id;
+        syarat.month = $('#bulan_st_modal').val();
+        console.log(syarat)
+        socket.emit('list_user_acts', syarat, function (data) {
+            _.each(data, function(row, index, list){
+                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+            })
+            $('#tbl_riwayat').DataTable().draw(false);
         });
+        $('#riwayat-user').modal('show');
+    });
+        
+    $('#bulan_st_modal').change(function(){
+        if(!$('#tampil-riwayat-by-month').is(':checked')) return;
+        $('#tbl_riwayat').DataTable().clear().draw(false);
+        var syarat = {};
+        syarat._id = current_id;
+        syarat.month = $('#bulan_st_modal').val();
+        if(syarat.month == 'none') return;
+        socket.emit('list_user_acts', syarat, function (data) {
+            _.each(data, function(row, index, list){
+                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+            })
+            $('#tbl_riwayat').DataTable().draw(false);
+        });
+    });
+
+    $('#riwayat-lower_ts, #riwayat-upper_ts').on('dp.change', function(e){
+        if($('#tampil-riwayat-by-range').is(':checked')){
+            if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
+            $('#tbl_riwayat').DataTable().clear().draw(false);
+            var syarat = {};
+            syarat._id = current_id;
+            syarat.lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()*1000;
+            syarat.upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()*1000 + 86399000;
+            console.log(moment.unix(syarat.lower_ts/1000).format("HH:mm:ss D MMMM YYYY"))
+            socket.emit('list_user_acts', syarat, function (data) {
+                console.log(data)
+                _.each(data, function(row, index, list){
+                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+                })
+                $('#tbl_riwayat').DataTable().draw(false);
+            });
+        }
+    });
+
+    $("input[name='tampil_riwayat']").change(function(e){
+        if ($(this).val() == '0'){
+            if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
+            $('#tbl_riwayat').DataTable().clear().draw(false);
+            var syarat = {};
+            syarat._id = current_id;
+            syarat.lower_ts = ($('#riwayat-lower_ts').data('DateTimePicker').date().unix() - $('#riwayat-lower_ts').data('DateTimePicker').date().unix()% 86400-25200)*1000;
+            syarat.upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()*1000 + 86399000;
+            console.log(moment.unix(syarat.lower_ts/1000).format("HH:mm:ss D MMMM YYYY"))
+            socket.emit('list_user_acts', syarat, function (data) {
+                console.log(data)
+                _.each(data, function(row, index, list){
+                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+                })
+                $('#tbl_riwayat').DataTable().draw(false);
+            })
+        } else {
+            $('#tbl_riwayat').DataTable().clear().draw(false);
+            var syarat = {};
+            syarat._id = current_id;
+            syarat.month = $('#bulan_st_modal').val();
+            if(syarat.month == 'none') return;
+            socket.emit('list_user_acts', syarat, function (data) {
+                _.each(data, function(row, index, list){
+                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+                })
+                $('#tbl_riwayat').DataTable().draw(false);
+            });
+        }
     })
 
     //tooltip utk pass edit

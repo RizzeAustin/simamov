@@ -1,9 +1,17 @@
 use simamov;
 // show collections
-// db.user.remove({jenis:0})
-// db.user.find({})
-// db.user.insert({_id: 'admin', password: '9a9e0d33fa0d884224f816e2e9691ee9267208399d18d17095253555791fa975', display_name: "Admin"})
-// db.surat_tugas_biasa.findOne();
+// db.user.update({_id: ObjectId('597d4b39094160252c595640')}, {$set:{jenis: 1}})
+// db.user.find().pretty()
+// db.custom_entity.find({nip: '13.7960'}).pretty()
+// db.pegawai.find({_id: '13.7960'}).pretty()
+// db.spj.find({})
+// db.user.find().pretty()
+// db.surat_tugas.drop();
+// db.custom_entity.update(
+//    {type: 'Penerima'},
+//    { $set: { active: true } },
+//    { multi: true }
+// )
 
 // db.old_pok_detailBelanja.drop()
 // db.old_pok_akun.drop()
@@ -15,7 +23,7 @@ use simamov;
 // db.old_pok_program.drop()
 // show collections
 // db.sppd.findOne({})
-
+//==================================================
 // db.pok_detailBelanja.drop()
 // db.pok_akun.drop()
 // db.pok_sub_komponen.drop()
@@ -24,25 +32,33 @@ use simamov;
 // db.pok_output.drop()
 // db.pok_kegiatan.drop()
 // db.pok_program.drop()
-// db.setting.remove({type:'spj'})
+// db.setting.drop()
 // db.custom_entity.drop()
+// db.perhitungan.drop()
+// db.surat_tugas.drop()
+// db.surat_tugas_biasa.drop()
+// db.setting_sppd.drop()
+//==================================================
+
+// db.setting_sppd.findOne()
+
 // db.pegawai.drop()
 // db.setting.drop()
 // db.perhitungan.drop()
 // db.surat_tugas.drop()
 
-// db.custom_entity.find({nama: 'Lukman Azhari, SST'}).pretty()
+// db.custom_entity.find({nip: { $exists: true}}).pretty()
 // db.kab.find().pretty()
 // db.pok_uraian_akun.find({thang: '2017'})
 // db.representasi.find().pretty()
 // db.perhitungan.find().pretty()
 // db.surat_tugas.find().pretty()
 // db.setting.find().pretty()
-// db.pok_uraian_akun.update({}, {$set: {thang: 2016}}, {multi: true})
-// db.pok_detailBelanja.find().pretty()
-// db.pok_akun.findOne()
-// db.pok_sub_komponen.findOne()
-// db.pok_komponen.findOne()
+// db.pok_uraian_akun.drop()
+db.pok_detailBelanja.findOne({})
+// db.pok_akun.findOne({kdakun: '532111'})
+// db.pok_sub_komponen.find({urskmpnen:'tanpa sub Komponen'}).pretty()
+// db.pok_komponen.find().length()
 // db.pok_sub_output.findOne()
 // db.pok_output.findOne()
 // db.pok_kegiatan.find()

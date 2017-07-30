@@ -195,7 +195,11 @@
                                         <form id="form_pok_unggah" enctype="multipart/form-data" method="post" action="/pok/unggah_pok">
                                             <div class="form-group row">
                                                 <label for="nomor">Nama</label>
-                                                <input type="text" id="pok_name" name="pok_name" class="form-control" placeholder="Nama..." value="POK Revisi 1" required>
+                                                <input type="text" id="pok_name" name="pok_name" class="form-control" placeholder="nama..." value="POK Revisi 1" required>
+                                            </div> 
+                                            <div class="form-group row">
+                                                <label for="nomor">Tahun Anggaran</label>
+                                                <input type="text" id="thang" name="thang" class="form-control" placeholder="thn anggaran..." value="{{tahun_anggaran}}" required>
                                             </div> 
                                             <div class="form-group row">
                                                 <label for="nomor">File</label>
@@ -433,6 +437,13 @@
                                             </div>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>
+                                        Download sebagai: <a id="download_pdf2" href="#"><i class="fa fa-file-pdf-o fa-sm mt-2"></i> Pdf </a> | <a id="download_xlsx2" href="#"><i class="fa fa-file-excel-o fa-sm mt-2"></i> Xlsx</a>
+                                    </p>
                                 </div>
                             </div>
                             <div class="row">
@@ -723,8 +734,8 @@
                 $( row ).find('td:eq(9)').attr('class', 'format-uang');
                 $( row ).find('td:eq(10)').attr('class', 'format-uang');
                 $( row ).find('td:eq(11)').attr('class', 'format-uang');
-            }
-            // "footerCallback": function ( row, data, start, end, display ) {
+            },
+            "footerCallback": function ( row, data, start, end, display ) {
                 // calcSum('akun', data, 'pok_table_entry')
                 // calcSum('skomponen', data, 'pok_table_entry')
                 // calcSum('komponen', data, 'pok_table_entry')
@@ -732,7 +743,33 @@
                 // calcSum('output', data, 'pok_table_entry')
                 // calcSum('kegiatan', data, 'pok_table_entry')
                 // calcSum('program', data, 'pok_table_entry');
-            // }
+     
+                // Remove the formatting to get integer data for summation
+                // var intVal = function ( i ) {
+                //     return typeof i === 'string' ?
+                //         i.replace(/\D/g, '')*1 :
+                //         typeof i === 'number' ?
+                //             i : 0;
+                // };
+
+                // var prt_row = tabel_pok_entry.DataTable()
+                //         .rows( function ( idx, data, node ) {
+                //             return data[2] == '<span class="badge badge-default">program</span>' ?
+                //                 true : false;
+                //         } );
+
+                // var pagu = 0;
+                // var arr = _.filter(data, function(col){ return col[2].match(/program/);});
+                // var pagu = _.reduce(_.map(arr, function(arr){ return arr[8]; }), function(a, b){
+                //          return a + b; }, 0);
+
+                // var sampai_bln_ini = 0;
+                // var sisa_dana = 0;
+
+                // $('#sisa-dana').html(formatUang(pagu).replace(/\-$/g,''));
+                // $('#sisa-dana-percent').html(' ('+((getNumber(pagu)/pagu)*100).toFixed(0)+'%)');
+
+            }
         });
 
         function calcSum(type, data, tab_id){
@@ -753,13 +790,6 @@
             })
         }
         tabel_riwayat.DataTable({
-            // scrollY:        false,
-            // scrollX:        true,
-            // scrollCollapse: true,
-            // fixedColumns:   {
-            //     leftColumns: 3,
-            //     rightColumns: 1
-            // },
             columnDefs: [
                 {
                     "targets": [ 0 ],
@@ -771,6 +801,7 @@
             rowReorder: {
                 enable: false
             },
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
             createdRow: function( row, data, dataIndex ) {
                 if(!data[5]){
                     $( row ).find('td:eq(4)').text('-');
@@ -890,7 +921,8 @@
         $('#bulan_realisasi_modal option:eq('+current_month+')').prop('selected', true);
         $('#download_pdf').attr('href', 'pok/download/pdf/'+(current_month-1));
         $('#download_xlsx').attr('href', 'pok/download/xlsx/'+(current_month-1));
-        
+
+        var riwayat_syarat;        
         $('#bulan_realisasi').change(function(){
             var selected = $(this).val();
             $('#download_pdf').attr('href', 'pok/download/pdf/'+selected);
@@ -921,8 +953,10 @@
             tabel_riwayat.DataTable().clear().draw(false);
             var selected = $(this).val();
             if(selected == 'none') return;
-            socket.emit('riwayat_init', {'detail_id': $('#tbh_entry_detail').val(), 'init': false, 
-                'month': selected});
+
+            riwayat_syarat = {'detail_id': $('#tbh_entry_detail').val(), 'init': false, 
+                'month': selected}
+            socket.emit('riwayat_init', riwayat_syarat);
         });
 
         $('#riwayat-lower_ts, #riwayat-upper_ts').datetimepicker({
@@ -941,8 +975,9 @@
                 tabel_riwayat.DataTable().clear().draw(false);
                 var lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()
                 var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()
-                socket.emit('riwayat_init', {'detail_id': $('#tbh_entry_detail').val(), 'init': false,
-                    'lower_ts': lower_ts, 'upper_ts': upper_ts});
+                riwayat_syarat = {'detail_id': $('#tbh_entry_detail').val(), 'init': false,
+                    'lower_ts': lower_ts, 'upper_ts': upper_ts}
+                socket.emit('riwayat_init', riwayat_syarat);
             }
         });
 
@@ -952,14 +987,16 @@
                 tabel_riwayat.DataTable().clear().draw(false);
                 var lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()
                 var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()
-                socket.emit('riwayat_init', {'detail_id': $('#tbh_entry_detail').val(), 'init': false,
-                    'lower_ts': lower_ts, 'upper_ts': upper_ts});
+                riwayat_syarat = {'detail_id': $('#tbh_entry_detail').val(), 'init': false,
+                    'lower_ts': lower_ts, 'upper_ts': upper_ts}
+                socket.emit('riwayat_init', riwayat_syarat);
             } else {
                 tabel_riwayat.DataTable().clear().draw(false);
                 var selected = $('#bulan_realisasi_modal').val();
                 if(selected == 'none') return;
-                socket.emit('riwayat_init', {'detail_id': $('#tbh_entry_detail').val(), 'init': false, 
-                    'month': selected});
+                riwayat_syarat = {'detail_id': $('#tbh_entry_detail').val(), 'init': false, 
+                    'month': selected}
+                socket.emit('riwayat_init', riwayat_syarat);
             }
         })
 
@@ -1321,30 +1358,6 @@
                             +            '</div>'
                             +        '</div>'
                             +        '<div class="form-group row">'
-                            +            '<label class="col-md-2 form-control-label">PPh 21</label>'
-                            +            '<div class="col-md-2">'
-                            +                '<input id="pph21" type="text" class="form-control format-uang" autocomplete="off">'
-                            +            '</div>'
-                            +        '</div>'
-                            +        '<div class="form-group row">'
-                            +            '<label class="col-md-2 form-control-label">PPh 22</label>'
-                            +            '<div class="col-md-2">'
-                            +                '<input id="pph22" type="text" class="form-control format-uang" autocomplete="off">'
-                            +            '</div>'
-                            +        '</div>'
-                            +        '<div class="form-group row">'
-                            +            '<label class="col-md-2 form-control-label">PPh 23</label>'
-                            +            '<div class="col-md-2">'
-                            +                '<input id="pph23" type="text" class="form-control format-uang" autocomplete="off">'
-                            +            '</div>'
-                            +        '</div>'
-                            +        '<div class="form-group row">'
-                            +            '<label class="col-md-2 form-control-label">PPn</label>'
-                            +            '<div class="col-md-2">'
-                            +                '<input id="ppn" type="text" class="form-control format-uang" autocomplete="off">'
-                            +            '</div>'
-                            +        '</div>'
-                            +        '<div class="form-group row">'
                             +            '<label class="col-md-2 form-control-label">No. SPM</label>'
                             +            '<div class="col-md-2">'
                             +                '<input id="entry_spmno_field" type="text" class="form-control" autocomplete="off">'
@@ -1458,9 +1471,9 @@
                             if(!new_entry.penerima_nama) return;
                             if($('#entry_tgl_field').data('DateTimePicker').date()) new_entry.tgl_timestamp = $('#entry_tgl_field').data('DateTimePicker').date().unix();
                             new_entry.spm_no = $('#entry_spmno_field').val();
-                            new_entry.pph21 = $('#pph21').val();
-                            new_entry.pph22 = $('#pph22').val();
-                            new_entry.pph23 = $('#pph23').val();
+                            // new_entry.pph21 = $('#pph21').val();
+                            // new_entry.pph22 = $('#pph22').val();
+                            // new_entry.pph23 = $('#pph23').val();
                             new_entry.ppn = $('#ppn').val();
                             new_entry.tgl = $('#entry_tgl_field').val();
                             new_entry.bukti_no = $('#entry_buktino_field').val();
@@ -1729,7 +1742,7 @@
                     $('#entry_jumlah_field').focus();
                     $("#entri_submit").prop("disabled",false);
                     if(status == 'sukses'){
-                        generalAlert('Berhasil disimpan.');
+                        //generalAlert('Berhasil disimpan.');
                     } else {
                         generalAlert(status);
                     }
@@ -1761,7 +1774,7 @@
                         $("#entri_submit").html('Simpan');
                         $("#entri_submit").prop("disabled",false);
                         if(status == 'sukses'){
-                            generalAlert('Berhasil disimpan.');
+                            //generalAlert('Berhasil disimpan.');
                         } else {
                             generalAlert(status);
                         }
@@ -1810,7 +1823,7 @@
                         import_data_entry.updateSettings({
                             data : []
                         });
-                        generalAlert('Berhasil disimpan.');
+                        //generalAlert('Berhasil disimpan.');
                     } else {
                         generalAlert(status);
                     }
@@ -1835,7 +1848,9 @@
             detail_id_target_riwayat = all_row_target_td[0];
             var selected = $('#bulan_realisasi').val();
             $('#bulan_realisasi_modal option:eq('+(+selected+1)+')').prop('selected', true);
-            socket.emit('riwayat_init', {'detail_id': detail_id_target_riwayat, 'init': true, 'month': selected}, function (data) {
+            riwayat_syarat = {'detail_id': detail_id_target_riwayat, 'init': true, 'month': selected}
+            detail_name = all_row_target_td[4];
+            socket.emit('riwayat_init', riwayat_syarat, function (data) {
                 populateSelect(data.details, 'detail');
                 populateSelect(data.akuns, 'akun');
                 populateSelect(data.skomps, 'skomponen');
@@ -1957,8 +1972,9 @@
             tabel_riwayat.DataTable().clear().draw(false);
             if($('#tbh_entry_detail').val() == '--pilih--') return;
             if($('#tampil-riwayat-by-month').is(':checked')){
-                socket.emit('riwayat_init', {'detail_id': $('#tbh_entry_detail').val(), 'init': false, 
-                    'month': $('#bulan_realisasi_modal').val()});
+                riwayat_syarat = {'detail_id': $('#tbh_entry_detail').val(), 'init': false, 
+                    'month': $('#bulan_realisasi_modal').val()}
+                socket.emit('riwayat_init', riwayat_syarat);
             } else {
                 if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == ''){
                     generalAlert('Periode realisasi belum ditentukan.')
@@ -1966,9 +1982,67 @@
                 }
                 var lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()
                 var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()
-                socket.emit('riwayat_init', {'detail_id': $('#tbh_entry_detail').val(), 'init': false,
-                    'lower_ts': lower_ts, 'upper_ts': upper_ts});
+                riwayat_syarat = {'detail_id': $('#tbh_entry_detail').val(), 'init': false,
+                    'lower_ts': lower_ts, 'upper_ts': upper_ts}
+                socket.emit('riwayat_init', riwayat_syarat);
             }
+        })
+
+        var detail_name;
+        $('#download_xlsx2').click(function(){
+            riwayat_syarat.pdf = false;
+            riwayat_syarat.xlsx = true;
+            riwayat_syarat.detail = detail_name;
+            if($('#tampil-riwayat-by-range').is(':checked')){
+                if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == ''){
+                    generalAlert('Periode ada yang kosong.');
+                    return;
+                } 
+                riwayat_syarat.periode = $('#riwayat-lower_ts').val() + ' - ' + $('#riwayat-upper_ts').val();
+            } else {
+                var selected = $('#bulan_realisasi_modal option:selected').text();
+                if(selected == '--pilih--'){
+                    generalAlert('Bulan belum dipilih.');
+                    return;
+                }
+                riwayat_syarat.periode = selected;
+            }
+            console.log(riwayat_syarat)
+            socket.emit('riwayat_init', riwayat_syarat, function(link){
+                if(!link){
+                    generalAlert('Tidak ada data.');
+                    return;
+                }
+                console.log(link)
+                window.open("http://"+$(location).attr('host')+link,'_blank');
+            });
+        })
+
+        $('#download_pdf2').click(function(){
+            riwayat_syarat.xlsx = false;
+            riwayat_syarat.pdf = true;
+            riwayat_syarat.detail = detail_name;
+            if($('#tampil-riwayat-by-range').is(':checked')){
+                if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == ''){
+                    generalAlert('Periode ada yang kosong.');
+                    return;
+                } 
+                riwayat_syarat.periode = $('#riwayat-lower_ts').val() + ' - ' + $('#riwayat-upper_ts').val();
+            } else {
+                var selected = $('#bulan_realisasi_modal option:selected').text();
+                if(selected == '--pilih--'){
+                    generalAlert('Bulan belum dipilih.');
+                    return;
+                }
+                riwayat_syarat.periode = selected;
+            }
+            socket.emit('riwayat_init', riwayat_syarat, function(link){
+                if(!link){
+                    generalAlert('Tidak ada data.');
+                    return;
+                }
+                window.open("http://"+$(location).attr('host')+link,'_blank');
+            });
         })
 
         //fungsi umum tambah list
@@ -2303,6 +2377,7 @@
         });
 
         tabel_riwayat.on('click', '.del-riwayat-tbl', function (e) {
+            var state_undo = false;
             {{#unless admin}}
             if($(this).closest('tr').find('td:eq(7)').text()!= user_aktiv){
                 generalAlert('Maaf, Anda tidak memiliki hak akses.')
@@ -2310,18 +2385,39 @@
             }
             {{/unless}}
             var temp = $(this).html();
-            $(this).html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>');
-            var row = tabel_riwayat.DataTable().row($(this).closest('tr'));
+            var target_delete = $(this).closest('tr');
+            var row = tabel_riwayat.DataTable().row(target_delete);
+            target_delete.hide();
             var parent_id = $("#tbh_entry_detail").val();
-            socket.emit('del_riwayat', {'parent_id': parent_id, 'target_id': row.data()[0], 
-                'month': $('#bulan_realisasi').val()}, function(status){
-                if(status === 'sukses'){
-                    $(this).html(temp);
-                    row.remove().draw(false);
-                } else {
-                    $(this).html(temp);
+            $.toast({
+                text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
+                textAlign: 'right', 
+                hideAfter: 4000,
+                loader: false,
+                stack: false,
+                position: 'bottom-right',
+                allowToastClose: false,
+                afterHidden: function () {
+                    if(!state_undo){
+                        socket.emit('del_riwayat', {'parent_id': parent_id, 'target_id': row.data()[0], 
+                            'month': $('#bulan_realisasi').val()}, function(status){
+                            if(status === 'sukses'){
+                                $(this).html(temp);
+                                row.remove().draw(false);
+                            } else {
+                                $(this).html(temp);
+                            }
+                        });
+                        target_delete = null;
+                    }
                 }
-            });
+            })
+            $('#undo_delete').click(function(){
+                row_to_delete = null;
+                state_undo = true;
+                target_delete.show();
+                $.toast().reset('all');
+            })
         })
 
         socket.on('pok_entry_update_realisasi', function(data) {
@@ -2410,11 +2506,16 @@
                 .data(sisa_dana);
             } 
 
-            //tampilan format uang pengeluaran
-            setAutoNumeric(target_row.find('td:eq(9)'), new_tsbi);
-            setAutoNumeric(target_row.find('td:eq(8)'), new_rbl);
-            setAutoNumeric(target_row.find('td:eq(7)'), new_value);
-            setAutoNumeric(target_row.find('td:eq(11)'), sisa_dana);
+            // tampilan format uang pengeluaran
+            // setAutoNumeric(target_row.find('td:eq(9)'), new_tsbi);
+            // setAutoNumeric(target_row.find('td:eq(8)'), new_rbl);
+            // setAutoNumeric(target_row.find('td:eq(7)'), new_value);
+            // setAutoNumeric(target_row.find('td:eq(11)'), sisa_dana);
+            target_row.find('td:eq(9)').text(formatUang(new_tsbi));
+            target_row.find('td:eq(8)').text(formatUang(new_rbl));
+            target_row.find('td:eq(7)').text(formatUang(new_value));
+            target_row.find('td:eq(11)').text(formatUang(sisa_dana));
+
             if(getNumber(sisa_dana) < 0){
                 target_row.find('td:eq(11)').css("background-color", "yellow")
             } else {
@@ -2470,10 +2571,16 @@
                 .data(sisa_dana)
 
             //tampilan
-            setAutoNumeric(parent_pengeluaran_td.find('td:eq(9)'), new_jumlah_tsbi);
-            setAutoNumeric(parent_pengeluaran_td.find('td:eq(7)'), new_jumlah);
-            setAutoNumeric(parent_pengeluaran_td.find('td:eq(8)'), new_rsbl);
-            setAutoNumeric(parent_pengeluaran_td.find('td:eq(11)'), sisa_dana);
+            // setAutoNumeric(parent_pengeluaran_td.find('td:eq(9)'), new_jumlah_tsbi);
+            // setAutoNumeric(parent_pengeluaran_td.find('td:eq(7)'), new_jumlah);
+            // setAutoNumeric(parent_pengeluaran_td.find('td:eq(8)'), new_rsbl);
+            // setAutoNumeric(parent_pengeluaran_td.find('td:eq(11)'), sisa_dana);
+
+            parent_pengeluaran_td.find('td:eq(9)').text(formatUang(new_jumlah_tsbi));
+            parent_pengeluaran_td.find('td:eq(8)').text(formatUang(new_rsbl));
+            parent_pengeluaran_td.find('td:eq(7)').text(formatUang(new_jumlah));
+            parent_pengeluaran_td.find('td:eq(11)').text(formatUang(sisa_dana));
+
             if(getNumber(sisa_dana) < 0){
                 parent_pengeluaran_td.find('td:eq(11)').css("background-color", "yellow")
             } else {
@@ -2498,12 +2605,12 @@
                 var pagu = 0;
 
                 _.each(prt_row.data(), function(program, index, list){
-                    realisasi_bulan_ini += program[9];
-                    realisasi_bulan_lalu += program[10];
-                    sampai_bln_ini += program[11];
-                    sisa_dana += program[13];
+                    realisasi_bulan_ini += getNumber(program[9]);
+                    realisasi_bulan_lalu += getNumber(program[10]);
+                    sampai_bln_ini += getNumber(program[11]);
+                    sisa_dana += getNumber(program[13]);
 
-                    pagu += program[8];
+                    pagu += getNumber(program[8]);
                 })
 
                 $('#realisasi-bulan-ini').html(formatUang(realisasi_bulan_ini).replace(/\-$/g,''));
@@ -2517,6 +2624,14 @@
 
                 $('#sisa-dana').html(formatUang(sisa_dana).replace(/\-$/g,''));
                 $('#sisa-dana-percent').html(' ('+((getNumber(sisa_dana)/pagu)*100).toFixed(2)+'%)');
+                adjustColumn()
+            }
+        }
+
+        function adjustColumn(){
+            var table = $.fn.dataTable.fnTables(true);
+            if ( table.length > 0 ) {
+                $(table).dataTable().fnAdjustColumnSizing();
             }
         }
 
@@ -2593,13 +2708,13 @@
                 $( row ).find('td:eq(7)').attr('class', 'text-center');
             },
             "footerCallback": function ( row, data, start, end, display ) {
-                calcSum('akun', data, 'pok_table_edit')
-                calcSum('skomponen', data, 'pok_table_edit')
-                calcSum('komponen', data, 'pok_table_edit')
-                calcSum('soutput', data, 'pok_table_edit')
-                calcSum('output', data, 'pok_table_edit')
-                calcSum('kegiatan', data, 'pok_table_edit')
-                calcSum('program', data, 'pok_table_edit');
+                // calcSum('akun', data, 'pok_table_edit')
+                // calcSum('skomponen', data, 'pok_table_edit')
+                // calcSum('komponen', data, 'pok_table_edit')
+                // calcSum('soutput', data, 'pok_table_edit')
+                // calcSum('output', data, 'pok_table_edit')
+                // calcSum('kegiatan', data, 'pok_table_edit')
+                // calcSum('program', data, 'pok_table_edit');
             }
         });
 
@@ -2667,8 +2782,7 @@
         });
 
         $('#eua_kode_akun, #eua_uraian_akun').keyup(function(e){
-            if(e.keyCode == 13)
-            {
+            if(e.keyCode == 13){
                 $('#btn-tambah-uraian-akun').click();
             }
         });
@@ -3418,7 +3532,7 @@
 
         function setNumberMultiply(target, active, pair){
             // ///update akun jumlah
-            var multiply_result = active.autoNumeric('getNumber') * pair.autoNumeric('getNumber');
+            var multiply_result = getNumber(active.text()) * getNumber(pair.text());
 
             updateParentJumlah(target, getNumber(target.html()), multiply_result);
 
@@ -3429,7 +3543,8 @@
                 .draw(false);
 
             //update tampilan format uang jumlah
-            setAutoNumeric(target, multiply_result);
+            // setAutoNumeric(target, );
+            target.text(formatUang(multiply_result));
             
         }
 
@@ -3455,17 +3570,17 @@
 
             var old_jlh = getNumber(prt_row.data()[0][8]);
 
-            var new_jumlah = old_jlh - old_child_price + new_child_price;
+            var new_jumlah = old_jlh - getNumber(old_child_price) + getNumber(new_child_price);
 
             tabel_pok_edit.DataTable()
                 .cell(parent_jumlah_td)
-                .data(new_jumlah);
+                .data(formatUang(new_jumlah));
             //tampilan
-            setAutoNumeric(parent_jumlah_td, new_jumlah);
+            // setAutoNumeric(parent_jumlah_td, new_jumlah);
 
             var type = parent_jumlah_td.closest('tr').find('span').html();
             if(type != 'program'){
-                updateParentJumlah(parent_jumlah_td, old_jlh, new_jumlah);
+                updateParentJumlah(parent_jumlah_td, getNumber(old_jlh), getNumber(new_jumlah));
             }
         }
 
@@ -3484,6 +3599,13 @@
         //submit unggah pok
         form_pok_unggah.on('submit', function(e) {
             e.preventDefault();
+            if(!$('#thang').val().match(/^\d{4}$/)){
+                generalAlert('Tahun tidak valid.');
+                return;
+            } else if(!$('#pok_name').val()){
+                generalAlert('Nama POK tidak boleh kosong.');
+                return;
+            }
             $("#pok_unggah_button").prop("disabled",true);
             $("#pok_unggah_button").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#pok_unggah_button").text());
             var formData = new FormData($(this)[0]);
@@ -3493,13 +3615,6 @@
                 type: 'POST',
                 data: formData,
                 async: false,
-                // success: function (data) {
-                //     setTimeout(function() {
-                //         $("#pok_unggah_button").prop("disabled",false);
-                //         $("#pok_unggah_button").html('Unggah');
-                //         location.reload();
-                //     }, 5000);
-                // },
                 error: function(){
                     $("#pok_unggah_button").prop("disabled",false);
                     $("#pok_unggah_button").html('Unggah');
@@ -3517,6 +3632,11 @@
 
             nonames = data;
             $('#pok_unduh_rename').modal('show');
+        })
+        socket.on('pok_unduh_finish_xlsx', function(data) {
+            $("#pok_unggah_button").prop("disabled",false);
+            $("#pok_unggah_button").html('Unggah');
+            generalAlert('POK telah diupdate.')
         })
 
         var prog_ht, keg_ht, akun_ht;
@@ -3671,16 +3791,17 @@
             // $("#pok_table tbody").append(data);
             $('#pok_table_'+data.tabel).DataTable().row.add( data.row );
             cb();
-            var prt_row = $('#pok_table_'+data.tabel).DataTable()
-                            .rows( function ( idx, dataa, node ) {
-                                return dataa[0] == data.row[0] ?
-                                    true : false;
-                            } );
-            prt_row
-                .nodes()
-                .to$()
-                .find('td.format-uang')
-                .autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+            //format uang
+            // var prt_row = $('#pok_table_'+data.tabel).DataTable()
+            //                 .rows( function ( idx, dataa, node ) {
+            //                     return dataa[0] == data.row[0] ?
+            //                         true : false;
+            //                 } );
+            // prt_row
+            //     .nodes()
+            //     .to$()
+            //     .find('td.format-uang')
+                // .autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
         })
 
         socket.on('pok_edit_update_jlh', function(data) {
@@ -3699,9 +3820,11 @@
 
             $('#pok_table_'+data.tabel).DataTable()
                 .cell(parent_jumlah_td)
-                .data(data.new_jumlah);
+                .data(formatUang(data.new_jumlah));
 
-            setAutoNumeric(parent_jumlah_td, data.new_jumlah);
+            // //format uang
+            // setAutoNumeric(parent_jumlah_td, data.new_jumlah);
+            // parent_jumlah_td.text(formatUang(data.new_jumlah))
         })
 
         socket.on('pok_item_deleted', function(id) {
@@ -3724,6 +3847,7 @@
 
         socket.on('pok_datatable_apply', function(tabel) {
             if(tabel == 'edit') $('#pok_table_edit').DataTable().draw(false);
+            //update jumlah
             else {
                 $('#pok_table_entry').DataTable().draw(false);
                 var prt_row = tabel_pok_entry.DataTable()
@@ -3738,20 +3862,24 @@
                 var pagu = 0;
 
                 _.each(prt_row.data(), function(program, index, list){
-                    sampai_bln_ini += program[11];
-                    sisa_dana += program[13];
+                    sampai_bln_ini += getNumber(program[11]);
+                    sisa_dana += getNumber(program[13]);
 
-                    pagu += program[8];
+                    pagu += getNumber(program[8]);
                 })
-                if(sisa_dana == '0--'){
+
+                if(sisa_dana == 0){
                     $('#sisa-dana').html(formatUang(pagu).replace(/\-$/g,''));
-                    $('#sisa-dana-percent').html(' ('+((getNumber(pagu)/pagu)*100).toFixed(0)+'%)');
+                    if(!pagu) $('#sisa-dana-percent').html(' (0%)');
+                        else $('#sisa-dana-percent').html(' ('+((getNumber(pagu)/pagu)*100).toFixed(0)+'%)');
                 }                
             }
             spinner.stop();
+            //format uang
             $('td.format-uang').each (function() {
                 $(this).text(formatUang($(this).text()));
             });
+            adjustColumn()
         })
 
         socket.on('title_change', function(new_pok_name) {
@@ -3927,10 +4055,7 @@
         });
 
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            var table = $.fn.dataTable.fnTables(true);
-            if ( table.length > 0 ) {
-                $(table).dataTable().fnAdjustColumnSizing();
-            }
+            adjustColumn();
         });
 
 
@@ -3944,7 +4069,8 @@
                 .cell(target_td)
                 .data(new_value)
                 .draw(false);
-            if(format_uang) setAutoNumeric(target_td, new_value);
+            // if(format_uang) setAutoNumeric(target_td, new_value);
+            if(format_uang) target_td.text(formatUang(new_value))
         }
 
         //Fungsi umum

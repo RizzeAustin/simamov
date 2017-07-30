@@ -8,7 +8,12 @@ var PegawaiSchema = new Schema({
     "nip" : String,
     "jabatan" : String,
     "gol" : String,
-    "kode_dosen" : String
+    "kode_dosen" : String,
+    "ce" : String,
+    "active": {
+    	type: Boolean,
+    	default: true
+    }
 }, { collection: 'pegawai' });
 
 PegawaiSchema.methods.isExist = function(cb) {

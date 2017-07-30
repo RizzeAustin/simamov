@@ -92,10 +92,15 @@ app.use('/fonts', express.static(__dirname + '/fonts'));
 app.use('/img', express.static(__dirname + '/img'));
 app.use('/result', express.static(__dirname + '/template/output'));
 app.use('/template', express.static(__dirname + '/template'));
+app.use('/download', express.static(__dirname + '/template/output/riwayat'));
 
 //====== ROUTES ======//
 var login = require('./controllers/login.js'); //route index
 app.use('/login', login); //root menggunakan dialihkan ke index.js
+
+
+//Short syntax tool
+var _ = require("underscore");
 
 //cek login, urutan harus di bawah route login
 var login_check = function (req, res, next) {
@@ -114,9 +119,10 @@ var login_check = function (req, res, next) {
 		})
 		return;
 	}
+	//register socket.io utk call via socket
 	io.on('connection', function(client) {
 		if(req.session)
-			connections[req.session.username] = client;
+			connections[req.session.user_id] = client;
 	})
 
   	next()
@@ -130,23 +136,18 @@ app.use('/', index); //root menggunakan dialihkan ke index.js
 
 //SPPD
 var sppd = require('./controllers/sppd.js');
-sppd.socket(io, connections);
 app.use('/sppd', sppd); 
 //SPJ
 var spj = require('./controllers/spj.js');
-spj.socket(io, connections);
 app.use('/spj', spj);
 //PEGAWAI
 var pegawai = require('./controllers/pegawai.js');
-pegawai.socket(io, connections);
 app.use('/pegawai', pegawai);
 //POK
 var pok = require('./controllers/pok.js');
-pok.socket(io, connections);
 app.use('/pok', pok);
 //ADMIN
 var admin = require('./controllers/admin.js');
-admin.socket(io, connections);
 app.use('/admin', admin);
 //LOGOUT
 var logout = require('./controllers/logout.js');
@@ -171,15 +172,21 @@ server.listen(process.env.PORT || 3000, function(){
 
 io.on('connection', function(client) {
 
-	if(!client.handshake.session.username){
+	if(!client.handshake.session.user_id){
 
 		client.emit('login_required', 'Anda harus login.');
 		return;
 
 	}
 
+	pok.socket(io, connections, client);
+	sppd.socket(io, connections, client);
+	spj.socket(io, connections, client);
+	pegawai.socket(io, connections, client);
+	admin.socket(io, connections, client);
+	login.socket(io, connections, client);
+
 	client.on('join', function(data) {
-    	console.log(data);
     	client.emit('messages', 'Terhubung ke server.');
     });
 })

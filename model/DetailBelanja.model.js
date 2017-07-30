@@ -20,13 +20,16 @@ var DetailBelanjaSchema = new Schema({
     'satkeg': String,
     'hargasat': Number,
     'jumlah': Number,
-    timestamp: Number,
-    active: {
+    'timestamp': {
+        type: Number,
+        required: true
+    },
+    'active': {
         default: true,
         type: Boolean
     },
-    old: [],
-    realisasi: [{
+    'old': [],
+    'realisasi': [{
         'timestamp': Number,
         'jumlah': Number,
         'penerima_nama': String,
@@ -43,7 +46,7 @@ var DetailBelanjaSchema = new Schema({
         'ket': String,
         'pengentry': String
     }],
-    pengentry: {
+    'pengentry': {
         type: String,
         ref: 'User'
     }

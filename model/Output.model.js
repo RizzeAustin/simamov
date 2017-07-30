@@ -11,6 +11,7 @@ var OutputSchema = new Schema({
     'kdgiat': String,
     'kdoutput': String,
     'vol': Number,
+    'satkeg': String,
     uraian: String,
     jumlah: Number,
     timestamp: Number,

@@ -3,11 +3,22 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
-    _id: String,
+    username: String,
     password: String,
     jenis: Number,
     ip_address: String,
-    last_login_time: String
+    last_login_time: String,
+    act: [{
+        label: String,
+        timestamp: {
+            type: Number,
+            default: new Date().getTime()
+        }
+    }],
+    active: {
+    	type: Boolean,
+    	default: true
+    }
 }, { collection: 'user' });
 
 UserSchema.methods.isExist = function(cb) {

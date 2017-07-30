@@ -191,6 +191,7 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+        moment.locale('id');
         $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/bootstrap-tokenfield.css"));
 
         //function
@@ -356,6 +357,9 @@
                 enable: false
             },
             createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(3)').attr('class', 'text-center');
+                $( row ).find('td:eq(4)').attr('class', 'text-center');
+                $( row ).find('td:eq(5)').attr('class', 'text-center');
             }
         });
         //tgl modal riwayat soal

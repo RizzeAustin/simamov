@@ -27,6 +27,8 @@ var CustomEntity = require(__dirname+"/../model/CustomEntity.model");
 var SettingSPPD = require(__dirname+"/../model/SettingSPPD.model");
 var Setting = require(__dirname+"/../model/Setting.model");
 
+var User = require(__dirname+"/../model/User.model");
+
 //Short syntax tool
 var _ = require("underscore");
 
@@ -46,38 +48,35 @@ spj.connections;
 
 spj.io;
 
-spj.socket = function(io, connections){
+spj.socket = function(io, connections, client){
 
 	spj.connections = connections;
 
 	spj.io = io;
 
-	io.sockets.on('connection', function (client) {
-		client.on('set_honor_detail', function (data, cb) {
-			Setting.update({type: 'spj'}, {$set: {'honor_detail_id': data.honor_detail_id}}, {upsert: true}, function(err, result){
-				console.log(result)
-				if(err) cb('error')
-					else cb('sukses')
-			})
+	
+	client.on('set_honor_detail', function (data, cb) {
+		Setting.update({type: 'spj'}, {$set: {'honor_detail_id': data.honor_detail_id}}, {upsert: true}, function(err, result){
+			if(err) cb('error')
+				else cb('sukses')
 		})
-		client.on('set_transport_detail', function (data, cb) {
-			Setting.update({type: 'spj'}, {$set: {'transport_detail_id': data.transport_detail_id}}, {upsert: true}, function(err, result){
-				console.log(result)
-				if(err) cb('error')
-					else cb('sukses')
-			})
-		})
-	    client.on('spj_pulihkan_template', function (jenis, cb){
-	    	var path = __dirname+'/../template/';
-    		if(jenis == 'honor'){
-    			fs.createReadStream(path + 'cadangan/HonorTemplate.xlsx').pipe(fs.createWriteStream(path + 'HonorTemplate.xlsx'));
-    			cb('sukses');
-    		} else if(jenis == 'transport'){
-    			fs.createReadStream(path + 'cadangan/TransportTemplate.xlsx').pipe(fs.createWriteStream(path + 'TransportTemplate.xlsx'));
-    			cb('sukses');
-    		}
-	    })
 	})
+	client.on('set_transport_detail', function (data, cb) {
+		Setting.update({type: 'spj'}, {$set: {'transport_detail_id': data.transport_detail_id}}, {upsert: true}, function(err, result){
+			if(err) cb('error')
+				else cb('sukses')
+		})
+	})
+    client.on('spj_pulihkan_template', function (jenis, cb){
+    	var path = __dirname+'/../template/';
+		if(jenis == 'honor'){
+			fs.createReadStream(path + 'cadangan/HonorTemplate.xlsx').pipe(fs.createWriteStream(path + 'HonorTemplate.xlsx'));
+			cb('sukses');
+		} else if(jenis == 'transport'){
+			fs.createReadStream(path + 'cadangan/TransportTemplate.xlsx').pipe(fs.createWriteStream(path + 'TransportTemplate.xlsx'));
+			cb('sukses');
+		}
+    })
 
 }
 
@@ -107,7 +106,7 @@ spj.post('/honor', function(req, res){
 			function(cb){
 				form.parse(req, function(err, fields, file){
 					if(err){
-						errorHandler(req.session.username, 'Form parse Error. Mohon hubungi admin.');
+						errorHandler(req.session.user_id, 'Form parse Error. Mohon hubungi admin.');
 						return;
 					}
 					tgl_buat_surat = fields.tgl_buat_surat;
@@ -127,7 +126,6 @@ spj.post('/honor', function(req, res){
 				Setting.findOne({'honor_detail_id': honor_detail_id, type: 'spj'}).exec(function(err, result){
 					if(!result){
 						Setting.create({'honor_detail_id': honor_detail_id, type: 'spj'},function(err, result){
-							console.log(result);
 							cb(null, '');
 						})
 					} else {
@@ -164,11 +162,20 @@ spj.post('/honor', function(req, res){
 			},
 			function(cb){
 				SettingSPPD.findOne({}, 'ppk bendahara').populate('ppk bendahara').exec(function(err, result){
+					if(!result || !result.ppk || !result.bendahara){
+						cb('Pengaturan PPK/Bendahara belum ada. Harap tentukan di pengaturan SPPD.', null);
+						return;
+					}
 					setting = result;
 					cb(null, '');
 				})
 			},
 		], function(err, final){
+			if(err){
+				sendNotification(req.session.user_id, err);
+				res.sendStatus(404)
+				return;
+			}
 			// Load an existing workbook
 			XlsxPopulate.fromFileAsync("./template/HonorTemplate.xlsx")
 		    .then(workbook => {
@@ -396,13 +403,16 @@ spj.post('/honor', function(req, res){
 								    		// 		'sum': false, 'total_sampai_bln_ini': 0, 'broadcast': true});
 								    	})
 									} else {
-										console.log(i,'aaaaaaaaaa')
-										sendNotification(req.session.username, 'Honor tsb untuk '+data[i]['nama']+' pernah tercatat di realisasi.')
+										sendNotification(req.session.user_id, 'Honor tsb untuk '+data[i]['nama']+' pernah tercatat di realisasi.')
 									}
 							})
 								// console.log(i)
 			    		})
 					})
+				});
+				//riwayat user
+				User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Buat SPJ Honor Dosen periode '+periode}}}, 
+					function(err, status){
 				})
 	        })
 
@@ -441,7 +451,7 @@ spj.post('/transport', function(req, res){
 			function(cb){
 				form.parse(req, function(err, fields, file){
 					if(err){
-						errorHandler(req.session.username, 'Form parse Error. Mohon hubungi admin.');
+						errorHandler(req.session.user_id, 'Form parse Error. Mohon hubungi admin.');
 						return;
 					}
 					tgl_buat_surat = fields.tgl_buat_surat;
@@ -461,7 +471,6 @@ spj.post('/transport', function(req, res){
 				Setting.findOne({'transport_detail_id': transport_detail_id, type: 'spj'}).exec(function(err, result){
 					if(!result){
 						Setting.create({'transport_detail_id': transport_detail_id, type: 'spj'},function(err, result){
-							console.log(result);
 							cb(null, '');
 						})
 					} else {
@@ -759,7 +768,7 @@ spj.post('/transport', function(req, res){
 							    		var total_sampai_bln_ini = 0;
 								    	var new_entry = {};
 								    	new_entry.pengentry = req.session.username;
-								    	new_entry.ket = 'SPJ Transport Dosen';
+								    	new_entry.ket = 'SPJ Transport Dosen periode '+periode;
 								    	// new_entry.bukti_no = '';// data.bukti_no || '';
 								    	// new_entry.spm_no = '';// data.spm_no || '';
 								    	new_entry.penerima_nama = data[i]['nama'];
@@ -777,18 +786,17 @@ spj.post('/transport', function(req, res){
 								    		// 		'sum': false, 'total_sampai_bln_ini': 0, 'broadcast': true});
 								    	})
 									} else {
-										sendNotification(req.session.username, 'Transport tsb untuk '+data[i]['nama']+' pernah tercatat di realisasi.')
+										sendNotification(req.session.user_id, 'Transport tsb untuk '+data[i]['nama']+' pernah tercatat di realisasi.')
 									}
 							})
 			    		})
 					})
 				})
+				//riwayat user
+				User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Buat SPJ Transport Dosen Non STIS periode '+periode}}}, 
+					function(err, status){
+				})
 	        })
-
-
-
-
-
 			// res.send('ok');
 		}
 	)
@@ -806,7 +814,7 @@ spj.post('/pengaturan/unggah_template/:type', function(req, res){
 			function(callback){
 				form.parse(req, function(err, fields, file){
 					if(err){
-						errorHandler(req.session.username, 'Form parse Error. Mohon hubungi admin.');
+						errorHandler(req.session.user_id, 'Form parse Error. Mohon hubungi admin.');
 						return;
 					}
 					callback(null, 'File parsed')
@@ -922,14 +930,14 @@ function getNumber(obj){
     return +obj;
 }
 
-function errorHandler(username, message){
-	if(_.isString(username)) pok.connections[username].emit('messages', message)
-		else username.emit('messages', message)
+function errorHandler(user_id, message){
+	if(_.isString(user_id)) pok.connections[user_id].emit('messages', message)
+		else user_id.emit('messages', message)
 }
 
-function sendNotification(username, message){
-	if(_.isString(username)) spj.connections[username].emit('messages', message)
-		else username.emit('messages', message)
+function sendNotification(user_id, message){
+	if(_.isString(user_id)) spj.connections[user_id].emit('messages', message)
+		else user_id.emit('messages', message)
 }
 
 module.exports = spj;

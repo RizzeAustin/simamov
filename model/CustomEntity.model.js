@@ -7,7 +7,12 @@ var CustomEntitySchema = new Schema({
     "nama" : String,
     "nip" : String,
     "jabatan" : String,
-    "gol" : String
+    "gol" : String,
+    "ket" : String,
+    "active": {
+    	type: Boolean,
+    	default: true
+    }
 }, { collection: 'custom_entity', strict: false});
 
 CustomEntitySchema.methods.isExist = function(cb) {

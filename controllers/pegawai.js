@@ -7,6 +7,7 @@ var async = require('async');
 var Pegawai = require(__dirname+"/../model/Pegawai.model");
 
 var CustomEntity = require(__dirname+"/../model/CustomEntity.model");
+var User = require(__dirname+"/../model/User.model");
 
 //Short syntax tool
 var _ = require("underscore");
@@ -27,222 +28,266 @@ pegawai.connections;
 
 pegawai.io;
 
-pegawai.socket = function(io, connections){
+pegawai.socket = function(io, connections, client){
 	pegawai.connections = connections;
 
 	pegawai.io = io;
 
-	io.sockets.on('connection', function (client) {
-		client.on('pegawai_init', function (tab) {
-			if(tab == 'stis'){
-				var kode_dosen = ['init'];
-				Pegawai.find().sort('nama').exec(function(err, pegs){
-					var nomor = 1;
-					_.each(pegs, function(peg, i, list){
-						if(peg.kode_dosen) kode_dosen.push(peg.kode_dosen);
-					});
-					var query = 'SELECT * ' +
-								'FROM dosen ' +
-								'WHERE unit = ? AND kode_dosen NOT IN (?) ORDER BY nama';
-					sipadu_db.query(query, ['STIS', kode_dosen], function (err, dosens, fields) {
-							if (err){
-							  	console.log(err)
-							  	return;
-							}
-							_.each(dosens, function(dos, i, list){
-								var row = [
-									nomor,
-									dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
-									dos.kode_dosen || '-',
-									dos.pangkat || '-',
-									dos.gol_pajak || '-',
-									'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
-									+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-									dos.kode_dosen || '-'
-								]
-								nomor++;
-								client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
-								if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_stis');
-							});
-							_.each(pegs, function(peg, i, list){
-								var row = [
-									nomor,
-									peg.nama || '-',
-									peg._id || '-',
-									peg.jabatan || '-',
-									peg.gol || '-',
-									'<button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
-									+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-									peg.kode_dosen || 'none'
-								]
-								nomor++;
-								client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
-								if(i == pegs.length - 1) client.emit('pegawai_init_finish', 'pegawai_stis');
-							});
-					})
-
-				});
-			} else if(tab == 'bps'){
+	client.on('pegawai_init', function (tab) {
+		if(tab == 'stis'){
+			var kode_dosen = ['init'];
+			Pegawai.find({active: true}).sort('nama').exec(function(err, pegs){
 				var nomor = 1;
+				_.each(pegs, function(peg, i, list){
+					if(peg.kode_dosen) kode_dosen.push(peg.kode_dosen);
+				});
 				var query = 'SELECT * ' +
 							'FROM dosen ' +
-							'WHERE unit = ? AND kode_dosen NOT IN (?)';
-				CustomEntity.find({type: 'Penerima', unit: 'BPS'}).sort('nama').exec(function(err, bpspeg){
-					var kode_dosen = ['init'];
-					_.each(bpspeg, function(peg, i, list){
-						if(peg.get('kode_dosen')) kode_dosen.push(peg.get('kode_dosen'));
-						var row = [
-							nomor++,
-							peg.nama || '-',
-							peg.get('nip') || '-',
-							peg.get('jabatan') || '-',
-							peg.get('gol') || '-',
-							'<button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
-							+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-							peg.get('kode_dosen') || 'none',
-							peg._id || 'none'
-						]
-						client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
-						if(i == list.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
-					});
-					sipadu_db.query(query, ['BPS', kode_dosen], function (err, dosens, fields) {
+							'WHERE aktif = 1 AND unit = ? AND kode_dosen NOT IN (?) ORDER BY nama';
+				sipadu_db.query(query, ['STIS', kode_dosen], function (err, dosens, fields) {
 						if (err){
 						  	console.log(err)
 						  	return;
 						}
 						_.each(dosens, function(dos, i, list){
 							var row = [
-								nomor++,
+								nomor,
 								dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
 								dos.kode_dosen || '-',
 								dos.pangkat || '-',
 								dos.gol_pajak || '-',
 								'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
 								+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-								dos.kode_dosen || 'none',
-								'none'
+								dos.kode_dosen || '-'
 							]
-							client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
-							if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
+							nomor++;
+							client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
+							if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_stis');
 						});
-					})
+						_.each(pegs, function(peg, i, list){
+							var row = [
+								nomor,
+								peg.nama || '-',
+								peg._id || '-',
+								peg.jabatan || '-',
+								peg.gol || '-',
+								'<button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
+								+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
+								peg.kode_dosen || 'none',
+								peg.ce || 'none'
+							]
+							nomor++;
+							client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
+							if(i == pegs.length - 1) client.emit('pegawai_init_finish', 'pegawai_stis');
+						});
+				})
+
+			});
+		} else if(tab == 'bps'){
+			var nomor = 1;
+			var query = 'SELECT * ' +
+						'FROM dosen ' +
+						'WHERE aktif = 1 AND unit = ? AND kode_dosen NOT IN (?)';
+			CustomEntity.find({type: 'Penerima', unit: 'BPS', active: true}).sort('nama').exec(function(err, bpspeg){
+				var kode_dosen = ['init'];
+				_.each(bpspeg, function(peg, i, list){
+					if(peg.get('kode_dosen')) kode_dosen.push(peg.get('kode_dosen'));
+					var row = [
+						nomor++,
+						peg.nama || '-',
+						peg.get('nip') || '-',
+						peg.get('jabatan') || '-',
+						peg.get('gol') || '-',
+						'<button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
+						+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
+						peg.get('kode_dosen') || 'none',
+						peg._id || 'none',
+						peg.ce || 'none'
+					]
+					client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
+					if(i == list.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
 				});
-				
-			} else {
-				CustomEntity.find({type: 'Penerima', unit: { $ne: 'BPS' }}).sort('nama').exec(function(err, custs){
-					_.each(custs, function(cust, i, list){
-						var ket = '-';
-						if(cust.unit) ket = 'Dosen '+(cust.unit||'Luar');
+				sipadu_db.query(query, ['BPS', kode_dosen], function (err, dosens, fields) {
+					if (err){
+					  	console.log(err)
+					  	return;
+					}
+					_.each(dosens, function(dos, i, list){
 						var row = [
-							i+1,
-							cust.nama,
-							cust.get('nip') || '-',
-							cust.jabatan || '-',
-							cust.gol || '-',
-							ket || '-',
-							'<button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
+							nomor++,
+							dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
+							dos.kode_dosen || '-',
+							dos.pangkat || '-',
+							dos.gol_pajak || '-',
+							'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
 							+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-							cust.kode_dosen || 'none',
-							cust._id || 'none'
+							dos.kode_dosen || 'none',
+							'none'
 						]
-						client.emit('pegawai_init_response', {'row': row, unit: 'non_stis_bps'});
-						if(i == custs.length - 1) client.emit('pegawai_init_finish', 'non_stis_bps');
+						client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
+						if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
 					});
-				});
-			}
-			
-		});
-
-		client.on('jab_list', function (data, cb) {
-			Pegawai.find().distinct('jabatan', function(error, jabs) {
-				cb(jabs);
-			})
-		})
-
-		client.on('entry_pegawai_baru', function (data, cb) {
-			if(data.collection == 'pegawai'){
-				var peg = new Pegawai(data.data);
-				peg.save(function(err, res){
-					cb(peg._id);
-				});
-			} else if(data.collection == 'bps'){
-				data.data.nip = data.data._id;
-				delete data.data._id;
-				data.data.type = 'Penerima';
-				data.data.unit = 'BPS';
-				var cs = new CustomEntity(data.data);
-				cs.save(function(err, res){
-					console.log(err,res)
-					cb(cs._id);
-				});
-			} else if(data.collection == 'custom_entity'){
-				data.data.nip = data.data._id;
-				delete data.data._id;
-				data.data.type = 'Penerima';
-				data.data.unit = 'Non STIS/BPS';
-				var cs = new CustomEntity(data.data);
-				cs.save(function(err, res){
-					console.log(err,res)
-					cb(cs._id);
-				});
-			}
-		})
-
-		client.on('gol_list', function (data, cb) {
-			Pegawai.find().distinct('gol', function(error, gols) {
-				cb(gols);
-			})
-		})
-
-		client.on('edit_pegawai', function (data, cb) {
-			if(data.type == pegawai){
-				Pegawai.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
-					if (err) {
-		    			cb('gagal');
-		    			return
-		    		}
-					cb('sukses');
 				})
-			} else {
-				CustomEntity.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
-					console.log(err,status)
-					if (err) {
-		    			cb('gagal');
-		    			return
-		    		}
-					cb('sukses');
-				})
-			}
+			});
 			
-		})
+		} else {
+			CustomEntity.find({type: 'Penerima', unit: { $ne: 'BPS' }, active: true}).sort('nama').exec(function(err, custs){
+				_.each(custs, function(cust, i, list){
+					var ket = '-';
+					if(cust.unit) ket = 'Dosen '+(cust.unit||'Luar');
+					var row = [
+						i+1,
+						cust.nama,
+						cust.get('nip') || '-',
+						cust.jabatan || '-',
+						cust.gol || '-',
+						cust.ket || ket || '-',
+						'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
+						+' <button type="button" class="hapus-pgw"><i class="icon-close"></i></button>'
+						+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
+						cust.kode_dosen || cust._id,
+						cust._id || 'none'
+					]
+					client.emit('pegawai_init_response', {'row': row, unit: 'non_stis_bps'});
+					if(i == custs.length - 1) client.emit('pegawai_init_finish', 'non_stis_bps');
+				});
+			});
+		}
+		
+	});
 
-		client.on('edit_bps_ce', function (data, cb) {
-			CustomEntity.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
+	client.on('jab_list', function (data, cb) {
+		Pegawai.find().distinct('jabatan', function(error, jabs) {
+			cb(jabs);
+		})
+	})
+
+	client.on('entry_pegawai_baru', function (data, cb) {
+		if(data.collection == 'pegawai'){
+			var peg = new Pegawai(data.data);
+			peg.save(function(err, res){
+				cb(peg._id);
+			});
+		} else if(data.collection == 'bps'){
+			data.data.nip = data.data._id;
+			delete data.data._id;
+			data.data.type = 'Penerima';
+			data.data.unit = 'BPS';
+			var cs = new CustomEntity(data.data);
+			cs.save(function(err, res){
+				console.log(err,res)
+				cb(cs._id);
+			});
+		} else if(data.collection == 'custom_entity'){
+			data.data.nip = data.data._id;
+			delete data.data._id;
+			data.data.type = 'Penerima';
+			data.data.unit = 'Non STIS/BPS';
+			var cs = new CustomEntity(data.data);
+			cs.save(function(err, res){
+				console.log(err,res)
+				cb(cs._id);
+			});
+		}
+		User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat pegawai baru : '+data.data.nama}}}, 
+			function(err, status){
+		})
+	})
+
+	client.on('gol_list', function (data, cb) {
+		Pegawai.find().distinct('gol', function(error, gols) {
+			cb(gols);
+		})
+	})
+
+	client.on('edit_pegawai', function (data, cb) {
+		console.log(data)
+		if(data.type == 'pegawai'){
+			Pegawai.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
 				if (err) {
 	    			cb('gagal');
 	    			return
 	    		}
 				cb('sukses');
 			})
-		})
-
-		client.on('hapus_pegawai', function (_id, cb) {
-			Pegawai.remove({'_id': _id}, function(err, status) {
+		} else if(data.type == 'bps'){
+			CustomEntity.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
+				console.log(err,status)
 				if (err) {
 	    			cb('gagal');
 	    			return
 	    		}
-
-	    		if(!status.result.n){
-	    			CustomEntity.remove({'_id': _id}, function(err, status) {
-	    				console.log(err, status)
-	    				cb('sukses');
-	    			})
-	    		} else {
+				cb('sukses');
+			})
+		} else{
+			Pegawai.update({_id: data._id}, {'ce': data.value}, function(err, status) {
+				if (err) {
+	    			cb('gagal');
+							console.log(err)
+	    			return
+	    		}
+	    		if(!status.nModified){
+	    			CustomEntity.update({_id: data._id}, {'ce': data.value}, function(err, status) {
+						if (err) {
+			    			cb('gagal');
+							console.log(err)
+			    			return
+			    		}
+						cb('sukses');
+						CustomEntity.update({'_id': data.value}, {active: false}, function(err, status) {
+		    				console.log(status)
+		    			})
+					})
+	    		}else {
 	    			cb('sukses');
-	    		}				
-			}) 
+					CustomEntity.update({'_id': data.value}, {active: false}, function(err, status) {
+	    				console.log(status)
+	    			})
+	    		}
+			})
+		}
+		User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Edit pegawai '+data._id+', '+data.field+' ==> '+data.value}}}, 
+			function(err, status){
 		})
+		
+	})
+
+	client.on('edit_bps_ce', function (data, cb) {
+		CustomEntity.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
+			if (err) {
+    			cb('gagal');
+    			return
+    		}
+			cb('sukses');
+		})
+		User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Edit pegawai '+data._id+', '+data.field+' ==> '+data.value}}}, 
+			function(err, status){
+		})
+	})
+
+	client.on('hapus_pegawai', function (_id, cb) {
+		Pegawai.update({'_id': _id}, {active: false}, function(err, status) {
+			if (err) {
+    			cb('gagal');
+    			return
+    		}
+
+    		console.log(status)
+
+    		if(!status.nModified){
+    			CustomEntity.update({'_id': _id}, {active: false}, function(err, status) {
+    				cb('sukses');
+					User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Hapus Entitas Non STIS '+_id}}}, 
+						function(err, status){
+					})	
+    			})
+    		} else {
+    			cb('sukses');
+				User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Hapus pegawai STIS '+_id}}}, 
+					function(err, status){
+				})	
+    		}			
+		}) 
 	})
 
 }
@@ -282,14 +327,14 @@ pegawai.post('/ajax/edit', function(req, res){
 	});
 });
 
-function errorHandler(username, message){
-	if(_.isString(username)) pok.connections[username].emit('messages', message)
-		else username.emit('messages', message)
+function errorHandler(user_id, message){
+	if(_.isString(user_id)) pok.connections[user_id].emit('messages', message)
+		else user_id.emit('messages', message)
 }
 
-function sendNotification(username, message){
-	if(_.isString(username)) pok.connections[username].emit('messages', message)
-		else username.emit('messages', message)
+function sendNotification(user_id, message){
+	if(_.isString(user_id)) pok.connections[user_id].emit('messages', message)
+		else user_id.emit('messages', message)
 }
 
 module.exports = pegawai;

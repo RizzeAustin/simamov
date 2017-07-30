@@ -37,6 +37,8 @@ var CustomEntity = require(__dirname+"/../model/CustomEntity.model");
 var Akun = require(__dirname+"/../model/Akun.model");
 var DetailBelanja = require(__dirname+"/../model/DetailBelanja.model");
 
+var User = require(__dirname+"/../model/User.model");
+
 var _ = require("underscore");
 
 var moment = require('moment');
@@ -51,334 +53,331 @@ sppd.connections;
 
 sppd.io;
 
-sppd.socket = function(io, connections){
+sppd.socket = function(io, connections, client){
 	sppd.connections = connections;
 
 	sppd.io = io;
 
-	io.sockets.on('connection', function (client) {
-		var thang = client.handshake.session.tahun_anggaran;
-		var user_aktiv = client.handshake.session.username || 'dummy user';
+	var thang = client.handshake.session.tahun_anggaran;
+	var user_aktiv = client.handshake.session.username || 'dummy user';
 
 
-		client.on('komponen_list', function (q, cb){
-	    	Komponen.find({"thang": thang, "urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdoutput kdkmpnen urkmpnen', function(err, custs){
-	    		_.each(custs, function(item, index, list){
-	    			custs[index].d = levenshtein.get(q, item.urkmpnen);
-	    		})
-	    		custs = _.sortBy(custs, function(o) { return o.d; })
-	    		cb(custs);
-	    	})
-	    })
-		client.on('komponen_list_extra', function (q, cb){
-	    	Komponen.find({"thang": thang, "urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdkmpnen urkmpnen', function(err, custs1){
-	    		CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'komp'}, function(err, custs2){
-		    		_.each(custs1, function(item, index, list){
-		    			custs1[index].d = levenshtein.get(q, item.urkmpnen);
-		    		})
-		    		_.each(custs2, function(item, index, list){
-		    			custs2[index].d = levenshtein.get(q.query, item.nama);
-		    		})
-		    		custs = _.sortBy(custs1.concat(custs2), function(o) { return o.d; })
-		    		cb(custs);
-		    	})
-	    	})
-	    })
-		client.on('lokasi_list', function (q, cb){
-	    	CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'lokasi'}, function(err, custs){
-	    		_.each(custs, function(item, index, list){
-	    			custs[index].d = levenshtein.get(q, item.nama);
-	    		})
-	    		custs = _.sortBy(custs, function(o) { return o.d; })
-	    		cb(custs);
-	    	})
-	    })
-		client.on('prov_list', function (q, cb){
-			var where = {};
-			if(!q.kab) where = {"nama": new RegExp(q.q, "i")};
-			 else where = {"nama": new RegExp(q.q, "i"), _id: q.kab.match(/^\d{2}/)[0]};
-	    	Prov.find(where, function(err, prov){
-	    		_.each(prov, function(item, index, list){
-	    			prov[index].d = levenshtein.get(q.q, item.nama);
-	    		})
-	    		prov = _.sortBy(prov, function(o) { return o.d; })
-	    		cb(prov);
-	    	})
-	    })
-		client.on('kab_list', function (q, cb){
-			var where = {};
-			if(!q.prov) where = {"nama": new RegExp(q.q, "i")};
-			 else where = {"nama": new RegExp(q.q, "i"), "id_propinsi": q.prov};
-	    	Kab.find(where, 'nama', function(err, kab){
-	    		_.each(kab, function(item, index, list){
-	    			kab[index].d = levenshtein.get(q.q, item.nama);
-	    		})
-	    		kab = _.sortBy(kab, function(o) { return o.d; })
-	    		cb(kab);
-	    	})
-	    })
-		client.on('kab_tiket_list', function (q, cb){
-	    	Kab.find({"nama": new RegExp(q, "i"), 'tiket_jkt_b': { $exists: true, $ne: 0 },'tiket_jkt_e': { $exists: true, $ne: 0 }}, function(err, kab){
-	    		_.each(kab, function(item, index, list){
-	    			kab[index].d = levenshtein.get(q, item.nama);
-	    		})
-	    		kab = _.sortBy(kab, function(o) { return o.d; })
-	    		cb(kab);
-	    	})
-	    })
-		client.on('org_list', function (q, cb){
-	    	CustomEntity.find({"nama": new RegExp(q, "i"), type: 'org'}, 'nama', function(err, kab){
-	    		cb(kab);
-	    	})
-	    })
-		client.on('add_ttd_st', function (new_ttd, cb){
-	    	SettingSPPD.findOne({}, function(err, setting){
-	    		if(!setting){
-	    			var new_setting = new SettingSPPD({ttd_st: [new_ttd]});
-	    			new_setting.save(function(err, res){
-	    				cb('sukses');
-	    			});
-	    		} else {
-	    			SettingSPPD.update({}, {$push: {"ttd_st": new_ttd}}, {new: true}, function(err, result){
-	    				cb('sukses');
-	    			})
-	    		}
-	    		
-	    	})
-	    })
-		client.on('add_ttd_leg', function (new_ttd, cb){
-	    	SettingSPPD.findOne({}, function(err, setting){
-	    		if(!setting){
-	    			var new_setting = new SettingSPPD({ttd_leg: [new_ttd]});
-	    			new_setting.save(function(err, res){
-	    				cb('sukses');
-	    			});
-	    		} else {
-	    			SettingSPPD.update({}, {$push: {"ttd_leg": new_ttd}}, {new: true}, function(err, result){
-	    				cb('sukses');
-	    			})
-	    		}
-	    		
-	    	})
-	    })
-		client.on('set_ppk', function (new_ppk, cb){
-	    	SettingSPPD.findOne({}, function(err, setting){
-	    		if(!setting){
-	    			var new_setting = new SettingSPPD({ppk: new_ppk});
-	    			new_setting.save(function(err, res){
-	    				cb('sukses');
-	    			});
-	    		} else {
-	    			SettingSPPD.update({}, {$set: {ppk: new_ppk}}, {new: true}, function(err, result){
-	    				cb('sukses');
-	    			})
-	    		}
-	    		
-	    	})
-	    })
-		client.on('set_bend', function (new_bend, cb){
-	    	SettingSPPD.findOne({}, function(err, setting){
-	    		if(!setting){
-	    			var new_setting = new SettingSPPD({bendahara: new_bend});
-	    			new_setting.save(function(err, res){
-	    				cb('sukses');
-	    			});
-	    		} else {
-	    			SettingSPPD.update({}, {$set: {bendahara: new_bend}}, {new: true}, function(err, result){
-	    				cb('sukses');
-	    			})
-	    		}
-	    		
-	    	})
-	    })
-		client.on('set_default_ttd_st', function (nip, cb){
-	    	SettingSPPD.update({}, {ttd_st_default: nip}, function(err, status){
-	    		cb('sukses');
-	    	})
-	    })
-		client.on('set_default_ttd_leg', function (nip, cb){
-	    	SettingSPPD.update({}, {ttd_leg_default: nip}, function(err, status){
-	    		cb('sukses');
-	    	})
-	    })
-		client.on('ttd_st_remove', function (nip, cb){
-	    	SettingSPPD.update({}, {$pull: {ttd_st: nip}}, function(err, status){
-	    		cb('sukses');
-	    	})
-	    })
-		client.on('ttd_leg_remove', function (nip, cb){
-	    	SettingSPPD.update({}, {$pull: {ttd_leg: nip}}, function(err, status){
-	    		cb('sukses');
-	    	})
-	    })
-		client.on('surat_tugas', function (data, cb){
-			handleSuratTugas(data, cb, null);
-	    })
-		client.on('surat_tugas_biasa', function (data, cb){
-			handleSuratTugasBiasa(data, cb, null);
-	    })
-		client.on('perhitungan', function (data, cb){
-			handlePerhitungan(data, cb, null, user_aktiv);
-	    })
-	    client.on('riwayat_surat_tugas', function (data, cb){
-	    	var Model = {};
-	    	if(data.type == 'surat_tugas'){
-	    		Model = SuratTugas;
-	    	} else {
-	    		Model = SuratTugasBiasa;
-	    	}
-	    	var y = client.handshake.session.tahun_anggaran || new Date().getFullYear();
-    		var m = data.month || new Date().getMonth();
-    		var lower_ts = data.lower_ts || Math.round(new Date(y, m, 1).getTime()/1000)
-    		var upper_ts = data.upper_ts || Math.round(new Date(y, +m + 1, 0).getTime()/1000) + 86399
-    		Model.find({ "timestamp": {$gte : lower_ts, $lte : upper_ts}}).sort({'_id': -1}).populate('nama_lengkap').exec(function(err, surats){
-    			var tasks = [];
-    			_.each(surats, function(srt, index, list){
-    				tasks.push(
-    					function(cb){
-    						if(!srt.nama_lengkap){
-    							Model.findOne({_id: srt._id}, 'nama_lengkap', function(err, res){
-    								CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
-    									if(!peg){
-    										delete surats[index];
-    										cb(null, '');
-    									} else {
-    										srt.nama_lengkap = peg.toObject();
-											cb(null, '')
-    									}
-									})
-    							})
-		    				} else {
-		    					cb(null, '')
-		    				}
-    					}
-    				)
-    			})
-    			async.series(tasks, function(err, final){
-    				console.log(surats)
-    				cb(surats);
-    			})
+	client.on('komponen_list', function (q, cb){
+    	Komponen.find({"thang": thang, "urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdoutput kdkmpnen urkmpnen', function(err, custs){
+    		_.each(custs, function(item, index, list){
+    			custs[index].d = levenshtein.get(q, item.urkmpnen);
     		})
-	    })
-	    client.on('get_surat_tugas', function (data, cb){
-	    	if(data.type == 'surat_tugas'){
-	    		SuratTugas.findOne({ "_id": data.nomor}).populate('nama_lengkap prov kab org').exec(function(err, surat){
-	    			if(!surat.nama_lengkap){
-						SuratTugas.findOne({_id: surat._id}, 'nama_lengkap', function(err, res){
-							CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
-								surat.nama_lengkap = peg.toObject();
-								cb(surat);
-							})
-						})
-    				} else {
-    					cb(surat);
-    				}
+    		custs = _.sortBy(custs, function(o) { return o.d; })
+    		cb(custs);
+    	})
+    })
+	client.on('komponen_list_extra', function (q, cb){
+    	Komponen.find({"thang": thang, "urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdkmpnen urkmpnen', function(err, custs1){
+    		CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'komp'}, function(err, custs2){
+	    		_.each(custs1, function(item, index, list){
+	    			custs1[index].d = levenshtein.get(q, item.urkmpnen);
 	    		})
-	    	} else {
-	    		SuratTugasBiasa.findOne({ "_id": data.nomor}).populate('nama_lengkap').exec(function(err, surat){
-	    			if(!surat.nama_lengkap){
-						SuratTugasBiasa.findOne({_id: surat._id}, 'nama_lengkap', function(err, res){
-							CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
-								surat.nama_lengkap = peg.toObject();
-								cb(surat);
-							})
-						})
-    				} else {
-    					cb(surat);
-    				}
+	    		_.each(custs2, function(item, index, list){
+	    			custs2[index].d = levenshtein.get(q.query, item.nama);
 	    		})
-	    	}
-	    })
-	    client.on('get_perhitungan', function (nomor, cb){
-	    	var data = {};
-	    	Perhitungan.findOne({ "_id": nomor}).exec(function(err, perhit){
-    			SuratTugas.findOne({ "_id": nomor}).populate('prov kab org').exec(function(err, st){
-    				var temp_id = st.nama_lengkap;
-    				st.populate('nama_lengkap', function(err){
-    					if(!st.nama_lengkap){
-    						CustomEntity.findOne({_id: temp_id}, function(err, peg){
-								st.nama_lengkap = peg.toObject();
-								data.st = st;
-			    				data.perhit = perhit;
-				    			cb(data);
+	    		custs = _.sortBy(custs1.concat(custs2), function(o) { return o.d; })
+	    		cb(custs);
+	    	})
+    	})
+    })
+	client.on('lokasi_list', function (q, cb){
+    	CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'lokasi'}, function(err, custs){
+    		_.each(custs, function(item, index, list){
+    			custs[index].d = levenshtein.get(q, item.nama);
+    		})
+    		custs = _.sortBy(custs, function(o) { return o.d; })
+    		cb(custs);
+    	})
+    })
+	client.on('prov_list', function (q, cb){
+		var where = {};
+		if(!q.kab) where = {"nama": new RegExp(q.q, "i")};
+		 else where = {"nama": new RegExp(q.q, "i"), _id: q.kab.match(/^\d{2}/)[0]};
+    	Prov.find(where, function(err, prov){
+    		_.each(prov, function(item, index, list){
+    			prov[index].d = levenshtein.get(q.q, item.nama);
+    		})
+    		prov = _.sortBy(prov, function(o) { return o.d; })
+    		cb(prov);
+    	})
+    })
+	client.on('kab_list', function (q, cb){
+		var where = {};
+		if(!q.prov) where = {"nama": new RegExp(q.q, "i")};
+		 else where = {"nama": new RegExp(q.q, "i"), "id_propinsi": q.prov};
+    	Kab.find(where, 'nama', function(err, kab){
+    		_.each(kab, function(item, index, list){
+    			kab[index].d = levenshtein.get(q.q, item.nama);
+    		})
+    		kab = _.sortBy(kab, function(o) { return o.d; })
+    		cb(kab);
+    	})
+    })
+	client.on('kab_tiket_list', function (q, cb){
+    	Kab.find({"nama": new RegExp(q, "i"), 'tiket_jkt_b': { $exists: true, $ne: 0 },'tiket_jkt_e': { $exists: true, $ne: 0 }}, function(err, kab){
+    		_.each(kab, function(item, index, list){
+    			kab[index].d = levenshtein.get(q, item.nama);
+    		})
+    		kab = _.sortBy(kab, function(o) { return o.d; })
+    		cb(kab);
+    	})
+    })
+	client.on('org_list', function (q, cb){
+    	CustomEntity.find({"nama": new RegExp(q, "i"), type: 'org'}, 'nama', function(err, kab){
+    		cb(kab);
+    	})
+    })
+	client.on('add_ttd_st', function (new_ttd, cb){
+    	SettingSPPD.findOne({}, function(err, setting){
+    		if(!setting){
+    			var new_setting = new SettingSPPD({ttd_st: [new_ttd]});
+    			new_setting.save(function(err, res){
+    				cb('sukses');
+    			});
+    		} else {
+    			SettingSPPD.update({}, {$push: {"ttd_st": new_ttd}}, {new: true}, function(err, result){
+    				cb('sukses');
+    			})
+    		}
+    		
+    	})
+    })
+	client.on('add_ttd_leg', function (new_ttd, cb){
+    	SettingSPPD.findOne({}, function(err, setting){
+    		if(!setting){
+    			var new_setting = new SettingSPPD({ttd_leg: [new_ttd]});
+    			new_setting.save(function(err, res){
+    				cb('sukses');
+    			});
+    		} else {
+    			SettingSPPD.update({}, {$push: {"ttd_leg": new_ttd}}, {new: true}, function(err, result){
+    				cb('sukses');
+    			})
+    		}
+    		
+    	})
+    })
+	client.on('set_ppk', function (new_ppk, cb){
+    	SettingSPPD.findOne({}, function(err, setting){
+    		if(!setting){
+    			var new_setting = new SettingSPPD({ppk: new_ppk});
+    			new_setting.save(function(err, res){
+    				cb('sukses');
+    			});
+    		} else {
+    			SettingSPPD.update({}, {$set: {ppk: new_ppk}}, {new: true}, function(err, result){
+    				cb('sukses');
+    			})
+    		}
+    		
+    	})
+    })
+	client.on('set_bend', function (new_bend, cb){
+    	SettingSPPD.findOne({}, function(err, setting){
+    		if(!setting){
+    			var new_setting = new SettingSPPD({bendahara: new_bend});
+    			new_setting.save(function(err, res){
+    				cb('sukses');
+    			});
+    		} else {
+    			SettingSPPD.update({}, {$set: {bendahara: new_bend}}, {new: true}, function(err, result){
+    				cb('sukses');
+    			})
+    		}
+    		
+    	})
+    })
+	client.on('set_default_ttd_st', function (nip, cb){
+    	SettingSPPD.update({}, {ttd_st_default: nip}, function(err, status){
+    		cb('sukses');
+    	})
+    })
+	client.on('set_default_ttd_leg', function (nip, cb){
+    	SettingSPPD.update({}, {ttd_leg_default: nip}, function(err, status){
+    		cb('sukses');
+    	})
+    })
+	client.on('ttd_st_remove', function (nip, cb){
+    	SettingSPPD.update({}, {$pull: {ttd_st: nip}}, function(err, status){
+    		cb('sukses');
+    	})
+    })
+	client.on('ttd_leg_remove', function (nip, cb){
+    	SettingSPPD.update({}, {$pull: {ttd_leg: nip}}, function(err, status){
+    		cb('sukses');
+    	})
+    })
+	client.on('surat_tugas', function (data, cb){
+		handleSuratTugas(data, cb, null, client.handshake.session.user_id);
+    })
+	client.on('surat_tugas_biasa', function (data, cb){
+		handleSuratTugasBiasa(data, cb, null, client.handshake.session.user_id);
+    })
+	client.on('perhitungan', function (data, cb){
+		handlePerhitungan(data, cb, null, user_aktiv, client.handshake.session.user_id);
+    })
+    client.on('riwayat_surat_tugas', function (data, cb){
+    	var Model = {};
+    	if(data.type == 'surat_tugas'){
+    		Model = SuratTugas;
+    	} else {
+    		Model = SuratTugasBiasa;
+    	}
+    	var y = client.handshake.session.tahun_anggaran || new Date().getFullYear();
+		var m = data.month || new Date().getMonth();
+		var lower_ts = data.lower_ts || Math.round(new Date(y, m, 1).getTime()/1000)
+		var upper_ts = data.upper_ts || Math.round(new Date(y, +m + 1, 0).getTime()/1000) + 86399
+		Model.find({ "timestamp": {$gte : lower_ts, $lte : upper_ts}}).sort({'_id': -1}).populate('nama_lengkap').exec(function(err, surats){
+			var tasks = [];
+			_.each(surats, function(srt, index, list){
+				tasks.push(
+					function(cb){
+						if(!srt.nama_lengkap){
+							Model.findOne({_id: srt._id}, 'nama_lengkap', function(err, res){
+								CustomEntity.findOne({_id: new ObjectId(res.nama_lengkap)}, function(err, peg){
+									if(!peg){
+										delete surats[index];
+										cb(null, '');
+									} else {
+										srt.nama_lengkap = peg.toObject();
+										cb(null, '')
+									}
+								})
 							})
-    					}else {
-    						data.st = st;
+	    				} else {
+	    					cb(null, '')
+	    				}
+					}
+				)
+			})
+			async.series(tasks, function(err, final){
+				cb(surats);
+			})
+		})
+    })
+    client.on('get_surat_tugas', function (data, cb){
+    	if(data.type == 'surat_tugas'){
+    		SuratTugas.findOne({ "_id": data.nomor}).populate('nama_lengkap prov kab org').exec(function(err, surat){
+    			if(!surat.nama_lengkap){
+					SuratTugas.findOne({_id: surat._id}, 'nama_lengkap', function(err, res){
+						CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
+							surat.nama_lengkap = peg.toObject();
+							cb(surat);
+						})
+					})
+				} else {
+					cb(surat);
+				}
+    		})
+    	} else {
+    		SuratTugasBiasa.findOne({ "_id": data.nomor}).populate('nama_lengkap').exec(function(err, surat){
+    			if(!surat.nama_lengkap){
+					SuratTugasBiasa.findOne({_id: surat._id}, 'nama_lengkap', function(err, res){
+						CustomEntity.findOne({_id: res.nama_lengkap}, function(err, peg){
+							surat.nama_lengkap = peg.toObject();
+							cb(surat);
+						})
+					})
+				} else {
+					cb(surat);
+				}
+    		})
+    	}
+    })
+    client.on('get_perhitungan', function (nomor, cb){
+    	var data = {};
+    	Perhitungan.findOne({ "_id": nomor}).exec(function(err, perhit){
+			SuratTugas.findOne({ "_id": nomor}).populate('prov kab org').exec(function(err, st){
+				var temp_id = st.nama_lengkap;
+				st.populate('nama_lengkap', function(err){
+					if(!st.nama_lengkap){
+						CustomEntity.findOne({_id: temp_id}, function(err, peg){
+							st.nama_lengkap = peg.toObject();
+							data.st = st;
 		    				data.perhit = perhit;
 			    			cb(data);
-    					}
-    				})
-	    		})
+						})
+					}else {
+						data.st = st;
+	    				data.perhit = perhit;
+		    			cb(data);
+					}
+				})
     		})
-	    })
-	    client.on('last_nmr_surat', function (nomor, cb){
-    		SettingSPPD.findOne({}, 'last_nmr_surat').exec(function(err, result){
-				cb(result.last_nmr_surat);
+		})
+    })
+    client.on('last_nmr_surat', function (nomor, cb){
+		SettingSPPD.findOne({}, 'last_nmr_surat').exec(function(err, result){
+			cb(result.last_nmr_surat);
+		})
+    })
+    client.on('biaya2_list', function (data, cb){
+		Prov.find({}).exec(function(err, result){
+			Representasi.find({}).exec(function(err, reps){
+				cb({'prov': result, 'reps': reps});
 			})
-	    })
-	    client.on('biaya2_list', function (data, cb){
-    		Prov.find({}).exec(function(err, result){
-    			Representasi.find({}).exec(function(err, reps){
-					cb({'prov': result, 'reps': reps});
-				})
+		})
+    })
+    client.on('prov_biaya2_edit', function (data, cb){
+		Prov.update({_id: data._id},{$set: data.data}, {upsert: true}).exec(function(err, result){
+			cb('sukses');
+		})
+    })
+    client.on('tiket_list', function (data, cb){
+		Kab.find({}).exec(function(err, result){
+			cb(result);
+		})
+    })
+    client.on('kab_tiket_edit', function (data, cb){
+		Kab.update({_id: data._id},{$set: data.data}, {upsert: true}).exec(function(err, result){
+			cb('sukses');
+		})
+    })
+    client.on('representasi_edit', function (data, cb){
+		Representasi.update({_id: data._id},{$set: data.data}, {upsert: true}).exec(function(err, result){
+			cb('sukses');
+		})
+    })
+    client.on('representasi_biaya', function (data, cb){
+		Representasi.findOne({_id: data.jenis_pgw}, data.posisi_kota).exec(function(err, result){
+			if(result) cb(result[data.posisi_kota])
+				else cb(0);
+		})
+    })
+    client.on('populate_akun', function (kdkmpnen, cb){
+    	if(kdkmpnen == ''){
+    		Akun.find({'thang': thang}).sort('kdakun').exec(function(err, akuns){
+				cb(akuns || [])
 			})
-	    })
-	    client.on('prov_biaya2_edit', function (data, cb){
-    		Prov.update({_id: data._id},{$set: data.data}, {upsert: true}).exec(function(err, result){
-				cb('sukses');
+    	} else {
+    		Akun.find({'kdkmpnen': kdkmpnen, 'thang': thang}).sort('kdakun').exec(function(err, akuns){
+				cb(akuns || [])
 			})
-	    })
-	    client.on('tiket_list', function (data, cb){
-    		Kab.find({}).exec(function(err, result){
-				cb(result);
-			})
-	    })
-	    client.on('kab_tiket_edit', function (data, cb){
-    		Kab.update({_id: data._id},{$set: data.data}, {upsert: true}).exec(function(err, result){
-				cb('sukses');
-			})
-	    })
-	    client.on('representasi_edit', function (data, cb){
-    		Representasi.update({_id: data._id},{$set: data.data}, {upsert: true}).exec(function(err, result){
-				cb('sukses');
-			})
-	    })
-	    client.on('representasi_biaya', function (data, cb){
-    		Representasi.findOne({_id: data.jenis_pgw}, data.posisi_kota).exec(function(err, result){
-				if(result) cb(result[data.posisi_kota])
-					else cb(0);
-			})
-	    })
-	    client.on('populate_akun', function (kdkmpnen, cb){
-	    	if(kdkmpnen == ''){
-	    		Akun.find({'thang': thang}).sort('kdakun').exec(function(err, akuns){
-					cb(akuns || [])
-				})
-	    	} else {
-	    		Akun.find({'kdkmpnen': kdkmpnen, 'thang': thang}).sort('kdakun').exec(function(err, akuns){
-					cb(akuns || [])
-				})
-	    	}
-	    })
-	    client.on('populate_detail', function (kode, cb){
-    		DetailBelanja.find({'kdkmpnen': kode.kdkmpnen, "kdakun": kode.kdakun, 'thang': thang}).sort('noitem').exec(function(err, details){
-				cb(details || {})
-			})
-	    })
-	    client.on('pulihkan_template', function (jenis, cb){
-	    	var path = __dirname+'/../template/';
-    		if(jenis == 'st'){
-    			fs.createReadStream(path + 'cadangan/surat_tugas.docx').pipe(fs.createWriteStream(path + 'surat_tugas.docx'));
-    			cb('sukses');
-    		} else if(jenis == 'stb'){
-    			fs.createReadStream(path + 'cadangan/surat_tugas_biasa.docx').pipe(fs.createWriteStream(path + 'surat_tugas_biasa.docx'));
-    			cb('sukses');
-    		} else {
-    			fs.createReadStream(path + 'cadangan/sppd_perhitungan.docx').pipe(fs.createWriteStream(path + 'sppd_perhitungan.docx'));
-    			cb('sukses');
-    		}
-	    })
-	})
+    	}
+    })
+    client.on('populate_detail', function (kode, cb){
+		DetailBelanja.find({'kdkmpnen': kode.kdkmpnen, "kdakun": kode.kdakun, 'thang': thang}).sort('noitem').exec(function(err, details){
+			cb(details || {})
+		})
+    })
+    client.on('pulihkan_template', function (jenis, cb){
+    	var path = __dirname+'/../template/';
+		if(jenis == 'st'){
+			fs.createReadStream(path + 'cadangan/surat_tugas.docx').pipe(fs.createWriteStream(path + 'surat_tugas.docx'));
+			cb('sukses');
+		} else if(jenis == 'stb'){
+			fs.createReadStream(path + 'cadangan/surat_tugas_biasa.docx').pipe(fs.createWriteStream(path + 'surat_tugas_biasa.docx'));
+			cb('sukses');
+		} else {
+			fs.createReadStream(path + 'cadangan/sppd_perhitungan.docx').pipe(fs.createWriteStream(path + 'sppd_perhitungan.docx'));
+			cb('sukses');
+		}
+    })
 
 };
 
@@ -386,6 +385,7 @@ sppd.get('/surat_tugas', function(req, res){
 	SettingSPPD.findOne({}).populate('ttd_st ttd_leg bendahara ppk').exec(function(err, result){
 		if(!result){
 			SettingSPPD.update({}, {last_nmr_surat: 1}, {upsert: true}, function(err, last){
+				result = {};
 				result.last_nmr_surat = 1;
 				res.render('sppd/surat_tugas', {layout: false,  setting: result, admin: req.session.jenis});
 			})
@@ -403,7 +403,7 @@ sppd.get('/surat_tugas', function(req, res){
 });
 
 sppd.post('/surat_tugas', function(req, res){
-	handleSuratTugas(req.body, null, res);
+	handleSuratTugas(req.body, null, res, req.session.user_id);
 });
 
 sppd.get('/surat_tugas_biasa', function(req, res){
@@ -427,7 +427,7 @@ sppd.get('/surat_tugas_biasa', function(req, res){
 });
 
 sppd.post('/surat_tugas_biasa', function(req, res){
-	handleSuratTugasBiasa(req.body, null, res);
+	handleSuratTugasBiasa(req.body, null, res, req.session.user_id);
 });
 
 sppd.get('/perhitungan', function(req, res){
@@ -463,7 +463,7 @@ sppd.get('/perhitungan', function(req, res){
 });
 
 sppd.post('/perhitungan', function(req, res){
-	handlePerhitungan(req.body, null, res, req.session.username || 'dummy user');
+	handlePerhitungan(req.body, null, res, req.session.username || 'dummy user', req.session.user_id);
 });
 
 sppd.get('/perhitungan-old', function(req, res){
@@ -484,7 +484,7 @@ sppd.post('/pengaturan/unggah_template/:type', function(req, res){
 			function(callback){
 				form.parse(req, function(err, fields, file){
 					if(err){
-						errorHandler(req.session.username, 'Form parse Error. Mohon hubungi admin.');
+						errorHandler(req.session.user_id, 'Form parse Error. Mohon hubungi admin.');
 						return;
 					}
 					callback(null, 'File parsed')
@@ -526,7 +526,7 @@ function buatSurat(data, outputDocx, doc, cb){
 	cb(null, '');
 }
 
-function handleSuratTugas(data, cb, res){
+function handleSuratTugas(data, cb, res, user_id){
 	if(data.docx || data.pdf){
 		data.nama_lengkap = JSON.parse(data.nama_lengkap_temp);
 	}
@@ -647,7 +647,9 @@ function handleSuratTugas(data, cb, res){
 			})
 		}], 
 		function(err, finish){
-			console.log(data.tugas);
+			User.update({_id: user_id}, {$push: {"act": {label: 'Buat Surat Tugas '+data.nomor}}}, 
+				function(err, status){
+			})
 			if(data.docx){
 				res.download(outputDocx);
 				res.on('finish', function() {
@@ -672,7 +674,7 @@ function handleSuratTugas(data, cb, res){
 	})
 }
 
-function handleSuratTugasBiasa(data, cb, res){
+function handleSuratTugasBiasa(data, cb, res, user_id){
 	if(data.docx || data.pdf){
 		data.anggota = JSON.parse(data.anggota_temp);
 		data.pelaksanaan = JSON.parse(data.pelaksanaan);
@@ -783,11 +785,9 @@ function handleSuratTugasBiasa(data, cb, res){
 			buatSurat(data, outputDocx, doc, cb);
 		}],
 		function(err, finish){
-			// CustomEntity.find({nama: data.detail_tugas}, function(err, res){
-			// 	if(!res){
-			// 		CustomEntity.create({nama: data.detail_tugas});
-			// 	}
-			// })
+			User.update({_id: user_id}, {$push: {"act": {label: 'Buat Surat Tugas Biasa '+data.nomor}}}, 
+				function(err, status){
+			})
 			if(data.docx){
 				res.download(outputDocx);
 				res.on('finish', function() {
@@ -813,7 +813,7 @@ function handleSuratTugasBiasa(data, cb, res){
 	);
 }
 
-function handlePerhitungan(data, cb, res, username){
+function handlePerhitungan(data, cb, res, username, user_id){
 	var current_timestamp = Math.round(new Date().getTime()/1000);
 	var sppd_template = fs.readFileSync(__dirname+"/../template/sppd_perhitungan.docx","binary");
 	var outputDocx = '';
@@ -1011,16 +1011,16 @@ function handlePerhitungan(data, cb, res, username){
 							    	DetailBelanja.update({'thang': thang, "_id": data.detail}, {$push: {"realisasi": new_entry}}, {new: true}, function(err, result){
 							    		if (err) {
 							    			console.log(err)
-							    			sendNotification(username, 'Gagal menyimpan.')
+							    			sendNotification(user_id, 'Gagal menyimpan.')
 							    			return
 							    		}
-							    		sendNotification(username, 'Realisasi berhasil diupdate.')
+							    		sendNotification(user_id, 'Realisasi berhasil diupdate.')
 							    		// var total_sampai_bln_ini = new_entry.jumlah;
 							    		// sppd.io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': data.detail, 'realisasi': new_entry.jumlah, 
 							    				// 'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini});
 							    	})
 								} else {
-									sendNotification(username, 'SPPD sudah pernah tercatat di realisasi.')
+									sendNotification(user_id, 'SPPD sudah pernah tercatat di realisasi.')
 								}
 						})
 					})
@@ -1031,6 +1031,9 @@ function handlePerhitungan(data, cb, res, username){
 			buatSurat(data, outputDocx, doc, cb);
 		}],
 		function(err, finish){
+			User.update({_id: user_id}, {$push: {"act": {label: 'Buat Surat Perhitungan '+data.surtug.nomor_surat}}}, 
+				function(err, status){
+			})
 			if(data.docx){
 				res.download(outputDocx);
 				res.on('finish', function() {
@@ -1162,10 +1165,10 @@ function terbilang(bilangan) {
   return kaLimat.replace(/^\s*/g, "");
 }
 
-function sendNotification(username, message){
-	if(!username) return;
-	if(_.isString(username)) sppd.connections[username].emit('messages', message)
-		else username.emit('messages', message)
+function sendNotification(user_id, message){
+	if(!user_id) return;
+	if(_.isString(user_id)) sppd.connections[user_id].emit('messages', message)
+		else user_id.emit('messages', message)
 }
 
 module.exports = sppd;

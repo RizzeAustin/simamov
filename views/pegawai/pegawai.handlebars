@@ -121,7 +121,7 @@
                                                     <label for="tampil-riwayat-by-month">
                                                         <input type="radio" id="tampil-riwayat-by-month" name="tampil_riwayat" value="1" checked="checked"> Bulan 
                                                         <select id="bulan_realisasi_modal" name="bulan_realisasi_modal" size="1">
-                                                            <option value="none">--pilih--</option>
+                                                            <option value="">--pilih--</option>
                                                             <option value="0">Januari</option>
                                                             <option value="1">Februari</option>
                                                             <option value="2">Maret</option>
@@ -140,6 +140,13 @@
                                             </div>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>
+                                        Download sebagai: <a id="download_pdf" href="#"><i class="fa fa-file-pdf-o fa-sm mt-2"></i> Pdf </a> | <a id="download_xlsx" href="#"><i class="fa fa-file-excel-o fa-sm mt-2"></i> Xlsx</a>
+                                    </p>
                                 </div>
                             </div>
                             <div class="row">
@@ -204,7 +211,7 @@
         <div class="modal-content">
             <form id="link_sipadu_simamov" action="/admin/edit/" method="POST">
                 <div class="modal-header">
-                    <h6 class="modal-title">Link Data Sipadu - Simamov</h6>
+                    <h6 class="modal-title">Link Data</h6>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -500,6 +507,7 @@
                             edited.field = 'gol';
                             edited.value = editor_tps.val();
                         }
+                        edited.type = 'pegawai';
                         socket.emit('edit_pegawai', edited, function(status){
                             if(status == 'sukses'){
                                 $('#tbl_pegawai_stis').DataTable()
@@ -667,12 +675,158 @@
             }
         });
 
+        //editable cell pegawai STIS
+        var CE = {};
+        CE.active_tps;
+        CE.editor_tps;
+        CE.state_active_editor = false;
+        $('#tbl_non_stis_bps').on('dblclick', 'tr td', function () {
+            //ingat td terklik
+            CE.active_tps = $(this);
+            //cek kondisi saat td tdk bisa diedit
+            var row = CE.active_tps.closest('tr').find('td:eq(2)');
+            if(CE.state_active_editor || CE.active_tps.is(':nth-child(1)') || CE.active_tps.is(':nth-child(7)')){
+                $.toast({
+                    text: 'Anda tidak dapat mengedit sel tersebut.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                });
+                return;
+            }
+            //set ada input yg aktif /spy tdk dobel
+            CE.state_active_editor = true;
+            //css yg akan diclone
+            var cloneProperties = ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+                          'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+                          'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
+
+            if(CE.active_tps.is(':nth-child(4)')) {
+                var datalist = '<input list="jabatan" name="jabatan">'
+                                +'<datalist id="jabatan">'
+                socket.emit('jab_list', 'ok', function(jabs){
+                    _.each(jabs, function(jab, index, list){
+                        datalist += '<option value="'+jab+'">';
+                    });
+                    datalist += '</datalist>';
+                    CE.editor_tps = $(datalist).val(CE.active_tps.text()).hide().appendTo(CE.active_tps.parent());
+
+                    CE.editor_tps.css('position', 'absolute');
+                    CE.editor_tps
+                        .show()
+                        .offset(CE.active_tps.offset())
+                        .css(CE.active_tps.css(cloneProperties))
+                        .width(CE.active_tps.width())
+                        .height(CE.active_tps.height())
+                        .focus();
+                    CE.editor_tps.select();
+                });
+                return;
+            } else if(CE.active_tps.is(':nth-child(5)')) {
+                var datalist = '<input list="gol" name="gol">'
+                                +'<datalist id="gol">'
+                socket.emit('gol_list', 'ok', function(gols){
+                    _.each(gols, function(gol, index, list){
+                        datalist += '<option value="'+gol+'">';
+                    });
+                    datalist += '</datalist>';
+                    CE.editor_tps = $(datalist).val(CE.active_tps.text()).hide().appendTo(CE.active_tps.parent());
+
+                    CE.editor_tps.css('position', 'absolute');
+                    CE.editor_tps
+                        .show()
+                        .offset(CE.active_tps.offset())
+                        .css(CE.active_tps.css(cloneProperties))
+                        .width(CE.active_tps.width())
+                        .height(CE.active_tps.height())
+                        .focus();
+                    CE.editor_tps.select();
+                });
+                return;
+            } else {
+                CE.editor_tps = $('<textarea></textarea>').val(CE.active_tps.text()).hide().appendTo(CE.active_tps.parent());
+            }
+            //set css editor
+            CE.editor_tps.css('position', 'absolute');
+            CE.editor_tps
+                .show()
+                .offset(CE.active_tps.offset())
+                .css(CE.active_tps.css(cloneProperties))
+                .width(CE.active_tps.width())
+                .height(CE.active_tps.height())
+                .focus();
+            //blok semua teks
+            CE.editor_tps.select();
+        });
+
+        //saat editor diblur/ tekan enter
+        $('#tbl_non_stis_bps').on('blur keydown', 'input,textarea', function (e) {
+            //jika enter anggap blur (krn klo tidak, di fired 2 kali)
+            if (e.which === 13){
+                $(this).blur();
+            } else if (e.which === 0){//jika blur ==> keycode nya 0
+                //show kembali
+                if(CE.editor_tps.val() !== CE.active_tps.text()){
+                    if(CE.editor_tps.val() == ''){
+                        CE.editor_tps.val('-');
+                        CE.active_tps = null;
+                        CE.state_active_editor = false;
+                        CE.editor_tps.hide();
+                    }else {
+                        var edited = {};
+                        edited._id = $('#tbl_non_stis_bps').DataTable().row(CE.active_tps.closest('tr')).data()[8];
+                        if(CE.active_tps.is(':nth-child(2)')) {
+                            edited.field = 'nama';
+                            edited.value = CE.editor_tps.val();
+                        } else if(CE.active_tps.is(':nth-child(3)')){
+                            edited.field = 'nip';
+                            edited.value = CE.editor_tps.val();
+                        } else if(CE.active_tps.is(':nth-child(4)')){
+                            edited.field = 'jabatan';
+                            edited.value = CE.editor_tps.val();
+                        } else if(CE.active_tps.is(':nth-child(5)')){
+                            edited.field = 'gol';
+                            edited.value = CE.editor_tps.val();
+                        } else{
+                            edited.field = 'ket';
+                            edited.value = CE.editor_tps.val();
+                        }
+                        socket.emit('edit_bps_ce', edited, function(status){
+                            if(status == 'sukses'){
+                                $('#tbl_non_stis_bps').DataTable()
+                                    .cell(CE.active_tps)
+                                    .data(CE.editor_tps.val())
+                                    .draw(false);
+                                CE.active_tps = null;
+                                CE.state_active_editor = false;
+                                CE.editor_tps.hide();
+                                generalAlert('Berhasil diubah.')
+                            } else {
+                                generalAlert('Gagal diubah, mohon hub. admin.')
+                            }
+                        })
+                    }
+                } else {
+                    CE.active_tps = null;
+                    CE.state_active_editor = false;
+                    CE.editor_tps.hide();
+                }
+            } else if(e.which === 27){
+                CE.active_tps = null;
+                CE.state_active_editor = false;
+                CE.editor_tps.hide();
+            }
+        });
+
         //hapus pegawai
+        var target_delete;
         $('#all-table-container').on('click', '.hapus-pgw', function (e) {
+            var state_undo = false;
             var btn = $(this);
             btn.html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>');
             var table_id = btn.closest('table').attr('id');
-            console.log(table_id)
             var row = $(this).closest('tr');
             var _id = row.find('td:eq(2)').text();
             if(table_id == 'tbl_pegawai_bps'){
@@ -680,22 +834,44 @@
             } else if(table_id == 'tbl_non_stis_bps'){
                 _id = $('#'+table_id).DataTable().row(row).data()[8];
             }
-            socket.emit('hapus_pegawai', _id, function(status){
-                if(status == 'sukses'){
-                    btn.closest('table').DataTable().row( row )
-                        .remove();
-                    btn.html('<i class="icon-close"></i>');
-                    generalAlert('Terhapus.');
-                    _.each($('#'+table_id).DataTable().rows()[0], function(row, index, list){
-                        $('#'+table_id).DataTable()
-                            .cell($('#'+table_id).DataTable().row(row).nodes().to$().find('td:eq(0)'))
-                            .data(index+1);
-                    });
-                    $('#'+table_id).DataTable().draw(false);
-                } else {
-                    btn.html('<i class="icon-close"></i>');
-                    generalAlert('Gagal dihapus, mohon hub. admin.')
+            target_delete = btn.closest('tr');
+            target_delete.hide();
+            $.toast({
+                text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
+                textAlign: 'right', 
+                hideAfter: 4000,
+                loader: false,
+                stack: false,
+                position: 'bottom-right',
+                allowToastClose: false,
+                afterHidden: function () {
+                    if(!state_undo){
+                        socket.emit('hapus_pegawai', _id, function(status){
+                            if(status == 'sukses'){
+                                btn.closest('table').DataTable().row( row )
+                                    .remove();
+                                generalAlert('Terhapus.');
+                                _.each($('#'+table_id).DataTable().rows()[0], function(row, index, list){
+                                    $('#'+table_id).DataTable()
+                                        .cell($('#'+table_id).DataTable().row(row).nodes().to$().find('td:eq(0)'))
+                                        .data(index+1);
+                                });
+                                $('#'+table_id).DataTable().draw(false);
+                            } else {
+                                btn.html('<i class="icon-close"></i>');
+                                generalAlert('Gagal dihapus, mohon hub. admin.')
+                            }
+                        })
+                        target_delete = null;
+                    }
                 }
+            })
+            $('#undo_delete').click(function(){
+                btn.html('<i class="icon-close"></i>');
+                row_to_delete = null;
+                state_undo = true;
+                target_delete.show();
+                $.toast().reset('all');
             })
         })
 
@@ -714,6 +890,7 @@
             rowReorder: {
                 enable: false
             },
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
             createdRow: function( row, data, dataIndex ) {
                 if(!data[6]){
                     $( row ).find('td:eq(4)').text('-');
@@ -840,14 +1017,16 @@
 
         var current_penerima_id;
         var current_kode_dosen;
+        var current_ce;
         $('#riwayat-lower_ts, #riwayat-upper_ts').on('dp.change', function(e){
             if($('#tampil-riwayat-by-range').is(':checked')){
                 if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
                 $('#tbl_riwayat').DataTable().clear().draw(false);
                 var lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()
-                var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()
-                socket.emit('riwayat_init', {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen || 'none', 
-                    'init': false, 'call_from_pengguna': true,'lower_ts': lower_ts, 'upper_ts': upper_ts});
+                var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix();
+                riwayat_syarat = {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen || 'none', 'ce': current_ce || 'none', 
+                    'init': false, 'call_from_pengguna': true,'lower_ts': lower_ts, 'upper_ts': upper_ts};
+                socket.emit('riwayat_init', riwayat_syarat);
             }
         });
         $('#bulan_realisasi_modal').change(function(){
@@ -855,10 +1034,14 @@
             $('#tbl_riwayat').DataTable().clear().draw(false);;
             var selected = $(this).val();
             if(selected == 'none') return;
-            socket.emit('riwayat_init', {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen || 'none', 'init': false, 'call_from_pengguna': true,
-                'month': selected});
+            riwayat_syarat = {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen || 'none', 'ce': current_ce || 'none', 'init': false, 'call_from_pengguna': true, 'month': selected}
+            socket.emit('riwayat_init', riwayat_syarat);
         });
 
+        var active_table_id;
+        var riwayat_syarat;
+        var nama_lengkap;
+        var periode;
         $('#all-table-container').on('click', '.riwayat-pgw', function (e) {
 
             $('#tbl_riwayat').DataTable().clear().draw(false);
@@ -867,18 +1050,30 @@
 
             var row = $(this).closest('tr');
 
-            current_penerima_id = row.find('td:eq(2)').text();
+            active_table_id = $(this).closest('table').attr('id');
 
             var row_data = row.closest('table').DataTable().row(row).data();
 
             current_kode_dosen = row_data[6] || 'none';
 
+            if(active_table_id == 'tbl_non_stis_bps'){
+                current_penerima_id = row_data[8]
+                current_kode_dosen = row_data[7] || 'none';
+                current_ce = row_data[7] || 'none';
+            } else{
+                current_penerima_id = row.find('td:eq(2)').text();
+                current_ce = row_data[8] || row_data[7] || 'none';
+            }
+            //nama lengkap untuk download xlsx/pdf
+            nama_lengkap = row_data[1];
+
             $('.nama_penerima').text(row.find('td:eq(1)').text());
 
             $('#riwayat_modal').modal('show');
 
-            socket.emit('riwayat_init', {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen, 'init': false, 'call_from_pengguna': true,
-                'month': $('#bulan_realisasi_modal').val()});
+            riwayat_syarat = {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen, 'ce': current_ce, 'init': false, 'call_from_pengguna': true, 'month': $('#bulan_realisasi_modal').val()}
+
+            socket.emit('riwayat_init', riwayat_syarat);
         });
 
         $('#link_sipadu_modal').on('shown.bs.modal', function () {
@@ -893,11 +1088,11 @@
         //state kode dosen utk link
         var kode_dosen_active;
         var link_row_active;
-        var active_table_id;
         $('#all-table-container').on('click', '.link-sipadu', function (e) {
             //destroy utk auto complete yg beda2 tiap jenis pegawai
             $('#nama_penerima_link').typeahead('destroy');
 
+            //id tabel utk perlakuan dimana letak kode dosen
             active_table_id = $(this).closest('table').attr('id');
 
 
@@ -914,7 +1109,7 @@
             if(active_table_id == 'tbl_pegawai_stis') type = 'pegawai_only'
                 else if(active_table_id == 'tbl_pegawai_bps') type = 'custom_bps_only'
                     else type = 'pegawai_and_bps';
-            //assign nama ke fild
+            //assign nama ke field
             $('#nama_penerima').val(row.find('td:eq(1)').text());
 
             //register typeahead
@@ -947,7 +1142,7 @@
             edited.field = 'kode_dosen';
             //value utk kode dosen
             edited.value = kode_dosen_active;
-            if(active_table_id == 'tbl_pegawai_bps'){
+            if(active_table_id == 'tbl_pegawai_stis'){
                 edited.type = 'pegawai';
             } else if(active_table_id == 'tbl_non_stis_bps'){
                 edited.type = 'ce';
@@ -965,6 +1160,29 @@
 
             socket.emit('edit_pegawai', edited, function(status){
                 if(status == 'sukses'){
+                    if(active_table_id == 'tbl_non_stis_bps'){
+                        generalAlert('Berhasil.')
+                        $('#nama_penerima_link').val();
+                        $("#btn-link-sipadu-submit").prop("disabled",false);
+                        $("#btn-link-sipadu-submit").html('Simpan');
+                        $('#link_sipadu_modal').modal('toggle');
+                        $('#'+active_table_id).DataTable()
+                            .row(link_row_active)
+                            .remove();
+                        _.each($('#'+active_table_id).DataTable().rows()[0], function(row, index, list){
+                            $('#'+active_table_id).DataTable()
+                                .cell($('#'+active_table_id).DataTable().row(row).nodes().to$().find('td:eq(0)'))
+                                .data(index+1);
+                        });
+                        $('#'+active_table_id).DataTable().draw(false);
+                        //cear saat load spy tdk double
+                        $('#tbl_pegawai_stis').DataTable().clear();
+                        $('#tbl_pegawai_bps').DataTable().clear();
+                        //invoke data pegawai STIS
+                        socket.emit('pegawai_init', 'stis');
+                        socket.emit('pegawai_init', 'bps');
+                        return;
+                    }
                     var parent_row = $('#'+active_table_id).DataTable()
                         .rows( function ( idx, data, node ) {
                             var idx = 2
@@ -1177,20 +1395,40 @@
         });
 
         //hapus riwayat
+        var target_delete;
         $('#tbl_riwayat').on('click', '.del-riwayat-tbl', function (e) {
-            var temp = $(this).html();
-            $(this).html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>');
-            var row = $('#tbl_riwayat').DataTable().row((this).closest('tr'));
+            var state_undo = false;
+            target_delete = $(this).closest('tr');
+            target_delete.hide();
+            $.toast({
+                text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
+                textAlign: 'right', 
+                hideAfter: 4000,
+                loader: false,
+                stack: false,
+                position: 'bottom-right',
+                allowToastClose: false,
+                afterHidden: function () {
+                    if(!state_undo){
+                        var row = $('#tbl_riwayat').DataTable().row(target_delete);
 
-            socket.emit('del_riwayat', {'parent_id': row.data()[1], 'target_id': row.data()[0], 
-                'month': $('#bulan_realisasi_modal').val()}, function(status){
-                if(status === 'sukses'){
-                    $(this).html(temp);
-                    row.remove().draw(false);
-                } else {
-                    $(this).html(temp);
+                        socket.emit('del_riwayat', {'parent_id': row.data()[1], 'target_id': row.data()[0], 
+                            'month': $('#bulan_realisasi_modal').val()}, function(status){
+                            if(status === 'sukses'){
+                                generalAlert('Berhasil dihapus.');
+                                row.remove().draw(false);
+                            }
+                        });
+                        target_delete = null;
+                    }
                 }
-            });
+            })
+            $('#undo_delete').click(function(){
+                row_to_delete = null;
+                state_undo = true;
+                target_delete.show();
+                $.toast().reset('all');
+            })
         })
 
         //tab click event
@@ -1296,6 +1534,60 @@
                     $('#tambah_pegawai').modal('toggle');
                     generalAlert('Pegawai berhasil disimpan.')
             })
+        });
+
+        $('#download_xlsx').click(function(){
+            riwayat_syarat.pdf = false;
+            riwayat_syarat.xlsx = true;
+            riwayat_syarat.nama_lengkap = nama_lengkap;
+            if($('#tampil-riwayat-by-range').is(':checked')){
+                if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == ''){
+                    generalAlert('Periode ada yang kosong.');
+                    return;
+                } 
+                riwayat_syarat.periode = $('#riwayat-lower_ts').val() + ' - ' + $('#riwayat-upper_ts').val();
+            } else {
+                var selected = $('#bulan_realisasi_modal option:selected').text();
+                if(selected == '--pilih--'){
+
+                    return;
+                }
+                riwayat_syarat.periode = selected;
+            }
+            socket.emit('riwayat_init', riwayat_syarat, function(link){
+                if(!link){
+                    generalAlert('Tidak ada data.');
+                    return;
+                }
+                window.open("http://"+$(location).attr('host')+link,'_blank');
+            });
+        })
+
+        $('#download_pdf').click(function(){
+            riwayat_syarat.xlsx = false;
+            riwayat_syarat.pdf = true;
+            riwayat_syarat.nama_lengkap = nama_lengkap;
+            if($('#tampil-riwayat-by-range').is(':checked')){
+                if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == ''){
+                    generalAlert('Periode ada yang kosong.');
+                    return;
+                } 
+                riwayat_syarat.periode = $('#riwayat-lower_ts').val() + ' - ' + $('#riwayat-upper_ts').val();
+            } else {
+                var selected = $('#bulan_realisasi_modal option:selected').text();
+                if(selected == '--pilih--'){
+
+                    return;
+                }
+                riwayat_syarat.periode = selected;
+            }
+            socket.emit('riwayat_init', riwayat_syarat, function(link){
+                if(!link){
+                    generalAlert('Tidak ada data.');
+                    return;
+                }
+                window.open("http://"+$(location).attr('host')+link,'_blank');
+            });
         })
 
         function generalAlert(message){

@@ -27,6 +27,7 @@
         .table > tbody > tr > td {
              vertical-align: middle;
              border: 1px solid black;
+             table-layout: fixed;
         }
 
         .level1{
@@ -70,11 +71,11 @@
           content: counter(Serial); /* Display the counter */
         }
 
-        #pok_table_entry th, #pok_table_entry td, #pok_table_edit td:nth-child(8) { white-space: nowrap; }
+        #pok_table_entry th, #pok_table_edit td:nth-child(8) { white-space: nowrap; }
 
-        /*.DTFC_LeftBodyLiner{
+        .DTFC_LeftBodyLiner{
             overflow-y: hidden !important;
-        }*/
+        }
 
         div#pok_table_entry_wrapper.dataTables_wrapper {
             width: 1200px;
@@ -299,7 +300,7 @@
             }
 
             socket.on('connect', function(data) {
-                socket.emit('join', 'Hello World from client');
+                socket.emit('join');
             });
 
             socket.on('login_required', function(data) {

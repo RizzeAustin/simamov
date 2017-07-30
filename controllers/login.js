@@ -6,8 +6,22 @@ var crypto = require('crypto');
 //load model User
 var User = require(__dirname+"/../model/User.model");
 var Program = require(__dirname+"/../model/Program.model");
+
 //buat router khusus login
 var login = express.Router();
+
+//Socket.io
+login.connections;
+
+login.io;
+
+login.socket = function(io, connections, client){
+	login.connections = connections;
+
+	login.io = io;
+}
+
+
 //route GET /login
 login.get('/', function(req, res){
 	var href = '';
@@ -32,7 +46,7 @@ login.post('/', function(req, res){
 	var hash = crypto.createHmac('sha256', req.body.password)
                    .digest('hex');
 	//cek login ke db
-	User.findOne({ '_id':  req.body.username, 'password': hash}, function (err, user) {
+	User.findOne({ 'username':  req.body.username, 'password': hash, active: true}, function (err, user) {
 		if (err) {
 			//jika koneksi error
 			res.send('Database bermasalah, mohon hubungi admin');
@@ -61,14 +75,17 @@ login.post('/', function(req, res){
 		req.session.username = req.body.username;
 		req.session.tahun_anggaran = req.body.tahun_anggaran;
 		req.session.jenis = user.jenis;
+		req.session.user_id = user._id;
+
 		//ke home
 		if(!req.query.href) req.query.href = ''
 			else req.query.href = '#'+req.query.href
 		res.redirect('/'+req.query.href);
 		//update user sikap
-    	User.update({_id: req.body.username}, {ip_address: req.headers['x-forwarded-for'] || req.connection.remoteAddress, last_login_time: formatDate(new Date())}, function(err, raw){
-    		console.log(raw);
-    	})
+    	User.update({_id: user._id}, {ip_address: req.headers['x-forwarded-for'] || req.connection.remoteAddress, last_login_time: formatDate(new Date()),
+    		$push: {"act": {label: 'Login'}}}, function(err, status){
+
+		})
 	});
 });
 

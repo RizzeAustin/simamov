@@ -597,6 +597,9 @@
                 enable: false
             },
             createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(3)').attr('class', 'text-center');
+                $( row ).find('td:eq(4)').attr('class', 'text-center');
+                $( row ).find('td:eq(5)').attr('class', 'text-center');
             }
         });
         //tgl modal riwayat soal
