@@ -289,8 +289,27 @@
             }
         );
 
+        // $('#detail_tugas').typeahead({
+        //         hint: true,
+        //         highlight: true,
+        //         minLength: 1
+        //     }, {
+        //         source: function(q, p){
+        //                 {
+        //                     socket.emit('tugas_list', q, function (data) {
+        //                         return p(_.map(data, function(tug){ return {value: tug.nama}}))
+        //                     });
+        //                 }
+        //         }
+        //     }
+        // );
+
         $("#nama_lengkap_label").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
              $('#nama_lengkap').val(datum._id);
+        });
+
+        $("#detail_tugas").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
+             $('#detail_tugas').val(toTitleCase(datum.value));
         });
 
         $('#detail_tugas').typeahead({
@@ -547,6 +566,11 @@
         //Reload pdf viewer
         var download_surat = false;
         $('#suratTugas').on('submit', function(e) {
+            if(!$('#ttd_surat_tugas').val() || !$('#ttd_legalitas').val()){
+                generalAlert('Setting Penanda Tangan Surat Tugas atau Legalitas belum ditentukan. Silahkan ubah di pengaturan SPPD.')
+                e.preventDefault();
+                return false;
+            }
             if(download_surat){
                 download_surat = false;
                 clearForm();
@@ -694,6 +718,11 @@
                 loader: false,
                 position: 'bottom-right'
             })
+        }
+
+        function toTitleCase(str)
+        {
+            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
         }
     });
 </script>

@@ -63,6 +63,13 @@ sppd.socket = function(io, connections, client){
 
 
 	client.on('komponen_list', function (q, cb){
+    	if(q.query){
+    		q.query = q.query.replace(/\\/g, '');
+    	} else if(q.q){
+    		q.q = q.q.replace(/\\/g, '');
+    	} else{
+    		q = q.replace(/\\/g, '');
+    	}
     	Komponen.find({"thang": thang, "urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdoutput kdkmpnen urkmpnen', function(err, custs){
     		_.each(custs, function(item, index, list){
     			custs[index].d = levenshtein.get(q, item.urkmpnen);
@@ -72,13 +79,20 @@ sppd.socket = function(io, connections, client){
     	})
     })
 	client.on('komponen_list_extra', function (q, cb){
+    	if(q.query){
+    		q.query = q.query.replace(/\\/g, '');
+    	} else if(q.q){
+    		q.q = q.q.replace(/\\/g, '');
+    	} else{
+    		q = q.replace(/\\/g, '');
+    	}
     	Komponen.find({"thang": thang, "urkmpnen": new RegExp(q, "i"), 'active': true}, 'kdkmpnen urkmpnen', function(err, custs1){
-    		CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'komp'}, function(err, custs2){
+    		CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'tugas'}, function(err, custs2){
 	    		_.each(custs1, function(item, index, list){
 	    			custs1[index].d = levenshtein.get(q, item.urkmpnen);
 	    		})
 	    		_.each(custs2, function(item, index, list){
-	    			custs2[index].d = levenshtein.get(q.query, item.nama);
+	    			custs2[index].d = levenshtein.get(q, item.nama);
 	    		})
 	    		custs = _.sortBy(custs1.concat(custs2), function(o) { return o.d; })
 	    		cb(custs);
@@ -86,6 +100,13 @@ sppd.socket = function(io, connections, client){
     	})
     })
 	client.on('lokasi_list', function (q, cb){
+    	if(q.query){
+    		q.query = q.query.replace(/\\/g, '');
+    	} else if(q.q){
+    		q.q = q.q.replace(/\\/g, '');
+    	} else{
+    		q = q.replace(/\\/g, '');
+    	}
     	CustomEntity.find({"nama": new RegExp(q, "i"), 'type': 'lokasi'}, function(err, custs){
     		_.each(custs, function(item, index, list){
     			custs[index].d = levenshtein.get(q, item.nama);
@@ -95,6 +116,13 @@ sppd.socket = function(io, connections, client){
     	})
     })
 	client.on('prov_list', function (q, cb){
+    	if(q.query){
+    		q.query = q.query.replace(/\\/g, '');
+    	} else if(q.q){
+    		q.q = q.q.replace(/\\/g, '');
+    	} else{
+    		q = q.replace(/\\/g, '');
+    	}
 		var where = {};
 		if(!q.kab) where = {"nama": new RegExp(q.q, "i")};
 		 else where = {"nama": new RegExp(q.q, "i"), _id: q.kab.match(/^\d{2}/)[0]};
@@ -107,6 +135,13 @@ sppd.socket = function(io, connections, client){
     	})
     })
 	client.on('kab_list', function (q, cb){
+    	if(q.query){
+    		q.query = q.query.replace(/\\/g, '');
+    	} else if(q.q){
+    		q.q = q.q.replace(/\\/g, '');
+    	} else{
+    		q = q.replace(/\\/g, '');
+    	}
 		var where = {};
 		if(!q.prov) where = {"nama": new RegExp(q.q, "i")};
 		 else where = {"nama": new RegExp(q.q, "i"), "id_propinsi": q.prov};
@@ -119,6 +154,13 @@ sppd.socket = function(io, connections, client){
     	})
     })
 	client.on('kab_tiket_list', function (q, cb){
+    	if(q.query){
+    		q.query = q.query.replace(/\\/g, '');
+    	} else if(q.q){
+    		q.q = q.q.replace(/\\/g, '');
+    	} else{
+    		q = q.replace(/\\/g, '');
+    	}
     	Kab.find({"nama": new RegExp(q, "i"), 'tiket_jkt_b': { $exists: true, $ne: 0 },'tiket_jkt_e': { $exists: true, $ne: 0 }}, function(err, kab){
     		_.each(kab, function(item, index, list){
     			kab[index].d = levenshtein.get(q, item.nama);
@@ -128,6 +170,13 @@ sppd.socket = function(io, connections, client){
     	})
     })
 	client.on('org_list', function (q, cb){
+    	if(q.query){
+    		q.query = q.query.replace(/\\/g, '');
+    	} else if(q.q){
+    		q.q = q.q.replace(/\\/g, '');
+    	} else{
+    		q = q.replace(/\\/g, '');
+    	}
     	CustomEntity.find({"nama": new RegExp(q, "i"), type: 'org'}, 'nama', function(err, kab){
     		cb(kab);
     	})
@@ -410,6 +459,7 @@ sppd.get('/surat_tugas_biasa', function(req, res){
 	SettingSPPD.findOne({}).populate('ttd_st ttd_leg bendahara ppk').exec(function(err, result){
 		if(!result){
 			SettingSPPD.update({}, {last_nmr_surat: 1}, {upsert: true}, function(err, last){
+				result = {};
 				result.last_nmr_surat = 1;
 				res.render('sppd/surat_tugas_biasa', {layout: false,  setting: result, admin: req.session.jenis});
 			})
@@ -647,9 +697,17 @@ function handleSuratTugas(data, cb, res, user_id){
 			})
 		}], 
 		function(err, finish){
+			console.log(data.tugas)
 			User.update({_id: user_id}, {$push: {"act": {label: 'Buat Surat Tugas '+data.nomor}}}, 
 				function(err, status){
 			})
+			CustomEntity.update(
+			    {'nama': data.tugas, type: 'tugas'}, 
+			    {$setOnInsert: {'nama': data.tugas}}, 
+			    {upsert: true}, 
+			    function(err, numAffected) {
+			    }
+			);
 			if(data.docx){
 				res.download(outputDocx);
 				res.on('finish', function() {

@@ -1501,10 +1501,8 @@
                             +        '</div>'
                             +        '<div class="row">'
                             +            '<div class="col-md-12">'
-                            +                '<div style="height: 510px;position:relative;">'
-                            +                    '<div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">'
-                            +                '<div id="spreadsheet_entry">'
-                            +                '</div></div></div>'
+                            +                '<div id="spreadsheet_entry" style="height: 640px; width: 1200px; overflow: hidden;">'
+                            +                '</div>'
                             +            '</div>'
                             +        '</div>'
                             +    '</div>'
@@ -1564,6 +1562,7 @@
                 });
 
                 Handsontable.hooks.add('afterChange', function(changes, source){
+                    if(!import_data_entry) return;
                     if(import_data_entry.getSourceData()[0].tgl_timestamp){
                         var data = import_data_entry.getSourceData();
                         _.each(changes, function(change, index, list){
@@ -2727,7 +2726,8 @@
                     realisasi_bulan_ini += getNumber(program[9]);
                     realisasi_bulan_lalu += getNumber(program[10]);
                     sampai_bln_ini += getNumber(program[11]);
-                    sisa_dana += getNumber(program[13]);
+                    console.log(program)
+                    sisa_dana += getNumber((getNumber(program[13]) == 0)?program[8]:program[13]);
 
                     pagu += getNumber(program[8]);
                 })
@@ -2743,7 +2743,7 @@
 
                 $('#sisa-dana').html(formatUang(sisa_dana).replace(/\-$/g,''));
                 $('#sisa-dana-percent').html(' ('+((getNumber(sisa_dana)/pagu)*100).toFixed(2)+'%)');
-                adjustColumn()
+                // adjustColumn()
             }
         }
 

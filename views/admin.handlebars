@@ -304,9 +304,25 @@
 
     //hapus user
     var target_delete;
+    var target;
     $('table').on('click', '.del', function () {
+        if(row_to_delete){
+            console.log('asdjsabdjasbdjh')
+            $.ajax({
+                url: '/admin/hapus_user/'+target.closest('td').attr('id'),
+                type: 'DELETE',
+                success: function(data) {
+                    generalAlert(data);
+                    target_delete.remove()
+                },
+                error: function (jXHR, textStatus, errorThrown) {
+                    generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+                }
+            });
+            target_delete = null;
+        }
         var state_undo = false;
-        var target = $(this);
+        target = $(this);
         target_delete = $(this).closest('tr');
         target_delete.hide();
         $.toast({
@@ -340,7 +356,7 @@
             target_delete.show();
             $.toast().reset('all');
         })
-    })
+    });
 
 
     //init bulan

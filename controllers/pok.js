@@ -69,16 +69,21 @@ var sipadu_db = mysql.createConnection({
 sipadu_db.connect();
 
 // var query = 'SELECT * ' +
-// 			'FROM dosen ' +
-// 			'WHERE nama = ?';
-// sipadu_db.query(query, 'Dosen1', function (err, rows, fields) {
+// 						'FROM dosen';
+
+// sipadu_db.query(query, function (err, dosen, fields) {
 // 	if (err){
 // 	  	console.log(err)
 // 	  	return;
 // 	}
-
-// 	console.log(rows[0].nama)
+// 	;
+// 	console.log(_.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang}}))
 // })
+
+
+//similarity between string
+var clj_fuzzy = require('clj-fuzzy');
+
 
 //Socket.io
 pok.connections;
@@ -1322,6 +1327,14 @@ pok.socket = function(io, connections, client){
     })
 
     client.on('penerima_list', function (q, cb){
+    	console.log(q)
+    	if(q.query){
+    		q.query = q.query.replace(/\\/g, '');
+    	} else if(q.q){
+    		q.q = q.q.replace(/\\/g, '');
+    	} else{
+    		q = q.replace(/\\/g, '');
+    	}
     	if(q.type == 'custom_bps_only'){
     		CustomEntity.find({"nama": new RegExp(q.query, "i"), type: 'Penerima', unit: 'BPS', active: true}, 'nama', function(err, custs){
     			_.each(custs, function(item, index, list){
@@ -1395,14 +1408,14 @@ pok.socket = function(io, connections, client){
 		var lower_ts = Math.round(new Date(y, m, 1).getTime()/1000)
 		var upper_ts = Math.round(new Date(y, +m + 1, 0).getTime()/1000) + 86399;
 
-    	//jika sekali banyak
+    	//jika sekali banyak/dari handsontable
     	if(new_entry.import){
     		//hapus data terakhir (row kosong/spare)
     		new_entry.data.pop();
     		//kueri utk dosen di sipadu
     		var query = 'SELECT * ' +
-						'FROM dosen ' +
-						'WHERE nama = ?';
+						'FROM dosen';
+						 // +'WHERE nama = ?';
 
 			//fungsi umum utk menyimpan
 			function submit_entry(item, callback){
@@ -1446,61 +1459,48 @@ pok.socket = function(io, connections, client){
 
 			//iterasi tiap row
     		_.each(new_entry.data, function(item, index, list){
+    			//info umum
+    			item.timestamp = new_entry.timestamp;
+	    		item.pengentry = client.handshake.session.username || 'admin';
+
     			tasks.push(function(callback){
-    				//catat timestamp & user
-    				item.timestamp = new_entry.timestamp;
-	    			item.pengentry = client.handshake.session.username || 'admin';
-					//ambil id d sipadu
-					sipadu_db.query(query, item.penerima_nama, function (err, dosen, fields) {
-						if (err){
-						  	console.log(err)
-						  	return;
-						}
-
-						//jika tdk kosong
-						if(!_.isEmpty(dosen)){
-							//assign id
-							item.penerima_id = dosen[0].kode_dosen;
-
-							//cek apakah sdh pernah dientry
+    				//ambil semua pegawai
+    				Pegawai.find({}, 'nama', function(err, pegs){
+    					var matched = getMatchEntity(item.penerima_nama, pegs);
+    					// console.log(item.penerima_nama, matched.nama, ' = ',matched.score);
+    					//ambil id ke peg
+    					if(matched.score >= 0.86){
+    						item.penerima_id = matched._id;
+    						//untuk cross check kesamaan nama
+    						item.ket = '['+item.penerima_nama+'] '+item.ket;
 							DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-									'tgl': item.tgl}).exec(function(err, result){
-									//jika blm ada, simpan
+								'tgl': item.tgl}).exec(function(err, result){
 			    					if(!result){
+			    						//simpan
 			    						submit_entry(item, callback);
 			    					} else {
-			    						//jika sdh ada
 			    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
-								    			+item.tgl+' sudah pernah dientry.')
+						    							+item.tgl+' sudah pernah dientry.')
 			    						callback(null, 'sudah ada')
 			    					}
-			    			})
-
-							//cek klo dosen sdh ada d pegawai & custom entity
-							Pegawai.findOne({kode_dosen: dosen[0].kode_dosen}, '_id', function(err, peg){
-								//cek klo dosen sdh ada d custom entity
-								CustomEntity.findOne({kode_dosen: dosen[0].kode_dosen}, '_id', function(err, cust){
-									//jika di kduanya blm ada
-									if(!peg && !cust){
-										//hanya simpan yg dari bps atau non bps/stis
-										if(dosen[0].unit == 'BPS' || dosen[0].unit == 'Non STIS/BPS'){
-											var ce = new CustomEntity({nama: dosen[0].nama, type: 'Penerima', unit: dosen[0].unit,
-														kode_dosen: dosen[0].kode_dosen});
-											ce.save();
-										}
-									}
-								})
-							})
-							
-						} else {
-							//jika tdk ada di db sipadu, ambil dari simamov
-							Pegawai.findOne({nama: item.penerima_nama}, '_id', function(err, pegawai){
-								//jika tdk ada
-								if(!_.isEmpty(pegawai)){
-									item.penerima_id = pegawai._id;
+			    			})	
+    					} else {//jika tdk score < 0.86, cek di custom entity, klo g ada cek sipadu, klo g ada cek custom entity
+    						sipadu_db.query(query, function (err, dosen, fields) {
+								if (err){
+								  	console.log(err)
+								  	return;
+								}
+								var dosen_refine = _.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang}});
+								var matched = getMatchEntity(item.penerima_nama, dosen_refine);
+								//ambil id ke peg
+		    					if(matched.score >= 0.86){
+		    						item.penerima_id = matched._id;
+		    						//untuk cross check kesamaan nama nanti
+		    						item.ket = '['+item.penerima_nama+'] '+item.ket;
 									DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
 										'tgl': item.tgl}).exec(function(err, result){
 					    					if(!result){
+					    						//simpan
 					    						submit_entry(item, callback);
 					    					} else {
 					    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
@@ -1508,53 +1508,156 @@ pok.socket = function(io, connections, client){
 					    						callback(null, 'sudah ada')
 					    					}
 					    			})	
-								} else {
-									//klo masih tdk ada, ambil di custom
-									CustomEntity.findOne({nama: item.penerima_nama}, '_id', function(err, cust){
-										if(!_.isEmpty(cust)){
-											item.penerima_id = cust._id;
+		    					} else {//jika tdk score < 0.86, cek di custom entity, klo g ada cek sipadu, klo g ada cek custom entity
+		    						CustomEntity.find({type: 'Penerima'}, 'nama', function(err, custs){
+										if (err){
+										  	console.log(err)
+										  	return;
+										}
+										var matched = getMatchEntity(item.penerima_nama, custs);
+										if(matched.score >= 0.86){
+				    						item.penerima_id = matched._id;
+				    						//untuk cross check kesamaan nama nanti
+				    						item.ket = '['+item.penerima_nama+'] '+item.ket;
 											DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
 												'tgl': item.tgl}).exec(function(err, result){
 							    					if(!result){
+							    						//simpan
 							    						submit_entry(item, callback);
 							    					} else {
 							    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
-								    							+item.tgl+' sudah pernah dientry.')
+										    							+item.tgl+' sudah pernah dientry.')
 							    						callback(null, 'sudah ada')
 							    					}
 							    			})	
-										} else {
-											//klo masih tdk ada, buat custom
+				    					} else {
+				    						// klo masih tdk ada, buat custom
 											CustomEntity.create({'nama': item.penerima_nama, type:'Penerima'}, function(err, new_penerima){
 												item.penerima_id = new_penerima._id;
-												DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-													'tgl': item.tgl}).exec(function(err, result){
-								    					if(!result){
-								    						submit_entry(item, callback);
-								    					} else {
-								    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
-								    							+item.tgl+' sudah pernah dientry.')
-								    						callback(null, 'sudah ada')
-								    					}
-								    			})	
+												submit_entry(item, callback);
 											})
-										}
+				    					}
 									})
-								}
+		    					}
 							})
-						}
-					})
+    					}
+    				})
     			})
-    		}); 
+    		})
+
+			// //iterasi tiap row
+   //  		_.each(new_entry.data, function(item, index, list){
+   //  			tasks.push(function(callback){
+   //  				//catat timestamp & user
+   //  				item.timestamp = new_entry.timestamp;
+	  //   			item.pengentry = client.handshake.session.username || 'admin';
+			// 		//ambil id d sipadu
+			// 		sipadu_db.query(query, item.penerima_nama, function (err, dosen, fields) {
+			// 			if (err){
+			// 			  	console.log(err)
+			// 			  	return;
+			// 			}
+
+			// 			//jika tdk kosong
+			// 			if(!_.isEmpty(dosen)){
+			// 				//assign id
+			// 				item.penerima_id = dosen[0].kode_dosen;
+
+			// 				//cek apakah sdh pernah dientry
+			// 				DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
+			// 						'tgl': item.tgl}).exec(function(err, result){
+			// 						//jika blm ada, simpan
+			//     					if(!result){
+			//     						submit_entry(item, callback);
+			//     					} else {
+			//     						//jika sdh ada
+			//     						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
+			// 					    			+item.tgl+' sudah pernah dientry.')
+			//     						callback(null, 'sudah ada')
+			//     					}
+			//     			})
+
+			// 				//cek klo dosen sdh ada d pegawai & custom entity
+			// 				Pegawai.findOne({kode_dosen: dosen[0].kode_dosen}, '_id', function(err, peg){
+			// 					//cek klo dosen sdh ada d custom entity
+			// 					CustomEntity.findOne({kode_dosen: dosen[0].kode_dosen}, '_id', function(err, cust){
+			// 						//jika di kduanya blm ada
+			// 						if(!peg && !cust){
+			// 							//hanya simpan yg dari bps atau non bps/stis
+			// 							if(dosen[0].unit == 'BPS' || dosen[0].unit == 'Non STIS/BPS'){
+			// 								var ce = new CustomEntity({nama: dosen[0].nama, type: 'Penerima', unit: dosen[0].unit,
+			// 											kode_dosen: dosen[0].kode_dosen});
+			// 								ce.save();
+			// 							}
+			// 						}
+			// 					})
+			// 				})
+							
+			// 			} else {
+			// 				//jika tdk ada di db sipadu, ambil dari simamov
+			// 				Pegawai.findOne({nama: item.penerima_nama}, '_id', function(err, pegawai){
+			// 					//jika tdk ada
+			// 					if(!_.isEmpty(pegawai)){
+			// 						item.penerima_id = pegawai._id;
+			// 						DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
+			// 							'tgl': item.tgl}).exec(function(err, result){
+			// 		    					if(!result){
+			// 		    						submit_entry(item, callback);
+			// 		    					} else {
+			// 		    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
+			// 					    							+item.tgl+' sudah pernah dientry.')
+			// 		    						callback(null, 'sudah ada')
+			// 		    					}
+			// 		    			})	
+			// 					} else {
+			// 						//klo masih tdk ada, ambil di custom
+			// 						CustomEntity.findOne({nama: item.penerima_nama}, '_id', function(err, cust){
+			// 							if(!_.isEmpty(cust)){
+			// 								item.penerima_id = cust._id;
+			// 								DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
+			// 									'tgl': item.tgl}).exec(function(err, result){
+			// 				    					if(!result){
+			// 				    						submit_entry(item, callback);
+			// 				    					} else {
+			// 				    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
+			// 					    							+item.tgl+' sudah pernah dientry.')
+			// 				    						callback(null, 'sudah ada')
+			// 				    					}
+			// 				    			})	
+			// 							} else {
+			// 								//klo masih tdk ada, buat custom
+			// 								CustomEntity.create({'nama': item.penerima_nama, type:'Penerima'}, function(err, new_penerima){
+			// 									item.penerima_id = new_penerima._id;
+			// 									DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
+			// 										'tgl': item.tgl}).exec(function(err, result){
+			// 					    					if(!result){
+			// 					    						submit_entry(item, callback);
+			// 					    					} else {
+			// 					    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
+			// 					    							+item.tgl+' sudah pernah dientry.')
+			// 					    						callback(null, 'sudah ada')
+			// 					    					}
+			// 					    			})	
+			// 								})
+			// 							}
+			// 						})
+			// 					}
+			// 				})
+			// 			}
+			// 		})
+   //  			})
+   //  		}); 
 
     		async.series(tasks, function(err, finish){
-    			if(err){
-    				console.log(err);
-    				cb('gagal');
-    				return;
-    			} 
-    			cb('sukses');
+    			console.log('Import finished');
+    			// if(err){
+    			// 	console.log(err);
+    			// 	cb('gagal');
+    			// 	return;
+    			// } 
+    			// cb('sukses');
     		})
+			cb('sukses');
 
     		return;
     	}
@@ -3365,18 +3468,19 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 					[removed._id, '<span class="badge badge-danger">dihapus</span>', '<span class="badge badge-default">detail</span>', removed.nmitem, 
 					formatUang(removed.volkeg), removed.satkeg, formatUang(removed.hargasat), formatUang(removed.jumlah), '<button type="button" class="link-realisasi"><i class="icon-share"></i></button>']
 				);
-				removed.active = false;
+				removed.volkeg = 0;
+				removed.jumlah = 0;
 				removed.save();
 			})
 			pok.connections[user_id].emit('pok_unduh_finish_xlsx');
 		})
-		Akun.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		SubKomponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		Komponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		SubOutput.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		Output.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		Kegiatan.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		Program.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		// Akun.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		// SubKomponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		// Komponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		// SubOutput.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		// Output.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		// Kegiatan.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		// Program.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
 		User.update({_id: user_id}, {$push: {"act": {label: 'Upload File Xlsx POK'}}}, 
 			function(err, status){
 		})
@@ -3628,6 +3732,18 @@ function POK(file_path, pok_name, username, user_id){
 	this.getDetailBelanja = function(){
 		return detail_belanja;
 	}
+}
+
+function getMatchEntity(name, entities){
+	var p = [];
+	_.each(entities, function(peg, index, list){
+		peg.score = clj_fuzzy.metrics.jaro_winkler(name, peg.nama);
+		p.push(peg);
+	})
+
+	var matched = _.max(p, function(peg){ return peg.score; })
+
+	return matched;
 }
 
 function errorHandler(user_id, message){

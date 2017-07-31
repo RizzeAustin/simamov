@@ -3,10 +3,10 @@ use simamov;
 // db.user.update({_id: ObjectId('597d4b39094160252c595640')}, {$set:{jenis: 1}})
 // db.user.find().pretty()
 // db.custom_entity.find({nip: '13.7960'}).pretty()
-// db.pegawai.find({_id: '13.7960'}).pretty()
+// db.pegawai.find({}).pretty()
 // db.spj.find({})
 // db.user.find().pretty()
-// db.surat_tugas.drop();
+// db.pegawai.update({}, {$set: {active: true}}, {multi: true});
 // db.custom_entity.update(
 //    {type: 'Penerima'},
 //    { $set: { active: true } },
@@ -24,22 +24,18 @@ use simamov;
 // show collections
 // db.sppd.findOne({})
 //==================================================
-db.pok_detailBelanja.drop()
-db.pok_akun.drop()
-db.pok_sub_komponen.drop()
-db.pok_komponen.drop()
-db.pok_sub_output.drop()
-db.pok_output.drop()
-db.pok_kegiatan.drop()
-db.pok_program.drop()
-db.setting.drop()
-db.custom_entity.drop()
-db.perhitungan.drop()
-db.surat_tugas.drop()
-db.surat_tugas_biasa.drop()
-db.setting_sppd.drop()
+// db.pok_detailBelanja.drop()
+// db.pok_akun.drop()
+// db.pok_sub_komponen.drop()
+// db.pok_komponen.drop()
+// db.pok_sub_output.drop()
+// db.pok_output.drop()
+// db.pok_kegiatan.drop()
+// db.pok_program.drop()
+// db.setting.drop()
+// db.custom_entity.drop()
 //==================================================
-
+// db.custom_entity.insert({nama: 'Abdul Ghofar S.Si, MTI.', type: 'Penerima'})
 // db.setting_sppd.findOne()
 
 // db.pegawai.drop()
@@ -47,7 +43,7 @@ db.setting_sppd.drop()
 // db.perhitungan.drop()
 // db.surat_tugas.drop()
 
-// db.custom_entity.find({nip: { $exists: true}}).pretty()
+// db.custom_entity.find({type: 'tugas'}).pretty()
 // db.kab.find().pretty()
 // db.pok_uraian_akun.find({thang: '2017'})
 // db.representasi.find().pretty()

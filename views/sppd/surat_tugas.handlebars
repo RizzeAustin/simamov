@@ -709,6 +709,11 @@
         //Reload pdf viewer
         var download_surat = false;
         $('#suratTugas').on('submit', function(e) {
+            if(!$('#ttd_surat_tugas').val() || !$('#ttd_legalitas').val()){
+                generalAlert('Setting Penanda Tangan Surat Tugas atau Legalitas belum ditentukan. Silahkan ubah di pengaturan SPPD.')
+                e.preventDefault();
+                return false;
+            }
             if(download_surat){
                 download_surat = false;
                 clearForm();
@@ -805,6 +810,21 @@
                         {
                             socket.emit('komponen_list', q, function (data) {
                                 return p(_.map(data, function(peg){ return {kdkmpnen: peg.kdoutput+'.'+peg.kdkmpnen, value: peg.urkmpnen}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $('#detail_tugas').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('komponen_list_extra', q, function (data) {
+                                return p(_.map(data, function(ur){ return {kdkmpnen: (ur.kdkmpnen || ur._id), value: (ur.urkmpnen || ur.nama)}}))
                             });
                         }
                 }

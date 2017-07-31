@@ -14,6 +14,7 @@
     "angular-expressions": "0.3.0",
     "async": "2.1.5",
     "body-parser": "1.17.1",
+    "clj-fuzzy": "0.4.0",
     "compression": "1.6.2",
     "cookie-parser": "1.4.3",
     "csvtojson": "1.1.7",
