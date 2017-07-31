@@ -211,6 +211,34 @@
                                         </form>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="text-center" style="margin-bottom: 30px">
+                                            <span>Perubahan POK</span>
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div id="main_section" class="row">
+                                    <div class="col-md-12" style="padding-left: 0;">                                    
+                                        <table id="pok_table_change" class="table table-bordered" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Status</th>
+                                                    <th class="tipe">Tipe</th>
+                                                    <th class="uraian">Uraian</th>
+                                                    <th>Volume</th>
+                                                    <th>Satuan</th>
+                                                    <th>Harga Satuan</th>
+                                                    <th>Jumlah</th>
+                                                    <th class="pilihan">Pilihan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>             
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                             {{/if}}
                         </div> 
@@ -452,6 +480,7 @@
                                         <thead>
                                             <tr>
                                                 <th>_id</th>
+                                                <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
                                                 <th class="default-sort-column">No.</th>
                                                 <th>Tanggal</th>
                                                 <th>Penerima</th>
@@ -636,6 +665,80 @@
 </div>
 <!-- /.modal -->
 
+<div class="modal fade" id="link_realisasi_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Transfer Realisasi</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="padding: 15px">
+                    <div class="col-md-12" style="padding: 0">
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_program">Program</label>
+                            <div class="col-md-9">
+                                <select id="link_entry_program" name="tbh_entry_program" class="form-control pok-link-dropdown" size="1"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_kegiatan">Kegiatan</label>
+                            <div class="col-md-9">
+                                <select id="link_entry_kegiatan" name="tbh_entry_kegiatan" class="form-control pok-link-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_output">Output</label>
+                            <div class="col-md-9">
+                                <select id="link_entry_output" name="tbh_entry_output" class="form-control pok-link-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_s_output">Sub Output</label>
+                            <div class="col-md-9">
+                                <select id="link_entry_soutput" name="tbh_entry_s_output" class="form-control pok-link-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_komponen">Komponen</label>
+                            <div class="col-md-9">
+                                <select id="link_entry_komponen" name="tbh_entry_komponen" class="form-control pok-link-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_s_komponen">Sub Komponen</label>
+                            <div class="col-md-9">
+                                <select id="link_entry_skomponen" name="tbh_entry_s_komponen" class="form-control pok-link-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_akun">Akun</label>
+                            <div class="col-md-9">
+                                <select id="link_entry_akun" name="tbh_entry_akun" class="form-control pok-link-dropdown" size="1"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_d_blnj">Detail Belanja</label>
+                            <div class="col-md-9">
+                                <select id="link_entry_detail" name="tbh_entry_d_blnj" class="form-control" size="1"></select>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button id="btn-ubah-detail-submit" type="button" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
 <script src="/js/handsontable.full.min.js"></script>
 
 <script type="text/javascript">
@@ -795,6 +898,15 @@
                     "targets": [ 0 ],
                     "visible": false,
                     "searchable": false
+                },
+                {
+                   'targets': 1,
+                   'searchable':false,
+                   'orderable':false,
+                   'className': 'dt-body-center',
+                   'render': function (data, type, full, meta){
+                       return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                   }
                 }
             ],
             aaSorting: [],
@@ -803,9 +915,6 @@
             },
             "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
             createdRow: function( row, data, dataIndex ) {
-                if(!data[5]){
-                    $( row ).find('td:eq(4)').text('-');
-                }
                 if(!data[6]){
                     $( row ).find('td:eq(5)').text('-');
                 }
@@ -824,23 +933,26 @@
                 if(!data[11]){
                     $( row ).find('td:eq(10)').text('-');
                 }
-                $( row ).find('td:eq(0)').attr('class', 'text-center').text(dataIndex+1);
-                $( row ).find('td:eq(1)').attr('class', 'text-center');
-                $( row ).find('td:eq(3)').attr('class', 'format-uang');
+                if(!data[12]){
+                    $( row ).find('td:eq(11)').text('-');
+                }
+                $( row ).find('td:eq(1)').attr('class', 'text-center').text(dataIndex+1);
+                $( row ).find('td:eq(2)').attr('class', 'text-center');
                 $( row ).find('td:eq(4)').attr('class', 'format-uang');
                 $( row ).find('td:eq(5)').attr('class', 'format-uang');
                 $( row ).find('td:eq(6)').attr('class', 'format-uang');
                 $( row ).find('td:eq(7)').attr('class', 'format-uang');
-                $( row ).find('td:eq(3)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
-                setAutoNumeric( $( row ).find('td:eq(3)'), data[4]);
+                $( row ).find('td:eq(8)').attr('class', 'format-uang');
                 $( row ).find('td:eq(4)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                setAutoNumeric( $( row ).find('td:eq(4)'), data[5]);
                 $( row ).find('td:eq(5)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
                 $( row ).find('td:eq(6)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
                 $( row ).find('td:eq(7)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
-                $( row ).find('td:eq(8)').attr('class', 'text-center');
+                $( row ).find('td:eq(8)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
                 $( row ).find('td:eq(9)').attr('class', 'text-center');
-                $( row ).find('td:eq(11)').attr('class', 'text-center');
+                $( row ).find('td:eq(10)').attr('class', 'text-center');
                 $( row ).find('td:eq(12)').attr('class', 'text-center');
+                $( row ).find('td:eq(13)').attr('class', 'text-center');
             },
             "footerCallback": function ( row, data, start, end, display ) {
                 var api = this.api(), data;
@@ -855,31 +967,31 @@
      
                 // Total over all pages
                 total4 = api
-                    .column( 4 )
-                    .data()
-                    .reduce( function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0 );
-                total5 = api
                     .column( 5 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
-                total6 = api
+                total5 = api
                     .column( 6 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
-                total7 = api
+                total6 = api
                     .column( 7 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
-                total8 = api
+                total7 = api
                     .column( 8 )
+                    .data()
+                    .reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0 );
+                total8 = api
+                    .column( 9 )
                     .data()
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -894,25 +1006,32 @@
                 //     }, 0 );
      
                 // Update footer
-                $( api.column( 1 ).footer() ).html(
+                $( api.column( 2 ).footer() ).html(
                     'Total'
                 );
-                $( api.column( 4 ).footer() ).html(
+                $( api.column( 5 ).footer() ).html(
                     formatUang(total4)
                 );
-                $( api.column( 5 ).footer() ).html(
+                $( api.column( 6 ).footer() ).html(
                     formatUang(total5)
                 );
-                $( api.column( 6 ).footer() ).html(
+                $( api.column( 7 ).footer() ).html(
                     formatUang(total6)
                 );
-                $( api.column( 7 ).footer() ).html(
+                $( api.column( 8 ).footer() ).html(
                     formatUang(total7)
                 );
-                $( api.column( 8 ).footer() ).html(
+                $( api.column( 9 ).footer() ).html(
                     formatUang(total8)
                 );
             }
+        });
+
+        $('#example-select-all').on('click', function(){
+           // Get all rows with search applied
+           var rows = tabel_riwayat.DataTable().rows({ 'search': 'applied' }).nodes();
+           // Check/uncheck checkboxes for all rows in the table
+           $('input[type="checkbox"]', rows).prop('checked', this.checked);
         });
 
         //init bulan
@@ -2192,9 +2311,9 @@
         tabel_riwayat.on('dblclick', 'tr td', function () {
             active_entry = $(this);
             // console.log(active_entry.closest('tr').find('td:eq(7)').text(),'dksldsf', user_aktiv)
-            if({{#unless admin}}active_entry.closest('tr').find('td:eq(7)').text()!= user_aktiv || {{/unless}}state_active_editor_entry || active_entry.is(':nth-child(1)') || active_entry.is(':nth-child(12)') || active_entry.is(':nth-child(13)')){
+            if({{#unless admin}}active_entry.closest('tr').find('td:eq(8)').text()!= user_aktiv || {{/unless}}state_active_editor_entry || active_entry.is(':nth-child(1)') || active_entry.is(':nth-child(2)') || active_entry.is(':nth-child(13)') || active_entry.is(':nth-child(14)')){
                 {{#unless admin}}
-                if(active_entry.closest('tr').find('td:eq(7)').text()!= user_aktiv){
+                if(active_entry.closest('tr').find('td:eq(8)').text()!= user_aktiv){
                     $.toast({
                         text: 'Maaf Anda tidak dapat mengedit entrian pengguna lain.',
                         textAlign: 'left', 
@@ -2222,14 +2341,14 @@
                           'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
             if(active_entry.hasClass('format-uang')){
                 editor_entry = $('<input type="text" class="format-uang">').val(getNumber(active_entry.text())).hide().appendTo(active_entry.parent());
-            } else if(active_entry.is(':nth-child(2)')) {
+            } else if(active_entry.is(':nth-child(3)')) {
                 editor_entry = $('<input type="text" class="date">').val(active_entry.text()).hide().appendTo(active_entry.parent());
                 editor_entry.datetimepicker({
                     locale: 'id',
                     format: 'D MMMM YYYY',
                     useCurrent: false //Important! See issue #1075
                 });
-            }  else if(active_entry.is(':nth-child(3)')) {
+            }  else if(active_entry.is(':nth-child(4)')) {
                 editor_entry = $('<input type="text" class="penerima-autocomplete">').val(active_entry.text()).hide().appendTo(active_entry.parent());
                 editor_entry.typeahead({
                         hint: true,
@@ -2289,7 +2408,7 @@
                     var row = tabel_riwayat.DataTable().row(active_entry.closest('tr'));
                     var parent_id = $("#tbh_entry_detail").val();
                     var data = {};
-                    if(active_entry.is(':nth-child(2)')){
+                    if(active_entry.is(':nth-child(3)')){
                         if(new_value == '-' || new_value == '' || !date_field_timestamp_temp){
                             active_entry = null;
                             state_active_editor_entry = false;
@@ -2297,7 +2416,7 @@
                             return;
                         }
                         data = {'realisasi.$.tgl': new_value, 'realisasi.$.tgl_timestamp': date_field_timestamp_temp}
-                    } else if(active_entry.is(':nth-child(3)')){
+                    } else if(active_entry.is(':nth-child(4)')){
                         active_entry.css('visibility','visible');
                         if(new_value == '-' || new_value == ''){
                             active_entry = null;
@@ -2307,7 +2426,7 @@
                         }
                         data = {'realisasi.$.penerima_nama': new_value, 'realisasi.$.penerima_id': penerima_id_temp}
                         penerima_id_temp = null;
-                    } else if(active_entry.is(':nth-child(4)')){
+                    } else if(active_entry.is(':nth-child(5)')){
                         if(new_value == '-' || new_value == ''|| new_value == '0'){
                             active_entry = null;
                             state_active_editor_entry = false;
@@ -2315,14 +2434,6 @@
                             return;
                         }
                         data = {'realisasi.$.jumlah': getNumber(new_value)}
-                    }  else if(active_entry.is(':nth-child(5)')){
-                        if(new_value == '-' || new_value == ''|| new_value == '0'){
-                            active_entry = null;
-                            state_active_editor_entry = false;
-                            editor_entry.hide();
-                            return;
-                        }
-                        data = {'realisasi.$.pph21': getNumber(new_value)}
                     }  else if(active_entry.is(':nth-child(6)')){
                         if(new_value == '-' || new_value == ''|| new_value == '0'){
                             active_entry = null;
@@ -2330,7 +2441,7 @@
                             editor_entry.hide();
                             return;
                         }
-                        data = {'realisasi.$.pph22': getNumber(new_value)}
+                        data = {'realisasi.$.pph21': getNumber(new_value)}
                     }  else if(active_entry.is(':nth-child(7)')){
                         if(new_value == '-' || new_value == ''|| new_value == '0'){
                             active_entry = null;
@@ -2338,7 +2449,7 @@
                             editor_entry.hide();
                             return;
                         }
-                        data = {'realisasi.$.pph23': getNumber(new_value)}
+                        data = {'realisasi.$.pph22': getNumber(new_value)}
                     }  else if(active_entry.is(':nth-child(8)')){
                         if(new_value == '-' || new_value == ''|| new_value == '0'){
                             active_entry = null;
@@ -2346,12 +2457,20 @@
                             editor_entry.hide();
                             return;
                         }
+                        data = {'realisasi.$.pph23': getNumber(new_value)}
+                    }  else if(active_entry.is(':nth-child(9)')){
+                        if(new_value == '-' || new_value == ''|| new_value == '0'){
+                            active_entry = null;
+                            state_active_editor_entry = false;
+                            editor_entry.hide();
+                            return;
+                        }
                         data = {'realisasi.$.ppn': getNumber(new_value)}
-                    } else if(active_entry.is(':nth-child(9)')){
-                        data = {'realisasi.$.spm_no': new_value}
                     } else if(active_entry.is(':nth-child(10)')){
-                        data = {'realisasi.$.bukti_no': new_value}
+                        data = {'realisasi.$.spm_no': new_value}
                     } else if(active_entry.is(':nth-child(11)')){
+                        data = {'realisasi.$.bukti_no': new_value}
+                    } else if(active_entry.is(':nth-child(12)')){
                         data = {'realisasi.$.ket': new_value}
                     }
                     data['realisasi.$.timestamp'] = Math.round(new Date().getTime()/1000);
@@ -2379,7 +2498,7 @@
         tabel_riwayat.on('click', '.del-riwayat-tbl', function (e) {
             var state_undo = false;
             {{#unless admin}}
-            if($(this).closest('tr').find('td:eq(7)').text()!= user_aktiv){
+            if($(this).closest('tr').find('td:eq(8)').text()!= user_aktiv){
                 generalAlert('Maaf, Anda tidak memiliki hak akses.')
                 return;
             }
@@ -3633,11 +3752,6 @@
             nonames = data;
             $('#pok_unduh_rename').modal('show');
         })
-        socket.on('pok_unduh_finish_xlsx', function(data) {
-            $("#pok_unggah_button").prop("disabled",false);
-            $("#pok_unggah_button").html('Unggah');
-            generalAlert('POK telah diupdate.')
-        })
 
         var prog_ht, keg_ht, akun_ht;
         $('#pok_unduh_rename').on('shown.bs.modal', function() {
@@ -3705,8 +3819,6 @@
             var keg_ht_data = keg_ht.getSourceData();
             var akun_ht_data = akun_ht.getSourceData();
 
-            console.log(prog_ht_data,keg_ht_data,akun_ht_data)
-
             for (var i = prog_ht_data.length-1; i > -1; i--) {
                 if(!prog_ht_data[i].uraian){
                     generalAlert('Program baris '+(i+1)+': blm terisi.')
@@ -3748,6 +3860,315 @@
                 akun_ht.alter('remove_row', i);
             }
         })
+
+        $('#pok_table_change').DataTable({
+            columnDefs: [
+                {
+                    "targets": [ 0 ],
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            paging: false,
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(0)').attr('class', 'text-center');
+                $( row ).find('td:eq(1)').attr('class', 'text-center');
+
+                $( row ).find('td:eq(3)').attr('class', 'text-center');
+                $( row ).find('td:eq(4)').attr('class', 'text-center');
+
+                $( row ).find('td:eq(5)').attr('class', 'format-uang');
+                $( row ).find('td:eq(6)').attr('class', 'format-uang');
+
+                $( row ).find('td:eq(7)').attr('class', 'text-center');
+            }
+        });
+
+        socket.on('pok_unduh_finish_xlsx', function(data) {
+            $("#pok_unggah_button").prop("disabled",false);
+            $("#pok_unggah_button").html('Unggah');
+            generalAlert('POK telah diupdate.');
+            $('#pok_table_change').DataTable().draw(false);
+        })
+
+        socket.on('pok_unduh_finish_xlsx_add_change', function(data) {
+            $('#pok_table_change').DataTable().row.add( data );
+        });
+
+        var detail_id_target_link;
+        $('#pok_table_change').on('click', '.link-realisasi', function(){
+            detail_id_target_link = $('#pok_table_change').DataTable().row($(this).closest('tr')).data()[0];
+            if(!$('#link_entry_detail').val()) socket.emit('pok_list', {'type': '', 'syarat': {}, 'sortby': 'kdprogram', 'for': 'riwayat'});
+            $('#link_realisasi_modal').modal('show');
+        })
+        //tambah list
+        socket.on('pok_list_for_riwayat', function(data) {
+            populateSelectForLink(data.items, data.type);
+        })
+
+        //fungsi umum tambah list
+        var parent_code;
+        function populateSelectForLink(lists, type){
+            var options ='<option>'
+                        +   '--pilih--'
+                        +'</option>';
+            
+            _.each(lists, function(item, index, list){
+                if(type == 'program'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else if(item.kdprogram !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    }                    
+                } else if(type == 'kegiatan'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else if(item.kdgiat !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                        parent_code = item.kdprogram;
+                    }                    
+                } else if(type == 'output'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else if(item.kdoutput !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                        parent_code = item.kdgiat;
+                    }                    
+                } else if(type == 'soutput'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdsoutput+' '+item.ursoutput
+                                + '</option>';
+                    } else if(lists.length == 1 || item.kdsoutput == parent_code){
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdsoutput+' '+item.ursoutput
+                                + '</option>';
+                        parent_code = item.kdoutput;
+                    } else {
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdsoutput+' '+item.ursoutput
+                                + '</option>';
+                    }
+                } else if(type == 'komponen'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdkmpnen+' '+item.urkmpnen
+                                + '</option>';
+                    } else if(item.kdkmpnen !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdkmpnen+' '+item.urkmpnen
+                                + '</option>';
+                    } else{
+                        options +='<option value="'+item.kdkmpnen+'" selected="selected">'
+                                +   item.kdkmpnen+' '+item.urkmpnen
+                                + '</option>';
+                        parent_code = item.kdsoutput;
+                    }
+                    
+                } else if(type == 'skomponen'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdskmpnen+' '+item.urskmpnen
+                            + '</option>';
+                    } else if(lists.length == 1 || item.kdskmpnen == parent_code){
+                        options +='<option value="'+item._id+'" selected="selected">'
+                            +   item.kdskmpnen+' '+item.urskmpnen
+                            + '</option>';
+                        parent_code = item.kdkmpnen;
+                    } else{
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdskmpnen+' '+item.urskmpnen
+                            + '</option>';
+                    }
+                } else if(type == 'akun'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
+                            + '</option>';
+                    } else if(item.kdakun !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
+                            + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
+                            + '</option>';
+                        parent_code = item.kdskmpnen;
+                    }
+                } else if(type == 'detail'){
+                    if(!detail_id_target_link){
+                        options +='<option value="'+item._id+'">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                    } else if(item._id !== detail_id_target_link){
+                        options +='<option value="'+item._id+'">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                        parent_code = item.kdakun;
+                    }
+                }
+            })
+            $('#link_entry_'+type).empty().append(options);
+        }
+
+        $('.pok-link-dropdown').change(function(){
+            var type = $(this).attr('id').match(/link_entry_(.*)/)[1];
+
+            var kode;
+            if(!$("#link_entry_"+type+" option:selected").text().match(/\s?\w+(?=\s)/)) return;
+
+            if(type != 'skomponen') kode = $("#link_entry_"+type+" option:selected").text().match(/\d+(?=\s)/)[0]
+                else kode = $("#link_entry_"+type+" option:selected").text().match(/\s?\w+(?=\s)/)[0]
+
+            var syarat = {};
+            var sortby;
+
+            if(type == 'program'){
+                syarat.kdprogram = kode;
+                sortby = 'kdgiat';
+                $('#link_entry_kegiatan').empty();
+                $('#link_entry_output').empty();
+                $('#link_entry_soutput').empty();
+                $('#link_entry_komponen').empty();
+                $('#link_entry_skomponen').empty();
+                $('#link_entry_akun').empty();
+                $('#link_entry_detail').empty();
+            } else if(type == 'kegiatan'){
+                syarat.kdprogram = $("#link_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = kode;
+                sortby = 'kdoutput';
+                $('#link_entry_output').empty();
+                $('#link_entry_soutput').empty();
+                $('#link_entry_komponen').empty();
+                $('#link_entry_skomponen').empty();
+                $('#link_entry_akun').empty();
+                $('#link_entry_detail').empty();
+            } else if(type == 'output'){
+                syarat.kdprogram = $("#link_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#link_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = kode;
+                sortby = 'kdsoutput';
+                $('#link_entry_soutput').empty();
+                $('#link_entry_komponen').empty();
+                $('#link_entry_skomponen').empty();
+                $('#link_entry_akun').empty();
+                $('#link_entry_detail').empty();
+            } else if(type == 'soutput'){
+                syarat.kdprogram = $("#link_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#link_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#link_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = kode;
+                sortby = 'kdkmpnen';
+                $('#link_entry_komponen').empty();
+                $('#link_entry_skomponen').empty();
+                $('#link_entry_akun').empty();
+                $('#link_entry_detail').empty();
+            } else if(type == 'komponen'){
+                syarat.kdprogram = $("#link_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#link_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#link_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = $("#link_entry_soutput option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdkmpnen = kode;
+                sortby = 'kdskmpnen';
+                $('#link_entry_skomponen').empty();
+                $('#link_entry_akun').empty();
+                $('#link_entry_detail').empty();
+            } else if(type == 'skomponen'){
+                syarat.kdprogram = $("#link_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#link_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#link_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = $("#link_entry_soutput option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdkmpnen = $("#link_entry_komponen option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdskmpnen = kode;
+                sortby = 'kdakun';
+                $('#link_entry_akun').empty();
+                $('#link_entry_detail').empty();
+            } else if(type == 'akun'){
+                syarat.kdprogram = $("#link_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#link_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#link_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = $("#link_entry_soutput option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdkmpnen = $("#link_entry_komponen option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdskmpnen = $("#link_entry_skomponen option:selected").text().match(/\s?\w+(?=\s)/)[0];
+                syarat.kdakun = kode
+                sortby = 'noitem'
+                $('#link_entry_detail').empty();
+            }
+
+            socket.emit('pok_list', {'type': type, 'syarat': syarat, 'sortby': sortby, 'for': 'riwayat'});
+        });
+
+        $('#btn-ubah-detail-submit').click(function(){
+            if($('#link_entry_detail').val() && $('#link_entry_detail option:selected').text() != '--pilih--'){
+                console.log({'detail_id': detail_id_target_link, 'target': $('#link_entry_detail').val()})
+                socket.emit('transfer_realisasi', {'detail_id': detail_id_target_link, 'target': $('#link_entry_detail').val()}, function (data) {
+                    if(data == 'sukses'){
+                        $('#link_realisasi_modal').modal('toggle');
+                        generalAlert('Realisasi berhasil ditransfer.')
+                    } else {
+                        generalAlert('Gagal mengubah detail. Mohon hubungi admin.')
+                    }                    
+                });
+            }else {
+                generalAlert('Detail belum dipilih.');
+            }
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         ////////////////Object & Sockets

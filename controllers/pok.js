@@ -1685,7 +1685,7 @@ pok.socket = function(io, connections, client){
 									rows.push({tgl: item.tgl, penerima_nama: item.penerima_nama, jumlah: item.jumlah, pph21: item.pph21, pph22: item.pph22, 
 	    								pph23: item.pph23, ppn: item.ppn, spm_no: item.spm_no, bukti_no: item.bukti_no, ket: item.ket, pengentry: item.pengentry})
 	    						} else {
-	    							client.emit('riwayat_tbl_add', [item._id, '', item.tgl, item.penerima_nama, item.jumlah, item.pph21, item.pph22, 
+	    							client.emit('riwayat_tbl_add', [item._id, '', '', item.tgl, item.penerima_nama, item.jumlah, item.pph21, item.pph22, 
 	    								item.pph23, item.ppn, item.spm_no, item.bukti_no, item.ket, item.pengentry, 
 	    								'<button type="button" class="del-riwayat-tbl"><i class="icon-close"></i></button>']);
 	    							return;
@@ -1792,7 +1792,7 @@ pok.socket = function(io, connections, client){
 									rows.push({tgl: item.tgl, penerima_nama: item.penerima_nama, jumlah: item.jumlah, pph21: item.pph21, pph22: item.pph22, 
 	    								pph23: item.pph23, ppn: item.ppn, spm_no: item.spm_no, bukti_no: item.bukti_no, ket: item.ket, pengentry: item.pengentry})
 	    					}else {
-	    						client.emit('riwayat_tbl_add', [item._id, '', item.tgl, item.penerima_nama, item.jumlah, item.pph21, item.pph22, 
+	    						client.emit('riwayat_tbl_add', [item._id, '', '', item.tgl, item.penerima_nama, item.jumlah, item.pph21, item.pph22, 
     							item.pph23, item.ppn, item.spm_no, item.bukti_no, item.ket, item.pengentry, '<button type="button" class="del-riwayat-tbl"><i class="icon-close"></i></button>']);
 	    					}
 	    				}
@@ -2048,6 +2048,36 @@ pok.socket = function(io, connections, client){
     	var y = thang || new Date().getFullYear();
 		getRealisasiSum(client, Math.round(new Date(y, month, 1).getTime()/1000), 
 			Math.round(new Date(y, +month + 1, 0).getTime()/1000) + 86399);
+    })
+
+    client.on('transfer_realisasi', function (ids, cb){
+    	console.log(ids)
+    	DetailBelanja.findOne({_id: ids.detail_id}, 'realisasi', function(err, source){
+    		if(err){
+    			console.log(err);
+    			return;
+    		}
+    		if(!source || !source.realisasi){
+    			cb('sukses')
+    			return;
+    		}
+
+    		DetailBelanja.findOne({_id: ids.target}, 'realisasi', function(err, target){
+    			var new_realisasi = target.realisasi;
+    			_.each(source.realisasi, function(realss, index, list){
+    				new_realisasi.push(realss);
+    			})
+				DetailBelanja.update({_id: ids.target}, { $set: {'realisasi': new_realisasi} }, function(err, updated){
+					if(err) console.log(err);
+					console.log(updated)
+					cb('sukses')
+				});
+
+				User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Transfer realisasi '+ids.detail_id+' ==> '+ids.target}}}, 
+					function(err, status){
+				})
+    		})
+    	})
     })
 }
 
@@ -3052,8 +3082,14 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp){
 				new_item['active'] = true;
 				Model.update({_id: new ObjectId(result[ '_id' ])}, { $set: new_item }, function(err, updated){
 					if(err) errorHandler(user_id, result[ '_id' ]+' update error. Mohon hubungi admin.');
-					// console.log(result[ '_id' ]+' updated');
-					// item_added_callback(err, result[ '_id' ]+' updated');
+					if(item.nmitem){
+						pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
+							[item._id, '<span class="badge badge-success">update</span>', '<span class="badge badge-default">detail</span>', (old.nmitem)?old.nmitem + '==>' + item.nmitem:item.nmitem, 
+							(old.volkeg)?formatUang(old.volkeg) + '==>' + formatUang(item.volkeg):formatUang(item.volkeg), (old.satkeg)?old.satkeg + '==>' + item.satkeg:item.satkeg, 
+							(old.hargasat)?formatUang(old.hargasat) + '==>' + formatUang(item.hargasat):formatUang(item.hargasat), (old.jumlah)?formatUang(old.jumlah) + '==>' + formatUang(item.jumlah):formatUang(item.jumlah), 
+							'-']
+						);
+					}
 					if(cb) cb(null, '')
 				});
 			} else {
@@ -3064,6 +3100,7 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp){
 				});
 			}
 		} else {
+			item.timestamp = current_timestamp;
 			item.save(function(err, item){
 				if(err) errorHandler(user_id, item[ '_id' ]+' insert error. Mohon hubungi admin.');
 				// console.log(item[ '_id' ]+' inserted')
@@ -3322,8 +3359,24 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 	async.series(tasks, function(err, final){
 		DetailBelanja.find({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, function(err, removed_details){
 			console.log(removed_details);
+			var rows = [];
+			_.each(removed_details, function(removed, index, list){
+				pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
+					[removed._id, '<span class="badge badge-danger">dihapus</span>', '<span class="badge badge-default">detail</span>', removed.nmitem, 
+					formatUang(removed.volkeg), removed.satkeg, formatUang(removed.hargasat), formatUang(removed.jumlah), '<button type="button" class="link-realisasi"><i class="icon-share"></i></button>']
+				);
+				removed.active = false;
+				removed.save();
+			})
+			pok.connections[user_id].emit('pok_unduh_finish_xlsx');
 		})
-		pok.connections[user_id].emit('pok_unduh_finish_xlsx');
+		Akun.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		SubKomponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		Komponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		SubOutput.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		Output.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		Kegiatan.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		Program.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
 		User.update({_id: user_id}, {$push: {"act": {label: 'Upload File Xlsx POK'}}}, 
 			function(err, status){
 		})
@@ -3586,6 +3639,10 @@ function sendNotification(user_id, message){
 	if(!pok.connections[user_id]) return;
 	if(_.isString(user_id)) pok.connections[user_id].emit('messages', message)
 		else user_id.emit('messages', message)
+}
+
+function formatUang(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 module.exports = pok;
