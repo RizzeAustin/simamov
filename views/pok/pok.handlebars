@@ -518,6 +518,11 @@
                                     </table>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-12" id="multiple-action" style="margin: 0 auto; text-align: center;">
+                                    
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1028,11 +1033,110 @@
         });
 
         $('#example-select-all').on('click', function(){
+
+           if(this.checked){
+
+                $('#multiple-action').html(
+
+                    '<button id="btn-multiple-delete" type="button" style="height:35px;width:35px;"><i class="icon-close font-lg"></i></button> '
+                    +'<button id="btn-multiple-move" type="button" style="height:35px;width:35px;"><i class="icon-share-alt font-lg"></i></i></button>'
+
+                )
+
+           } else {
+               $('#multiple-action').html('');
+           }
+
            // Get all rows with search applied
            var rows = tabel_riwayat.DataTable().rows({ 'search': 'applied' }).nodes();
            // Check/uncheck checkboxes for all rows in the table
            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+
+           
         });
+
+        //function
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+        $('#riwayat_modal tbody').on('change', 'input[type="checkbox"]', function(){
+           // If checkbox is not checked
+           if(!this.checked){
+              var el = $('#example-select-all').get(0);
+              // If "Select all" control is checked and has 'indeterminate' property
+              if(el && el.checked && ('indeterminate' in el)){
+                 // Set visual state of "Select all" control
+                 // as 'indeterminate'
+                 el.indeterminate = true;
+              }
+           }
+           var checked = tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
+
+           // Iterate over all checkboxes in the table
+           // tabel_riwayat.DataTable().$('input[type="checkbox"]').each(function(){
+           //    // If checkbox doesn't exist in DOM
+           //    if(!$.contains(document, this)){
+           //       // If checkbox is checked
+           //       console.log(this.value)
+           //    }
+           // });
+           if(this.checked){
+
+                $('#multiple-action').html(
+
+                    '<button id="btn-multiple-delete" type="button" style="height:35px;width:35px;"><i class="icon-close font-lg"></i></button> '
+                    +'<button id="btn-multiple-move" type="button" style="height:35px;width:35px;"><i class="icon-share-alt font-lg"></i></i></button>'
+
+                )
+
+           } else if(!checked){
+               $('#multiple-action').html('');
+           }
+        });
+
+        $('#riwayat_modal').on('click', '#btn-multiple-delete', function(){
+            $("#btn-multiple-delete").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw font-lg"></i>');
+            var checked = tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
+            if(typeof checked === 'string'){
+                checked = [checked];
+            }
+            $('#example-select-all').prop('checked', false);
+            _.each(checked, function(id, index, list){
+                socket.emit('del_riwayat', {'parent_id': $("#tbh_entry_detail").val(), 'target_id': id, 
+                'month': $('#bulan_realisasi').val()}, function(status){
+                    var row_affected = tabel_riwayat.DataTable()
+                                    .rows( function ( idx, data, node ) {
+                                        return data[0] == id ?
+                                            true : false;
+                                    } )
+                                    .nodes()
+                                    .to$();
+                    tabel_riwayat.DataTable().row(row_affected).remove().draw(false);
+                    if(!tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]']){
+                        $('#multiple-action').html('');
+                    }
+                });
+            })
+        })
+
+        $('#riwayat_modal').on('click', '#btn-multiple-move', function(){
+            generalAlert('Fungsi ini belum berfungsi.');
+            return;
+        })
 
         //init bulan
         var current_month = new Date().getMonth()+1;
@@ -1499,6 +1603,11 @@
                             +                '<button id="btn-set-import-data" type="button">Set</button>'
                             +            '</div>'
                             +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<div class="col-md-12">'
+                            +                '<p>Jumlah: <span id="jumlah-spreadsheed"></span></p>'
+                            +            '</div>'
+                            +        '</div>'
                             +        '<div class="row">'
                             +            '<div class="col-md-12">'
                             +                '<div id="spreadsheet_entry" style="height: 640px; width: 1200px; overflow: hidden;">'
@@ -1537,7 +1646,7 @@
                   startCols: 10,
                   minCols: 10,
                   maxCols: 10,
-                  colWidths: [70, 200, 93, 93, 93, 93, 93, 93, 93, 95],
+                  colWidths: [125, 200, 93, 93, 93, 93, 93, 93, 93, 95],
                   manualColumnResize: true,
                   minSpareRows: 1,
                   colHeaders: ["Tanggal", "Penerima", "Jumlah", "PPh 21", "PPh 22", "PPh 23", "PPn", "Nmr SPM", "Nmr Bukti", "Ket"],
@@ -1562,6 +1671,7 @@
                 });
 
                 Handsontable.hooks.add('afterChange', function(changes, source){
+                    var jumlah = 0;
                     if(!import_data_entry) return;
                     if(import_data_entry.getSourceData()[0].tgl_timestamp){
                         var data = import_data_entry.getSourceData();
@@ -1579,6 +1689,10 @@
                         });
                         import_data_entry.render();                        
                     }
+                    _.each(import_data_entry.getSourceData(), function(row, index, list){
+                        jumlah += getNumber(row.jumlah || 0);
+                    });
+                    $('#jumlah-spreadsheed').text(formatUang(jumlah));
                 });
 
                 $('#btn-set-import-data').click(function(e){
@@ -1960,6 +2074,9 @@
         var detail_id_target_riwayat;
         tabel_pok_entry.on('click', '.riwayat', function () {
             spinner.spin(target);
+            //remove tombol multiple hapus
+            $('#example-select-all').prop('checked', false);
+            $('#multiple-action').html('');
             //clear semua row sblm ditambahkan
             tabel_riwayat.DataTable().clear().draw(false);
             var all_row_target_td = tabel_pok_entry.DataTable().row($(this).closest('tr')).data();
@@ -2494,19 +2611,34 @@
             }
         });
 
+        var parent_id;
+        var target_id;
+        var temp;
+        var row;
+        var target_delete;
+        var state_undo;
         tabel_riwayat.on('click', '.del-riwayat-tbl', function (e) {
-            var state_undo = false;
+            //cek jk ada yg dihapus sebelumnya
+            if(target_delete){
+                $.toast().reset('all');
+                //jika ada, hapus target delete sebelumnya
+                socket.emit('del_riwayat', {'parent_id': parent_id, 'target_id': target_id, 
+                    'month': $('#bulan_realisasi').val()}, function(status){});
+                row.remove().draw(false);
+                target_delete = null;
+            }
+            state_undo = false;
             {{#unless admin}}
             if($(this).closest('tr').find('td:eq(8)').text()!= user_aktiv){
                 generalAlert('Maaf, Anda tidak memiliki hak akses.')
                 return;
             }
             {{/unless}}
-            var temp = $(this).html();
-            var target_delete = $(this).closest('tr');
-            var row = tabel_riwayat.DataTable().row(target_delete);
+            target_delete = $(this).closest('tr');
+            row = tabel_riwayat.DataTable().row(target_delete);
+            target_id = row.data()[0];
             target_delete.hide();
-            var parent_id = $("#tbh_entry_detail").val();
+            parent_id = $("#tbh_entry_detail").val();
             $.toast({
                 text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
                 textAlign: 'right', 
@@ -2517,7 +2649,7 @@
                 allowToastClose: false,
                 afterHidden: function () {
                     if(!state_undo){
-                        socket.emit('del_riwayat', {'parent_id': parent_id, 'target_id': row.data()[0], 
+                        socket.emit('del_riwayat', {'parent_id': parent_id, 'target_id': target_id, 
                             'month': $('#bulan_realisasi').val()}, function(status){
                             if(status === 'sukses'){
                                 $(this).html(temp);
@@ -2531,7 +2663,7 @@
                 }
             })
             $('#undo_delete').click(function(){
-                row_to_delete = null;
+                target_delete = null;
                 state_undo = true;
                 target_delete.show();
                 $.toast().reset('all');
@@ -2726,7 +2858,6 @@
                     realisasi_bulan_ini += getNumber(program[9]);
                     realisasi_bulan_lalu += getNumber(program[10]);
                     sampai_bln_ini += getNumber(program[11]);
-                    console.log(program)
                     sisa_dana += getNumber((getNumber(program[13]) == 0)?program[8]:program[13]);
 
                     pagu += getNumber(program[8]);

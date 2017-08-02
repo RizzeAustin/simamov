@@ -360,7 +360,7 @@
         }
 
         function checkInput(){
-            if($('#anggota').val()=='' || $('#lokasi').val()=='' || $('#nama_lengkap_label').val()==''
+            if($('#lokasi').val()=='' || $('#nama_lengkap_label').val()==''
                 || $('#detail_tugas').val()=='' || $('#tgl_berangkat').val()=='' || $('#tgl_kembali').val()==''){
                  return false
             } else{
@@ -587,6 +587,7 @@
 
             var data = $('#suratTugas').serializeObject();
             data.anggota = nama_anggota;
+            console.log(data.anggota)
 
             var start = $("#tgl_berangkat").data('DateTimePicker').date()._d,
                 end = $("#tgl_kembali").data('DateTimePicker').date()._d,

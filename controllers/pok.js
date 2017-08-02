@@ -84,7 +84,6 @@ sipadu_db.connect();
 //similarity between string
 var clj_fuzzy = require('clj-fuzzy');
 
-
 //Socket.io
 pok.connections;
 
@@ -1429,29 +1428,39 @@ pok.socket = function(io, connections, client){
 		    	//init total sampai bulan ini
 		    	var total_sampai_bln_ini = 0;
 		    	//push realisasi baru
-		    	DetailBelanja.update({'thang': thang, "_id": new_entry._id}, {$push: {"realisasi": item}}, {new: true}, function(err, result){
-		    		if (err) {
-		    			console.log(err)
-		    			errorHandler(client, 'Gagal menyimpan.')
-		    			cb('gagal')
-		    			return
+		    	if(getNumber(item.jumlah)){
+		    		if(item.jumlah){
+		    			item.jumlah = getNumber(item.jumlah);
 		    		}
-		    		callback(null, 'ok');
-	    			User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Entry realisasi '+item.penerima_nama+', Rp'+item.jumlah+', Tgl '+item.tgl}}}, 
-	    				function(err, status){
-					})
-		    		//sebarkan perubahan
-		    		if(item.tgl_timestamp >= lower_ts && item.tgl_timestamp <= upper_ts){
-		    			if(item.tgl_timestamp <= upper_ts) total_sampai_bln_ini += item.jumlah;
-		    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': new_entry._id, 'realisasi': item.jumlah, 
-		    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
-		    		} else if(item.tgl_timestamp <= upper_ts){
-		    			total_sampai_bln_ini += item.jumlah;
-		    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': new_entry._id, 'realisasi': 0, 
-		    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
+		    		if(item.pph21){
+		    			item.pph21 = getNumber(item.pph21);
 		    		}
+		    		DetailBelanja.update({'thang': thang, "_id": new_entry._id}, {$push: {"realisasi": item}}, {new: true}, function(err, result){
+			    		if (err) {
+			    			console.log(err)
+			    			errorHandler(client, 'Gagal menyimpan.')
+			    			cb('gagal')
+			    			return
+			    		}
+			    		callback(null, 'ok');
+		    			User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Entry realisasi '+item.penerima_nama+', Rp'+item.jumlah+', Tgl '+item.tgl}}}, 
+		    				function(err, status){
+						})
+			    		//sebarkan perubahan
+			    		if(item.tgl_timestamp >= lower_ts && item.tgl_timestamp <= upper_ts){
+			    			if(item.tgl_timestamp <= upper_ts) total_sampai_bln_ini += item.jumlah;
+			    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': new_entry._id, 'realisasi': item.jumlah, 
+			    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
+			    		} else if(item.tgl_timestamp <= upper_ts){
+			    			total_sampai_bln_ini += item.jumlah;
+			    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': new_entry._id, 'realisasi': 0, 
+			    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
+			    		}
 
-		    	})
+			    	})
+		    	} else{
+		    		callback(null, 'ok');
+		    	}
 			}
 
 			//init task
@@ -1467,14 +1476,13 @@ pok.socket = function(io, connections, client){
     				//ambil semua pegawai
     				Pegawai.find({}, 'nama', function(err, pegs){
     					var matched = getMatchEntity(item.penerima_nama, pegs);
-    					// console.log(item.penerima_nama, matched.nama, ' = ',matched.score);
     					//ambil id ke peg
-    					if(matched.score >= 0.86){
+    					if(matched.score >= 0.7){
     						item.penerima_id = matched._id;
     						//untuk cross check kesamaan nama
     						item.ket = '['+item.penerima_nama+'] '+item.ket;
 							DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-								'tgl': item.tgl}).exec(function(err, result){
+								'tgl': item.tgl, penerima_nama: item.penerima_nama}).exec(function(err, result){
 			    					if(!result){
 			    						//simpan
 			    						submit_entry(item, callback);
@@ -1493,12 +1501,12 @@ pok.socket = function(io, connections, client){
 								var dosen_refine = _.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang}});
 								var matched = getMatchEntity(item.penerima_nama, dosen_refine);
 								//ambil id ke peg
-		    					if(matched.score >= 0.86){
+		    					if(matched.score >= 0.7){
 		    						item.penerima_id = matched._id;
 		    						//untuk cross check kesamaan nama nanti
 		    						item.ket = '['+item.penerima_nama+'] '+item.ket;
 									DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-										'tgl': item.tgl}).exec(function(err, result){
+										'tgl': item.tgl, penerima_nama: item.penerima_nama}).exec(function(err, result){
 					    					if(!result){
 					    						//simpan
 					    						submit_entry(item, callback);
@@ -1515,12 +1523,12 @@ pok.socket = function(io, connections, client){
 										  	return;
 										}
 										var matched = getMatchEntity(item.penerima_nama, custs);
-										if(matched.score >= 0.86){
+										if(matched.score >= 0.7){
 				    						item.penerima_id = matched._id;
 				    						//untuk cross check kesamaan nama nanti
 				    						item.ket = '['+item.penerima_nama+'] '+item.ket;
 											DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-												'tgl': item.tgl}).exec(function(err, result){
+												'tgl': item.tgl, penerima_nama: item.penerima_nama}).exec(function(err, result){
 							    					if(!result){
 							    						//simpan
 							    						submit_entry(item, callback);
@@ -1788,7 +1796,7 @@ pok.socket = function(io, connections, client){
 									rows.push({tgl: item.tgl, penerima_nama: item.penerima_nama, jumlah: item.jumlah, pph21: item.pph21, pph22: item.pph22, 
 	    								pph23: item.pph23, ppn: item.ppn, spm_no: item.spm_no, bukti_no: item.bukti_no, ket: item.ket, pengentry: item.pengentry})
 	    						} else {
-	    							client.emit('riwayat_tbl_add', [item._id, '', '', item.tgl, item.penerima_nama, item.jumlah, item.pph21, item.pph22, 
+	    							client.emit('riwayat_tbl_add', [item._id, item._id, '', item.tgl, item.penerima_nama, item.jumlah, item.pph21, item.pph22, 
 	    								item.pph23, item.ppn, item.spm_no, item.bukti_no, item.ket, item.pengentry, 
 	    								'<button type="button" class="del-riwayat-tbl"><i class="icon-close"></i></button>']);
 	    							return;
@@ -2112,7 +2120,10 @@ pok.socket = function(io, connections, client){
     		var y = thang || new Date().getFullYear();
     		var m = id.month || client.handshake.session.bulan_anggaran || new Date().getMonth();
     		var lower_ts = Math.round(new Date(y, m, 1).getTime()/1000)
-    		var upper_ts = Math.round(new Date(y, +m + 1, 0).getTime()/1000) + 86399
+    		var upper_ts = Math.round(new Date(y, +m + 1, 0).getTime()/1000) + 86399;
+    		if(!parent || !parent.realisasi.id(id.target_id)){
+    			return;
+    		}
     		if(parent.realisasi.id(id.target_id).tgl_timestamp >= lower_ts && parent.realisasi.id(id.target_id).tgl_timestamp <= upper_ts){
     			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': id.parent_id, 
     				'realisasi': -Math.abs(parent.realisasi.id(id.target_id).jumlah), 'sum': false,
@@ -2154,7 +2165,6 @@ pok.socket = function(io, connections, client){
     })
 
     client.on('transfer_realisasi', function (ids, cb){
-    	console.log(ids)
     	DetailBelanja.findOne({_id: ids.detail_id}, 'realisasi', function(err, source){
     		if(err){
     			console.log(err);
@@ -3737,7 +3747,7 @@ function POK(file_path, pok_name, username, user_id){
 function getMatchEntity(name, entities){
 	var p = [];
 	_.each(entities, function(peg, index, list){
-		peg.score = clj_fuzzy.metrics.jaro_winkler(name, peg.nama);
+		peg.score = clj_fuzzy.metrics.jaro_winkler(capitalize(name), capitalize(peg.nama));
 		p.push(peg);
 	})
 
@@ -3759,6 +3769,16 @@ function sendNotification(user_id, message){
 
 function formatUang(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function capitalize(s){
+    return s.toLowerCase().replace( /.*/g, function(a){ return a.toUpperCase(); } );
+};
+
+function getNumber(obj){
+    if(!obj || obj == '-' || obj == '') return 0;
+    if (typeof obj === 'string' || obj instanceof String) return +obj.replace(/\D/g, '');
+    return +obj;
 }
 
 module.exports = pok;
