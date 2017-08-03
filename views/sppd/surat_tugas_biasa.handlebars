@@ -188,6 +188,7 @@
 <!-- /.modal -->
 
 <script src="/js/bootstrap-tokenfield.js"></script>
+<script src="/js/locale/id.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -595,7 +596,8 @@
             
             data.pelaksanaan = [];
 
-            moment.locale('id');
+            console.log(moment.locale('id'));
+            console.log(moment.months())
 
             while (currentDate <= end) {
                 if(new Date(currentDate).getDay() > 0 && new Date(currentDate).getDay() < 6) data.pelaksanaan.push({tgl: moment(new Date(currentDate)).format("D MMMM YYYY")});
