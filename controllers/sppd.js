@@ -795,6 +795,9 @@ function handleSuratTugasBiasa(data, cb, res, user_id){
             if(data.nomor.match(/\d*$/)[0] != last_nmr_surat){
                 SuratTugasBiasa.update({_id: data.nomor.match(/\d*$/)[0]}, {$set: data}, function(err, status){
                     data._id = data.nomor.match(/\d*$/)[0];
+                    if(data.nomor.match(/\d*$/)[0] > last_nmr_surat){
+                        last_nmr_surat = data.nomor.match(/\d*$/)[0];
+                    }
                     cb(null, '');
                 })
             } else {
@@ -830,7 +833,7 @@ function handleSuratTugasBiasa(data, cb, res, user_id){
                         cb(null, '');
                     }
                     //update nomor surat
-                    if(data.nomor.match(/\d*$/)[0] != last_nmr_surat){
+                    if(data.nomor.match(/\d*$/)[0] != last_nmr_surat && (data.nomor.match(/\d*$/)[0] < last_nmr_surat)){
                         assignData();
                     } else {
                         SettingSPPD.update({}, { $inc: { last_nmr_surat: 1 }}, function(err, status){
