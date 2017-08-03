@@ -12,7 +12,7 @@
                                 <div class="form-group row">
                                     <label for="nomor">Nomor Surat</label>
                                     <div class="input-group">
-                                        <input type="text" id="nomor" name="nomor" class="form-control" placeholder="Nomor surat" value="{{setting.last_nmr_surat}}/SPD/STIS/{{fullYear}}" readonly="readonly">
+                                        <input type="text" id="nomor" name="nomor" class="form-control" placeholder="Nomor surat" value="{{setting.last_nmr_surat}}/SPD/STIS/{{fullYear}}">
                                         <span class="input-group-btn">
                                             <button id="btn-riwayat-surat-tugas" type="button" class="btn btn-secondary"><i class="icon-list"></i></button>
                                         </span>
@@ -683,7 +683,8 @@
                     $("#tgl_berangkat").val(response.tgl_berangkat);
                     $("#tgl_kembali").val(response.tgl_kembali);
 
-                    $("#jumlah_hari").val(moment($('#tgl_kembali').val(), "DD MMMM YYYY").diff(moment($('#tgl_berangkat').val(), "DD MMMM YYYY"), 'days')+1);
+                    // $("#jumlah_hari").val(moment($('#tgl_kembali').val(), "DD MMMM YYYY").diff(moment($('#tgl_berangkat').val(), "DD MMMM YYYY"), 'days')+1);
+                    $("#jumlah_hari").val(response.jumlah_hari);
 
                     $("input[name='jenis_ang'][value='" + response.jenis_ang + "']").attr('checked', 'checked');
                     $('#ttd_surat_tugas option[value="'+response.ttd_surat_tugas+'"]').prop('selected','selected');

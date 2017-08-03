@@ -40,7 +40,7 @@ db.custom_entity.drop()
 // db.pegawai.drop()
 // db.setting.drop()
 // db.perhitungan.drop()
-// db.surat_tugas.drop()
+// db.surat_tugas.find()
 
 // db.setting_sppd.update({}, {$set: {last_nmr_surat: 897}})
 // db.setting_sppd.findOne()

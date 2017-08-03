@@ -231,7 +231,6 @@
                                                     <th>Satuan</th>
                                                     <th>Harga Satuan</th>
                                                     <th>Jumlah</th>
-                                                    <th class="pilihan">Pilihan</th>
                                                 </tr>
                                             </thead>
                                             <tbody>             
@@ -519,7 +518,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-12" id="multiple-action" style="margin: 0 auto; text-align: center;">
+                                <div class="col-md-12" id="multiple-action" style="margin: 0 auto; text-align: center; margin-bottom: 10px">
                                     
                                 </div>
                             </div>
@@ -1038,8 +1037,8 @@
 
                 $('#multiple-action').html(
 
-                    '<button id="btn-multiple-delete" type="button" style="height:35px;width:35px;"><i class="icon-close font-lg"></i></button> '
-                    +'<button id="btn-multiple-move" type="button" style="height:35px;width:35px;"><i class="icon-share-alt font-lg"></i></i></button>'
+                    '<button id="btn-multiple-delete" type="button" style="height:35px;width:35px;" title="Hapus terpilih"><i class="icon-close font-lg"></i></button> '
+                    +'<button id="btn-multiple-move" type="button" style="height:35px;width:35px;" title="Pindahkan terpilih ke rincian lain"><i class="icon-share-alt font-lg"></i></i></button>'
 
                 )
 
@@ -1109,6 +1108,10 @@
         });
 
         $('#riwayat_modal').on('click', '#btn-multiple-delete', function(){
+            if(!tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]']){
+                generalAlert('Tidak ada realisasi yang terpilih.')
+                return;
+            }
             $("#btn-multiple-delete").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw font-lg"></i>');
             var checked = tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
             if(typeof checked === 'string'){
@@ -1134,8 +1137,43 @@
         })
 
         $('#riwayat_modal').on('click', '#btn-multiple-move', function(){
-            generalAlert('Fungsi ini belum berfungsi.');
-            return;
+            if(!tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]']){
+                generalAlert('Tidak ada realisasi yang terpilih.')
+                return;
+            }
+            if(!$('#link_entry_detail').val()) socket.emit('pok_list', {'type': '', 'syarat': {}, 'sortby': 'kdprogram', 'for': 'riwayat_for_link'});
+            $('#link_realisasi_modal').modal('show');
+        })
+
+        $('#btn-ubah-detail-submit').click(function(){
+            if($('#link_entry_detail').val() && $('#link_entry_detail option:selected').text() != '--pilih--'){
+                var checked = tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
+                if(typeof checked === 'string'){
+                    checked = [checked];
+                }
+                $("#btn-ubah-detail-submit").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw font-lg"></i> '+$("#btn-ubah-detail-submit").html());
+                $('#example-select-all').prop('checked', false);
+                _.each(checked, function(id, index, list){
+                    socket.emit('del_riwayat', {'parent_id': $("#tbh_entry_detail").val(), 'target_id': id, 
+                        'new_parent_id': $('#link_entry_detail').val(), 'month': $('#bulan_realisasi').val()}, function(status){
+                        var row_affected = tabel_riwayat.DataTable()
+                                        .rows( function ( idx, data, node ) {
+                                            return data[0] == id ?
+                                                true : false;
+                                        } )
+                                        .nodes()
+                                        .to$();
+                        tabel_riwayat.DataTable().row(row_affected).remove().draw(false);
+                        if(!tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]']){
+                            $("#btn-ubah-detail-submit").html('Simpan');
+                            $('#link_realisasi_modal').modal('toggle');
+                            $('#multiple-action').html('');
+                        }
+                    });
+                })
+            }else {
+                generalAlert('Detail belum dipilih.');
+            }
         })
 
         //init bulan
@@ -2663,9 +2701,9 @@
                 }
             })
             $('#undo_delete').click(function(){
-                target_delete = null;
                 state_undo = true;
                 target_delete.show();
+                target_delete = null;
                 $.toast().reset('all');
             })
         })
@@ -4014,8 +4052,6 @@
 
                 $( row ).find('td:eq(5)').attr('class', 'format-uang');
                 $( row ).find('td:eq(6)').attr('class', 'format-uang');
-
-                $( row ).find('td:eq(7)').attr('class', 'text-center');
             }
         });
 
@@ -4031,13 +4067,13 @@
         });
 
         var detail_id_target_link;
-        $('#pok_table_change').on('click', '.link-realisasi', function(){
-            detail_id_target_link = $('#pok_table_change').DataTable().row($(this).closest('tr')).data()[0];
-            if(!$('#link_entry_detail').val()) socket.emit('pok_list', {'type': '', 'syarat': {}, 'sortby': 'kdprogram', 'for': 'riwayat'});
-            $('#link_realisasi_modal').modal('show');
-        })
+        // $('#pok_table_change').on('click', '.link-realisasi', function(){
+        //     detail_id_target_link = $('#pok_table_change').DataTable().row($(this).closest('tr')).data()[0];
+        //     if(!$('#link_entry_detail').val()) socket.emit('pok_list', {'type': '', 'syarat': {}, 'sortby': 'kdprogram', 'for': 'riwayat'});
+        //     $('#link_realisasi_modal').modal('show');
+        // })
         //tambah list
-        socket.on('pok_list_for_riwayat', function(data) {
+        socket.on('pok_list_for_riwayat_for_link', function(data) {
             populateSelectForLink(data.items, data.type);
         })
 
@@ -4258,24 +4294,24 @@
                 $('#link_entry_detail').empty();
             }
 
-            socket.emit('pok_list', {'type': type, 'syarat': syarat, 'sortby': sortby, 'for': 'riwayat'});
+            socket.emit('pok_list', {'type': type, 'syarat': syarat, 'sortby': sortby, 'for': 'riwayat_for_link'});
         });
 
-        $('#btn-ubah-detail-submit').click(function(){
-            if($('#link_entry_detail').val() && $('#link_entry_detail option:selected').text() != '--pilih--'){
-                console.log({'detail_id': detail_id_target_link, 'target': $('#link_entry_detail').val()})
-                socket.emit('transfer_realisasi', {'detail_id': detail_id_target_link, 'target': $('#link_entry_detail').val()}, function (data) {
-                    if(data == 'sukses'){
-                        $('#link_realisasi_modal').modal('toggle');
-                        generalAlert('Realisasi berhasil ditransfer.')
-                    } else {
-                        generalAlert('Gagal mengubah detail. Mohon hubungi admin.')
-                    }                    
-                });
-            }else {
-                generalAlert('Detail belum dipilih.');
-            }
-        })
+        // $('#btn-ubah-detail-submit').click(function(){
+        //     if($('#link_entry_detail').val() && $('#link_entry_detail option:selected').text() != '--pilih--'){
+        //         console.log({'detail_id': detail_id_target_link, 'target': $('#link_entry_detail').val()})
+        //         socket.emit('transfer_realisasi', {'detail_id': detail_id_target_link, 'target': $('#link_entry_detail').val()}, function (data) {
+        //             if(data == 'sukses'){
+        //                 $('#link_realisasi_modal').modal('toggle');
+        //                 generalAlert('Realisasi berhasil ditransfer.')
+        //             } else {
+        //                 generalAlert('Gagal mengubah detail. Mohon hubungi admin.')
+        //             }                    
+        //         });
+        //     }else {
+        //         generalAlert('Detail belum dipilih.');
+        //     }
+        // })
 
 
 

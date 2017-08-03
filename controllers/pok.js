@@ -1234,7 +1234,6 @@ pok.socket = function(io, connections, client){
     })
 
     client.on('pok_list', function (data) {
-    	console.log(data)
     	//init Model, Parent Model, dan tipe parent
     	var Model;
     	var ParentModel;
@@ -1311,6 +1310,8 @@ pok.socket = function(io, connections, client){
     		// 		}
     				if(data.for == 'riwayat'){
 						client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
+					} else if(data.for == 'riwayat_for_link') {
+						client.emit('pok_list_for_riwayat_for_link', {'items': items, 'type': data.type});
 					} else {
 						client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
 					}
@@ -1318,7 +1319,9 @@ pok.socket = function(io, connections, client){
     		} else {
     			if(data.for == 'riwayat'){
     				client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
-    			} else {
+    			} else if(data.for == 'riwayat_for_link') {
+						client.emit('pok_list_for_riwayat_for_link', {'items': items, 'type': data.type});
+				} else {
     				client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': '', 'parent_type': ''});
     			}
     		}	    		
@@ -2132,13 +2135,62 @@ pok.socket = function(io, connections, client){
     			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': id.parent_id,'realisasi': 0, 'sum': false,
     					'total_sampai_bln_ini': -Math.abs(parent.realisasi.id(id.target_id).jumlah), 'broadcast': true, message: '1 item realisasi telah dihapus.'});
     		}
+    		//jika pindah
+    		var to_moved = {};
+    		var temp = parent.realisasi.id(id.target_id);
+    		if(id.new_parent_id){
+    			if(temp.tgl_timestamp) to_moved.tgl_timestamp = temp.tgl_timestamp
+    			if(temp.penerima_id) to_moved.penerima_id = temp.penerima_id
+    			if(temp.tgl) to_moved.tgl = temp.tgl
+    			if(temp.penerima_nama) to_moved.penerima_nama = temp.penerima_nama
+    			if(temp.jumlah) to_moved.jumlah = temp.jumlah
+    			if(temp.pph21) to_moved.pph21 = temp.pph21;
+    			if(temp.pph22) to_moved.pph22 = temp.pph22;
+    			if(temp.pph23) to_moved.pph23 = temp.pph23;
+    			if(temp.ppn) to_moved.ppn = temp.ppn;
+    			if(temp.spm_no) to_moved.spm_no = temp.spm_no;
+    			if(temp.bukti_no) to_moved.bukti_no = temp.bukti_no;
+    			if(temp.ket) to_moved.ket = temp.ket;
+    			if(temp.timestamp) to_moved.timestamp = temp.timestamp;
+    			if(temp.pengentry) to_moved.pengentry = temp.pengentry;
+    		}
     		parent.realisasi.id(id.target_id).remove();
     		parent.save();
-    		cb('sukses')
-    		sendNotification(client, 'Berhasil dihapus.');
-    		User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Hapus riwayat '+id.parent_id+' > '+id.target_id}}}, 
-				function(err, status){
+    		cb('sukses');
+
+    		if(id.new_parent_id) sendNotification(client, 'Berhasil dipindahkan.');
+    		
+    		
+    		DetailBelanja.findOne({'thang': thang, '_id': id.new_parent_id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': to_moved.jumlah, 'penerima_id': to_moved.penerima_id, 
+			'tgl': to_moved.tgl}).exec(function(err, result){
+				//jika blm pernah
+				if(!result){
+					DetailBelanja.update({'thang': thang, "_id": id.new_parent_id}, {$push: {"realisasi": to_moved}}, {new: true}, function(err, result){
+			    		if (err) {
+			    			console.log(err)
+			    			errorHandler(client, 'Gagal menyimpan.')
+			    			cb('gagal')
+			    			return
+			    		}
+			    		cb('sukses');
+		    			User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Pindah realisasi '+id.parent_id+' '+to_moved.penerima_nama+', Rp'+to_moved.jumlah+', Tgl '+to_moved.tgl+' ke '+id.new_parent_id}}}, 
+		    				function(err, status){
+						})
+			    		//sebarkan
+			    		total_sampai_bln_ini = 0;
+			    		if(to_moved.tgl_timestamp >= lower_ts && to_moved.tgl_timestamp <= upper_ts){
+			    			if(to_moved.tgl_timestamp <= upper_ts) total_sampai_bln_ini += to_moved.jumlah;
+			    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': id.new_parent_id, 'realisasi': to_moved.jumlah, 
+			    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
+			    		}
+			    	})
+				}
 			})
+			if(id.new_parent_id){
+	    		User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Hapus riwayat '+id.parent_id+' > '+id.target_id}}}, 
+					function(err, status){
+				})
+			}
     	})
     })
 
@@ -3199,8 +3251,7 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp){
 						pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
 							[item._id, '<span class="badge badge-success">update</span>', '<span class="badge badge-default">detail</span>', (old.nmitem)?old.nmitem + '==>' + item.nmitem:item.nmitem, 
 							(old.volkeg)?formatUang(old.volkeg) + '==>' + formatUang(item.volkeg):formatUang(item.volkeg), (old.satkeg)?old.satkeg + '==>' + item.satkeg:item.satkeg, 
-							(old.hargasat)?formatUang(old.hargasat) + '==>' + formatUang(item.hargasat):formatUang(item.hargasat), (old.jumlah)?formatUang(old.jumlah) + '==>' + formatUang(item.jumlah):formatUang(item.jumlah), 
-							'-']
+							(old.hargasat)?formatUang(old.hargasat) + '==>' + formatUang(item.hargasat):formatUang(item.hargasat), (old.jumlah)?formatUang(old.jumlah) + '==>' + formatUang(item.jumlah):formatUang(item.jumlah)]
 						);
 					}
 					if(cb) cb(null, '')
@@ -3250,9 +3301,17 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 	var detail_belanja_var = ['thang', 'kdprogram','kdgiat','kdoutput','kdsoutput','kdkmpnen','kdskmpnen','kdakun','noitem','nmitem','volkeg','satkeg','hargasat','jumlah'];
 
 	var tasks = [];
+	//untuk matched nmitem (detail);
+	var details_list = [];
+
 	_.each(data[0].data, function(item, index, list){
 		//kode (kolom 0 di excel)
-		var c0 = item[0].replace(/^\s+|\s+$/g,'');
+		var c0 = item[0];
+		if(!item[0]){
+			c0 = '';
+		} else{
+			c0 = item[0].toString().replace(/^\s+|\s+$/g,'');
+		}
 
 		if(c0.match(/^\d{3}\.\d{2}\.\d{2}$/)){ //program
 			tasks.push(
@@ -3436,7 +3495,23 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 
 					current_kdakun = new_item.kdakun;
 
-					objToDB(Akun, new_item, akun_var, cb, user_id, current_timestamp);
+					async.series([
+
+						function(cb_akun){
+							DetailBelanja.find({kdprogram: current_kdprogram, kdgiat: current_kdgiat, kdoutput: current_kdoutput, kdsoutput: current_kdsoutput, 
+								kdkmpnen: current_kdkmpnen, kdskmpnen: new_item.kdskmpnen, kdakun: new_item.kdakun}, function(err, ds){
+								if(ds){
+									details_list = ds;
+								} else {
+									details_list = null;
+								}
+								cb_akun(null, '')
+							})
+						}
+
+					], function(err, final){
+						objToDB(Akun, new_item, akun_var, cb, user_id, current_timestamp);
+					})
 				}
 			)
 		}else if(c0 == ''){ //detail
@@ -3457,12 +3532,86 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 					new_item.kdakun = current_kdakun;
 					new_item.noitem = detail++;
 					new_item.nmitem = item[1].replace(/^\s+|\s+$/g,'');
-					new_item.volkeg = item[2];
+					new_item.volkeg = getNumber(item[2]);
 					new_item.satkeg = item[3].replace(/^\s+|\s+$/g,'');
-					new_item.hargasat = item[4];
-					new_item.jumlah = item[5];
+					new_item.hargasat = getNumber(item[4]);
+					new_item.jumlah = getNumber(item[5]);//new_item.volkeg*new_item.hargasat;
 
-					objToDB(DetailBelanja, new_item, detail_belanja_var, cb, user_id, current_timestamp);
+					if(details_list.length == 0){//jika blm pernah ada detail yg diupload
+						var new_detail = new DetailBelanja(new_item);
+						new_detail.save(function(err, det){
+							cb(null, '')
+							pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
+								[new_detail._id, '<span class="badge badge-primary">baru</span>', '<span class="badge badge-default">detail</span>', new_detail.nmitem, 
+								formatUang(new_detail.volkeg), new_detail.satkeg, formatUang(new_detail.hargasat), formatUang(new_detail.jumlah)]
+							);
+						})
+					}else { //jika sdh ada uploadan sebelumnya
+						var matched = null;
+						async.series([
+							function(cb_d){
+								matched = getMatchDetail(new_item.nmitem, details_list);
+								cb_d(null, '')
+							},
+							function(cb_d){
+								if(matched){
+									//init old
+									var old = {};
+									//iterasi variabel yg bisa jadi old
+									for (var i = 0; i < detail_belanja_var.length; i++) {
+										//jika var terdefinisi
+										if(matched[ detail_belanja_var[ i ] ]){
+											//jika tdk sama dgn yg baru, var lama jadikan old
+											if( matched[ detail_belanja_var[ i ] ] != new_item[ detail_belanja_var[ i ] ] ){
+												//bakal push to old
+												old[ detail_belanja_var[ i ] ] = matched[ detail_belanja_var[ i ] ];
+												//bakal jadi active item
+												new_item[ detail_belanja_var[ i ] ] = new_item[ detail_belanja_var[ i ] ]
+											}
+										}
+									}
+									if(!_.isEmpty(old)){
+										//timestamp utk unique revisi
+										old[ 'timestamp' ] = matched[ 'timestamp' ];
+										//timestemp update terbaru
+										new_item[ 'timestamp' ] = current_timestamp;
+										//old yg lama ditransfer
+										new_item['old'] = matched[ 'old' ];
+										//penambahan old
+										new_item['old'].push(old);
+										new_item['active'] = true;
+										DetailBelanja.update({_id: new ObjectId(matched[ '_id' ])}, { $set: new_item }, function(err, updated){
+											if(err) errorHandler(user_id, matched[ '_id' ]+' update error. Mohon hubungi admin.');
+											if(old.nmitem || old.volkeg || old.satkeg || old.hargasat || old.jumlah){
+												pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
+													[new_item._id, '<span class="badge badge-success">update</span>', '<span class="badge badge-default">detail</span>', (old.nmitem)?old.nmitem + ' ==> ' + new_item.nmitem:new_item.nmitem, 
+													(old.volkeg)?formatUang(old.volkeg) + ' ==> ' + formatUang(new_item.volkeg):formatUang(new_item.volkeg), (old.satkeg)?old.satkeg + ' ==> ' + new_item.satkeg:new_item.satkeg, 
+													(old.hargasat)?formatUang(old.hargasat) + ' ==> ' + formatUang(new_item.hargasat):formatUang(new_item.hargasat), (old.jumlah)?formatUang(old.jumlah) + ' ==> ' + formatUang(new_item.jumlah):formatUang(new_item.jumlah)]
+												);
+											}
+											cb_d(null, '')
+										});
+									} else {
+										// update timestamp terbaru
+										DetailBelanja.update({_id: new ObjectId(matched[ '_id' ])}, { $set: {'timestamp': current_timestamp, 'active': true} }, function(err, updated){
+											cb_d(null, '')
+										});
+									}
+								} else {
+									var detail = new DetailBelanja(new_item);
+									detail.save(function(err, det){
+										cb_d(null, '')
+										pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
+											[detail._id, '<span class="badge badge-primary">baru</span>', '<span class="badge badge-default">detail</span>', detail.nmitem, 
+											formatUang(detail.volkeg), detail.satkeg, formatUang(detail.hargasat), formatUang(detail.jumlah)]
+										);
+									})
+								}
+							}
+						], function(err, final){
+							cb(null, '')
+						})
+					}
 				}
 			)
 		}
@@ -3471,26 +3620,26 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 
 	async.series(tasks, function(err, final){
 		DetailBelanja.find({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, function(err, removed_details){
-			console.log(removed_details);
 			var rows = [];
 			_.each(removed_details, function(removed, index, list){
 				pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
 					[removed._id, '<span class="badge badge-danger">dihapus</span>', '<span class="badge badge-default">detail</span>', removed.nmitem, 
-					formatUang(removed.volkeg), removed.satkeg, formatUang(removed.hargasat), formatUang(removed.jumlah), '<button type="button" class="link-realisasi"><i class="icon-share"></i></button>']
+					formatUang(removed.volkeg) + ' ==> 0', removed.satkeg, formatUang(removed.hargasat), formatUang(removed.jumlah) + ' ==> 0']
 				);
+				removed.timestamp = current_timestamp;
 				removed.volkeg = 0;
 				removed.jumlah = 0;
 				removed.save();
 			})
 			pok.connections[user_id].emit('pok_unduh_finish_xlsx');
 		})
-		// Akun.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		// SubKomponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		// Komponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		// SubOutput.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		// Output.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		// Kegiatan.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
-		// Program.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{active: false}}, function(err, removed){console.log(removed)});
+		Akun.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
+		SubKomponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
+		Komponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
+		SubOutput.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
+		Output.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
+		Kegiatan.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
+		Program.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
 		User.update({_id: user_id}, {$push: {"act": {label: 'Upload File Xlsx POK'}}}, 
 			function(err, status){
 		})
@@ -3756,13 +3905,39 @@ function getMatchEntity(name, entities){
 	return matched;
 }
 
+function getMatchDetail(nmitem, akundetails){
+	var p = [];
+
+	_.each(akundetails, function(detail, index, list){
+		//jika belum prnah terpilih
+		if(!detail.taken){
+			detail.score = clj_fuzzy.metrics.jaro_winkler(capitalize(nmitem.replace(/\s|\-/g, '')), capitalize(detail.nmitem.replace(/\s|\-/g, '')));
+			p.push(detail);
+		}
+	})
+
+	var matched = _.max(p, function(detail){ return detail.score; })
+
+	if(matched.score >= 0.91){
+		matched.taken = true;
+		return matched;
+	} else{
+		return null;
+	}
+}
+
+// DetailBelanja.find({kdprogram: '01', kdgiat: '2888', kdoutput: '994', kdkmpnen: '002', kdskmpnen: 'F', kdakun: '522111'}, function(err, ds){
+// 	var text = '    -     biaya langganan daya dan jasa listrik'
+// 	var a = getMatchDetail(text, ds);//.9183
+// 	console.log(a.nmitem,' <> ',text,' = ', a.score);
+// })
+
 function errorHandler(user_id, message){
 	if(_.isString(user_id)) pok.connections[user_id].emit('messages', message)
 		else user_id.emit('messages', message)
 }
 
 function sendNotification(user_id, message){
-	if(!pok.connections[user_id]) return;
 	if(_.isString(user_id)) pok.connections[user_id].emit('messages', message)
 		else user_id.emit('messages', message)
 }
