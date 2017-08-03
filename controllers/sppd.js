@@ -630,10 +630,13 @@ function handleSuratTugas(data, cb, res, user_id){
                     data.nama_lengkap = pegawai._id;
 
                     //nomor surat
-                    if(list.length == 1 && data.nomor.match(/^\d*/)[0] != last_nmr_surat){
+                    if(list.length == 1 && data.nomor.match(/^\d*/)[0] != last_nmr_surat && (+data.nomor.match(/^\d*/)[0] < last_nmr_surat)){
                         SuratTugas.update({_id: data.nomor.match(/^\d*/)[0]}, {$set: data}, function(err, status){
                             data._id = data.nomor.match(/^\d*/)[0];
                         })
+                    } else if(+data.nomor.match(/^\d*/)[0] > last_nmr_surat){
+                        data._id = data.nomor.match(/^\d*/)[0];
+                        last_nmr_surat = data._id;
                     } else{
                         data._id = last_nmr_surat;
                     }
@@ -677,7 +680,7 @@ function handleSuratTugas(data, cb, res, user_id){
                                     cb(null, '');
                                 }
                                 //update nomor surat
-                                if(list.length == 1 && data.nomor.match(/^\d*/)[0] != last_nmr_surat){
+                                if(list.length == 1 && data.nomor.match(/^\d*/)[0] != last_nmr_surat && (+data.nomor.match(/^\d*/)[0] < last_nmr_surat)){
                                     assignData();
                                 } else {
                                     SettingSPPD.update({}, { $inc: { last_nmr_surat: 1 }}, function(err, status){
