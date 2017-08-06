@@ -32,16 +32,16 @@ var User = require(__dirname+"/../model/User.model");
 //Short syntax tool
 var _ = require("underscore");
 
+//similarity between string
+var clj_fuzzy = require('clj-fuzzy');
+
+var moment = require('moment');
+moment.locale('id');
+
 //modul sql utk koneksi db mysql sipadu
 var mysql = require('mysql');
-var sipadu_db = mysql.createConnection({
-	host: '127.0.0.1',
-	user: 'root',
-	password: '',
-	database: 'sipadu_db'
-});
 
-sipadu_db.connect();
+// sipadu_db.connect();
 
 //Socket.io
 spj.connections;
@@ -287,140 +287,159 @@ spj.post('/honor', function(req, res){
 
 		        return workbook.toFileAsync('./temp_file/'+file_name+'.xlsx');
 		    }).then(dataa => {
-		    	msopdf(null, function(error, office) {
-					var input = './temp_file/'+file_name+'.xlsx';//__dirname + '/../temp_file/'+file_name+'.xlsx';
-					var output = './template/output/spj/honor/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
+		    	var pegs, css, sipadus;
+		    	async.series([
+		    		function(callb){
+		    			msopdf(null, function(error, office) {
+						var input = './temp_file/'+file_name+'.xlsx';//__dirname + '/../temp_file/'+file_name+'.xlsx';
+						var output = './template/output/spj/honor/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
 
-			    	if(xlsx){
-			    		res.download(input);
-			    		res.on('finish', function() {
-							// hapus xlsx setelah didownload
-							fs.unlink(input);
-						});
-			    	} else {
-						office.excel({'input': input, 'output': output}, function(error, pdf) {
-					    	if (err) {
-						        console.error(err);
-						    }
-						    //hapus xlsx setelah terconvert
-					    	fs.unlink(input);
+				    	if(xlsx){
+				    		res.download(input);
+				    		res.on('finish', function() {
+								// hapus xlsx setelah didownload
+								fs.unlink(input);
+								setTimeout(function(){
+									callb(null, '')
+								}, 2000)
+							});
+				    	} else {
+							office.excel({'input': input, 'output': output}, function(error, pdf) {
+						    	if (err) {
+							        console.error(err);
+							    }
+							    //hapus xlsx setelah terconvert
+						    	fs.unlink(input);
+							})
 
+							office.close(null, function(error) {
+								if(pdf){
+									res.download(output);
+									res.on('finish', function() {
+										// hapus pdf setelah didownload
+										fs.unlink(output);
+										setTimeout(function(){
+											callb(null, '')
+										}, 2000)
+									});
+								}else{
+									res.send(file_name+'.pdf');
+									setTimeout(function(){
+										callb(null, '')
+									}, 2000)
+								} 							
+							})
+				    	}
+						
 						})
-
-						office.close(null, function(error) {
-							if(pdf){
-								res.download(output);
-								res.on('finish', function() {
-									// hapus pdf setelah didownload
-									fs.unlink(output);
+		    		},
+		    		function(callb){
+		    			Pegawai.find({active: true}, 'nama').exec(function(err, pegawai){
+		    				pegs = pegawai;
+		    				CustomEntity.find({type: 'Penerima', active: true}, 'nama', function(err, cust_ent){
+		    					css = cust_ent;
+		    					var query = 'SELECT * ' +
+									'FROM dosen ' +
+									'WHERE aktif = 1 AND unit <> "STIS"';
+								var sipadu_db = mysql.createConnection({
+									host: '127.0.0.1',
+									user: 'root',
+									password: '',
+									database: 'sipadu_db'
 								});
-							}else{
-								res.send(file_name+'.pdf');
-							} 							
-						})
-			    	}
-					
-				})
-				// var query = 'SELECT * ' +
-							// 'FROM dosen ' +
-							// 'WHERE nama = ?';
-				var query = 'SELECT * ' +
-							'FROM dosen ';
-				sipadu_db.query(query, function (err, dosen_sipadu, fields) {//(query, item.penerima_nama, function (err, dosen, fields) {
-					if (err){
-					  	console.log(err)
-					  	return;
-					}
+								sipadu_db.connect(function(err){
+									sipadu_db.query(query, function (err, dosens, fields) {
+										if (err) {
+									        console.error(err);
+									    }
+										sipadus = _.map(dosens, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit}});
+										sipadu_db.end();
+										callb(null, '');
+									})
+								})
+		    				})
+		    			})
+		    		}
 
+		    	], function(err, final){
+		    		//link ke POK realisasi
 					_.each(data, function(item, i, list){
 						var penerima_id;
-			    		// simpan database
-			    		//ambil id
-			    		async.series([
-			    			function(cb){
-			    				Pegawai.findOne({nama: data[i]['nama']}, function(err, peg){
-					    			// console.log(peg)
-					    			//jika tdk ada d database pegawai
-					    			if(!peg){
-					    				CustomEntity.findOne({nama: data[i]['nama']}, function(err, cust){
-					    					// console.log(cust)
-							    			//jika tdk ada d database c e
-							    			if(!cust){
-												_.each(dosen_sipadu, function(dos, index, list){
-													var nama_sipadu = dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang;
-													if(nama_sipadu.replace(/^\s+|\s+$/g,'') == data[i]['nama'].replace(/^\s+|\s+$/g,'')){
-														penerima_id = dos.kode_dosen;
-														cb(null, '')
-													}
-												})
-												if(!penerima_id){
-													CustomEntity.create({type:'Penerima', nama: data[i]['nama']}, function(err, ce){
-														penerima_id = ce._id;
-														cb(null, '');
-													})
-												}
-							    			} else {
-							    				penerima_id = cust._id;
-					    						cb(null, '')
-							    			}
-							    		})
-					    			} else {
-					    				penerima_id = peg._id;
-					    				cb(null, '')
-					    			}
-					    		})
-			    			}
 
-			    		], function(err, finish){
-			    			// cek apakah sdh pernah tersimpan
-				    		// console.log({'thang': thang, '_id': honor_detail_id, tgl_buat_honor: tgl_buat_honor})
-					   		DetailBelanja.findOne({'thang': thang, '_id': honor_detail_id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': getNumber(data[i]['bruto']), 'penerima_nama': data[i]['nama'], 
-								'tgl': tgl_buat_honor}).exec(function(err, result){
-									//jika blm pernah
-									if(!result){
-										//init total, user
-							    		var total_sampai_bln_ini = 0;
-								    	var new_entry = {};
-								    	new_entry.pengentry = req.session.username;
-								    	new_entry.ket = 'SPJ Honor Dosen periode '+periode;
-								    	new_entry.pph21 = data[i]['pph'];
-								    	// new_entry.bukti_no = '';// data.bukti_no || '';
-								    	// new_entry.spm_no = '';// data.spm_no || '';
-								    	new_entry.penerima_nama = data[i]['nama'];
-								    	new_entry.tgl = tgl_buat_honor;
-								    	new_entry.tgl_timestamp = current_timestamp;
-								    	new_entry.penerima_id = penerima_id;
-								    	new_entry.jumlah = data[i]['bruto'];
-								    	new_entry.timestamp = current_timestamp;
-								    	// console.log(new_entry)
-								    	// return;
-								    	DetailBelanja.update({'thang': thang, "_id": honor_detail_id}, {$push: {"realisasi": new_entry}}, {new: true}, function(err, result){
-								    		if (err) {
-								    			console.log(err)
-								    			return
-								    		}
-								    		// spj.io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': honor_detail_id, 'realisasi': data[i]['bruto'], 
-								    		// 		'sum': false, 'total_sampai_bln_ini': 0, 'broadcast': true});
-								    	})
+						async.series([
+							//ambil id
+							function(cb){
+								var matched = getMatchEntity(data[i]['nama'], pegs);
+								//jika ditemukan, ==> simpan
+								if(matched){
+									penerima_id = matched._id;
+									cb(null, '');
+								} else {
+									var matched = getMatchEntity(data[i]['nama'], css);
+									//jika ditemukan, ==> simpan
+									if(matched){
+										penerima_id = matched._id;
+										cb(null, '');
 									} else {
-										sendNotification(req.session.user_id, 'Honor tsb untuk '+data[i]['nama']+' pernah tercatat di realisasi.')
+										var matched = getMatchEntity(data[i]['nama'], sipadus);
+										if(matched){
+											CustomEntity.create({type:'Penerima', nama: data[i]['nama'], unit: matched.unit}, function(err, from_sipadu){
+												penerima_id = from_sipadu._id;
+												cb(null, '');
+											})
+										} else {
+											CustomEntity.create({type:'Penerima', nama: data[i]['nama']}, function(err, anonim){
+												penerima_id = anonim._id;
+												cb(null, '');
+											})
+										}
 									}
+								}
+							}
+						], function(err, final){
+							// cek apakah sdh pernah tersimpan
+				    		// console.log({'thang': thang, '_id': honor_detail_id, tgl_buat_honor: tgl_buat_honor})
+					   		DetailBelanja.findOne({'thang': thang, '_id': honor_detail_id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': getNumber(data[i]['bruto']), 
+								'tgl': tgl_buat_honor, penerima_id: penerima_id}).exec(function(err, result){
+								//jika blm pernah
+								if(!result){
+									//init total, user
+						    		var total_sampai_bln_ini = 0;
+							    	var new_entry = {};
+							    	new_entry.pengentry = req.session.username;
+							    	new_entry.ket = '['+data[i]['nama']+'] SPJ Honor Dosen periode '+periode;
+							    	new_entry.pph21 = data[i]['pph'];
+							    	// new_entry.bukti_no = '';// data.bukti_no || '';
+							    	// new_entry.spm_no = '';// data.spm_no || '';
+							    	new_entry.penerima_nama = data[i]['nama'];
+							    	new_entry.tgl = tgl_buat_honor;
+							    	new_entry.tgl_timestamp = moment(tgl_buat_honor, "D MMMM YYYY").unix();
+							    	new_entry.penerima_id = penerima_id;
+							    	new_entry.jumlah = data[i]['bruto'];
+							    	new_entry.timestamp = current_timestamp;
+							    	// console.log(new_entry)
+							    	// return;
+							    	DetailBelanja.update({'thang': thang, "_id": honor_detail_id}, {$push: {"realisasi": new_entry}}, {new: true}, function(err, result){
+							    		if (err) {
+							    			console.log(err)
+							    			return
+							    		}
+							    		// spj.io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': honor_detail_id, 'realisasi': data[i]['bruto'], 
+							    		// 		'sum': false, 'total_sampai_bln_ini': 0, 'broadcast': true});
+							    	})
+								} else {
+									sendNotification(req.session.user_id, 'Honor '+data[i]['nama']+' periode tsb sudah tercatat di realisasi.')
+								}
 							})
-								// console.log(i)
-			    		})
+						})
 					})
-				});
-				//riwayat user
-				User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Buat SPJ Honor Dosen periode '+periode}}}, 
-					function(err, status){
-				})
+
+					//riwayat user
+					User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Buat SPJ Honor Dosen periode '+periode}}}, 
+						function(err, status){
+					})
+		    	})
 	        })
-
-
-
-
-
-			// res.send('ok');
 		}
 	)
 });
@@ -675,105 +694,132 @@ spj.post('/transport', function(req, res){
 		    	workbook.definedName("periode").value(periode)	        
 		        return workbook.toFileAsync('./temp_file/'+file_name+'.xlsx');
 		    }).then(dataa => {
-		    	msopdf(null, function(error, office) {
-					var input = './temp_file/'+file_name+'.xlsx';//__dirname + '/../temp_file/'+file_name+'.xlsx';
-					var output = './template/output/spj/transport/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
+		    	var pegs, css, sipadus;
+		    	async.series([
+		    		function(callb){
+		    			msopdf(null, function(error, office) {
+						var input = './temp_file/'+file_name+'.xlsx';//__dirname + '/../temp_file/'+file_name+'.xlsx';
+						var output = './template/output/spj/transport/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
 
-			    	if(xlsx){
-			    		res.download(input);
-			    		res.on('finish', function() {
-							// hapus xlsx setelah didownload
-							fs.unlink(input);
-						});
-			    	} else {
-						office.excel({'input': input, 'output': output}, function(error, pdf) {
-					    	if (err) {
-						        console.error(err);
-						    }
-						    //hapus xlsx setelah terconvert
-					    	fs.unlink(input);
+				    	if(xlsx){
+				    		res.download(input);
+				    		res.on('finish', function() {
+								// hapus xlsx setelah didownload
+								fs.unlink(input);
+								setTimeout(function(){
+									callb(null, '')
+								}, 2000)
+							});
+				    	} else {
+							office.excel({'input': input, 'output': output}, function(error, pdf) {
+						    	if (err) {
+							        console.error(err);
+							    }
+							    //hapus xlsx setelah terconvert
+						    	fs.unlink(input);
 
-						})
+							})
 
-						office.close(null, function(error) {
-							if(pdf){
-								res.download(output);
-								res.on('finish', function() {
-									// hapus pdf setelah didownload
-									fs.unlink(output);
+							office.close(null, function(error) {
+								if(pdf){
+									res.download(output);
+									res.on('finish', function() {
+										// hapus pdf setelah didownload
+										fs.unlink(output);
+										setTimeout(function(){
+											callb(null, '')
+										}, 2000)
+									});
+								}else{
+									res.send(file_name+'.pdf');
+									setTimeout(function(){
+										callb(null, '')
+									}, 2000)
+								} 							
+							})
+				    	}
+						
+					})
+		    		},
+		    		function(callb){
+		    			Pegawai.find({active: true}, 'nama').exec(function(err, pegawai){
+		    				pegs = pegawai;
+		    				CustomEntity.find({type: 'Penerima', active: true}, 'nama', function(err, cust_ent){
+		    					css = cust_ent;
+		    					var query = 'SELECT * ' +
+									'FROM dosen ' +
+									'WHERE aktif = 1 AND unit <> "STIS"';
+								var sipadu_db = mysql.createConnection({
+									host: '127.0.0.1',
+									user: 'root',
+									password: '',
+									database: 'sipadu_db'
 								});
-							}else{
-								res.send(file_name+'.pdf');
-							} 							
-						})
-			    	}
-					
-				})
-
-				var query = 'SELECT * ' +
-							'FROM dosen ';
-				sipadu_db.query(query, function (err, dosen_sipadu, fields) {//(query, item.penerima_nama, function (err, dosen, fields) {
-					if (err){
-					  	console.log(err)
-					  	return;
-					}
-
+								sipadu_db.connect(function(err){
+									sipadu_db.query(query, function (err, dosens, fields) {
+										if (err) {
+									        console.error(err);
+									    }
+										sipadus = _.map(dosens, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit}});
+										sipadu_db.end();
+										callb(null, '');
+									})
+								})
+		    				})
+		    			})
+		    		}
+		    	], function(err, final){
+		    		//link ke POK realisasi
 					_.each(data, function(item, i, list){
 						var penerima_id;
-			    		// simpan database
-			    		//ambil id
-			    		async.series([
-			    			function(cb){
-			    				Pegawai.findOne({nama: data[i]['nama']}, function(err, peg){
-					    			// console.log(peg)
-					    			//jika tdk ada d database pegawai
-					    			if(!peg){
-					    				CustomEntity.findOne({nama: data[i]['nama']}, function(err, cust){
-					    					// console.log(cust)
-							    			//jika tdk ada d database c e
-							    			if(!cust){
-												_.each(dosen_sipadu, function(dos, index, list){
-													var nama_sipadu = dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang;
-													if(nama_sipadu.replace(/^\s+|\s+$/g,'') == data[i]['nama'].replace(/^\s+|\s+$/g,'')){
-														penerima_id = dos.kode_dosen;
-														cb(null, '')
-													}
-												})
-												if(!penerima_id){
-													CustomEntity.create({type:'Penerima', nama: data[i]['nama']}, function(err, ce){
-														penerima_id = ce._id;
-														cb(null, '');
-													})
-												}
-							    			} else {
-							    				penerima_id = cust._id;
-					    						cb(null, '')
-							    			}
-							    		})
-					    			} else {
-					    				penerima_id = peg._id;
-					    				cb(null, '')
-					    			}
-					    		})
-			    			}
 
-			    		], function(err, finish){
-			    			// cek apakah sdh pernah tersimpan
+						async.series([
+							//ambil id
+							function(cb){
+								var matched = getMatchEntity(data[i]['nama'], pegs);
+								//jika ditemukan, ==> simpan
+								if(matched){
+									penerima_id = matched._id;
+									cb(null, '');
+								} else {
+									var matched = getMatchEntity(data[i]['nama'], css);
+									//jika ditemukan, ==> simpan
+									if(matched){
+										penerima_id = matched._id;
+										cb(null, '');
+									} else {
+										var matched = getMatchEntity(data[i]['nama'], sipadus);
+										if(matched){
+											CustomEntity.create({type:'Penerima', nama: data[i]['nama'], unit: matched.unit}, function(err, from_sipadu){
+												penerima_id = from_sipadu._id;
+												cb(null, '');
+											})
+										} else {
+											CustomEntity.create({type:'Penerima', nama: data[i]['nama']}, function(err, anonim){
+												penerima_id = anonim._id;
+												cb(null, '');
+											})
+										}
+									}
+								}
+							}
+						], function(err, final){
+							// cek apakah sdh pernah tersimpan
 				    		// console.log({'thang': thang, '_id': honor_detail_id, tgl_buat_honor: tgl_buat_honor})
-					   		DetailBelanja.findOne({'thang': thang, '_id': transport_detail_id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': getNumber(data[i]['jumlah'] * 150000), 'penerima_nama': data[i]['nama'], 
-								'tgl': tgl_buat_honor}).exec(function(err, result){
+					   		DetailBelanja.findOne({'thang': thang, '_id': transport_detail_id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': getNumber(data[i]['jumlah'] * 150000), 
+								'tgl': tgl_buat_honor, 'penerima_id': penerima_id}).exec(function(err, result){
 									//jika blm pernah
 									if(!result){
 										//init total, user
 							    		var total_sampai_bln_ini = 0;
 								    	var new_entry = {};
 								    	new_entry.pengentry = req.session.username;
-								    	new_entry.ket = 'SPJ Transport Dosen periode '+periode;
+								    	new_entry.ket = '['+data[i]['nama']+'] SPJ Transport Dosen periode '+periode;
 								    	// new_entry.bukti_no = '';// data.bukti_no || '';
 								    	// new_entry.spm_no = '';// data.spm_no || '';
 								    	new_entry.penerima_nama = data[i]['nama'];
 								    	new_entry.tgl = tgl_buat_honor;
-								    	new_entry.tgl_timestamp = current_timestamp;
+							    		new_entry.tgl_timestamp = moment(tgl_buat_honor, "D MMMM YYYY").unix();
 								    	new_entry.penerima_id = penerima_id;
 								    	new_entry.jumlah = data[i]['jumlah'] * 150000;
 								    	new_entry.timestamp = current_timestamp;
@@ -789,15 +835,15 @@ spj.post('/transport', function(req, res){
 										sendNotification(req.session.user_id, 'Transport tsb untuk '+data[i]['nama']+' pernah tercatat di realisasi.')
 									}
 							})
-			    		})
+						})
 					})
-				})
-				//riwayat user
-				User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Buat SPJ Transport Dosen Non STIS periode '+periode}}}, 
-					function(err, status){
-				})
+
+					// //riwayat user
+					User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Buat SPJ Transport Dosen Non STIS periode '+periode}}}, 
+						function(err, status){
+					})
+		    	})
 	        })
-			// res.send('ok');
 		}
 	)
 });
@@ -934,6 +980,28 @@ function errorHandler(user_id, message){
 	if(_.isString(user_id)) pok.connections[user_id].emit('messages', message)
 		else user_id.emit('messages', message)
 }
+
+function getMatchEntity(name, entities){
+	var p = [];
+	_.each(entities, function(e, index, list){
+		e.score = clj_fuzzy.metrics.jaro_winkler(capitalize(name), capitalize(e.nama));
+		p.push(e);
+	})
+
+	var matched = _.max(p, function(e){ return e.score; })
+
+	// console.log(name,' vs ',matched.nama, ' = ',matched.score)
+
+	if(matched.score >= 0.86){
+		return matched;
+	} else {
+		return null;
+	}
+}
+
+function capitalize(s){
+    return s.toLowerCase().replace( /.*/g, function(a){ return a.toUpperCase(); } );
+};
 
 function sendNotification(user_id, message){
 	if(_.isString(user_id)) spj.connections[user_id].emit('messages', message)

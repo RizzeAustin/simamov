@@ -45,6 +45,9 @@ var moment = require('moment');
 
 var levenshtein = require('fast-levenshtein');
 
+var moment = require('moment');
+moment.locale('id');
+
 //modul formidable utk parse POST gambar
 var formidable = require('formidable');
 
@@ -1061,7 +1064,7 @@ function handlePerhitungan(data, cb, res, username, user_id){
                         //cek jk sdh pernah dientry
                         var thang = st.tgl_buat_perhit.match(/\d{4}$/)[0];
                         DetailBelanja.findOne({'thang': thang, '_id': st.detail, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': st.total_rincian, 'penerima_id': data.surtug.nama_lengkap._id, 
-                            'tgl': data.tgl_buat_perhit}).exec(function(err, result){
+                            'tgl': data.surtug.tgl_ttd_st}).exec(function(err, result){
                                 //jika blm pernah
                                 if(!result){
                                     //init total, user
@@ -1073,7 +1076,7 @@ function handlePerhitungan(data, cb, res, username, user_id){
                                     new_entry.spm_no = data.spm_no || '';
                                     new_entry.penerima_nama = data.nama_lengkap;
                                     new_entry.tgl = data.surtug.tgl_ttd_st;
-                                    new_entry.tgl_timestamp = data.surtug.timestamp;
+                                    new_entry.tgl_timestamp = moment(data.surtug.tgl_ttd_st, "D MMMM YYYY").unix();
                                     new_entry.penerima_id = data.surtug.nama_lengkap._id;
                                     new_entry.jumlah = st.total_rincian;
                                     new_entry.timestamp = current_timestamp;

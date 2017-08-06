@@ -188,7 +188,10 @@
 <!-- /.modal -->
 
 <script src="/js/bootstrap-tokenfield.js"></script>
+
+<script src="/js/moment.min.js"></script>
 <script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -569,6 +572,11 @@
         $('#suratTugas').on('submit', function(e) {
             if(!$('#ttd_surat_tugas').val() || !$('#ttd_legalitas').val()){
                 generalAlert('Setting Penanda Tangan Surat Tugas atau Legalitas belum ditentukan. Silahkan ubah di pengaturan SPPD.')
+                e.preventDefault();
+                return false;
+            }
+            if($('#nama_lengkap').val() == ''){
+                generalAlert('Kolom Nama: Harap pilih nama dari daftar saran/ silahkan tambahkan pegawai baru.')
                 e.preventDefault();
                 return false;
             }

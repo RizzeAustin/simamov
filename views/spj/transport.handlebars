@@ -145,6 +145,10 @@
 </div>
 <!-- /.modal -->
 
+<script src="/js/moment.min.js"></script>
+<script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+
 <script type="text/javascript">
     $(document).ready(function(){
         moment.locale('id');
@@ -177,29 +181,33 @@
                 download_surat = false;
                 return true;
             }
-            $("#unggah_xlsx_button").prop("disabled",true);
-            $("#unggah_xlsx_button").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#unggah_xlsx_button").text());
 
             $('#xlsx_file').remove();
             $('#pdf_file').remove();
 
             e.preventDefault();
-            var formData = new FormData($(this)[0]);
+            
+            $("#unggah_xlsx_button").prop("disabled",true);
+            $("#unggah_xlsx_button").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#unggah_xlsx_button").text());
 
-            $.ajax({
-                url: $(this).attr("action"),
-                type: 'POST',
-                data: formData,
-                async: false,
-                success: function (data) {
-                    $("#realTimeView").attr("src", 'http://'+location.host+'/result/spj/transport/'+data);
-                    $("#unggah_xlsx_button").prop("disabled",false);
-                    $("#unggah_xlsx_button").html('Buat Surat');
-                },
-                cache: false,
-                contentType: false,
-                processData: false
-            });
+            setTimeout(function(){
+                var formData = new FormData($('#form_upload_csv')[0]);
+
+                $.ajax({
+                    url: "/spj/transport",
+                    type: 'POST',
+                    data: formData,
+                    async: false,
+                    success: function (data) {
+                        $("#realTimeView").attr("src", 'http://'+location.host+'/result/spj/transport/'+data);
+                        $("#unggah_xlsx_button").prop("disabled",false);
+                        $("#unggah_xlsx_button").html('Buat Surat');
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }, 100)
         });
         $('.download').click(function(){
             console.log($('#csv_file').val())

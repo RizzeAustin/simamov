@@ -306,6 +306,10 @@
 </div>
 <!-- /.modal -->
 
+<script src="/js/moment.min.js"></script>
+<script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+
 <script type="text/javascript">
     socket = io.connect($(location).attr('host'));
     
@@ -822,13 +826,31 @@
 
         //hapus pegawai
         var target_delete;
+        var _id;
+        var table_id;
         $('#all-table-container').on('click', '.hapus-pgw', function (e) {
+            if(target_delete){
+                socket.emit('hapus_pegawai', _id, function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Terhapus.');
+                    }
+                })
+                target_delete.closest('table').DataTable().row( target_delete )
+                    .remove();
+                _.each($('#'+table_id).DataTable().rows()[0], function(row, index, list){
+                    $('#'+table_id).DataTable()
+                        .cell($('#'+table_id).DataTable().row( target_delete ).nodes().to$().find('td:eq(0)'))
+                        .data(index+1);
+                });
+                $('#'+table_id).DataTable().draw(false);
+                target_delete = null;
+            }
             var state_undo = false;
             var btn = $(this);
             btn.html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>');
-            var table_id = btn.closest('table').attr('id');
-            var row = $(this).closest('tr');
-            var _id = row.find('td:eq(2)').text();
+            table_id = btn.closest('table').attr('id');
+            row = $(this).closest('tr');
+            _id = row.find('td:eq(2)').text();
             if(table_id == 'tbl_pegawai_bps'){
                 _id = $('#'+table_id).DataTable().row(row).data()[7];
             } else if(table_id == 'tbl_non_stis_bps'){
@@ -868,9 +890,9 @@
             })
             $('#undo_delete').click(function(){
                 btn.html('<i class="icon-close"></i>');
-                row_to_delete = null;
                 state_undo = true;
                 target_delete.show();
+                target_delete = null;
                 $.toast().reset('all');
             })
         })
@@ -1060,6 +1082,9 @@
                 current_penerima_id = row_data[8]
                 current_kode_dosen = row_data[7] || 'none';
                 current_ce = row_data[7] || 'none';
+            } else if(active_table_id == 'tbl_pegawai_bps'){
+                current_penerima_id = row_data[7];
+                current_ce = row_data[8] || 'none';
             } else{
                 current_penerima_id = row.find('td:eq(2)').text();
                 current_ce = row_data[8] || row_data[7] || 'none';
@@ -1072,6 +1097,8 @@
             $('#riwayat_modal').modal('show');
 
             riwayat_syarat = {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen, 'ce': current_ce, 'init': false, 'call_from_pengguna': true, 'month': $('#bulan_realisasi_modal').val()}
+
+            console.log(riwayat_syarat)
 
             socket.emit('riwayat_init', riwayat_syarat);
         });
@@ -1424,9 +1451,9 @@
                 }
             })
             $('#undo_delete').click(function(){
-                row_to_delete = null;
                 state_undo = true;
                 target_delete.show();
+                target_delete = null;
                 $.toast().reset('all');
             })
         })
@@ -1518,7 +1545,7 @@
             socket.emit('entry_pegawai_baru', {'data': data, 'collection': collection}, 
                 function(_id){
                     if(!_id){
-                        generalAlert('Gagal menyimpan.');
+                        generalAlert('Gagal menyimpan. Cek isian.');
                         return;
                     }
                     if(collection == 'pegawai'){
@@ -1532,7 +1559,7 @@
                         socket.emit('pegawai_init', 'non');
                     }
                     $('#tambah_pegawai').modal('toggle');
-                    generalAlert('Pegawai berhasil disimpan.')
+                    // generalAlert('Pegawai berhasil disimpan.')
             })
         });
 

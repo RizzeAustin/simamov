@@ -14,14 +14,14 @@ var _ = require("underscore");
 
 //modul sql utk koneksi db mysql sipadu
 var mysql = require('mysql');
-var sipadu_db = mysql.createConnection({
-	host: '127.0.0.1',
-	user: 'root',
-	password: '',
-	database: 'sipadu_db'
-});
+// var sipadu_db = mysql.createConnection({
+// 	host: '127.0.0.1',
+// 	user: 'root',
+// 	password: '',
+// 	database: 'sipadu_db'
+// });
 
-sipadu_db.connect();
+// sipadu_db.connect();
 
 //Socket.io
 pegawai.connections;
@@ -38,32 +38,17 @@ pegawai.socket = function(io, connections, client){
 			var kode_dosen = ['init'];
 			Pegawai.find({active: true}).sort('nama').exec(function(err, pegs){
 				var nomor = 1;
-				_.each(pegs, function(peg, i, list){
-					if(peg.kode_dosen) kode_dosen.push(peg.kode_dosen);
-				});
-				var query = 'SELECT * ' +
-							'FROM dosen ' +
-							'WHERE aktif = 1 AND unit = ? AND kode_dosen NOT IN (?) ORDER BY nama';
-				sipadu_db.query(query, ['STIS', kode_dosen], function (err, dosens, fields) {
-						if (err){
-						  	console.log(err)
-						  	return;
-						}
-						_.each(dosens, function(dos, i, list){
-							var row = [
-								nomor,
-								dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
-								dos.kode_dosen || '-',
-								dos.pangkat || '-',
-								dos.gol_pajak || '-',
-								'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
-								+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-								dos.kode_dosen || '-'
-							]
-							nomor++;
-							client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
-							if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_stis');
-						});
+				// _.each(pegs, function(peg, i, list){
+				// 	if(peg.kode_dosen) kode_dosen.push(peg.kode_dosen);
+				// });
+				// var query = 'SELECT * ' +
+				// 			'FROM dosen ' +
+				// 			'WHERE aktif = 1 AND unit = ? AND kode_dosen NOT IN (?) ORDER BY nama';
+				// sipadu_db.query(query, ['STIS', kode_dosen], function (err, dosens, fields) {
+				// 		if (err){
+				// 		  	console.log(err)
+				// 		  	return;
+				// 		}
 						_.each(pegs, function(peg, i, list){
 							var row = [
 								nomor,
@@ -80,14 +65,29 @@ pegawai.socket = function(io, connections, client){
 							client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
 							if(i == pegs.length - 1) client.emit('pegawai_init_finish', 'pegawai_stis');
 						});
-				})
+						// _.each(dosens, function(dos, i, list){
+						// 	var row = [
+						// 		nomor,
+						// 		dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
+						// 		dos.kode_dosen || '-',
+						// 		dos.pangkat || '-',
+						// 		dos.gol_pajak || '-',
+						// 		'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
+						// 		+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
+						// 		dos.kode_dosen || '-'
+						// 	]
+						// 	nomor++;
+						// 	client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
+						// 	if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_stis');
+						// });
+				// })
 
 			});
 		} else if(tab == 'bps'){
 			var nomor = 1;
-			var query = 'SELECT * ' +
-						'FROM dosen ' +
-						'WHERE aktif = 1 AND unit = ? AND kode_dosen NOT IN (?)';
+			// var query = 'SELECT * ' +
+			// 			'FROM dosen ' +
+			// 			'WHERE aktif = 1 AND unit = ? AND kode_dosen NOT IN (?)';
 			CustomEntity.find({type: 'Penerima', unit: 'BPS', active: true}).sort('nama').exec(function(err, bpspeg){
 				var kode_dosen = ['init'];
 				_.each(bpspeg, function(peg, i, list){
@@ -107,27 +107,27 @@ pegawai.socket = function(io, connections, client){
 					client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
 					if(i == list.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
 				});
-				sipadu_db.query(query, ['BPS', kode_dosen], function (err, dosens, fields) {
-					if (err){
-					  	console.log(err)
-					  	return;
-					}
-					_.each(dosens, function(dos, i, list){
-						var row = [
-							nomor++,
-							dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
-							dos.kode_dosen || '-',
-							dos.pangkat || '-',
-							dos.gol_pajak || '-',
-							'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
-							+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-							dos.kode_dosen || 'none',
-							'none'
-						]
-						client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
-						if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
-					});
-				})
+				// sipadu_db.query(query, ['BPS', kode_dosen], function (err, dosens, fields) {
+				// 	if (err){
+				// 	  	console.log(err)
+				// 	  	return;
+				// 	}
+				// 	_.each(dosens, function(dos, i, list){
+				// 		var row = [
+				// 			nomor++,
+				// 			dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
+				// 			dos.kode_dosen || '-',
+				// 			dos.pangkat || '-',
+				// 			dos.gol_pajak || '-',
+				// 			'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
+				// 			+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
+				// 			dos.kode_dosen || 'none',
+				// 			'none'
+				// 		]
+				// 		client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
+				// 		if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
+				// 	});
+				// })
 			});
 			
 		} else {
@@ -166,7 +166,11 @@ pegawai.socket = function(io, connections, client){
 		if(data.collection == 'pegawai'){
 			var peg = new Pegawai(data.data);
 			peg.save(function(err, res){
-				cb(peg._id);
+				if(err){
+					cb(null);
+				}else {
+					cb(peg._id);
+				}
 			});
 		} else if(data.collection == 'bps'){
 			data.data.nip = data.data._id;
@@ -175,7 +179,6 @@ pegawai.socket = function(io, connections, client){
 			data.data.unit = 'BPS';
 			var cs = new CustomEntity(data.data);
 			cs.save(function(err, res){
-				console.log(err,res)
 				cb(cs._id);
 			});
 		} else if(data.collection == 'custom_entity'){

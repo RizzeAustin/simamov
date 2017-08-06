@@ -1,7 +1,7 @@
 //====== MODUL ======//
 //load framework express
 var express = require('express');
-var app = express(); //meload modul express saja
+var app = express();
 
 var server = require('http').createServer(app);  
 var io = require('socket.io')(server);
@@ -14,9 +14,6 @@ require('dotenv').config();
 var helmet = require('helmet');
 app.use(helmet());
 
-//Kompresi gzip
-var compression = require('compression');
-app.use(compression());
 
 //modul morgan utk debug log ke console
 var logger = require('morgan');
@@ -30,6 +27,10 @@ app.use(cookieParser(credentials.cookieSecret));
 //modul body parser utk mengatur POST request
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
+
+//Kompresi gzip
+var compression = require('compression');
+app.use(compression());
 
 //modul mongodb utk koneksi mongo db keuangan
 var mongo = require('mongodb');

@@ -745,6 +745,10 @@
 
 <script src="/js/handsontable.full.min.js"></script>
 
+<script src="/js/moment.min.js"></script>
+<script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+
 <script type="text/javascript">
     socket = io.connect($(location).attr('host'));
 
@@ -909,7 +913,7 @@
                    'orderable':false,
                    'className': 'dt-body-center',
                    'render': function (data, type, full, meta){
-                       return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(data).html() + '">';
+                       return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(full[0]).html() + '">';
                    }
                 }
             ],
@@ -1133,7 +1137,7 @@
                         $('#multiple-action').html('');
                     }
                 });
-            })
+            }) 
         })
 
         $('#riwayat_modal').on('click', '#btn-multiple-move', function(){
@@ -1711,15 +1715,20 @@
                 Handsontable.hooks.add('afterChange', function(changes, source){
                     var jumlah = 0;
                     if(!import_data_entry) return;
+                    var data = import_data_entry.getSourceData();
+                    _.each(changes, function(change, index, list){
+                        if(_.contains(['jumlah', 'pph21', 'pph22', 'pph23', 'ppn'], change[1])){
+                            if(data[change[0]][change[1]] < 0) data[change[0]][change[1]] *= -1;
+                        }
+                    })
+                    import_data_entry.render();
                     if(import_data_entry.getSourceData()[0].tgl_timestamp){
-                        var data = import_data_entry.getSourceData();
                         _.each(changes, function(change, index, list){
                             if((change[3] == '' && (change[1] == 'penerima_nama' || change[1] == 'jumlah'))
                                     || !import_data_entry.getSourceData()[change[0]].penerima_nama ||
                                     !import_data_entry.getSourceData()[change[0]].jumlah){
                                 data[change[0]].tgl_timestamp = ''
                                 data[change[0]].tgl = ''
-                                console.log()
                                 return;
                             }
                             data[change[0]].tgl_timestamp = data[0].tgl_timestamp
@@ -2019,6 +2028,12 @@
                 })
             } else if(s == '1'){
                 var rows = $("#tbl_tambah_penerima").DataTable().rows();
+                if(rows.nodes().to$().length == 0){
+                    generalAlert('Belum ada data yang diiput.')
+                    $("#entri_submit").html('Simpan');
+                    $("#entri_submit").prop("disabled",false);
+                    return;
+                }
                 var current_timestamp = Math.round(new Date().getTime()/1000);
                 _.each(rows.nodes().to$(), function(row, index, list){
                     var data = $("#tbl_tambah_penerima").DataTable().row(row).data();
@@ -2053,6 +2068,12 @@
                 $("#tbl_tambah_penerima").DataTable().clear().draw(false);
             } else {
                 var data = import_data_entry.getSourceData();
+                if(data.length < 2){
+                    generalAlert('Belum ada data yang diiput.')
+                    $("#entri_submit").html('Simpan');
+                    $("#entri_submit").prop("disabled",false);
+                    return;
+                }
                 for (var i = data.length-2; i > -1; i--) {
                     if(isNotSaveable(data[i].tgl) && isNotSaveable(data[i].penerima_nama) && isNotSaveable(data[i].jumlah)){
                         import_data_entry.alter('remove_row', i);
@@ -2545,6 +2566,9 @@
         });
 
         tabel_riwayat.on('blur keydown', 'input,textarea', function (e) {
+            if(!active_entry){
+                return;
+            }
             //jika enter anggap blur (krn klo tidak, di fired 2 kali)
             if (e.which === 13){
                 $(this).blur();
@@ -2707,10 +2731,11 @@
                 $.toast().reset('all');
             })
         })
+        
+        //datatable
+        var dt = $('#pok_table_entry').DataTable();
 
         socket.on('pok_entry_update_realisasi', function(data) {
-            //datatable
-            var dt = $('#pok_table_entry').DataTable();
 
             //row umum sbg target
             var target_row = dt

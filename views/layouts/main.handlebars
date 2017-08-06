@@ -272,15 +272,10 @@
 
     <script src="/js/typeahead.bundle.min.js"></script>
 
-    <script src="/js/moment.min.js"></script>
-    <script src="/js/locale/id.js"></script>
-    <script src="/js/bootstrap-datetimepicker.js"></script>
     <script src="/js/spin.min.js"></script>
 
     <script type="text/javascript">
         var socket = io.connect($(location).attr('host'));
-
-        moment.locale('id');
 
         if(!socket) location.reload();
 

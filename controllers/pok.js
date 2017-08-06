@@ -59,14 +59,8 @@ var levenshtein = require('fast-levenshtein');
 
 //modul sql utk koneksi db mysql sipadu
 var mysql = require('mysql');
-var sipadu_db = mysql.createConnection({
-	host: '127.0.0.1',
-	user: 'root',
-	password: '',
-	database: 'sipadu_db'
-});
 
-sipadu_db.connect();
+// sipadu_db.connect();
 
 // var query = 'SELECT * ' +
 // 						'FROM dosen';
@@ -293,7 +287,7 @@ pok.socket = function(io, connections, client){
 												[
 							                        kegiatan._id,
 							                        program._id,
-							                        '<span class="badge badge-default">kegiatan</span>',
+							                        '<span class="badge badge-default" title="Prog: '+program.kdprogram+'">kegiatan</span>',
 							                        kegiatan.kdgiat,
 							                        kegiatan.uraian,
 							                        '-',
@@ -307,7 +301,7 @@ pok.socket = function(io, connections, client){
 												[
 							                        kegiatan._id,
 							                        program._id,
-							                        '<span class="badge badge-default">kegiatan</span>',
+							                        '<span class="badge badge-default" title="Prog: '+program.kdprogram+'">kegiatan</span>',
 							                        kegiatan.kdgiat,
 							                        kegiatan.uraian,
 							                        '-',
@@ -348,7 +342,7 @@ pok.socket = function(io, connections, client){
 																	[
 										                                output._id,
 										                                kegiatan._id,
-										                                '<span class="badge badge-danger">output</span>',
+										                                '<span class="badge badge-danger" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+'">output</span>',
 										                                kegiatan.kdgiat+'.'+output.kdoutput,
 										                                output.uraian,
 										                                output.vol,
@@ -362,7 +356,7 @@ pok.socket = function(io, connections, client){
 																	[
 										                                output._id,
 										                                kegiatan._id,
-										                                '<span class="badge badge-danger">output</span>',
+										                                '<span class="badge badge-danger" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+'">output</span>',
 										                                kegiatan.kdgiat+'.'+output.kdoutput,
 										                                output.uraian,
 										                                output.vol,
@@ -402,7 +396,7 @@ pok.socket = function(io, connections, client){
 																						[
 												                                            soutput._id,
 												                                            output._id,
-												                                            '<span class="badge badge-danger">soutput</span>',
+												                                            '<span class="badge badge-danger" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+'">soutput</span>',
 												                                            output.kdoutput+'.'+soutput.kdsoutput,
 												                                            soutput.ursoutput,
 												                                            '-',
@@ -416,7 +410,7 @@ pok.socket = function(io, connections, client){
 																						[
 												                                            soutput._id,
 												                                            output._id,
-												                                            '<span class="badge badge-danger">soutput</span>',
+												                                            '<span class="badge badge-danger" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+'">soutput</span>',
 												                                            output.kdoutput+'.'+soutput.kdsoutput,
 												                                            soutput.ursoutput,
 												                                            '-',
@@ -469,7 +463,7 @@ pok.socket = function(io, connections, client){
 																												[
 																	                                                komponen._id,
 																	                                                parent_id,
-																	                                                '<span class="badge badge-primary">komponen</span>',
+																	                                                '<span class="badge badge-primary" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+', SOutp: '+soutput.kdsoutput+'">komponen</span>',
 																	                                                komponen.kdkmpnen,
 																	                                                komponen.urkmpnen,
 																	                                                '-',
@@ -483,7 +477,7 @@ pok.socket = function(io, connections, client){
 																												[
 																	                                                komponen._id,
 																	                                                parent_id,
-																	                                                '<span class="badge badge-primary">komponen</span>',
+																	                                                '<span class="badge badge-primary" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+', SOutp: '+soutput.kdsoutput+'">komponen</span>',
 																	                                                komponen.kdkmpnen,
 																	                                                komponen.urkmpnen,
 																	                                                '-',
@@ -525,7 +519,7 @@ pok.socket = function(io, connections, client){
 																																[
 																		                                                            skomponen._id,
 																		                                                            komponen._id,
-																		                                                            '<span class="badge badge-primary">skomponen</span>',
+																		                                                            '<span class="badge badge-primary title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+', SOutp: '+soutput.kdsoutput+', Komp: '+komponen.kdkmpnen+'">skomponen</span>',
 																		                                                            skomponen.kdskmpnen,
 																		                                                            skomponen.urskmpnen,
 																		                                                            '-',
@@ -539,7 +533,7 @@ pok.socket = function(io, connections, client){
 																																[
 																		                                                            skomponen._id,
 																		                                                            komponen._id,
-																		                                                            '<span class="badge badge-primary">skomponen</span>',
+																		                                                            '<span class="badge badge-primary" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+', SOutp: '+soutput.kdsoutput+', Komp: '+komponen.kdkmpnen+'">skomponen</span>',
 																		                                                            skomponen.kdskmpnen,
 																		                                                            skomponen.urskmpnen,
 																		                                                            '-',
@@ -590,7 +584,7 @@ pok.socket = function(io, connections, client){
 																																						[
 																							                                                                akun._id,
 																							                                                                parent_id,
-																							                                                                '<span class="badge badge-warning">akun</span>',
+																							                                                                '<span class="badge badge-warning" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+', SOutp: '+soutput.kdsoutput+', Komp: '+komponen.kdkmpnen+', SKomp: '+skomponen.kdskmpnen+'">akun</span>',
 																							                                                                akun.kdakun,
 																							                                                                akun.uraian,
 																							                                                                '-',
@@ -604,7 +598,7 @@ pok.socket = function(io, connections, client){
 																																						[
 																							                                                                akun._id,
 																							                                                                parent_id,
-																							                                                                '<span class="badge badge-warning">akun</span>',
+																							                                                                '<span class="badge badge-warning" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+', SOutp: '+soutput.kdsoutput+', Komp: '+komponen.kdkmpnen+', SKomp: '+skomponen.kdskmpnen+'">akun</span>',
 																							                                                                akun.kdakun,
 																							                                                                akun.uraian,
 																							                                                                '-',
@@ -644,7 +638,7 @@ pok.socket = function(io, connections, client){
 																																										detail_row = [
 																																											detail._id,
 																									                                                                        akun._id,
-																									                                                                        '<span class="badge badge-success">detail</span>',
+																									                                                                        '<span class="badge badge-success" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+', SOutp: '+soutput.kdsoutput+', Komp: '+komponen.kdkmpnen+', SKomp: '+skomponen.kdskmpnen+', Akun: '+akun.kdakun+'">detail</span>',
 																									                                                                        '',
 																									                                                                        detail.nmitem,
 																									                                                                        detail.volkeg,
@@ -657,7 +651,7 @@ pok.socket = function(io, connections, client){
 																																										detail_row = [
 																																											detail._id,
 																									                                                                        akun._id,
-																									                                                                        '<span class="badge badge-success">detail</span>',
+																									                                                                        '<span class="badge badge-success" title="Prog: '+program.kdprogram+', Keg: '+kegiatan.kdgiat+', Outp: '+output.kdoutput+', SOutp: '+soutput.kdsoutput+', Komp: '+komponen.kdkmpnen+', SKomp: '+skomponen.kdskmpnen+', Akun: '+akun.kdakun+'">detail</span>',
 																									                                                                        '',
 																									                                                                        detail.nmitem,
 																									                                                                        detail.volkeg,
@@ -1414,10 +1408,6 @@ pok.socket = function(io, connections, client){
     	if(new_entry.import){
     		//hapus data terakhir (row kosong/spare)
     		new_entry.data.pop();
-    		//kueri utk dosen di sipadu
-    		var query = 'SELECT * ' +
-						'FROM dosen';
-						 // +'WHERE nama = ?';
 
 			//fungsi umum utk menyimpan
 			function submit_entry(item, callback){
@@ -1477,15 +1467,15 @@ pok.socket = function(io, connections, client){
 
     			tasks.push(function(callback){
     				//ambil semua pegawai
-    				Pegawai.find({}, 'nama', function(err, pegs){
+    				Pegawai.find({active: true}, 'nama', function(err, pegs){
     					var matched = getMatchEntity(item.penerima_nama, pegs);
     					//ambil id ke peg
-    					if(matched.score >= 0.7){
+    					if(matched.score >= 0.86){
     						item.penerima_id = matched._id;
     						//untuk cross check kesamaan nama
     						item.ket = '['+item.penerima_nama+'] '+item.ket;
 							DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-								'tgl': item.tgl, penerima_nama: item.penerima_nama}).exec(function(err, result){
+								'tgl': item.tgl}).exec(function(err, result){
 			    					if(!result){
 			    						//simpan
 			    						submit_entry(item, callback);
@@ -1495,21 +1485,19 @@ pok.socket = function(io, connections, client){
 			    						callback(null, 'sudah ada')
 			    					}
 			    			})	
-    					} else {//jika tdk score < 0.86, cek di custom entity, klo g ada cek sipadu, klo g ada cek custom entity
-    						sipadu_db.query(query, function (err, dosen, fields) {
+    					} else {
+    						CustomEntity.find({type: 'Penerima', active: true}, 'nama', function(err, custs){
 								if (err){
 								  	console.log(err)
 								  	return;
 								}
-								var dosen_refine = _.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang}});
-								var matched = getMatchEntity(item.penerima_nama, dosen_refine);
-								//ambil id ke peg
-		    					if(matched.score >= 0.7){
+								var matched = getMatchEntity(item.penerima_nama, custs);
+								if(matched.score >= 0.86){
 		    						item.penerima_id = matched._id;
 		    						//untuk cross check kesamaan nama nanti
 		    						item.ket = '['+item.penerima_nama+'] '+item.ket;
 									DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-										'tgl': item.tgl, penerima_nama: item.penerima_nama}).exec(function(err, result){
+										'tgl': item.tgl}).exec(function(err, result){
 					    					if(!result){
 					    						//simpan
 					    						submit_entry(item, callback);
@@ -1519,145 +1507,60 @@ pok.socket = function(io, connections, client){
 					    						callback(null, 'sudah ada')
 					    					}
 					    			})	
-		    					} else {//jika tdk score < 0.86, cek di custom entity, klo g ada cek sipadu, klo g ada cek custom entity
-		    						CustomEntity.find({type: 'Penerima'}, 'nama', function(err, custs){
-										if (err){
-										  	console.log(err)
-										  	return;
-										}
-										var matched = getMatchEntity(item.penerima_nama, custs);
-										if(matched.score >= 0.7){
-				    						item.penerima_id = matched._id;
-				    						//untuk cross check kesamaan nama nanti
-				    						item.ket = '['+item.penerima_nama+'] '+item.ket;
-											DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-												'tgl': item.tgl, penerima_nama: item.penerima_nama}).exec(function(err, result){
-							    					if(!result){
-							    						//simpan
-							    						submit_entry(item, callback);
-							    					} else {
-							    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
-										    							+item.tgl+' sudah pernah dientry.')
-							    						callback(null, 'sudah ada')
-							    					}
-							    			})	
-				    					} else {
-				    						// klo masih tdk ada, buat custom
-											CustomEntity.create({'nama': item.penerima_nama, type:'Penerima'}, function(err, new_penerima){
-												item.penerima_id = new_penerima._id;
-												submit_entry(item, callback);
-											})
-				    					}
-									})
+		    					} else {
+		    						var sipadu_db = mysql.createConnection({
+										host: '127.0.0.1',
+										user: 'root',
+										password: '',
+										database: 'sipadu_db'
+									});
+
+						    		//kueri utk dosen di sipadu
+						    		var query = 'SELECT * ' +
+											'FROM dosen ' +
+											'WHERE aktif = 1 AND unit <> "STIS"';
+		    						sipadu_db.connect(function(err){
+		    							sipadu_db.query(query, function (err, dosen, fields) {
+											if (err){
+											  	console.log(err)
+											  	return;
+											}
+											sipadu_db.end();
+											var dosen_refine = _.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit}});
+											var matched = getMatchEntity(item.penerima_nama, dosen_refine);
+											//ambil id ke peg
+					    					if(matched.score >= 0.86){
+					    						CustomEntity.create({'nama': item.penerima_nama, type:'Penerima', unit: matched.unit}, function(err, new_penerima){
+													item.penerima_id = new_penerima._id;
+						    						//untuk cross check kesamaan nama nanti
+						    						item.ket = '['+item.penerima_nama+'] '+item.ket;
+													DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
+														'tgl': item.tgl}).exec(function(err, result){
+									    					if(!result){
+									    						//simpan
+									    						submit_entry(item, callback);
+									    					} else {
+									    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
+												    							+item.tgl+' sudah pernah dientry.')
+									    						callback(null, 'sudah ada')
+									    					}
+									    			})	
+												})
+					    					} else {
+					    						// klo masih tdk ada, buat custom
+												CustomEntity.create({'nama': item.penerima_nama, type:'Penerima'}, function(err, new_penerima){
+													item.penerima_id = new_penerima._id;
+													submit_entry(item, callback);
+												})
+					    					}
+										})
+		    						});
 		    					}
 							})
     					}
     				})
     			})
     		})
-
-			// //iterasi tiap row
-   //  		_.each(new_entry.data, function(item, index, list){
-   //  			tasks.push(function(callback){
-   //  				//catat timestamp & user
-   //  				item.timestamp = new_entry.timestamp;
-	  //   			item.pengentry = client.handshake.session.username || 'admin';
-			// 		//ambil id d sipadu
-			// 		sipadu_db.query(query, item.penerima_nama, function (err, dosen, fields) {
-			// 			if (err){
-			// 			  	console.log(err)
-			// 			  	return;
-			// 			}
-
-			// 			//jika tdk kosong
-			// 			if(!_.isEmpty(dosen)){
-			// 				//assign id
-			// 				item.penerima_id = dosen[0].kode_dosen;
-
-			// 				//cek apakah sdh pernah dientry
-			// 				DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-			// 						'tgl': item.tgl}).exec(function(err, result){
-			// 						//jika blm ada, simpan
-			//     					if(!result){
-			//     						submit_entry(item, callback);
-			//     					} else {
-			//     						//jika sdh ada
-			//     						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
-			// 					    			+item.tgl+' sudah pernah dientry.')
-			//     						callback(null, 'sudah ada')
-			//     					}
-			//     			})
-
-			// 				//cek klo dosen sdh ada d pegawai & custom entity
-			// 				Pegawai.findOne({kode_dosen: dosen[0].kode_dosen}, '_id', function(err, peg){
-			// 					//cek klo dosen sdh ada d custom entity
-			// 					CustomEntity.findOne({kode_dosen: dosen[0].kode_dosen}, '_id', function(err, cust){
-			// 						//jika di kduanya blm ada
-			// 						if(!peg && !cust){
-			// 							//hanya simpan yg dari bps atau non bps/stis
-			// 							if(dosen[0].unit == 'BPS' || dosen[0].unit == 'Non STIS/BPS'){
-			// 								var ce = new CustomEntity({nama: dosen[0].nama, type: 'Penerima', unit: dosen[0].unit,
-			// 											kode_dosen: dosen[0].kode_dosen});
-			// 								ce.save();
-			// 							}
-			// 						}
-			// 					})
-			// 				})
-							
-			// 			} else {
-			// 				//jika tdk ada di db sipadu, ambil dari simamov
-			// 				Pegawai.findOne({nama: item.penerima_nama}, '_id', function(err, pegawai){
-			// 					//jika tdk ada
-			// 					if(!_.isEmpty(pegawai)){
-			// 						item.penerima_id = pegawai._id;
-			// 						DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-			// 							'tgl': item.tgl}).exec(function(err, result){
-			// 		    					if(!result){
-			// 		    						submit_entry(item, callback);
-			// 		    					} else {
-			// 		    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
-			// 					    							+item.tgl+' sudah pernah dientry.')
-			// 		    						callback(null, 'sudah ada')
-			// 		    					}
-			// 		    			})	
-			// 					} else {
-			// 						//klo masih tdk ada, ambil di custom
-			// 						CustomEntity.findOne({nama: item.penerima_nama}, '_id', function(err, cust){
-			// 							if(!_.isEmpty(cust)){
-			// 								item.penerima_id = cust._id;
-			// 								DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-			// 									'tgl': item.tgl}).exec(function(err, result){
-			// 				    					if(!result){
-			// 				    						submit_entry(item, callback);
-			// 				    					} else {
-			// 				    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
-			// 					    							+item.tgl+' sudah pernah dientry.')
-			// 				    						callback(null, 'sudah ada')
-			// 				    					}
-			// 				    			})	
-			// 							} else {
-			// 								//klo masih tdk ada, buat custom
-			// 								CustomEntity.create({'nama': item.penerima_nama, type:'Penerima'}, function(err, new_penerima){
-			// 									item.penerima_id = new_penerima._id;
-			// 									DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-			// 										'tgl': item.tgl}).exec(function(err, result){
-			// 					    					if(!result){
-			// 					    						submit_entry(item, callback);
-			// 					    					} else {
-			// 					    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
-			// 					    							+item.tgl+' sudah pernah dientry.')
-			// 					    						callback(null, 'sudah ada')
-			// 					    					}
-			// 					    			})	
-			// 								})
-			// 							}
-			// 						})
-			// 					}
-			// 				})
-			// 			}
-			// 		})
-   //  			})
-   //  		}); 
 
     		async.series(tasks, function(err, finish){
     			console.log('Import finished');
@@ -2158,34 +2061,34 @@ pok.socket = function(io, connections, client){
     		parent.save();
     		cb('sukses');
 
-    		if(id.new_parent_id) sendNotification(client, 'Berhasil dipindahkan.');
-    		
-    		
-    		DetailBelanja.findOne({'thang': thang, '_id': id.new_parent_id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': to_moved.jumlah, 'penerima_id': to_moved.penerima_id, 
-			'tgl': to_moved.tgl}).exec(function(err, result){
-				//jika blm pernah
-				if(!result){
-					DetailBelanja.update({'thang': thang, "_id": id.new_parent_id}, {$push: {"realisasi": to_moved}}, {new: true}, function(err, result){
-			    		if (err) {
-			    			console.log(err)
-			    			errorHandler(client, 'Gagal menyimpan.')
-			    			cb('gagal')
-			    			return
-			    		}
-			    		cb('sukses');
-		    			User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Pindah realisasi '+id.parent_id+' '+to_moved.penerima_nama+', Rp'+to_moved.jumlah+', Tgl '+to_moved.tgl+' ke '+id.new_parent_id}}}, 
-		    				function(err, status){
-						})
-			    		//sebarkan
-			    		total_sampai_bln_ini = 0;
-			    		if(to_moved.tgl_timestamp >= lower_ts && to_moved.tgl_timestamp <= upper_ts){
-			    			if(to_moved.tgl_timestamp <= upper_ts) total_sampai_bln_ini += to_moved.jumlah;
-			    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': id.new_parent_id, 'realisasi': to_moved.jumlah, 
-			    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
-			    		}
-			    	})
-				}
-			})
+    		if(id.new_parent_id){
+    			 sendNotification(client, 'Berhasil dipindahkan.');
+    			 DetailBelanja.findOne({'thang': thang, '_id': id.new_parent_id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': to_moved.jumlah, 'penerima_id': to_moved.penerima_id, 
+				'tgl': to_moved.tgl}).exec(function(err, result){
+					//jika blm pernah
+					if(!result){
+						DetailBelanja.update({'thang': thang, "_id": id.new_parent_id}, {$push: {"realisasi": to_moved}}, {new: true}, function(err, result){
+				    		if (err) {
+				    			console.log(err)
+				    			errorHandler(client, 'Gagal menyimpan.')
+				    			cb('gagal')
+				    			return
+				    		}
+				    		cb('sukses');
+			    			User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Pindah realisasi '+id.parent_id+' '+to_moved.penerima_nama+', Rp'+to_moved.jumlah+', Tgl '+to_moved.tgl+' ke '+id.new_parent_id}}}, 
+			    				function(err, status){
+							})
+				    		//sebarkan
+				    		total_sampai_bln_ini = 0;
+				    		if(to_moved.tgl_timestamp >= lower_ts && to_moved.tgl_timestamp <= upper_ts){
+				    			if(to_moved.tgl_timestamp <= upper_ts) total_sampai_bln_ini += to_moved.jumlah;
+				    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': id.new_parent_id, 'realisasi': to_moved.jumlah, 
+				    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
+				    		}
+				    	})
+					}
+				})
+    		}
 			if(id.new_parent_id){
 	    		User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Hapus riwayat '+id.parent_id+' > '+id.target_id}}}, 
 					function(err, status){
