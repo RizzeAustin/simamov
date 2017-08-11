@@ -10,17 +10,7 @@
                                     <h3><i class="fa fa-credit-card fa-lg mt-2"></i> SPJ Honor</h3>
                                     <p class="text-muted">Buat SPJ Honor Dosen</p>
                                 </div>
-                            </div> 
-                            <!-- <div class="form-group row">
-                                <div class="col-md-12">
-                                    <label class="radio-inline" for="import_radio" style="margin-left: 10px">
-                                        <input type="radio" id="import_radio" name="data_source" value="0" checked="checked">Import Data
-                                    </label>
-                                    <label class="radio-inline" for="sipadu_radio">
-                                        <input id="sipadu_radio" type="radio" name="data_source" value="1">SIPADU
-                                    </label>
-                                </div>
-                            </div> -->  
+                            </div>  
                             <div class="form-group row">
                                 <div class="col-md-12">
                                     <form id="form_upload_csv" enctype="multipart/form-data" method="post" action="/spj/honor">
@@ -153,7 +143,7 @@
     $(document).ready(function(){
         moment.locale('id');
         //Inisialisasi pdf viewer
-        $("#realTimeView").attr("src", 'http://'+location.host+'/result/SPJHonor.pdf');
+        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/SPJHonor.pdf');
         
         $("#tgl_buat_surat").val(moment().format('D MMMM YYYY'));
         $('#tgl_buat_surat').datetimepicker({
@@ -199,7 +189,7 @@
                     data: formData,
                     async: false,
                     success: function (data) {
-                        $("#realTimeView").attr("src", 'http://'+location.host+'/result/spj/honor/'+data);
+                        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/spj/honor/'+data);
                         $("#unggah_xlsx_button").prop("disabled",false);
                         $("#unggah_xlsx_button").html('Buat Surat');
                     },
@@ -210,7 +200,6 @@
             }, 100)
         });
         $('.download').click(function(){
-            console.log($('#csv_file').val())
 
             if(!$('#csv_file').val()){
                 generalAlert('File csv belum dipilih.');
@@ -259,7 +248,6 @@
             var type = $(this).attr('id').match(/tbh_entry_(.*)/)[1];
 
             var kode;
-            console.log($("#tbh_entry_"+type+" option:selected").text())
             if(!$("#tbh_entry_"+type+" option:selected").text().match(/\s?\w+(?=\s)/)) return;
 
             if(type != 'skomponen') kode = $("#tbh_entry_"+type+" option:selected").text().match(/\d+(?=\s)/)[0]

@@ -153,7 +153,7 @@
     $(document).ready(function(){
         moment.locale('id');
         //Inisialisasi pdf viewer
-        $("#realTimeView").attr("src", 'http://'+location.host+'/result/SPJHonor.pdf');
+        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/SPJHonor.pdf');
         
         $("#tgl_buat_surat").val(moment().format('D MMMM YYYY'));
         $('#tgl_buat_surat').datetimepicker({
@@ -199,7 +199,7 @@
                     data: formData,
                     async: false,
                     success: function (data) {
-                        $("#realTimeView").attr("src", 'http://'+location.host+'/result/spj/transport/'+data);
+                        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/spj/transport/'+data);
                         $("#unggah_xlsx_button").prop("disabled",false);
                         $("#unggah_xlsx_button").html('Buat Surat');
                     },
@@ -210,7 +210,6 @@
             }, 100)
         });
         $('.download').click(function(){
-            console.log($('#csv_file').val())
 
             if(!$('#csv_file').val()){
                 generalAlert('File csv belum dipilih.');

@@ -12,7 +12,7 @@
                                 <div class="form-group row">
                                     <label for="nomor">Nomor Surat</label>
                                     <div class="input-group">
-                                        <input type="text" id="nomor" name="nomor" class="form-control" placeholder="Nomor surat" value="{{setting.last_nmr_surat}}/SPD/STIS/{{fullYear}}">
+                                        <input type="text" id="nomor" name="nomor" class="form-control" placeholder="Nomor surat" value="{{setting.last_nmr_surat}}/SPD/STIS/{{fullYear}}" autocomplete="off">
                                         <span class="input-group-btn">
                                             <button id="btn-riwayat-surat-tugas" type="button" class="btn btn-secondary"><i class="icon-list"></i></button>
                                         </span>
@@ -74,11 +74,11 @@
                                     <label for="tgl_berangkat">Waktu<span> *</span></label>
                                     <div class="form-group row">
                                         <div class="col-md-6">
-                                            <input type='text-input' class="form-control date" name="tgl_berangkat" id="tgl_berangkat" required>
+                                            <input type='text-input' class="form-control date tgl_ttd" name="tgl_berangkat" id="tgl_berangkat" required>
                                             <span class="help-block text-muted">berangkat</span> 
                                         </div>
                                         <div class="col-md-6">
-                                            <input type='text-input' class="form-control date" name="tgl_kembali" id="tgl_kembali" required>
+                                            <input type='text-input' class="form-control date tgl_ttd" name="tgl_kembali" id="tgl_kembali" required>
                                             <span class="help-block text-muted">kembali</span> 
                                             <input style="display: none;" type="text" id="jumlah_hari" name="jumlah_hari" value="">
                                         </div>
@@ -314,7 +314,7 @@
 
     $(document).ready(function(){
         moment.locale('id');
-        $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/bootstrap-tokenfield.css"));
+        // $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/bootstrap-tokenfield.css"));
 
         //function
         $.fn.serializeObject = function()
@@ -337,7 +337,7 @@
         var SPPD = {};
     
         //Inisialisasi pdf viewer
-        $("#realTimeView").attr("src", 'http://'+location.host+'/result/surat_tugas.pdf');
+        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/surat_tugas.pdf');
 
         //Input tgl sekarang utk ttd
         $(".tgl_ttd").val(moment().format('D MMMM YYYY'));
@@ -361,6 +361,8 @@
         //Disable tgl sblm tgl berangkat pd input tgl kembali
         $("#tgl_berangkat").on("dp.change", function (e) {
             $('#tgl_kembali').data("DateTimePicker").minDate(e.date);
+
+            $('#tgl_kembali').val($("#tgl_berangkat").val())
 
             $('#timestamp').remove()
 
@@ -420,7 +422,6 @@
             }
             delete e.attrs.label;
             if(_.filter(nama_sppd, function(o){if (o._id == e.attrs._id){return o;} }).length == 0) nama_sppd.push(e.attrs);
-            console.log(nama_sppd)
         });
 
         $("#tambah_pegawai").on('shown.bs.modal', function () {
@@ -474,7 +475,6 @@
         })
 
         $("#tambah_pegawai").on("hidden.bs.modal", function () {
-            console.log('esc/close?')
             if(!is_saved){
                 $('#nama_lengkap').tokenfield('setTokens', _.without(nama_sppd, _.findWhere(nama_sppd, {
                   value: $('#tbh_nama').val()
@@ -545,7 +545,6 @@
                 function(response){
                     $('#tbl_riwayat').DataTable().clear();
                     _.each(response, function(surat, i, list){
-                        console.log(response);
                         if(surat && surat.nama_lengkap){
                             var row = [
                                 surat._id,
@@ -618,7 +617,6 @@
                 function(response){
                     $('#tbl_riwayat').DataTable().clear();
                     _.each(response, function(surat, i, list){
-                        console.log(response);
                         if(surat && surat.nama_lengkap){
                             var row = [
                                 surat._id,
@@ -744,7 +742,7 @@
                         $('#nomor').val(
                             nomor_temp.replace(/^\d*/, response.last_nmr_surat)
                         )
-                        $("#realTimeView").attr("src", 'http://'+location.host+response.outputPdf)
+                        $("#realTimeView").attr("src", location.protocol+'//'+location.host+response.outputPdf)
                         generalAlert('Surat dibuat.');
                     } else {
                         generalAlert('Gagal buat surat. Hubungi Admin.');
@@ -842,6 +840,10 @@
             $("#detail_tugas").select();
         });
 
+        $("#detail_tugas").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+            $("#detail_tugas").val(toTitleCase(datum.value));
+        });
+
         $('#kabupaten').typeahead({
                 hint: true,
                 highlight: true,
@@ -912,7 +914,7 @@
 
         function toTitleCase(str)
         {
-            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}).replace(/Stis/g, 'STIS').replace(/Pnbp/g, 'PNBP').replace(/Div/g, 'DIV');
         }
     });
 </script>

@@ -6,13 +6,13 @@
                     <div class="card p-2">
                         <div class="card-block">
                         <div class="row">
-                            <h3><i class="icon-plane"></i> Surat Tugas Biasa</h3>
+                            <h3><i class="icon-paper-plane"></i> Surat Tugas Biasa</h3>
                         </div>
                             <form id="suratTugas" action="/sppd/surat_tugas_biasa" method="POST">  
                                 <div class="form-group row">
                                     <label for="nomor">Nomor Surat</label>
                                     <div class="input-group">
-                                        <input type="text" id="nomor" name="nomor" class="form-control" placeholder="Nomor surat" value="02722.{{setting.last_nmr_surat}}">
+                                        <input type="text" id="nomor" name="nomor" class="form-control" placeholder="Nomor surat" value="02722.{{setting.last_nmr_surat}}" autocomplete="off">
                                         <span class="input-group-btn">
                                             <button id="btn-riwayat-surat-tugas" type="button" class="btn btn-secondary"><i class="icon-list"></i></button>
                                         </span>
@@ -40,11 +40,11 @@
                                     <label for="tgl_berangkat">Waktu Pelaksanaan<span> *</span></label>
                                     <div class="form-group row">
                                         <div class="col-md-6">
-                                            <input type='text-input' class="form-control date" name="tgl_berangkat" id="tgl_berangkat" required>
+                                            <input type='text-input' class="form-control date tgl_ttd" name="tgl_berangkat" id="tgl_berangkat" required>
                                             <span class="help-block text-muted">berangkat</span> 
                                         </div>
                                         <div class="col-md-6">
-                                            <input type='text-input' class="form-control date" name="tgl_kembali" id="tgl_kembali" required>
+                                            <input type='text-input' class="form-control date tgl_ttd" name="tgl_kembali" id="tgl_kembali" required>
                                             <span class="help-block text-muted">kembali</span> 
                                         </div>
                                     </div>
@@ -217,7 +217,7 @@
         };
     
         //Inisialisasi pdf viewer
-        $("#realTimeView").attr("src", 'http://'+location.host+'/result/surat_tugas_biasa.pdf');
+        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/surat_tugas_biasa.pdf');
 
         //Input tgl sekarang utk ttd
         $(".tgl_ttd").val(moment().format('D MMMM YYYY'));
@@ -241,6 +241,8 @@
         //Disable tgl sblm tgl berangkat pd input tgl kembali
         $("#tgl_berangkat").on("dp.change", function (e) {
             $('#tgl_kembali').data("DateTimePicker").minDate(e.date);
+
+            $('#tgl_kembali').val($("#tgl_berangkat").val())
 
             $('#timestamp').remove()
 
@@ -274,7 +276,7 @@
         });
         $("#anggota").on("tokenfield:removetoken", function(e) {
             nama_anggota = _.without(nama_anggota, _.findWhere(nama_anggota, {
-              _id: e.attrs._id
+              value: e.attrs.value
             }));
         });
 
@@ -292,21 +294,6 @@
                 }
             }
         );
-
-        // $('#detail_tugas').typeahead({
-        //         hint: true,
-        //         highlight: true,
-        //         minLength: 1
-        //     }, {
-        //         source: function(q, p){
-        //                 {
-        //                     socket.emit('tugas_list', q, function (data) {
-        //                         return p(_.map(data, function(tug){ return {value: tug.nama}}))
-        //                     });
-        //                 }
-        //         }
-        //     }
-        // );
 
         $("#nama_lengkap_label").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
              $('#nama_lengkap').val(datum._id);
@@ -345,10 +332,6 @@
                 }
             }
         );
-
-        // $("#lokasi_label").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
-        //      $('#lokasi').val(datum._id);
-        // });
 
         function resetForm(){
             nama_anggota = [];
@@ -521,7 +504,6 @@
             var nomor = $(this).closest('tr').find('td:eq(0)').text();
             socket.emit('get_surat_tugas', {'nomor': nomor, 'type': 'surat_tugas_biasa'}, 
                 function(response){
-                    console.log(response)
                     // return;
                     resetForm();
                     var nomor_temp =  $('#nomor').val();
@@ -596,16 +578,12 @@
 
             var data = $('#suratTugas').serializeObject();
             data.anggota = nama_anggota;
-            console.log(data.anggota)
 
             var start = $("#tgl_berangkat").data('DateTimePicker').date()._d,
                 end = $("#tgl_kembali").data('DateTimePicker').date()._d,
                 currentDate = new Date(start);
             
             data.pelaksanaan = [];
-
-            console.log(moment.locale('id'));
-            console.log(moment.months())
 
             while (currentDate <= end) {
                 if(new Date(currentDate).getDay() > 0 && new Date(currentDate).getDay() < 6) data.pelaksanaan.push({tgl: moment(new Date(currentDate)).format("D MMMM YYYY")});
@@ -621,7 +599,7 @@
                         $('#nomor').val(
                             nomor_temp.replace(/\d*$/, response.last_nmr_surat)
                         )
-                        $("#realTimeView").attr("src", 'http://'+location.host+response.outputPdf)
+                        $("#realTimeView").attr("src", location.protocol+'//'+location.host+response.outputPdf)
                         generalAlert('Surat dibuat.');
                     } else {
                         generalAlert('Gagal buat surat. Hubungi Admin.');
@@ -733,7 +711,7 @@
 
         function toTitleCase(str)
         {
-            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}).replace(/Stis/g, 'STIS').replace(/Pnbp/g, 'PNBP').replace(/Div/g, 'DIV');
         }
     });
 </script>

@@ -398,7 +398,6 @@ spj.post('/honor', function(req, res){
 							}
 						], function(err, final){
 							// cek apakah sdh pernah tersimpan
-				    		// console.log({'thang': thang, '_id': honor_detail_id, tgl_buat_honor: tgl_buat_honor})
 					   		DetailBelanja.findOne({'thang': thang, '_id': honor_detail_id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': getNumber(data[i]['bruto']), 
 								'tgl': tgl_buat_honor, penerima_id: penerima_id}).exec(function(err, result){
 								//jika blm pernah
@@ -417,15 +416,12 @@ spj.post('/honor', function(req, res){
 							    	new_entry.penerima_id = penerima_id;
 							    	new_entry.jumlah = data[i]['bruto'];
 							    	new_entry.timestamp = current_timestamp;
-							    	// console.log(new_entry)
 							    	// return;
 							    	DetailBelanja.update({'thang': thang, "_id": honor_detail_id}, {$push: {"realisasi": new_entry}}, {new: true}, function(err, result){
 							    		if (err) {
 							    			console.log(err)
 							    			return
 							    		}
-							    		// spj.io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': honor_detail_id, 'realisasi': data[i]['bruto'], 
-							    		// 		'sum': false, 'total_sampai_bln_ini': 0, 'broadcast': true});
 							    	})
 								} else {
 									sendNotification(req.session.user_id, 'Honor '+data[i]['nama']+' periode tsb sudah tercatat di realisasi.')
@@ -805,7 +801,6 @@ spj.post('/transport', function(req, res){
 							}
 						], function(err, final){
 							// cek apakah sdh pernah tersimpan
-				    		// console.log({'thang': thang, '_id': honor_detail_id, tgl_buat_honor: tgl_buat_honor})
 					   		DetailBelanja.findOne({'thang': thang, '_id': transport_detail_id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': getNumber(data[i]['jumlah'] * 150000), 
 								'tgl': tgl_buat_honor, 'penerima_id': penerima_id}).exec(function(err, result){
 									//jika blm pernah
@@ -828,8 +823,6 @@ spj.post('/transport', function(req, res){
 								    			console.log(err)
 								    			return
 								    		}
-								    		// spj.io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': honor_detail_id, 'realisasi': data[i]['bruto'], 
-								    		// 		'sum': false, 'total_sampai_bln_ini': 0, 'broadcast': true});
 								    	})
 									} else {
 										sendNotification(req.session.user_id, 'Transport tsb untuk '+data[i]['nama']+' pernah tercatat di realisasi.')
@@ -989,8 +982,6 @@ function getMatchEntity(name, entities){
 	})
 
 	var matched = _.max(p, function(e){ return e.score; })
-
-	// console.log(name,' vs ',matched.nama, ' = ',matched.score)
 
 	if(matched.score >= 0.86){
 		return matched;

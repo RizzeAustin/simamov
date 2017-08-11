@@ -648,7 +648,6 @@ function handleSuratTugas(data, cb, res, user_id){
                     //simpan db
                     st.save(function(err, result){
                         st.populate('nama_lengkap ttd_legalitas ttd_surat_tugas prov kab org', function(err2){
-                            // console.log(data.nama_lengkap.length)
                             //cek apakah dari tabel Pegawai
                             async.series([
                                 function(cb){
@@ -828,7 +827,6 @@ function handleSuratTugasBiasa(data, cb, res, user_id){
                         data.waktu_pelaksanaan = st.waktu_pelaksanaan;
                         data.atas_nama_ketua_stis = st.atas_nama_ketua_stis;
                         data.page2 = data.anggota;
-                        console.log(data.anggota);
                         if(data.anggota.length == 0){
                             data.anggota.push({value: ''});
                         }
@@ -922,7 +920,6 @@ function handlePerhitungan(data, cb, res, username, user_id){
             Perhitungan.findOne({_id: data.nomor.match(/^\d*/)[0]}, function(err, perhit){
                 if(perhit){
                     Perhitungan.update({_id: data.nomor.match(/^\d*/)[0]}, {$set: st}, function(err, status){
-                        console.log(status)
                     })
                 }
             })
@@ -1049,19 +1046,6 @@ function handlePerhitungan(data, cb, res, username, user_id){
 
                         //end
                         cb(null, '');
-                        // var a = {"_id" : ObjectId("5973b31207c40e1e4894beb0"),
-                        // "pengentry" : "ade",
-                        // "ket" : "boom",
-                        // "bukti_no" : "0000215",
-                        // "spm_no" : "0011451",
-                        // "penerima_nama" : "Setia Pramana, S.Si., Ph.D.",
-                        // "tgl" : "23 Juli 2017",
-                        // "tgl_timestamp" : 1500754636,
-                        // "penerima_id" : "19770722 200003 1 002",
-                        // "jumlah" : 1250000,
-                        // "timestamp" : 1500754706}
-                        //jika atomic entry
-                        //cek jk sdh pernah dientry
                         var thang = st.tgl_buat_perhit.match(/\d{4}$/)[0];
                         DetailBelanja.findOne({'thang': thang, '_id': st.detail, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': st.total_rincian, 'penerima_id': data.surtug.nama_lengkap._id, 
                             'tgl': data.surtug.tgl_ttd_st}).exec(function(err, result){
@@ -1080,7 +1064,6 @@ function handlePerhitungan(data, cb, res, username, user_id){
                                     new_entry.penerima_id = data.surtug.nama_lengkap._id;
                                     new_entry.jumlah = st.total_rincian;
                                     new_entry.timestamp = current_timestamp;
-                                    // console.log(new_entry)
                                     DetailBelanja.update({'thang': thang, "_id": data.detail}, {$push: {"realisasi": new_entry}}, {new: true}, function(err, result){
                                         if (err) {
                                             console.log(err)
@@ -1088,9 +1071,6 @@ function handlePerhitungan(data, cb, res, username, user_id){
                                             return
                                         }
                                         sendNotification(user_id, 'Realisasi berhasil diupdate.')
-                                        // var total_sampai_bln_ini = new_entry.jumlah;
-                                        // sppd.io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': data.detail, 'realisasi': new_entry.jumlah, 
-                                                // 'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini});
                                     })
                                 } else {
                                     sendNotification(user_id, 'SPPD sudah pernah tercatat di realisasi.')

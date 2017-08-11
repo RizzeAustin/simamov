@@ -152,7 +152,7 @@
     <div class="modal-dialog modal-primary" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h6 class="modal-title">Riwayat User</h6>
+                <h6 class="modal-title">Riwayat Pengguna</h6>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -239,7 +239,6 @@
 <script src="/js/bootstrap-datetimepicker.js"></script>
 
 <script type="text/javascript">
-
     //tambah user
     $('#tambah_user').on('submit', function(e) {
         e.preventDefault();
@@ -310,8 +309,7 @@
     var target_delete;
     var target;
     $('table').on('click', '.del', function () {
-        if(row_to_delete){
-            console.log('asdjsabdjasbdjh')
+        if(target_delete){
             $.ajax({
                 url: '/admin/hapus_user/'+target.closest('td').attr('id'),
                 type: 'DELETE',
@@ -397,7 +395,6 @@
         syarat._id = $(this).closest('td').attr('id');
         current_id = syarat._id;
         syarat.month = $('#bulan_st_modal').val();
-        console.log(syarat)
         socket.emit('list_user_acts', syarat, function (data) {
             _.each(data, function(row, index, list){
                 $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
@@ -430,9 +427,7 @@
             syarat._id = current_id;
             syarat.lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()*1000;
             syarat.upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()*1000 + 86399000;
-            console.log(moment.unix(syarat.lower_ts/1000).format("HH:mm:ss D MMMM YYYY"))
             socket.emit('list_user_acts', syarat, function (data) {
-                console.log(data)
                 _.each(data, function(row, index, list){
                     $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
                 })
@@ -449,9 +444,7 @@
             syarat._id = current_id;
             syarat.lower_ts = ($('#riwayat-lower_ts').data('DateTimePicker').date().unix() - $('#riwayat-lower_ts').data('DateTimePicker').date().unix()% 86400-25200)*1000;
             syarat.upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()*1000 + 86399000;
-            console.log(moment.unix(syarat.lower_ts/1000).format("HH:mm:ss D MMMM YYYY"))
             socket.emit('list_user_acts', syarat, function (data) {
-                console.log(data)
                 _.each(data, function(row, index, list){
                     $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
                 })

@@ -89,11 +89,11 @@
 
     $(document).ready(function(){
         $("#btn-transport-template").click(function(){
-            location.href = 'http://'+window.location.host+'/template/TransportTemplate.xlsx';
+            location.href = location.protocol+'//'+window.location.host+'/template/TransportTemplate.xlsx';
         })
 
         $("#btn-honor-template").click(function(){
-            location.href = 'http://'+window.location.host+'/template/HonorTemplate.xlsx';
+            location.href = location.protocol+'//'+window.location.host+'/template/HonorTemplate.xlsx';
         })
 
         $(".pulihkan-template").click(function(){
@@ -116,7 +116,7 @@
             var formData = new FormData($(this)[0]);
 
             $.ajax({
-                url: 'http://'+window.location.host+url,
+                url: location.protocol+'//'+window.location.host+url,
                 type: 'POST',
                 data: formData,
                 async: false,

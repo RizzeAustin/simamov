@@ -351,6 +351,10 @@
         })
 
         $('#btn-ttd-surat-tugas').click(function(){
+            if(!$('#inp-ttd-surat-tugas').val() || !selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
             socket.emit('add_ttd_st', {_id: selected_peg_id}, 
                 function(status){
                     if(status == 'sukses'){
@@ -372,6 +376,10 @@
         })
 
         $('#btn-ttd-legalitas').click(function(){
+            if(!$('#inp-ttd-legalitas').val() || !selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
             socket.emit('add_ttd_leg', {_id: selected_peg_id}, 
                 function(status){
                     if(status == 'sukses'){
@@ -393,6 +401,10 @@
         })
 
         $('#btn-set-ppk').click(function(){
+            if(!selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
             socket.emit('set_ppk', {nama: $('#inp-ppk').val(), _id: selected_peg_id}, 
                 function(status){
                     if(status == 'sukses'){
@@ -405,6 +417,10 @@
         })
 
         $('#btn-set-bend').click(function(){
+            if(!selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
             socket.emit('set_bend', {nama: $('#inp-bend').val(), _id: selected_peg_id}, 
                 function(status){
                     if(status == 'sukses'){
@@ -549,7 +565,6 @@
                     $('#tbl-biaya-biaya').DataTable().draw(false);
 
                     _.each(response.reps, function(rep, i, list){
-                        console.log(rep)
                         var row = [
                             rep._id,
                             rep.uraian,
@@ -902,15 +917,15 @@
         });
 
         $("#btn-st-template").click(function(){
-            location.href = 'http://'+window.location.host+'/template/surat_tugas.docx';
+            location.href = location.protocol+'//'+window.location.host+'/template/surat_tugas.docx';
         })
 
         $("#btn-stb-template").click(function(){
-            location.href = 'http://'+window.location.host+'/template/surat_tugas_biasa.docx';
+            location.href = location.protocol+'//'+window.location.host+'/template/surat_tugas_biasa.docx';
         })
 
         $("#btn-sp-template").click(function(){
-            location.href = 'http://'+window.location.host+'/template/sppd_perhitungan.docx';
+            location.href = location.protocol+'//'+window.location.host+'/template/sppd_perhitungan.docx';
         })
 
         $(".pulihkan-template").click(function(){
@@ -933,7 +948,7 @@
             var formData = new FormData($(this)[0]);
 
             $.ajax({
-                url: 'http://'+window.location.host+url,
+                url: location.protocol+'//'+window.location.host+url,
                 type: 'POST',
                 data: formData,
                 async: false,

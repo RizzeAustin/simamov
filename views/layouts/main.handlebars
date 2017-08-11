@@ -15,12 +15,13 @@
     <link href="/css/simple-line-icons.css" rel="stylesheet">
 
     <!-- Main styles for this application <link href="/css/bootstrap.min.css" rel="stylesheet"> -->    
-    <link href="/css/style.css" rel="stylesheet">  
+    <link href="/css/style.css" rel="stylesheet">
     <link href="/css/jquery.dataTables.css" rel="stylesheet"> 
     <link href="/css/dataTables.bootstrap.min.css" rel="stylesheet"> 
     <link href="/css/fixedColumns.bootstrap.min.css" rel="stylesheet">  
     <link href="/css/jquery.toast.min.css" rel="stylesheet"> 
-    <link href="/css/tokenfield-typeahead.css" rel="stylesheet"> 
+    <link href="/css/tokenfield-typeahead.css" rel="stylesheet">
+    <link href="/css/bootstrap-tokenfield.css" rel="stylesheet"> 
     <link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
     <style type="text/css">
@@ -28,6 +29,10 @@
              vertical-align: middle;
              border: 1px solid black;
              table-layout: fixed;
+        }
+
+        .token{
+            line-height: 1.9;
         }
 
         .level1{
@@ -251,7 +256,7 @@
     <script src="/js/jquery.min.js"></script>
     <script src="/js/tether.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/pace.min.js"></script>
+    <script data-pace-options='{ "ajax": false }' src="/js/pace.min.js"></script>
 
 
     <!-- Plugins and scripts required by all views -->
@@ -307,7 +312,7 @@
                     position: 'bottom-right',
                     allowToastClose: true,
                     afterHidden: function () {
-                        window.location.replace("http://"+$(location).attr('host')+"/login");
+                        window.location.replace(location.protocol+"//"+$(location).attr('host')+"/login");
                     }
                 })
             });

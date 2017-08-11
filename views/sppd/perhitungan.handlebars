@@ -319,7 +319,7 @@
         };
     
         //Inisialisasi pdf viewer
-        $("#realTimeView").attr("src", 'http://'+location.host+'/result/sppd_perhitungan.pdf');
+        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/sppd_perhitungan.pdf');
 
         //Input tgl sekarang utk ttd
         $("#tgl_buat_perhit").val(moment().format('D MMMM YYYY'));
@@ -352,7 +352,6 @@
             socket.emit('populate_akun', kdkmpnen.match(/\d*$/)[0], 
                 function(response){
                     akun_opt = '';
-                    console.log(response)
                     _.each(response, function(akun, i, list){
                         akun_opt += '<option value='+akun.kdakun+' '+(kdakun == akun.kdakun ? "selected" : "")+'>' + akun.kdakun + ' ' + (akun.uraian || 'uraian blm ada') + '</option>'
                     })
@@ -381,14 +380,12 @@
 
         var dki_jkt = '{{prov.taksi_dn}}';
         var current_gol = '{{st.nama_lengkap.gol}}';
-        console.log('{{st.nama_lengkap.gol}}')
         var current_jumlah_hari = '{{st.jumlah_hari}}';
         var posisi_kota = '{{st.posisi_kota}}';
         var kode_output = '{{st.kode_output}}';
         var kdakun, noitem;
         populate_realisasi(kode_output)
         $("#w_dari_t4_tujuan").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
-            console.log(current_gol)
             if(datum.data._id == '31'){
                 $("#t_dari_t4_tujuan").val(formatUang(+datum.data.taksi_dn));
                 $("#t_dari_t4_asal").val(formatUang(+datum.data.taksi_dn));
@@ -409,7 +406,6 @@
                 $("#maks-hotel").text(formatUang(datum.data.inap_dn_es4_g3));
                 $("#hotel_biaya").autoNumeric("update", {maximumValue: datum.data.inap_dn_es4_g3});
             } else if(/i|ii/i.test(current_gol)){
-                console.log('asldjslakdjlsadalksdn')
                 $("#biaya_inap").val(formatUang(+datum.data.inap_dn_g12*0.3));
                 $("#b_inap_price_form").val(formatUang(datum.data.inap_dn_g12));
                 $("#b_inap_price").text(formatUang(datum.data.inap_dn_g12));
@@ -545,7 +541,7 @@
             socket.emit('perhitungan', data, 
                 function(response){
                     if(response){
-                        $("#realTimeView").attr("src", 'http://'+location.host+response.outputPdf)
+                        $("#realTimeView").attr("src", location.protocol+'//'+location.host+response.outputPdf)
                         generalAlert('Surat dibuat.');
                     } else {
                         generalAlert('Gagal buat surat. Hubungi Admin.');

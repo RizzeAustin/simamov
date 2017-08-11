@@ -994,16 +994,6 @@
                     .reduce( function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0 );
-
-                console.log(row, data, start, end, display)
-     
-                // Total over this page
-                // pageTotal5 = api
-                //     .column( 5, { page: 'current'} )
-                //     .data()
-                //     .reduce( function (a, b) {
-                //         return intVal(a) + intVal(b);
-                //     }, 0 );
      
                 // Update footer
                 $( api.column( 2 ).footer() ).html(
@@ -1097,8 +1087,6 @@
             $('#riwayat_modal').modal('show');
 
             riwayat_syarat = {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen, 'ce': current_ce, 'init': false, 'call_from_pengguna': true, 'month': $('#bulan_realisasi_modal').val()}
-
-            console.log(riwayat_syarat)
 
             socket.emit('riwayat_init', riwayat_syarat);
         });
@@ -1586,7 +1574,7 @@
                     generalAlert('Tidak ada data.');
                     return;
                 }
-                window.open("http://"+$(location).attr('host')+link,'_blank');
+                window.open(location.protocol+"//"+$(location).attr('host')+link,'_blank');
             });
         })
 
@@ -1613,7 +1601,7 @@
                     generalAlert('Tidak ada data.');
                     return;
                 }
-                window.open("http://"+$(location).attr('host')+link,'_blank');
+                window.open(location.protocol+"//"+$(location).attr('host')+link,'_blank');
             });
         })
 

@@ -60,21 +60,6 @@ var levenshtein = require('fast-levenshtein');
 //modul sql utk koneksi db mysql sipadu
 var mysql = require('mysql');
 
-// sipadu_db.connect();
-
-// var query = 'SELECT * ' +
-// 						'FROM dosen';
-
-// sipadu_db.query(query, function (err, dosen, fields) {
-// 	if (err){
-// 	  	console.log(err)
-// 	  	return;
-// 	}
-// 	;
-// 	console.log(_.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang}}))
-// })
-
-
 //similarity between string
 var clj_fuzzy = require('clj-fuzzy');
 
@@ -436,7 +421,7 @@ pok.socket = function(io, connections, client){
 																						parent_kd = output.kdoutput;
 																						parent_id = output._id;
 																					} else {
-																						console.log(soutput.ursoutput);
+
 																					}
 																					data.row = soutput_row
 																					client.emit('pok_row_init_response', data, function () {
@@ -923,63 +908,6 @@ pok.socket = function(io, connections, client){
 	    		removeItem(DetailBelanja, syarat, null);
 	    	}
     	});
-   //  	Model.findOneAndUpdate({'thang': thang, _id: item._id, 'active': true}, {$set: {active: false, pengentry: user_aktiv}, $push: {"old": {active: true, pengentry: msg}}}, function(err, item_deleted){
-   //  		if(err){
-			// 	errorHandler(client, 'Gagal dihapus. Mohon hubungi admin.')
-			// 	return;
-			// }
-			// client.broadcast.to(thang).emit('pok_item_deleted', item._id);
-			// if(item.type == 'program'){
-			// 	var syarat = {'thang': thang, 'kdprogram': item_deleted.kdprogram};
-	  //   		DetailBelanja.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Akun.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		SubKomponen.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Komponen.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		SubOutput.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Output.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Kegiatan.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   	} else if(item.type == 'kegiatan'){
-			// 	var syarat = {'thang': thang, 'kdprogram': item_deleted.kdprogram, 'kdgiat': item_deleted.kdgiat}
-	  //   		DetailBelanja.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Akun.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		SubKomponen.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Komponen.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		SubOutput.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Output.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   	} else if(item.type == 'output'){
-			// 	var syarat = {'thang': thang, 'kdprogram': item_deleted.kdprogram, 'kdgiat': item_deleted.kdgiat, 
-	  //   			'kdoutput': item_deleted.kdoutput}
-	  //   		DetailBelanja.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Akun.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		SubKomponen.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Komponen.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		SubOutput.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   	} else if(item.type == 'soutput'){
-			// 	var syarat = {'thang': thang, 'kdprogram': item_deleted.kdprogram, 'kdgiat': item_deleted.kdgiat, 
-	  //   			'kdoutput': item_deleted.kdoutput, 'kdsoutput': item_deleted.kdsoutput}
-	  //   		DetailBelanja.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Akun.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		SubKomponen.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Komponen.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   	} else if(item.type == 'komponen'){
-			// 	var syarat = {'thang': thang, 'kdprogram': item_deleted.kdprogram, 'kdgiat': item_deleted.kdgiat, 
-	  //   			'kdoutput': item_deleted.kdoutput, 'kdsoutput': item_deleted.kdsoutput, 'kdkmpnen': item_deleted.kdkmpnen}
-	  //   		DetailBelanja.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Akun.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		SubKomponen.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   	} else if(item.type == 'skomponen'){
-			// 	var syarat = {'thang': thang, 'kdprogram': item_deleted.kdprogram, 'kdgiat': item_deleted.kdgiat, 
-	  //   			'kdoutput': item_deleted.kdoutput, 'kdsoutput': item_deleted.kdsoutput, 'kdkmpnen': item_deleted.kdkmpnen, 
-	  //   			'kdskmpnen': item_deleted.kdskmpnen}
-	  //   		DetailBelanja.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   		Akun.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   	} else if(item.type == 'akun'){
-			// 	var syarat = {'thang': thang, 'kdprogram': item_deleted.kdprogram, 'kdgiat': item_deleted.kdgiat, 
-	  //   			'kdoutput': item_deleted.kdoutput, 'kdsoutput': item_deleted.kdsoutput, 'kdkmpnen': item_deleted.kdkmpnen, 
-	  //   			'kdskmpnen': item_deleted.kdskmpnen, 'kdakun': item_deleted.kdakun}
-	  //   		DetailBelanja.update(syarat, {$set: {active: false}}, {"multi": true}, function(err,s){})
-	  //   	}
-   //  	})
     })
 
     client.on('pok_edit_new_item', function (user_input) {
@@ -1270,38 +1198,8 @@ pok.socket = function(io, connections, client){
     	data.syarat.thang = thang;
 
     	Model.find(data.syarat).sort(data.sortby).exec(function(err, items){
-    		console.log(items)
     		if(data.type != 'program'){
     			ParentModel.findOne(data.syarat, function(err, parent){
-    		// 		if(data.type == 'akun'){
-    		// 			if(parent.urskmpnen == 'tanpa sub komponen'){
-    		// 				delete data.syarat.kdskmpnen;
-    		// 				Komponen.findOne(data.syarat, function(err, parent){
-    		// 					if(data.for == 'riwayat'){
-    		// 						client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
-    		// 					} else {
-    		// 						client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
-    		// 					}
-    		// 				})
-    		// 			}
-    		// 		} else if(data.type == 'komponen'){
-    		// 			if(parent.ursoutput == 'tanpa sub output'){
-    		// 				delete data.syarat.kdsoutput;
-    		// 				Output.findOne(data.syarat, function(err, parent){
-    		// 					if(data.for == 'riwayat'){
-    		// 						client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
-    		// 					} else {
-    		// 						client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
-    		// 					}
-    		// 				})
-    		// 			}
-    		// 		} else {
-    		// 			if(data.for == 'riwayat'){
-    		// 				client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
-						// } else {
-						// 	client.emit('pok_list_response', {'items': items, 'type': data.type, 'parent_id': parent._id, 'parent_type': parent_type});
-						// }
-    		// 		}
     				if(data.for == 'riwayat'){
 						client.emit('pok_list_for_riwayat', {'items': items, 'type': data.type});
 					} else if(data.for == 'riwayat_for_link') {
@@ -1323,7 +1221,6 @@ pok.socket = function(io, connections, client){
     })
 
     client.on('penerima_list', function (q, cb){
-    	console.log(q)
     	if(q.query){
     		q.query = q.query.replace(/\\/g, '');
     	} else if(q.q){
@@ -1563,13 +1460,6 @@ pok.socket = function(io, connections, client){
     		})
 
     		async.series(tasks, function(err, finish){
-    			console.log('Import finished');
-    			// if(err){
-    			// 	console.log(err);
-    			// 	cb('gagal');
-    			// 	return;
-    			// } 
-    			// cb('sukses');
     		})
 			cb('sukses');
 
@@ -1650,7 +1540,6 @@ pok.socket = function(io, connections, client){
     })
 
     client.on('riwayat_init', function (data, cb){
-    	console.log(data);
     	if((!data.detail_id || data.detail_id == '--pilih--') && !data.call_from_pengguna){
     		errorHandler(client, 'Detail belanja belum ditentukan.');
     		return;
@@ -2137,7 +2026,6 @@ pok.socket = function(io, connections, client){
     			})
 				DetailBelanja.update({_id: ids.target}, { $set: {'realisasi': new_realisasi} }, function(err, updated){
 					if(err) console.log(err);
-					console.log(updated)
 					cb('sukses')
 				});
 
@@ -2174,6 +2062,14 @@ pok.get('/', function(req, res){
 		if(pok_setting) res.render('pok/pok', {layout: false, pok_name: pok_setting.toObject().name, admin: req.session.jenis, username: req.session.username, tahun_anggaran: req.session.tahun_anggaran});
 			else res.render('pok/pok', {layout: false, pok_name: 'POK', admin: req.session.jenis, username: req.session.username, tahun_anggaran: req.session.tahun_anggaran});
 	})
+})
+
+pok.get('/refine', function(req, res){
+	res.send('ok');
+	//1. ambil semua detail yg ada realisasinya
+	//2. cek kesesuain nama dgn database pegawai
+	//3. jika >0.86 set id, jika id != id sebelumnya dan custom entity, maka hapus ce tsb
+	//4. jika tdk, 
 })
 
 //satuan pok
@@ -3071,7 +2967,6 @@ function proses_xml(xml_stream, roots_var, var_array, current_timestamp, Model, 
 									new_item['active'] = true;
 									Model.update({_id: new ObjectId(result[ '_id' ])}, { $set: new_item }, function(err, updated){
 										if(err) errorHandler(user_id, result[ '_id' ]+' update error. Mohon hubungi admin.');
-										// console.log(result[ '_id' ]+' updated');
 										item_added_callback(err, result[ '_id' ]+' updated');
 									});
 								} else {
@@ -3083,7 +2978,6 @@ function proses_xml(xml_stream, roots_var, var_array, current_timestamp, Model, 
 							} else {
 								item.save(function(err, item){
 									if(err) errorHandler(user_id, item[ '_id' ]+' insert error. Mohon hubungi admin.');
-									// console.log(item[ '_id' ]+' inserted')
 									item_added_callback(err, item[ '_id' ]+' inserted');
 								})
 							}
@@ -3170,8 +3064,6 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp){
 			item.timestamp = current_timestamp;
 			item.save(function(err, item){
 				if(err) errorHandler(user_id, item[ '_id' ]+' insert error. Mohon hubungi admin.');
-				// console.log(item[ '_id' ]+' inserted')
-				// item_added_callback(err, item[ '_id' ]+' inserted');
 				if(cb) cb(null, '')
 			})
 		}
@@ -3180,6 +3072,30 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp){
 
 function XlsxPOK(file_path, pok_name, username, thang, user_id){
 	const data = xlsx.parse(file_path);
+	//Ubah nama
+	Setting.findOne({type:'pok', 'thang': thang}, 'name timestamp old', function(err, pok_setting){
+		if(err) {
+			errorHandler(username, 'Database error.');
+			return;
+		};
+		//tambahkan nama, nama sebelumnya di old kan
+		if(pok_setting){
+			Setting.update({'thang': thang, type: 'pok'},{$set: {name: pok_name, timestamp: current_timestamp}, $push: {"old": {name: pok_setting.toObject().name, timestamp: pok_setting.toObject().timestamp}}}, {upsert: true}, function(err, status){
+				if(err){
+					errorHandler(username, 'Database error.');
+					return;
+				}			
+			})
+		} else {
+			old_setting = [];
+			Setting.update({'thang': thang, type: 'pok'},{$set: {name: pok_name, timestamp: current_timestamp, old: old_setting}}, {upsert: true}, function(err, status){
+				if(err){
+					errorHandler(username, 'Database error.');
+					return;
+				}			
+			})
+		}
+	})
 
 	//timestamp utk wkt penyimpanan
 	var current_timestamp = Math.round(new Date().getTime()/1000);
@@ -3353,7 +3269,6 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 						current_kdskmpnen = new_item.kdskmpnen;
 
 						SubKomponen.update(new_item, {$set: {urskmpnen: item[1].replace(/^\s+|\s+$/g,'')}}, function(err, res){
-							console.log(res);
 							cb(null, '')
 						})
 					} else {
@@ -3536,13 +3451,13 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 			})
 			pok.connections[user_id].emit('pok_unduh_finish_xlsx');
 		})
-		Akun.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
-		SubKomponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
-		Komponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
-		SubOutput.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
-		Output.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
-		Kegiatan.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
-		Program.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){console.log(removed)});
+		Akun.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){});
+		SubKomponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){});
+		Komponen.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){});
+		SubOutput.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){});
+		Output.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){});
+		Kegiatan.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){});
+		Program.update({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, {$set:{timestamp: current_timestamp}}, function(err, removed){});
 		User.update({_id: user_id}, {$push: {"act": {label: 'Upload File Xlsx POK'}}}, 
 			function(err, status){
 		})
@@ -3828,12 +3743,6 @@ function getMatchDetail(nmitem, akundetails){
 		return null;
 	}
 }
-
-// DetailBelanja.find({kdprogram: '01', kdgiat: '2888', kdoutput: '994', kdkmpnen: '002', kdskmpnen: 'F', kdakun: '522111'}, function(err, ds){
-// 	var text = '    -     biaya langganan daya dan jasa listrik'
-// 	var a = getMatchDetail(text, ds);//.9183
-// 	console.log(a.nmitem,' <> ',text,' = ', a.score);
-// })
 
 function errorHandler(user_id, message){
 	if(_.isString(user_id)) pok.connections[user_id].emit('messages', message)

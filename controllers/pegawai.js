@@ -14,14 +14,6 @@ var _ = require("underscore");
 
 //modul sql utk koneksi db mysql sipadu
 var mysql = require('mysql');
-// var sipadu_db = mysql.createConnection({
-// 	host: '127.0.0.1',
-// 	user: 'root',
-// 	password: '',
-// 	database: 'sipadu_db'
-// });
-
-// sipadu_db.connect();
 
 //Socket.io
 pegawai.connections;
@@ -38,17 +30,6 @@ pegawai.socket = function(io, connections, client){
 			var kode_dosen = ['init'];
 			Pegawai.find({active: true}).sort('nama').exec(function(err, pegs){
 				var nomor = 1;
-				// _.each(pegs, function(peg, i, list){
-				// 	if(peg.kode_dosen) kode_dosen.push(peg.kode_dosen);
-				// });
-				// var query = 'SELECT * ' +
-				// 			'FROM dosen ' +
-				// 			'WHERE aktif = 1 AND unit = ? AND kode_dosen NOT IN (?) ORDER BY nama';
-				// sipadu_db.query(query, ['STIS', kode_dosen], function (err, dosens, fields) {
-				// 		if (err){
-				// 		  	console.log(err)
-				// 		  	return;
-				// 		}
 						_.each(pegs, function(peg, i, list){
 							var row = [
 								nomor,
@@ -65,22 +46,6 @@ pegawai.socket = function(io, connections, client){
 							client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
 							if(i == pegs.length - 1) client.emit('pegawai_init_finish', 'pegawai_stis');
 						});
-						// _.each(dosens, function(dos, i, list){
-						// 	var row = [
-						// 		nomor,
-						// 		dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
-						// 		dos.kode_dosen || '-',
-						// 		dos.pangkat || '-',
-						// 		dos.gol_pajak || '-',
-						// 		'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
-						// 		+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-						// 		dos.kode_dosen || '-'
-						// 	]
-						// 	nomor++;
-						// 	client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_stis'});
-						// 	if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_stis');
-						// });
-				// })
 
 			});
 		} else if(tab == 'bps'){
@@ -107,27 +72,6 @@ pegawai.socket = function(io, connections, client){
 					client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
 					if(i == list.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
 				});
-				// sipadu_db.query(query, ['BPS', kode_dosen], function (err, dosens, fields) {
-				// 	if (err){
-				// 	  	console.log(err)
-				// 	  	return;
-				// 	}
-				// 	_.each(dosens, function(dos, i, list){
-				// 		var row = [
-				// 			nomor++,
-				// 			dos.gelar_depan+((dos.gelar_depan?' ':''))+dos.nama+' '+dos.gelar_belakang || '-',
-				// 			dos.kode_dosen || '-',
-				// 			dos.pangkat || '-',
-				// 			dos.gol_pajak || '-',
-				// 			'<button type="button" class="link-sipadu"><i class="icon-link"></i></button>'
-				// 			+' <button type="button" class="riwayat-pgw"><i class="icon-list"></i></button>',
-				// 			dos.kode_dosen || 'none',
-				// 			'none'
-				// 		]
-				// 		client.emit('pegawai_init_response', {'row': row, unit: 'pegawai_bps'});
-				// 		if(i == dosens.length - 1) client.emit('pegawai_init_finish', 'pegawai_bps');
-				// 	});
-				// })
 			});
 			
 		} else {
@@ -188,7 +132,6 @@ pegawai.socket = function(io, connections, client){
 			data.data.unit = 'Non STIS/BPS';
 			var cs = new CustomEntity(data.data);
 			cs.save(function(err, res){
-				console.log(err,res)
 				cb(cs._id);
 			});
 		}
@@ -204,7 +147,6 @@ pegawai.socket = function(io, connections, client){
 	})
 
 	client.on('edit_pegawai', function (data, cb) {
-		console.log(data)
 		if(data.type == 'pegawai'){
 			Pegawai.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
 				if (err) {
@@ -215,7 +157,6 @@ pegawai.socket = function(io, connections, client){
 			})
 		} else if(data.type == 'bps'){
 			CustomEntity.update({_id: data._id}, {[data.field]: data.value}, function(err, status) {
-				console.log(err,status)
 				if (err) {
 	    			cb('gagal');
 	    			return
@@ -226,25 +167,21 @@ pegawai.socket = function(io, connections, client){
 			Pegawai.update({_id: data._id}, {'ce': data.value}, function(err, status) {
 				if (err) {
 	    			cb('gagal');
-							console.log(err)
 	    			return
 	    		}
 	    		if(!status.nModified){
 	    			CustomEntity.update({_id: data._id}, {'ce': data.value}, function(err, status) {
 						if (err) {
 			    			cb('gagal');
-							console.log(err)
 			    			return
 			    		}
 						cb('sukses');
 						CustomEntity.update({'_id': data.value}, {active: false}, function(err, status) {
-		    				console.log(status)
 		    			})
 					})
 	    		}else {
 	    			cb('sukses');
 					CustomEntity.update({'_id': data.value}, {active: false}, function(err, status) {
-	    				console.log(status)
 	    			})
 	    		}
 			})
@@ -275,8 +212,6 @@ pegawai.socket = function(io, connections, client){
     			return
     		}
 
-    		console.log(status)
-
     		if(!status.nModified){
     			CustomEntity.update({'_id': _id}, {active: false}, function(err, status) {
     				cb('sukses');
@@ -305,16 +240,13 @@ pegawai.post('/ajax/edit', function(req, res){
 
 	MongoClient.connect(url, function(err, db){
 		if(err){
-			console.log('Unable to connect to server');
 		} else{
 			var jenis = req.body.jenis;
 
 			var value = req.body.new_value;
 
 			if(jenis == "jabatan"){
-				console.log(value);
 				value = value.replace(/(,\s*|\s*,)/g, ",");
-				console.log(value);
 				value = value.split(',');
 			}
 			db.collection('pegawai').update({"nip": req.body.nip}, {$set:{[jenis]:value}}, function(err, result){

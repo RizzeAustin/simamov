@@ -195,7 +195,7 @@
                                         <form id="form_pok_unggah" enctype="multipart/form-data" method="post" action="/pok/unggah_pok">
                                             <div class="form-group row">
                                                 <label for="nomor">Nama</label>
-                                                <input type="text" id="pok_name" name="pok_name" class="form-control" placeholder="nama..." value="POK Revisi 1" required>
+                                                <input type="text" id="pok_name" name="pok_name" class="form-control" placeholder="nama..." value="{{#if pok_name}}{{pok_name}}{{/if}}{{#unless pok_name}}POK Revisi 1{{/unless}}" required>
                                             </div> 
                                             <div class="form-group row">
                                                 <label for="nomor">Tahun Anggaran</label>
@@ -1089,14 +1089,6 @@
            }
            var checked = tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
 
-           // Iterate over all checkboxes in the table
-           // tabel_riwayat.DataTable().$('input[type="checkbox"]').each(function(){
-           //    // If checkbox doesn't exist in DOM
-           //    if(!$.contains(document, this)){
-           //       // If checkbox is checked
-           //       console.log(this.value)
-           //    }
-           // });
            if(this.checked){
 
                 $('#multiple-action').html(
@@ -1117,6 +1109,7 @@
                 return;
             }
             $("#btn-multiple-delete").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw font-lg"></i>');
+            $("#btn-multiple-delete").prop("disabled",true);
             var checked = tabel_riwayat.DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
             if(typeof checked === 'string'){
                 checked = [checked];
@@ -1175,6 +1168,7 @@
                         }
                     });
                 })
+                $("#btn-multiple-delete").prop("disabled",false);
             }else {
                 generalAlert('Detail belum dipilih.');
             }
@@ -1770,7 +1764,6 @@
         var editor_tbh_penerima;
         var active_tbh_penerima;
         $('#fields_form_entry').on('dblclick', 'table#tbl_tambah_penerima tr td', function () {
-            console.log('triggered')
             active_tbh_penerima = $(this);
             if(state_active_editor_tbh_penerima || active_tbh_penerima.is(':nth-child(1)') || active_tbh_penerima.is(':nth-child(12)')){
                 $.toast({
@@ -2301,14 +2294,12 @@
                 }
                 riwayat_syarat.periode = selected;
             }
-            console.log(riwayat_syarat)
             socket.emit('riwayat_init', riwayat_syarat, function(link){
                 if(!link){
                     generalAlert('Tidak ada data.');
                     return;
                 }
-                console.log(link)
-                window.open("http://"+$(location).attr('host')+link,'_blank');
+                window.open(location.protocol+"//"+$(location).attr('host')+link,'_blank');
             });
         })
 
@@ -2335,7 +2326,7 @@
                     generalAlert('Tidak ada data.');
                     return;
                 }
-                window.open("http://"+$(location).attr('host')+link,'_blank');
+                window.open(location.protocol+"//"+$(location).attr('host')+link,'_blank');
             });
         })
 
@@ -2485,7 +2476,6 @@
         var active_entry;
         tabel_riwayat.on('dblclick', 'tr td', function () {
             active_entry = $(this);
-            // console.log(active_entry.closest('tr').find('td:eq(7)').text(),'dksldsf', user_aktiv)
             if({{#unless admin}}active_entry.closest('tr').find('td:eq(8)').text()!= user_aktiv || {{/unless}}state_active_editor_entry || active_entry.is(':nth-child(1)') || active_entry.is(':nth-child(2)') || active_entry.is(':nth-child(13)') || active_entry.is(':nth-child(14)')){
                 {{#unless admin}}
                 if(active_entry.closest('tr').find('td:eq(8)').text()!= user_aktiv){
@@ -3924,7 +3914,7 @@
             var formData = new FormData($(this)[0]);
 
             $.ajax({
-                url: 'http://'+window.location.host+'/pok/unggah_pok', 
+                url: location.protocol+'//'+window.location.host+'/pok/unggah_pok', 
                 type: 'POST',
                 data: formData,
                 async: false,
@@ -4321,47 +4311,6 @@
 
             socket.emit('pok_list', {'type': type, 'syarat': syarat, 'sortby': sortby, 'for': 'riwayat_for_link'});
         });
-
-        // $('#btn-ubah-detail-submit').click(function(){
-        //     if($('#link_entry_detail').val() && $('#link_entry_detail option:selected').text() != '--pilih--'){
-        //         console.log({'detail_id': detail_id_target_link, 'target': $('#link_entry_detail').val()})
-        //         socket.emit('transfer_realisasi', {'detail_id': detail_id_target_link, 'target': $('#link_entry_detail').val()}, function (data) {
-        //             if(data == 'sukses'){
-        //                 $('#link_realisasi_modal').modal('toggle');
-        //                 generalAlert('Realisasi berhasil ditransfer.')
-        //             } else {
-        //                 generalAlert('Gagal mengubah detail. Mohon hubungi admin.')
-        //             }                    
-        //         });
-        //     }else {
-        //         generalAlert('Detail belum dipilih.');
-        //     }
-        // })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         ////////////////Object & Sockets
 
