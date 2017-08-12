@@ -1712,6 +1712,9 @@
                     var data = import_data_entry.getSourceData();
                     _.each(changes, function(change, index, list){
                         if(_.contains(['jumlah', 'pph21', 'pph22', 'pph23', 'ppn'], change[1])){
+                            if (typeof change[3] === 'string' || change[3] instanceof String)
+                                data[change[0]][change[1]] = change[3].replace(/\D/g, '')
+
                             if(data[change[0]][change[1]] < 0) data[change[0]][change[1]] *= -1;
                         }
                     })
@@ -2937,33 +2940,6 @@
                 $(table).dataTable().fnAdjustColumnSizing();
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         //////////EDIT

@@ -949,7 +949,6 @@
                 $( row ).find('td:eq(7)').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
                 $( row ).find('td:eq(8)').attr('class', 'text-center');
                 $( row ).find('td:eq(9)').attr('class', 'text-center');
-                $( row ).find('td:eq(10)').attr('class', 'text-center');
                 $( row ).find('td:eq(11)').attr('class', 'text-center');
             },
             "footerCallback": function ( row, data, start, end, display ) {
@@ -1049,6 +1048,23 @@
             riwayat_syarat = {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen || 'none', 'ce': current_ce || 'none', 'init': false, 'call_from_pengguna': true, 'month': selected}
             socket.emit('riwayat_init', riwayat_syarat);
         });
+        $("input[name='tampil_riwayat']").change(function(e){
+            if ($(this).val() == '0'){
+                if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
+                $('#tbl_riwayat').DataTable().clear().draw(false);
+                var lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()
+                var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix();
+                riwayat_syarat = {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen || 'none', 'ce': current_ce || 'none', 
+                    'init': false, 'call_from_pengguna': true,'lower_ts': lower_ts, 'upper_ts': upper_ts};
+                socket.emit('riwayat_init', riwayat_syarat);
+            } else {
+                $('#tbl_riwayat').DataTable().clear().draw(false);;
+                var selected = $('#bulan_realisasi_modal').val();
+                if(selected == 'none') return;
+                riwayat_syarat = {'penerima_id': current_penerima_id, 'kode_dosen': current_kode_dosen || 'none', 'ce': current_ce || 'none', 'init': false, 'call_from_pengguna': true, 'month': selected}
+                socket.emit('riwayat_init', riwayat_syarat);
+            }
+        })
 
         var active_table_id;
         var riwayat_syarat;

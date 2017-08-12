@@ -364,7 +364,7 @@ spj.post('/honor', function(req, res){
 		    	], function(err, final){
 		    		//link ke POK realisasi
 					_.each(data, function(item, i, list){
-						var penerima_id;
+						var penerima_id, nama_penerima;
 
 						async.series([
 							//ambil id
@@ -373,23 +373,27 @@ spj.post('/honor', function(req, res){
 								//jika ditemukan, ==> simpan
 								if(matched){
 									penerima_id = matched._id;
+									nama_penerima = matched.nama;
 									cb(null, '');
 								} else {
 									var matched = getMatchEntity(data[i]['nama'], css);
 									//jika ditemukan, ==> simpan
 									if(matched){
 										penerima_id = matched._id;
+										nama_penerima = matched.nama;
 										cb(null, '');
 									} else {
 										var matched = getMatchEntity(data[i]['nama'], sipadus);
 										if(matched){
 											CustomEntity.create({type:'Penerima', nama: data[i]['nama'], unit: matched.unit}, function(err, from_sipadu){
 												penerima_id = from_sipadu._id;
+												nama_penerima = matched.nama;
 												cb(null, '');
 											})
 										} else {
 											CustomEntity.create({type:'Penerima', nama: data[i]['nama']}, function(err, anonim){
 												penerima_id = anonim._id;
+												nama_penerima = data[i]['nama'];
 												cb(null, '');
 											})
 										}
@@ -408,9 +412,7 @@ spj.post('/honor', function(req, res){
 							    	new_entry.pengentry = req.session.username;
 							    	new_entry.ket = '['+data[i]['nama']+'] SPJ Honor Dosen periode '+periode;
 							    	new_entry.pph21 = data[i]['pph'];
-							    	// new_entry.bukti_no = '';// data.bukti_no || '';
-							    	// new_entry.spm_no = '';// data.spm_no || '';
-							    	new_entry.penerima_nama = data[i]['nama'];
+							    	new_entry.penerima_nama = nama_penerima;
 							    	new_entry.tgl = tgl_buat_honor;
 							    	new_entry.tgl_timestamp = moment(tgl_buat_honor, "D MMMM YYYY").unix();
 							    	new_entry.penerima_id = penerima_id;
@@ -767,7 +769,7 @@ spj.post('/transport', function(req, res){
 		    	], function(err, final){
 		    		//link ke POK realisasi
 					_.each(data, function(item, i, list){
-						var penerima_id;
+						var penerima_id, nama_penerima;
 
 						async.series([
 							//ambil id
@@ -776,23 +778,27 @@ spj.post('/transport', function(req, res){
 								//jika ditemukan, ==> simpan
 								if(matched){
 									penerima_id = matched._id;
+									nama_penerima = matched.nama;
 									cb(null, '');
 								} else {
 									var matched = getMatchEntity(data[i]['nama'], css);
 									//jika ditemukan, ==> simpan
 									if(matched){
 										penerima_id = matched._id;
+										nama_penerima = matched.nama;
 										cb(null, '');
 									} else {
 										var matched = getMatchEntity(data[i]['nama'], sipadus);
 										if(matched){
 											CustomEntity.create({type:'Penerima', nama: data[i]['nama'], unit: matched.unit}, function(err, from_sipadu){
 												penerima_id = from_sipadu._id;
+												nama_penerima = matched.nama;
 												cb(null, '');
 											})
 										} else {
 											CustomEntity.create({type:'Penerima', nama: data[i]['nama']}, function(err, anonim){
 												penerima_id = anonim._id;
+												nama_penerima = data[i]['nama'];
 												cb(null, '');
 											})
 										}
@@ -812,7 +818,7 @@ spj.post('/transport', function(req, res){
 								    	new_entry.ket = '['+data[i]['nama']+'] SPJ Transport Dosen periode '+periode;
 								    	// new_entry.bukti_no = '';// data.bukti_no || '';
 								    	// new_entry.spm_no = '';// data.spm_no || '';
-								    	new_entry.penerima_nama = data[i]['nama'];
+								    	new_entry.penerima_nama = nama_penerima;
 								    	new_entry.tgl = tgl_buat_honor;
 							    		new_entry.tgl_timestamp = moment(tgl_buat_honor, "D MMMM YYYY").unix();
 								    	new_entry.penerima_id = penerima_id;

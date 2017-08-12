@@ -3,7 +3,7 @@
         <div class="card-header"><i class="icon-lock-open"></i> Administrator</div>
             <div class="card-block"> 
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12" id="for_spinner">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
                                 <a id="User" class="nav-link active" data-toggle="tab" href="#Userchild" role="tab" aria-control="Userchild"><i class="icon-user"></i> Pengguna</a>
@@ -388,8 +388,36 @@
         }
     });
 
+    var opts = {
+          lines: 13 // The number of lines to draw
+        , length: 28 // The length of each line
+        , width: 14 // The line thickness
+        , radius: 42 // The radius of the inner circle
+        , scale: 0.25 // Scales overall size of the spinner
+        , corners: 1 // Corner roundness (0..1)
+        , color: '#000' // #rgb or #rrggbb or array of colors
+        , opacity: 0.25 // Opacity of the lines
+        , rotate: 0 // The rotation offset
+        , direction: 1 // 1: clockwise, -1: counterclockwise
+        , speed: 1 // Rounds per second
+        , trail: 60 // Afterglow percentage
+        , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+        , zIndex: 2e9 // The z-index (defaults to 2000000000)
+        , className: 'spinner' // The CSS class to assign to the spinner
+        , top: '50%' // Top position relative to parent
+        , left: '50%' // Left position relative to parent
+        , shadow: false // Whether to render a shadow
+        , hwaccel: false // Whether to use hardware acceleration
+        , position: 'absolute' // Element positioning
+    }
+
+    var target = document.getElementById('riwayat-user');
+    var spinner = new Spinner(opts);
+
     var current_id;
     $('.track').click(function(){
+        $('#riwayat-user').modal('show');
+        spinner.spin(target);
         $('#tbl_riwayat').DataTable().clear().draw(false);
         var syarat = {};
         syarat._id = $(this).closest('td').attr('id');
@@ -397,15 +425,16 @@
         syarat.month = $('#bulan_st_modal').val();
         socket.emit('list_user_acts', syarat, function (data) {
             _.each(data, function(row, index, list){
-                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss DD MMMM YYYY"), row.label] );
             })
             $('#tbl_riwayat').DataTable().draw(false);
+            spinner.stop();
         });
-        $('#riwayat-user').modal('show');
     });
         
     $('#bulan_st_modal').change(function(){
         if(!$('#tampil-riwayat-by-month').is(':checked')) return;
+        spinner.spin(target);
         $('#tbl_riwayat').DataTable().clear().draw(false);
         var syarat = {};
         syarat._id = current_id;
@@ -416,6 +445,7 @@
                 $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
             })
             $('#tbl_riwayat').DataTable().draw(false);
+            spinner.stop();
         });
     });
 

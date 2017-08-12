@@ -1371,6 +1371,8 @@ pok.socket = function(io, connections, client){
     						item.penerima_id = matched._id;
     						//untuk cross check kesamaan nama
     						item.ket = '['+item.penerima_nama+'] '+item.ket;
+    						//ganti penerima nama dgn sesuai id
+    						item.penerima_nama = matched.nama;
 							DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
 								'tgl': item.tgl}).exec(function(err, result){
 			    					if(!result){
@@ -1393,6 +1395,8 @@ pok.socket = function(io, connections, client){
 		    						item.penerima_id = matched._id;
 		    						//untuk cross check kesamaan nama nanti
 		    						item.ket = '['+item.penerima_nama+'] '+item.ket;
+		    						//ganti penerima nama dgn sesuai id
+    								item.penerima_nama = matched.nama;
 									DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
 										'tgl': item.tgl}).exec(function(err, result){
 					    					if(!result){
@@ -1431,6 +1435,8 @@ pok.socket = function(io, connections, client){
 													item.penerima_id = new_penerima._id;
 						    						//untuk cross check kesamaan nama nanti
 						    						item.ket = '['+item.penerima_nama+'] '+item.ket;
+						    						//ganti penerima nama dgn sesuai id
+    												item.penerima_nama = matched.nama;
 													DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
 														'tgl': item.tgl}).exec(function(err, result){
 									    					if(!result){
