@@ -358,6 +358,14 @@
             useCurrent: false
         });
 
+        $('<input />').attr('type', 'hidden')
+              .attr('name', "timestamp")
+              .attr('id', "timestamp")
+              .attr('value', $('#tgl_berangkat').data('DateTimePicker').date().unix())
+              .appendTo('#suratTugas');
+
+        $("#jumlah_hari").val(1);
+
         //Disable tgl sblm tgl berangkat pd input tgl kembali
         $("#tgl_berangkat").on("dp.change", function (e) {
             $('#tgl_kembali').data("DateTimePicker").minDate(e.date);
