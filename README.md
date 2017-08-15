@@ -1,13 +1,41 @@
-SIMAMOV V1.0
+SIMAMOV v1.0
 -----------
 
 Judul Skripsi: Sistem Informasi Manajemen Administrasi, Monitoring dan Evaluasi Anggaran STIS
+Developer: Muh. Shamad, Abdul Ghofar, M.T.I.
 
-Syarat:
+Fungsi secara umum:
 
-Server
-- Microsoft Office 2013
-- OS Windows 7 atau yang lebih baru
+**Manajemen POK**
 
-Client
-- Google Chrome
+- Unggah POK (*.xlsx)
+  
+- Entri Realisasi POK
+
+- Riwayat realisasi POK
+  
+**SPPD**
+
+- Buat Surat Tugas
+
+- Buat Surat Tugas Biasa
+
+- Buat Perhitungan
+
+**SPJ**
+
+- Honor Dosen
+
+- Transport Dosen Non STIS
+
+**Pegawai**
+
+- Manajemen Pegawai
+
+- Riwayat Penerimaan Pegawai
+
+**Administrator**
+
+- Manajemen Pengguna
+
+- Lihat Aktivitas Pengguna

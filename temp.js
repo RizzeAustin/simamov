@@ -7,13 +7,9 @@ use simamov;
 // db.spj.find({})
 // db.user.find().pretty()
 // db.pegawai.update({}, {$set: {active: true}}, {multi: true});
-// db.custom_entity.update(
-//    {type: 'Penerima'},
-//    { $set: { active: true } },
-//    { multi: true }
-// )
+// db.custom_entity.findOne()
 
-// db.old_pok_detailBelanja.drop()
+// db.pok_detailBelanja.findOne()
 // db.old_pok_akun.drop()
 // db.old_pok_sub_komponen.drop()
 // db.old_pok_komponen.drop()
@@ -53,6 +49,24 @@ use simamov;
 // db.kab.find().pretty()
 // db.pok_uraian_akun.find({thang: '2017'})
 // db.representasi.find().pretty()
+// db.representasi.insert({
+// 	"_id" : "pejabat_negara",
+// 	"uraian" : "Pejabat Negara",
+// 	"dalam_kota" : 125000,
+// 	"luar_kota" : 250000
+// })
+// db.representasi.insert({
+// 	"_id" : "eselon2",
+// 	"uraian" : "Pejabat Eselon II",
+// 	"luar_kota" : 150000,
+// 	"dalam_kota" : 75000
+// })
+// db.representasi.insert({
+// 	"_id" : "eselon1",
+// 	"uraian" : "Pejabat Eselon I",
+// 	"luar_kota" : 200000,
+// 	"dalam_kota" : 100000
+// })
 // db.perhitungan.find().pretty()
 // db.surat_tugas.find().pretty()
 // db.surat_tugas_biasa.drop()

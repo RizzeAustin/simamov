@@ -363,15 +363,18 @@ spj.post('/honor', function(req, res){
 
 		    	], function(err, final){
 		    		//link ke POK realisasi
+		    		var research = [];
 					_.each(data, function(item, i, list){
 						var penerima_id, nama_penerima;
 
 						async.series([
 							//ambil id
 							function(cb){
-								var matched = getMatchEntity(data[i]['nama'], pegs);
+								var matched = getMatchEntitySpecial(data[i]['nama'], pegs);
 								//jika ditemukan, ==> simpan
 								if(matched){
+									matched.target = data[i]['nama'];
+									research.push({nama: matched.nama, target: data[i]['nama'], score: matched.score})
 									penerima_id = matched._id;
 									nama_penerima = matched.nama;
 									cb(null, '');
@@ -431,6 +434,24 @@ spj.post('/honor', function(req, res){
 							})
 						})
 					})
+
+
+					XlsxPopulate.fromFileAsync("./template/similarity.xlsx")
+					    .then(workbook => {
+					    	var row = 1;
+					    	var nmr = 1;
+					    	_.each(research, function(item, index, list){
+					    		var r = workbook.sheet(0).range('A'+row+':D'+row);
+					    		r.value([[nmr,
+					    			item.target,
+					    			item.nama, 
+					    			item.score
+					    		]]);
+					    		row++;
+					    		nmr++;
+					    	})
+					    workbook.toFileAsync('./temp_file/'+new Date().getTime()/1000+'percobaan_without_dotz_space.xlsx');
+	    			})
 
 					//riwayat user
 					User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Buat SPJ Honor Dosen periode '+periode}}}, 
@@ -994,6 +1015,20 @@ function getMatchEntity(name, entities){
 	} else {
 		return null;
 	}
+}
+
+function getMatchEntitySpecial(name, entities){
+	name = name.replace(/dr\.|dr\s|ph\.?\s?d/g, '');
+	var p = [];
+	_.each(entities, function(e, index, list){
+		e.nama = e.nama.replace(/dr\.|dr\s|ph\.?\s?d/g, '');
+		e.score = clj_fuzzy.metrics.jaro_winkler(capitalize(name).replace(/\.|\,|\'|\s/g, ''), capitalize(e.nama).replace(/\.|\,|\'|\s/g, ''));
+		p.push(e);
+	})
+
+	var matched = _.max(p, function(e){ return e.score; })
+
+	return matched;
 }
 
 function capitalize(s){

@@ -63,6 +63,142 @@ var mysql = require('mysql');
 //similarity between string
 var clj_fuzzy = require('clj-fuzzy');
 
+	// var items;
+
+	// async.series([
+	// 	function(cb){
+	// 		//ambil semua custom entity (type: Penerima)
+	// 		CustomEntity.find({type: 'Penerima', active: true}, function(err, aaaaaa){
+	// 			items = aaaaaa;
+	// 			cb(null, '')
+	// 		})
+	// 	},
+	// 	function(cb){
+	// 		var task = [];
+
+	// 		_.each(items, function(item, idx, list){
+	// 			task.push(
+	// 				function(callb){
+	// 					CustomEntity.findOne({_id: new ObjectId(item._id)}, function(err, isExist){
+	// 						if(isExist){
+	// 							//cek apakah ada yg sama namanya
+	// 							CustomEntity.find({nama: item.nama, _id: {$ne: item._id}}, function(err, same_items){
+	// 								var task2 = [];
+
+	// 								_.each(same_items, function(it, idx, list){
+	// 									//iterasi utk setiap yg sama
+	// 									task2.push(
+	// 										function(clb){
+	// 											console.log(item._id, '>', it._id);
+	// 											DetailBelanja.find({'thang': 2017, active: true}, 'realisasi').elemMatch('realisasi', {'penerima_id': it._id}).exec(function(err, result){
+	// 							    					if(!result){
+	// 							    						//simpan
+	// 							    						clb(null, '')
+	// 							    					} else {
+	// 							    						var tsk = [];
+	// 							    						_.each(result, function(detail, idx, list){
+	// 							    							_.each(detail.realisasi, function(real, idx, list){
+	// 							    								tsk.push(
+	// 							    									function(clbk){
+	// 								    									if(it._id == real.penerima_id){
+	// 										    								real.penerima_id = item._id;
+	// 										    								detail.save(function(err){
+	// 										    									clbk(null, '')
+	// 										    								});
+	// 										    							} else {
+	// 										    								clbk(null, '')
+	// 										    							}
+	// 								    								}
+	// 							    								)
+	// 								    						})
+	// 							    						})
+	// 							    						async.series(tsk, function(err, final){
+	// 							    							clb(null, '')
+	// 							    						})
+	// 							    					}
+	// 							    			})
+	// 										}
+	// 									)
+	// 									//ganti semua penerima_id dgn item id
+	// 									//hapus it
+	// 								})
+
+	// 								async.series(task2, function(err, final){
+	// 									var task_a = [];
+	// 									_.each(same_items, function(it, idx, list){
+	// 										task_a.push(
+	// 											function(callbck){
+	// 												CustomEntity.remove({_id: new ObjectId(it._id)}, function(err, status){
+	// 													callbck(null, '')
+	// 												})
+	// 											}
+	// 										)
+	// 									})
+
+	// 									async.series(task_a, function(err, final){
+	// 										callb(null, '')
+	// 									})
+	// 								})
+									
+	// 							})
+	// 						} else {
+	// 							callb(null, '')
+	// 						}
+	// 					})
+	// 				}
+	// 			)
+	// 		})
+
+	// 		async.series(task, function(err, final){
+	// 			cb(null, '')
+	// 		})
+	// 	}
+
+	// ], function(err, final){
+	// 	console.log('finish')
+	// })
+
+	// DetailBelanja.find({'thang': 2017, active: true, realisasi: { $exists: true, $ne: [] }}, 'realisasi', function(err, reals){
+	// 	var tsk = [];
+	// 	var pegs;
+	// 	tsk.push(
+	// 		function(clbk){
+	// 			Pegawai.find({}, function(err, result){
+	// 				pegs = result;
+	// 				clbk(null, '')
+	// 			})
+	// 		}
+	// 	);
+	// 	_.each(reals, function(detail, idx, list){
+	// 		_.each(detail.realisasi, function(real, idx, list){
+	// 			tsk.push(
+	// 				function(clbk){
+	// 					if(it._id == real.penerima_id){
+	// 						real.penerima_id = item._id;
+	// 						detail.save(function(err){
+	// 							clbk(null, '')
+	// 						});
+	// 					} else {
+	// 						clbk(null, '')
+	// 					}
+	// 				}
+	// 			)
+	// 		})
+	// 	})
+	// 	async.series(tsk, function(err, final){
+	// 		console.log('finish')
+	// 	})
+	// })
+
+
+	//jika ditemukan, maka ganti semua penerima_id realisasi dgn _id itu dgn _id yg pertama.
+
+	//hapus yang sama itu
+	//1. ambil semua detail yg ada realisasinya
+	//2. cek kesesuain nama dgn database pegawai
+	//3. jika >0.86 set id, jika id != id sebelumnya dan custom entity, maka hapus ce tsb
+	//4. jika tdk,
+
 //Socket.io
 pok.connections;
 
@@ -2072,6 +2208,31 @@ pok.get('/', function(req, res){
 
 pok.get('/refine', function(req, res){
 	res.send('ok');
+	//ambil semua custom entity (type: Penerima)
+	CustomEntity.find({type: 'Penerima', active: true}, function(err, items){
+		_.each(items, function(item, idx, list){
+			//cek apakah ada yg sama namanya
+			CustomEntity.find({nama: item.nama, _id: {$ne: item._id}}, function(err, same_items){
+				_.each(same_items, function(it, idx, list){
+					console.log(item._id, '>', it._id);
+				})
+			})
+
+		})
+	})
+
+
+	//jika ditemukan, maka ganti semua penerima_id realisasi dgn _id itu dgn _id yg pertama.
+
+	//hapus yang sama itu
+
+
+
+
+
+
+
+
 	//1. ambil semua detail yg ada realisasinya
 	//2. cek kesesuain nama dgn database pegawai
 	//3. jika >0.86 set id, jika id != id sebelumnya dan custom entity, maka hapus ce tsb
