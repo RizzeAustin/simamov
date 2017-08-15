@@ -42,3 +42,6 @@ Fungsi secara umum:
 - Manajemen Pengguna
 
 - Lihat Aktivitas Pengguna
+
+
+Untuk Persyaratan Sistem, Instalasi, dan Panduan Penggunaan, klik <a href="https://git.stis.ac.id/Shamad/simamov/wikis/home">di sini</a>.
