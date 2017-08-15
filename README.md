@@ -2,6 +2,7 @@ SIMAMOV v1.0
 -----------
 
 Judul Skripsi: Sistem Informasi Manajemen Administrasi, Monitoring dan Evaluasi Anggaran STIS
+
 Developer: Muh. Shamad, Abdul Ghofar, M.T.I.
 
 Fungsi secara umum:
