@@ -10,6 +10,8 @@ Fungsi secara umum:
 **Manajemen POK**
 
 - Unggah POK (*.xlsx)
+
+- Edit POK
   
 - Entri Realisasi POK
 
