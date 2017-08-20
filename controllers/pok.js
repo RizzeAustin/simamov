@@ -63,6 +63,119 @@ var mysql = require('mysql');
 //similarity between string
 var clj_fuzzy = require('clj-fuzzy');
 
+	// DetailBelanja.find({'thang': 2017, active: true, realisasi: { $exists: true, $ne: [] }}, 'realisasi', function(err, reals){
+	// 	var tsk = [];
+	// 	var pegs, ce, dosen;
+	// 	tsk.push(
+	// 		function(clbk){
+	// 			Pegawai.find({}, function(err, result){
+	// 				pegs = result;
+	// 				clbk(null, '')
+	// 			})
+	// 		}
+	// 	);
+	// 	tsk.push(
+	// 		function(clbk){
+	// 			CustomEntity.find({type: 'Penerima', active: true}, function(err, result){
+	// 				ce = result;
+	// 				clbk(null, '')
+	// 			})
+	// 		}
+	// 	);
+		
+	// 	tsk.push(
+	// 		function(clbk){
+	// 			var sipadu_db = mysql.createConnection({
+	// 				host: '127.0.0.1',
+	// 				user: 'root',
+	// 				password: '',
+	// 				database: 'sipadu_db'
+	// 			});
+
+	//     		//kueri utk dosen di sipadu
+	//     		var query = 'SELECT * ' +
+	// 					'FROM dosen ' +
+	// 					'WHERE aktif = 1 AND unit <> "STIS"';
+	// 			sipadu_db.connect(function(err){
+	// 				sipadu_db.query(query, function (err, dosens, fields) {
+	// 					if (err){
+	// 					  	console.log(err)
+	// 					  	return;
+	// 					}
+	// 					sipadu_db.end();
+	// 					dosen = _.map(dosens, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit}});
+	// 					clbk(null, '')
+	// 				})
+	// 			})
+	// 		}
+	// 	);
+	// 	_.each(reals, function(detail, idx, list){
+	// 		_.each(detail.realisasi, function(real, idx, list){
+	// 			tsk.push(
+	// 				function(clbk){
+	// 					var matched = getMatchEntity(detail.realisasi.id(real._id).penerima_nama, pegs);
+	// 					if(matched.score >= 0.91){    						
+	// 						// console.log(real.penerima_nama)
+	// 						CustomEntity.findOne({nama: detail.realisasi.id(real._id).penerima_nama, type: 'Penerima'}, function(err, result){
+	// 							if(result){
+	// 								result.remove(function(err, status){
+	// 									DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+ //    										{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
+ //    											clbk(null, '')
+ //    									})
+	// 								});
+	// 							} else {
+	// 								DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 									{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
+	// 										clbk(null, '')
+	// 								})
+	// 							}
+	// 						})
+ //    					} else {
+ //    						matched = getMatchEntity(detail.realisasi.id(real._id).penerima_nama, ce);
+ //    						if(matched.score >= 0.91){
+	//     						DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 								{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
+	// 									clbk(null, '')
+	// 							})
+	//     					} else {
+	//     						matched = getMatchEntity(detail.realisasi.id(real._id).penerima_nama, dosen);
+	//     						if(matched.score >= 0.91){
+	//     							CustomEntity.findOne({'nama': detail.realisasi.id(real._id).penerima_nama.replace(/^\s*/g, ''), type:'Penerima', unit: matched.unit}, function(err, result){
+	//     								if(result){
+	//     									DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 											{$set: {'realisasi.$.penerima_id': result._id, 'realisasi.$.penerima_nama': result.nama}}, function(err, result){
+	// 												clbk(null, '')
+	// 										})
+	//     								} else {
+	//     									CustomEntity.create({'nama': detail.realisasi.id(real._id).penerima_nama.replace(/^\s*/g, ''), type:'Penerima', unit: matched.unit}, function(err, new_penerima){
+	// 											DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 												{$set: {'realisasi.$.penerima_id': new_penerima._id, 'realisasi.$.penerima_nama': new_penerima.nama}}, function(err, result){
+	// 													clbk(null, '')
+	// 											})
+	// 										})
+	//     								}
+	//     							})
+	// 	    					} else {
+	// 	    						CustomEntity.create({'nama': detail.realisasi.id(real._id).penerima_nama.replace(/^\s*/g, ''), type:'Penerima'}, function(err, new_penerima){
+	// 	    							ce.push(new_penerima)
+	// 									DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 										{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
+	// 											clbk(null, '')
+	// 									})
+	// 								})
+	// 	    					}
+	//     					}
+	// 					}
+	// 				}
+	// 			)
+	// 		})
+	// 	})
+	// 	async.series(tsk, function(err, final){
+	// 		console.log('finish')
+	// 	})
+	// })
+
 	// var items;
 
 	// async.series([
@@ -156,38 +269,6 @@ var clj_fuzzy = require('clj-fuzzy');
 
 	// ], function(err, final){
 	// 	console.log('finish')
-	// })
-
-	// DetailBelanja.find({'thang': 2017, active: true, realisasi: { $exists: true, $ne: [] }}, 'realisasi', function(err, reals){
-	// 	var tsk = [];
-	// 	var pegs;
-	// 	tsk.push(
-	// 		function(clbk){
-	// 			Pegawai.find({}, function(err, result){
-	// 				pegs = result;
-	// 				clbk(null, '')
-	// 			})
-	// 		}
-	// 	);
-	// 	_.each(reals, function(detail, idx, list){
-	// 		_.each(detail.realisasi, function(real, idx, list){
-	// 			tsk.push(
-	// 				function(clbk){
-	// 					if(it._id == real.penerima_id){
-	// 						real.penerima_id = item._id;
-	// 						detail.save(function(err){
-	// 							clbk(null, '')
-	// 						});
-	// 					} else {
-	// 						clbk(null, '')
-	// 					}
-	// 				}
-	// 			)
-	// 		})
-	// 	})
-	// 	async.series(tsk, function(err, final){
-	// 		console.log('finish')
-	// 	})
 	// })
 
 
@@ -1046,7 +1127,7 @@ pok.socket = function(io, connections, client){
     	});
     })
 
-    client.on('pok_edit_new_item', function (user_input) {
+    client.on('pok_edit_new_item', function (user_input, cb) {
     	var Model;
     	if(user_input.type == 'detail'){
     		Model = DetailBelanja;
@@ -1084,101 +1165,190 @@ pok.socket = function(io, connections, client){
     			user_input.kdakun = parent.kdakun
     			user_input.thang = thang
     			var item = new Model(user_input);
-    			item.save(function(err, result){
-    				if(err){
-    					console.log(err)
-						errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
-						return;
-					}
-					client.emit('pok_new_id', result._id);
-					user_input._id = result._id;
-					user_input.parent_id = parent_id_temp;
-					user_input.type = type_temp;
-					//jika cara 2 maka broadcast, jika cara 1 maka ke semua (krn cara 1 tdk append langsung)
-					if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
-						else io.sockets.to(thang).emit('pok_new_entry', user_input);
-					sendNotification(client, 'Item berhasil disimpan.')
-					User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
-						function(err, status){
-					})
-    			});
+    			Model.findOne({'thang': thang, kdprogram: parent.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput, kdsoutput: user_input.kdsoutput,
+    				kdkmpnen: user_input.kdkmpnen, kdskmpnen: user_input.kdskmpnen, kdakun: user_input.kdakun, nmitem: user_input.nmitem, 'active': true}, function(err, result){
+    				if(result){
+    					sendNotification(client, 'Item sudah ada.');
+    					if(cb) cb('gagal');
+    					return;
+    				} else {
+    					item.save(function(err, result){
+		    				if(err){
+		    					console.log(err)
+								errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
+								return;
+							}
+							client.emit('pok_new_id', result._id);
+							user_input._id = result._id;
+							user_input.parent_id = parent_id_temp;
+							user_input.type = type_temp;
+							//jika cara 2 maka broadcast, jika cara 1 maka ke semua (krn cara 1 tdk append langsung)
+							if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
+								else io.sockets.to(thang).emit('pok_new_entry', user_input);
+							if(cb) cb('sukses');
+							sendNotification(client, 'Item berhasil disimpan.')
+							User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
+								function(err, status){
+							})
+		    			});
+    				}
+    			})
     		})
     	} else if(user_input.parent_type == 'kegiatan'){
+    		if(!user_input.kdoutput.match(/^\d{3}$|\.\d{3}$/)){
+    			sendNotification(client, 'Kode output tidak valid.');
+    			return;
+    		}
     		Kegiatan.findOne({'thang': thang, _id: user_input.parent_id, 'active': true}, function(err, parent){
     			user_input.kdprogram = parent.kdprogram
     			user_input.kdgiat = parent.kdgiat
+    			user_input.kdoutput = user_input.kdoutput.match(/\d{3}$/)[0];
     			user_input.thang = thang
     			var item = new Model(user_input);
-    			item.save(function(err, result){
-    				if(err){
-    					console.log(err)
-						errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
+    			Model.findOne({'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput, 'active': true}, function(err, result){
+					if(result){
+						sendNotification(client, 'Item sudah ada.');
+						if(cb) cb('gagal');
 						return;
+					} else {
+						item.save(function(err, result){
+		    				if(err){
+		    					console.log(err)
+								errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
+								return;
+							}
+							client.emit('pok_new_id', result._id);
+							user_input._id = result._id;
+							user_input.parent_id = parent_id_temp;
+							user_input.type = type_temp;
+							if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
+								else io.sockets.to(thang).emit('pok_new_entry', user_input);
+							sendNotification(client, 'Item berhasil disimpan.')
+							if(cb) cb('sukses');
+							User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
+								function(err, status){
+							})
+		    			});
 					}
-					client.emit('pok_new_id', result._id);
-					user_input._id = result._id;
-					user_input.parent_id = parent_id_temp;
-					user_input.type = type_temp;
-					if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
-						else io.sockets.to(thang).emit('pok_new_entry', user_input);
-					sendNotification(client, 'Item berhasil disimpan.')
-					User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
-						function(err, status){
-					})
-    			});
+				})
     		})
     	} else if(user_input.parent_type == 'output'){
+    		//jika tdk lompat ke komponen (pada cara 2)
+    		if(user_input.kdsoutput){
+    			if(!user_input.kdsoutput.match(/^\d{3}$|\.\d{3}$/)){
+	    			sendNotification(client, 'Kode sub output tidak valid.');
+	    			return;
+	    		}
+    		} else {
+    			if(!user_input.kdkmpnen.match(/^\d{3}$|\.\d{3}$/)){
+	    			sendNotification(client, 'Kode komponen tidak valid.');
+	    			return;
+	    		}
+    		}
     		Output.findOne({'thang': thang, _id: user_input.parent_id, 'active': true}, function(err, parent){
     			user_input.kdprogram = parent.kdprogram
     			user_input.kdgiat = parent.kdgiat
     			user_input.kdoutput = parent.kdoutput
     			user_input.thang = thang
-    			var item = new Model(user_input);
-    			item.save(function(err, result){
-    				if(err){
-    					console.log(err)
-						errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
-						return;
-					}
-					client.emit('pok_new_id', result._id);
-					user_input._id = result._id;
-					user_input.parent_id = parent_id_temp;
-					user_input.type = type_temp;
-					if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
-						else io.sockets.to(thang).emit('pok_new_entry', user_input);
-					sendNotification(client, 'Item berhasil disimpan.')
-					User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
-						function(err, status){
+    			var syarat;
+    			if(user_input.kdsoutput){
+    				user_input.kdsoutput = user_input.kdsoutput.match(/\d{3}$/)[0];
+    				syarat = {'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput, kdsoutput: user_input.kdsoutput, 'active': true};
+    			} else {
+					//buat soutput jika langsung lompat ke komponen
+					SubOutput.findOne({'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput, kdsoutput: '001', 'active': true}, function(err, result){
+						if(!result){
+							SubOutput.create({'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput, kdsoutput: '001', ursoutput: 'tanpa sub output', 'active': true}, function(err, result){
+								//kdsoutput 001 dibuat
+							})
+						}
 					})
-    			});
+    				user_input.kdsoutput = '001';
+    				user_input.kdkmpnen = user_input.kdkmpnen.match(/\d{3}$/)[0]
+    				syarat = {'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput, kdsoutput: '001', kdkmpnen: user_input.kdkmpnen, 'active': true};
+    			}
+    			var item = new Model(user_input);
+    			Model.findOne(syarat, function(err, result){
+					if(result){
+						sendNotification(client, 'Item sudah ada.');
+						if(cb) cb('gagal');
+						return;
+					} else {
+						item.save(function(err, result){
+		    				if(err){
+		    					console.log(err)
+								errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
+								return;
+							}
+							client.emit('pok_new_id', result._id);
+							user_input._id = result._id;
+							user_input.parent_id = parent_id_temp;
+							user_input.type = type_temp;
+							if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
+								else io.sockets.to(thang).emit('pok_new_entry', user_input);
+							sendNotification(client, 'Item berhasil disimpan.')
+							if(cb) cb('sukses');
+							User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
+								function(err, status){
+							})
+		    			});
+					}
+				})
     		})
     	} else if(user_input.parent_type == 'soutput'){
+    		if(!user_input.kdkmpnen.match(/^\d{3}$|\.\d{3}$/)){
+    			sendNotification(client, 'Kode komponen tidak valid.');
+    			return;
+    		}
     		SubOutput.findOne({'thang': thang, _id: user_input.parent_id, 'active': true}, function(err, parent){
     			user_input.kdprogram = parent.kdprogram
     			user_input.kdgiat = parent.kdgiat
     			user_input.kdoutput = parent.kdoutput
     			user_input.kdsoutput = parent.kdsoutput
+    			user_input.kdkmpnen = user_input.kdkmpnen.match(/\d{3}$/)[0]
     			user_input.thang = thang
     			var item = new Model(user_input);
-    			item.save(function(err, result){
-    				if(err){
-    					console.log(err)
-						errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
+    			Model.findOne({'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput, kdoutput: user_input.kdoutput,
+    				kdsoutput: user_input.kdsoutput, kdkmpnen: user_input.kdkmpnen, 'active': true}, function(err, result){
+					if(result){
+						sendNotification(client, 'Item sudah ada.');
+						if(cb) cb('gagal');
 						return;
+					} else {
+						item.save(function(err, result){
+		    				if(err){
+		    					console.log(err)
+								errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
+								return;
+							}
+							client.emit('pok_new_id', result._id);
+							user_input._id = result._id;
+							user_input.parent_id = parent_id_temp;
+							user_input.type = type_temp;
+							if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
+								else io.sockets.to(thang).emit('pok_new_entry', user_input);
+							sendNotification(client, 'Item berhasil disimpan.')
+							if(cb) cb('sukses');
+							User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
+								function(err, status){
+							})
+		    			});
 					}
-					client.emit('pok_new_id', result._id);
-					user_input._id = result._id;
-					user_input.parent_id = parent_id_temp;
-					user_input.type = type_temp;
-					if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
-						else io.sockets.to(thang).emit('pok_new_entry', user_input);
-					sendNotification(client, 'Item berhasil disimpan.')
-					User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
-						function(err, status){
-					})
-    			});
+				})
     		})
     	} else if(user_input.parent_type == 'komponen'){
+    		if(user_input.kdskmpnen){
+    			if(!user_input.kdskmpnen.match(/^[A-Z]{1}$|\.[A-Z]{1}$/)){
+	    			sendNotification(client, 'Kode sub komponen tidak valid.');
+	    			return;
+	    		}
+    		}else {
+    			if(!user_input.kdakun.match(/^\d{6}$|\.\d{6}$/)){
+	    			sendNotification(client, 'Kode akun tidak valid.');
+	    			return;
+	    		}
+    		}
+    		
     		Komponen.findOne({'thang': thang, _id: user_input.parent_id, 'active': true}, function(err, parent){
     			user_input.kdprogram = parent.kdprogram
     			user_input.kdgiat = parent.kdgiat
@@ -1186,26 +1356,60 @@ pok.socket = function(io, connections, client){
     			user_input.kdsoutput = parent.kdsoutput
     			user_input.kdkmpnen = parent.kdkmpnen
     			user_input.thang = thang
-    			var item = new Model(user_input);
-    			item.save(function(err, result){
-    				if(err){
-    					console.log(err)
-						errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
-						return;
-					}
-					client.emit('pok_new_id', result._id);
-					user_input._id = result._id;
-					user_input.parent_id = parent_id_temp;
-					user_input.type = type_temp;
-					if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
-						else io.sockets.to(thang).emit('pok_new_entry', user_input);
-					sendNotification(client, 'Item berhasil disimpan.')
-					User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
-						function(err, status){
+    			var syarat;
+    			if(user_input.kdskmpnen){
+    				user_input.kdskmpnen = user_input.kdskmpnen.match(/[A-Z]{1}$/)[0]
+    				syarat = {'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput,
+    				kdsoutput: user_input.kdsoutput, kdkmpnen: user_input.kdkmpnen, kdskmpnen: user_input.kdskmpnen, 'active': true}
+    			} else {
+					SubKomponen.findOne({'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput,
+						kdsoutput: user_input.kdsoutput, kdkmpnen: user_input.kdkmpnen, kdskmpnen: 'A', 'active': true}, function(err, result){
+						if(!result){
+							SubKomponen.create({'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput,
+								kdsoutput: user_input.kdsoutput, kdkmpnen: user_input.kdkmpnen, kdskmpnen: 'A', urskmpnen: 'tanpa sub komponen', 'active': true}, function(err, result){
+								//kdskmpnen A dibuat
+							})
+						}
 					})
-    			});
+    				user_input.kdskmpnen = 'A';
+    				user_input.kdakun = user_input.kdakun.match(/\d{6}$/)[0]
+    				syarat = {'thang': thang, kdprogram: user_input.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput,
+    				kdsoutput: user_input.kdsoutput, kdkmpnen: user_input.kdkmpnen, kdskmpnen: 'A', kdakun: user_input.kdakun, 'active': true}
+    			}
+    			var item = new Model(user_input);
+    			Model.findOne(syarat, function(err, result){
+    				console.log(syarat,result)
+					if(result){
+						sendNotification(client, 'Item sudah ada.');
+						if(cb) cb('gagal');
+						return;
+					} else {
+		    			item.save(function(err, result){
+		    				if(err){
+		    					console.log(err)
+								errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
+								return;
+							}
+							client.emit('pok_new_id', result._id);
+							user_input._id = result._id;
+							user_input.parent_id = parent_id_temp;
+							user_input.type = type_temp;
+							if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
+								else io.sockets.to(thang).emit('pok_new_entry', user_input);
+							sendNotification(client, 'Item berhasil disimpan.')
+							if(cb) cb('sukses');
+							User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
+								function(err, status){
+							})
+		    			});
+					}
+				})
     		})
     	} else if(user_input.parent_type == 'skomponen'){
+    		if(!user_input.kdakun.match(/^\d{6}$|\.\d{6}$/)){
+    			sendNotification(client, 'Kode akun tidak valid.');
+    			return;
+    		}
     		SubKomponen.findOne({'thang': thang, _id: user_input.parent_id, 'active': true}, function(err, parent){
     			user_input.kdprogram = parent.kdprogram
     			user_input.kdgiat = parent.kdgiat
@@ -1213,55 +1417,86 @@ pok.socket = function(io, connections, client){
     			user_input.kdsoutput = parent.kdsoutput
     			user_input.kdkmpnen = parent.kdkmpnen
     			user_input.kdskmpnen = parent.kdskmpnen
+    			user_input.kdakun = user_input.kdakun.match(/\d{6}$/)[0]
     			user_input.thang = thang
     			var item = new Model(user_input);
-    			item.save(function(err, result){
-    				if(err){
-    					console.log(err)
-						errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
-						return;
-					}
-					client.emit('pok_new_id', result._id);
-					user_input._id = result._id;
-					user_input.parent_id = parent_id_temp;
-					user_input.type = type_temp;
-					if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
-						else io.sockets.to(thang).emit('pok_new_entry', user_input);
-					sendNotification(client, 'Item berhasil disimpan.')
-					User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
-						function(err, status){
-					})
-    			});
+    			Model.findOne({'thang': thang, kdprogram: parent.kdprogram, kdgiat: user_input.kdgiat, kdoutput: user_input.kdoutput, kdsoutput: user_input.kdsoutput,
+    				kdkmpnen: user_input.kdkmpnen, kdskmpnen: user_input.kdskmpnen, kdakun: user_input.kdakun, 'active': true}, function(err, result){
+    				if(result){
+    					sendNotification(client, 'Item sudah ada.');
+    					if(cb) cb('gagal');
+    					return;
+    				} else {
+    					item.save(function(err, result){
+		    				if(err){
+		    					console.log(err)
+								errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
+								return;
+							}
+							client.emit('pok_new_id', result._id);
+							user_input._id = result._id;
+							user_input.parent_id = parent_id_temp;
+							user_input.type = type_temp;
+							if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
+								else io.sockets.to(thang).emit('pok_new_entry', user_input);
+							sendNotification(client, 'Item berhasil disimpan.')
+							if(cb) cb('sukses');
+							User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
+								function(err, status){
+							})
+		    			});
+    				}
+    			})
     		})
     	} else if(user_input.parent_type == 'program'){
+    		if(!user_input.kdgiat.match(/^\d{4}$|\.\d{4}$/)){
+    			sendNotification(client, 'Kode kegiatan tidak valid.');
+    			return;
+    		}
     		Program.findOne({'thang': thang, _id: user_input.parent_id, 'active': true}, function(err, parent){
     			user_input.kdprogram = parent.kdprogram
+    			user_input.kdgiat = user_input.kdgiat.match(/\d{4}$/)[0];
     			user_input.thang = thang
     			var item = new Model(user_input);
-    			item.save(function(err, result){
-    				if(err){
-    					console.log(err)
-						errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
-						return;
-					}
-					client.emit('pok_new_id', result._id);
-					user_input._id = result._id;
-					user_input.parent_id = parent_id_temp;
-					user_input.type = type_temp;
-					if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
-						else io.sockets.to(thang).emit('pok_new_entry', user_input);
-					sendNotification(client, 'Item berhasil disimpan.')
-					User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
-						function(err, status){
-					})
-    			});
+    			Model.findOne({'thang': thang, kdprogram: parent.kdprogram, kdgiat: user_input.kdgiat.match(/\d{4}$/)[0], 'active': true}, function(err, result){
+    				if(result){
+    					sendNotification(client, 'Item sudah ada.');
+    					if(cb) cb('gagal');
+    					return;
+    				} else {
+    					item.save(function(err, result){
+		    				if(err){
+		    					console.log(err)
+								errorHandler(client, 'Gagal menyimpan. Mohon hubungi admin.')
+								return;
+							}
+							client.emit('pok_new_id', result._id);
+							user_input._id = result._id;
+							user_input.parent_id = parent_id_temp;
+							user_input.type = type_temp;
+							if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
+								else io.sockets.to(thang).emit('pok_new_entry', user_input);
+							if(cb) cb('sukses');
+							sendNotification(client, 'Item berhasil disimpan.')
+							User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
+								function(err, status){
+							})
+		    			});
+    				}
+    			})
     		})
     	} else if(user_input.parent_type == ''){
-    		Program.findOne({'thang': thang, _id: user_input.kdprogram, 'active': true}, function(err, parent){
+    		if(!user_input.kdprogram.match(/^\d{2}$|\.\d{2}$/)){
+    			sendNotification(client, 'Kode program tidak valid.');
+    			return;
+    		}
+    		Program.findOne({'thang': thang, kdprogram: user_input.kdprogram.match(/\d{2}$/)[0], 'active': true}, function(err, parent){
     			if(parent){
-    				sendNotification(client, 'Item Sudah ada.');
+    				sendNotification(client, 'Item sudah ada.');
+    				if(cb) cb('gagal');
     				return;
     			}
+    			user_input.kdprogram = user_input.kdprogram.match(/\d{2}$/)[0];
 				user_input.thang = thang
     			var item = new Model(user_input);
     			item.save(function(err, result){
@@ -1277,6 +1512,7 @@ pok.socket = function(io, connections, client){
 					if(!from_temp) client.broadcast.to(thang).emit('pok_new_entry', user_input)
 						else io.sockets.to(thang).emit('pok_new_entry', user_input);
 					sendNotification(client, 'Item berhasil disimpan.')
+					if(cb) cb('sukses');
 					User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Buat item POK baru '+result._id}}}, 
 						function(err, status){
 					})
@@ -1503,7 +1739,7 @@ pok.socket = function(io, connections, client){
     				Pegawai.find({active: true}, 'nama', function(err, pegs){
     					var matched = getMatchEntity(item.penerima_nama, pegs);
     					//ambil id ke peg
-    					if(matched.score >= 0.86){
+    					if(matched.score >= 0.91){
     						item.penerima_id = matched._id;
     						//untuk cross check kesamaan nama
     						item.ket = '['+item.penerima_nama+'] '+item.ket;
@@ -1527,7 +1763,7 @@ pok.socket = function(io, connections, client){
 								  	return;
 								}
 								var matched = getMatchEntity(item.penerima_nama, custs);
-								if(matched.score >= 0.86){
+								if(matched.score >= 0.91){
 		    						item.penerima_id = matched._id;
 		    						//untuk cross check kesamaan nama nanti
 		    						item.ket = '['+item.penerima_nama+'] '+item.ket;
@@ -1566,7 +1802,7 @@ pok.socket = function(io, connections, client){
 											var dosen_refine = _.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit}});
 											var matched = getMatchEntity(item.penerima_nama, dosen_refine);
 											//ambil id ke peg
-					    					if(matched.score >= 0.86){
+					    					if(matched.score >= 0.91){
 					    						CustomEntity.create({'nama': item.penerima_nama, type:'Penerima', unit: matched.unit}, function(err, new_penerima){
 													item.penerima_id = new_penerima._id;
 						    						//untuk cross check kesamaan nama nanti
@@ -1587,7 +1823,7 @@ pok.socket = function(io, connections, client){
 												})
 					    					} else {
 					    						// klo masih tdk ada, buat custom
-												CustomEntity.create({'nama': item.penerima_nama, type:'Penerima'}, function(err, new_penerima){
+												CustomEntity.create({'nama': item.penerima_nama.replace(/^\s*/g, ''), type:'Penerima'}, function(err, new_penerima){
 													item.penerima_id = new_penerima._id;
 													submit_entry(item, callback);
 												})
@@ -1950,7 +2186,7 @@ pok.socket = function(io, connections, client){
 		    							pph23:realisasi.pph23, ppn:realisasi.ppn, spm_no:realisasi.spm_no, bukti_no:realisasi.bukti_no, ket:realisasi.ket, pengentry:realisasi.pengentry})
 	    					} else {
 			    				client.emit('riwayat_tbl_add', [realisasi._id, detail._id, '', realisasi.tgl, detail.nmitem, realisasi.jumlah, realisasi.pph21, realisasi.pph22, 
-		    							realisasi.pph23, realisasi.ppn, realisasi.spm_no, realisasi.bukti_no, realisasi.ket, realisasi.pengentry, '<button type="button" class="del-riwayat-tbl"><i class="icon-close"></i></button>']);
+		    							realisasi.pph23, realisasi.ppn, realisasi.spm_no, realisasi.bukti_no, realisasi.ket, realisasi.pengentry, '<button type="button" class="del-riwayat-tbl"><i class="icon-close"></i></button> <button type="button" class="btn-ubah-penerima"><i class="icon-share-alt"></i></button>']);
     						}
     					}
     				})
@@ -2177,6 +2413,104 @@ pok.socket = function(io, connections, client){
     		})
     	})
     })
+
+    client.on('lihat_akun_data', function (detail_id, cb){
+    	DetailBelanja.findOne({_id: new ObjectId(detail_id)}, function(err, detail){
+    		if(detail){
+    			DetailBelanja.find({kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, 
+	    			kdoutput: detail.kdoutput, kdsoutput: detail.kdsoutput, kdkmpnen: detail.kdkmpnen, 
+	    			kdskmpnen: detail.kdskmpnen, kdakun: detail.kdakun}).sort('noitem').exec(function(err, details){
+	    			cb(details);
+	    		})
+    		}
+    	});
+    })
+
+    client.on('kembalikan_detail', function (detail_id, cb){
+    	DetailBelanja.findOne({_id: new ObjectId(detail_id)}, function(err, detail){
+    		if(detail){
+    			detail.volkeg = detail.old[detail.old.length-1].volkeg;
+    			detail.jumlah = detail.old[detail.old.length-1].jumlah;
+    			detail.timestamp = Math.round(new Date().getTime()/1000);
+    			detail.save(function(err){
+    				cb(detail);
+    			})
+    		}
+    	});
+    })
+
+    client.on('kembalikan_buatbaru_detail', function (detail_id, cb){
+    	DetailBelanja.findOne({_id: new ObjectId(detail_id)}, function(err, detail){
+    		if(detail){
+    			var timestamp = Math.round(new Date().getTime()/1000);
+    			var detail_belanja_var = ['noitem','nmitem','volkeg','satkeg','hargasat','jumlah'];
+    			DetailBelanja.findOne({_id: new ObjectId(detail_id)}, function(err, detail){
+		    		if(detail){
+		    			DetailBelanja.find({kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, 
+			    			kdoutput: detail.kdoutput, kdsoutput: detail.kdsoutput, kdkmpnen: detail.kdkmpnen, 
+			    			kdskmpnen: detail.kdskmpnen, kdakun: detail.kdakun}).sort('noitem').exec(function(err, details){
+			    				var new_detail = new DetailBelanja({'thang': detail.thang, 'timestamp': timestamp, pengentry: user_aktiv, kdprogram: detail.kdprogram,
+    								kdgiat: detail.kdgiat, kdoutput: detail.kdoutput, kdsoutput: detail.kdsoutput, kdkmpnen: detail.kdkmpnen,
+    								kdskmpnen: detail.kdskmpnen, kdakun: detail.kdakun, nmitem: detail.nmitem, volkeg: detail.volkeg, satkeg: detail.satkeg,
+    								hargasat: detail.hargasat, jumlah: detail.jumlah, noitem: details.length+1
+    							});
+    							//kembalikan nilai sblmnya
+				    			for (var i = 0; i < detail_belanja_var.length; i++) {
+				    				if(detail.old[detail.old.length-1][detail_belanja_var[i]]){
+				    					detail[detail_belanja_var[i]] = detail.old[detail.old.length-1][detail_belanja_var[i]];
+				    				}
+				    			}
+				    			detail.timestamp = timestamp;
+				    			detail.save(function(err){
+				    				new_detail.save(function(err){
+				    					console.log(new_detail);
+				    					cb({'prev_detail': detail, 'new_detail': new_detail});
+				    				})
+				    			})
+			    		})
+		    		}
+		    	});
+    		}
+    	});
+    })
+
+    client.on('timpa_need_detail_list', function (detail_id, cb){
+    	DetailBelanja.findOne({_id: new ObjectId(detail_id)}, function(err, detail){
+    		if(detail){
+    			DetailBelanja.find({kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, 
+	    			kdoutput: detail.kdoutput, kdsoutput: detail.kdsoutput, kdkmpnen: detail.kdkmpnen, 
+	    			kdskmpnen: detail.kdskmpnen, kdakun: detail.kdakun}).sort('noitem').exec(function(err, details){
+	    			cb(details);
+	    		})
+    		}
+    	});
+    })
+
+    client.on('timpa_detail', function (ids, cb){
+    	DetailBelanja.findOne({_id: new ObjectId(ids.target_id)}, function(err, target){
+    		if(target){
+    			DetailBelanja.findOne({_id: new ObjectId(ids.source_id)}, function(err, source){
+	    			var detail_belanja_var = ['nmitem','volkeg','satkeg','hargasat','jumlah'];
+	    			var old = {};
+	    			old.nmitem = target.nmitem;
+	    			old.volkeg = target.volkeg;
+	    			old.satkeg = target.satkeg;
+	    			old.hargasat = target.hargasat;
+	    			old.jumlah = target.jumlah;
+	    			target.old.push(old);
+	    			for (var i = 0; i < detail_belanja_var.length; i++) {
+	    				if(source[detail_belanja_var[i]]){
+	    					target[detail_belanja_var[i]] = source[detail_belanja_var[i]];
+	    				}
+	    			}
+	    			target.save(function(err){
+	    				cb(source);
+	    				source.remove();
+	    			})
+	    		})
+    		}
+    	});
+    })
 }
 
 function getRealisasiSum(client, lower_ts, upper_ts, bypass){
@@ -2272,7 +2606,7 @@ pok.post('/unggah_pok', function(req, res){
 			} 
 		], function(err, final){
 			if(ext == 'xlsx' || ext == 'xls'){
-				var pok = new XlsxPOK(file_path, pok_name || 'POK', req.session.username || 'admin', thang || req.session.tahun_anggaran || new Date().getFullYear(), req.session.user_id || 'ahsbdjasdbasjd');
+				var pok = new XlsxPOK(file_path, pok_name || 'POK', req.session.username || 'admin', thang || req.session.tahun_anggaran || new Date().getFullYear(), req.session.user_id || 'dummy user');
 			}else if(ext.match(/^s/)) {
 				var pok = new POK(file_path, pok_name || 'POK', req.session.username || 'admin', req.session.user_id || 'ahsbdjasdbasjd');
 			}
@@ -3213,9 +3547,11 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp){
 					if(err) errorHandler(user_id, result[ '_id' ]+' update error. Mohon hubungi admin.');
 					if(item.nmitem){
 						pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
-							[item._id, '<span class="badge badge-success">update</span>', '<span class="badge badge-default">detail</span>', (old.nmitem)?old.nmitem + '==>' + item.nmitem:item.nmitem, 
+							[result[ '_id' ], '<span class="badge badge-success">update</span>', item.kdprogram+'>'+item.kdgiat+'>'+item.kdoutput+'>'+item.kdsoutput+'>'+item.kdkmpnen+'>'+item.kdskmpnen+'>'+item.kdakun,
+							(old.nmitem)?old.nmitem + '==>' + item.nmitem:item.nmitem, 
 							(old.volkeg)?formatUang(old.volkeg) + '==>' + formatUang(item.volkeg):formatUang(item.volkeg), (old.satkeg)?old.satkeg + '==>' + item.satkeg:item.satkeg, 
-							(old.hargasat)?formatUang(old.hargasat) + '==>' + formatUang(item.hargasat):formatUang(item.hargasat), (old.jumlah)?formatUang(old.jumlah) + '==>' + formatUang(item.jumlah):formatUang(item.jumlah)]
+							(old.hargasat)?formatUang(old.hargasat) + '==>' + formatUang(item.hargasat):formatUang(item.hargasat), (old.jumlah)?formatUang(old.jumlah) + '==>' + formatUang(item.jumlah):formatUang(item.jumlah),
+							'<button type="button" class="kembalikan-buatbaru-detail" title="kembalikan detail dan buat baru"><i class="icon-action-undo"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>']
 						);
 					}
 					if(cb) cb(null, '')
@@ -3239,6 +3575,61 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp){
 
 function XlsxPOK(file_path, pok_name, username, thang, user_id){
 	const data = xlsx.parse(file_path);
+	//validasi
+	var is_valid = false;
+	_.each(data[0].data, function(item, index, list){
+		//kode (kolom 0 di excel)
+		var c0 = item[0];
+		if(!item[0]){
+			c0 = '';
+		} else{
+			c0 = item[0].toString().replace(/^\s+|\s+$/g,'');
+		}
+
+		if(c0.match(/^\d{3}\.\d{2}\.\d{2}$/)){ //program
+			if(!item[1]){
+				is_valid = true;
+				return;
+			}
+		}else if(c0.match(/^\d{4}$/)){ //kegiatan
+			if(!item[1]){
+				is_valid = true;
+				return;
+			}
+		}else if(c0.match(/^\d{4}\.\d{3}$/)){ //output
+			if(!item[1]){
+				is_valid = true;
+				return;
+			}
+		}else if(c0.match(/^\d{3}$/)){ //komponen
+			if(!item[1]){
+				is_valid = true;
+				return;
+			}
+		}else if(c0.match(/^\w{1}$/)){ //sub komponen
+			if(!item[1]){
+				is_valid = true;
+				return;
+			}
+		}else if(c0.match(/^\d{6}$/)){ //akun
+			if(!item[1]){
+				is_valid = true;
+				return;
+			}
+		}else if(c0 == ''){ //detail
+			if(!item[1] || item[2] === '' || !item[3] || item[4] === '' || item[5] === ''){
+				console.log('boom')
+				is_valid = true;
+				return;
+			}
+		}
+	})
+
+	if(is_valid){
+		pok.connections[user_id].emit('pok_unduh_gagal_xlsx');
+		return;
+	}
+
 	//Ubah nama
 	Setting.findOne({type:'pok', 'thang': thang}, 'name timestamp old', function(err, pok_setting){
 		if(err) {
@@ -3251,7 +3642,7 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 				if(err){
 					errorHandler(username, 'Database error.');
 					return;
-				}			
+				}
 			})
 		} else {
 			old_setting = [];
@@ -3527,8 +3918,9 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 						new_detail.save(function(err, det){
 							cb(null, '')
 							pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
-								[new_detail._id, '<span class="badge badge-primary">baru</span>', '<span class="badge badge-default">detail</span>', new_detail.nmitem, 
-								formatUang(new_detail.volkeg), new_detail.satkeg, formatUang(new_detail.hargasat), formatUang(new_detail.jumlah)]
+								[new_detail._id, '<span class="badge badge-primary">baru</span>', new_detail.kdprogram+'>'+new_detail.kdgiat+'>'+new_detail.kdoutput+'>'+new_detail.kdsoutput+'>'+new_detail.kdkmpnen+'>'+new_detail.kdskmpnen+'>'+new_detail.kdakun, new_detail.nmitem, 
+								formatUang(new_detail.volkeg), new_detail.satkeg, formatUang(new_detail.hargasat), formatUang(new_detail.jumlah),
+								'<button type="button" class="timpa-detail" title="timpa ke detail lain"><i class="icon-link"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>']
 							);
 						})
 					}else { //jika sdh ada uploadan sebelumnya
@@ -3569,9 +3961,11 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 											if(err) errorHandler(user_id, matched[ '_id' ]+' update error. Mohon hubungi admin.');
 											if(old.nmitem || old.volkeg || old.satkeg || old.hargasat || old.jumlah){
 												pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
-													[new_item._id, '<span class="badge badge-success">update</span>', '<span class="badge badge-default">detail</span>', (old.nmitem)?old.nmitem + ' ==> ' + new_item.nmitem:new_item.nmitem, 
+													[matched[ '_id' ], '<span class="badge badge-success">update</span>', new_item.kdprogram+'>'+new_item.kdgiat+'>'+new_item.kdoutput+'>'+new_item.kdsoutput+'>'+new_item.kdkmpnen+'>'+new_item.kdskmpnen+'>'+new_item.kdakun, 
+													(old.nmitem)?old.nmitem + ' ==> ' + new_item.nmitem:new_item.nmitem, 
 													(old.volkeg)?formatUang(old.volkeg) + ' ==> ' + formatUang(new_item.volkeg):formatUang(new_item.volkeg), (old.satkeg)?old.satkeg + ' ==> ' + new_item.satkeg:new_item.satkeg, 
-													(old.hargasat)?formatUang(old.hargasat) + ' ==> ' + formatUang(new_item.hargasat):formatUang(new_item.hargasat), (old.jumlah)?formatUang(old.jumlah) + ' ==> ' + formatUang(new_item.jumlah):formatUang(new_item.jumlah)]
+													(old.hargasat)?formatUang(old.hargasat) + ' ==> ' + formatUang(new_item.hargasat):formatUang(new_item.hargasat), (old.jumlah)?formatUang(old.jumlah) + ' ==> ' + formatUang(new_item.jumlah):formatUang(new_item.jumlah),
+													'<button type="button" class="kembalikan-buatbaru-detail" title="kembalikan detail dan buat baru"><i class="icon-action-undo"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>']
 												);
 											}
 											cb_d(null, '')
@@ -3587,8 +3981,9 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 									detail.save(function(err, det){
 										cb_d(null, '')
 										pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
-											[detail._id, '<span class="badge badge-primary">baru</span>', '<span class="badge badge-default">detail</span>', detail.nmitem, 
-											formatUang(detail.volkeg), detail.satkeg, formatUang(detail.hargasat), formatUang(detail.jumlah)]
+											[detail._id, '<span class="badge badge-primary">baru</span>', detail.kdprogram+'>'+detail.kdgiat+'>'+detail.kdoutput+'>'+detail.kdsoutput+'>'+detail.kdkmpnen+'>'+detail.kdskmpnen+'>'+detail.kdakun, detail.nmitem, 
+											formatUang(detail.volkeg), detail.satkeg, formatUang(detail.hargasat), formatUang(detail.jumlah),
+											'<button type="button" class="timpa-detail" title="timpa ke detail lain"><i class="icon-link"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>']
 										);
 									})
 								}
@@ -3600,21 +3995,34 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 				}
 			)
 		}
-		
 	})
 
 	async.series(tasks, function(err, final){
 		DetailBelanja.find({timestamp: {$ne: current_timestamp}, active: true, 'thang': thang}, function(err, removed_details){
 			var rows = [];
 			_.each(removed_details, function(removed, index, list){
-				pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
-					[removed._id, '<span class="badge badge-danger">dihapus</span>', '<span class="badge badge-default">detail</span>', removed.nmitem, 
-					formatUang(removed.volkeg) + ' ==> 0', removed.satkeg, formatUang(removed.hargasat), formatUang(removed.jumlah) + ' ==> 0']
-				);
-				removed.timestamp = current_timestamp;
-				removed.volkeg = 0;
-				removed.jumlah = 0;
-				removed.save();
+				if(removed.jumlah != 0){
+					pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
+						[removed._id, '<span class="badge badge-danger">dihapus</span>', removed.kdprogram+'>'+removed.kdgiat+'>'+removed.kdoutput+'>'+removed.kdsoutput+'>'+removed.kdkmpnen+'>'+removed.kdskmpnen+'>'+removed.kdakun, removed.nmitem, 
+						formatUang(removed.volkeg) + ' ==> 0', removed.satkeg, formatUang(removed.hargasat), formatUang(removed.jumlah) + ' ==> 0',
+						'<button type="button" class="kembalikan-detail" title="kembalikan detail"><i class="icon-action-undo"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>']
+					);
+					var old = {};
+					old.timestamp = removed.timestamp
+					old.volkeg = removed.volkeg
+					old.jumlah = removed.jumlah
+					removed.old.push(old);
+					removed.timestamp = current_timestamp;
+					removed.volkeg = 0;
+					removed.jumlah = 0;
+					removed.save();
+				} else {
+					pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', 
+						[removed._id, '<span class="badge badge-danger">dihapus</span>', removed.kdprogram+'>'+removed.kdgiat+'>'+removed.kdoutput+'>'+removed.kdsoutput+'>'+removed.kdkmpnen+'>'+removed.kdskmpnen+'>'+removed.kdakun, removed.nmitem, 
+						formatUang(removed.volkeg) + ' ==> 0', removed.satkeg, formatUang(removed.hargasat), formatUang(removed.jumlah) + ' ==> 0',
+						'<button type="button" class="kembalikan-detail" title="kembalikan detail"><i class="icon-action-undo"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>']
+					);
+				}
 			})
 			pok.connections[user_id].emit('pok_unduh_finish_xlsx');
 		})
@@ -3879,9 +4287,10 @@ function POK(file_path, pok_name, username, user_id){
 }
 
 function getMatchEntity(name, entities){
+	name = name.replace(/^\s*/g, '').replace(/^\w{2}\.?\s|^\w{2}\.\s?|\s?\,.*$|\s\w{1,3}\.\s?\w{1,4}\.?|\s\w{2}$/g, '');
 	var p = [];
 	_.each(entities, function(peg, index, list){
-		peg.score = clj_fuzzy.metrics.jaro_winkler(capitalize(name), capitalize(peg.nama));
+		peg.score = clj_fuzzy.metrics.jaro_winkler(capitalize(name).replace(/\.|\,|\'|\s/g, ''), capitalize(peg.nama).replace(/^\w{2}\.?\s|^\w{2}\.\s?|\s?\,.*$|\s\w{1,3}\.\s?\w{1,4}\.?|\s\w{2}$/g, '').replace(/\.|\,|\'|\s/g, ''));
 		p.push(peg);
 	})
 

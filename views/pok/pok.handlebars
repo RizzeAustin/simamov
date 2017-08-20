@@ -1,6 +1,6 @@
 <div class="animated fadeIn">
     <div class="card" id="new">
-        <div class="card-header"><i class="icon-shuffle"></i> Petunjuk Operasional Kegiatan (POK)</div>
+        <div class="card-header"><i class="icon-calculator"></i> Petunjuk Operasional Kegiatan (POK)</div>
             <div class="card-block">
                 <div class="row">
                     <div class="col-md-12">
@@ -203,7 +203,7 @@
                                             </div> 
                                             <div class="form-group row">
                                                 <label for="nomor">File</label>
-                                                <input name="pok_file" type="file" class="form-control" required/>
+                                                <input name="pok_file" type="file" class="form-control" required accept=".xlsx,.xls"/>
                                             </div> 
                                             <div class="row">
                                                 <button id="pok_unggah_button" type="submit">Unggah</button>
@@ -225,12 +225,13 @@
                                                 <tr>
                                                     <th>Id</th>
                                                     <th>Status</th>
-                                                    <th class="tipe">Tipe</th>
-                                                    <th class="uraian">Uraian</th>
+                                                    <th>Asal</th>
+                                                    <th>Uraian</th>
                                                     <th>Volume</th>
                                                     <th>Satuan</th>
                                                     <th>Harga Satuan</th>
                                                     <th>Jumlah</th>
+                                                    <th>Pilihan</th>
                                                 </tr>
                                             </thead>
                                             <tbody>             
@@ -250,7 +251,7 @@
 </div>
 
 <div class="modal fade" id="entry_modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div id="modal-remove-lg" class="modal-dialog modal-primary" role="document">
+    <div id="modal-remove-lg" style="max-width: 500px;" class="modal-dialog modal-primary" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title">Entri Pengeluaran <span class="detail_blnj_entry"></span></h6>
@@ -537,7 +538,7 @@
 <!-- /.modal -->
 
 <div class="modal fade" id="edit-uraian-akun" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
-    <div class="modal-dialog modal-primary" role="document">
+    <div class="modal-dialog modal-primary" role="document" style="max-width: 500px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title">Edit Daftar Uraian Akun</h6>
@@ -743,6 +744,85 @@
 </div>
 <!-- /.modal -->
 
+<div class="modal fade" id="lihat-akun-modal" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Akun: <span id="lihat-akun-modal-title"></span></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0 15px;">
+                <div style="padding: 15px; padding-bottom: 0">
+                    <div style="height: 510px;position:relative;">
+                        <div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="tbl-lihat-akun" class="table" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Status</th>
+                                                <th>Uraian</th>
+                                                <th>Volume</th>
+                                                <th>Satuan</th>
+                                                <th>Harga Satuan</th>
+                                                <th>Jumlah</th>
+                                                <th>Pilihan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div class="modal fade" id="modal-timpa-detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Akun: <span id="timpa-lihat-akun-modal-title"></span></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="padding: 15px">
+                    <p>Timpa detail ke (realisasi tidak dihapus):</p>
+                    <div class="col-md-12" style="padding: 0">
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <select id="timpa_d_blnj_list" name="timpa_d_blnj_list" class="form-control" size="1"></select>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button id="btn-timpa" type="button" class="btn btn-primary">Timpa</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
 <script src="/js/handsontable.full.min.js"></script>
 
 <script src="/js/moment.min.js"></script>
@@ -845,61 +925,9 @@
                 $( row ).find('td:eq(9)').attr('class', 'format-uang');
                 $( row ).find('td:eq(10)').attr('class', 'format-uang');
                 $( row ).find('td:eq(11)').attr('class', 'format-uang');
-            },
-            "footerCallback": function ( row, data, start, end, display ) {
-                // calcSum('akun', data, 'pok_table_entry')
-                // calcSum('skomponen', data, 'pok_table_entry')
-                // calcSum('komponen', data, 'pok_table_entry')
-                // calcSum('soutput', data, 'pok_table_entry')
-                // calcSum('output', data, 'pok_table_entry')
-                // calcSum('kegiatan', data, 'pok_table_entry')
-                // calcSum('program', data, 'pok_table_entry');
-     
-                // Remove the formatting to get integer data for summation
-                // var intVal = function ( i ) {
-                //     return typeof i === 'string' ?
-                //         i.replace(/\D/g, '')*1 :
-                //         typeof i === 'number' ?
-                //             i : 0;
-                // };
-
-                // var prt_row = tabel_pok_entry.DataTable()
-                //         .rows( function ( idx, data, node ) {
-                //             return data[2] == '<span class="badge badge-default">program</span>' ?
-                //                 true : false;
-                //         } );
-
-                // var pagu = 0;
-                // var arr = _.filter(data, function(col){ return col[2].match(/program/);});
-                // var pagu = _.reduce(_.map(arr, function(arr){ return arr[8]; }), function(a, b){
-                //          return a + b; }, 0);
-
-                // var sampai_bln_ini = 0;
-                // var sisa_dana = 0;
-
-                // $('#sisa-dana').html(formatUang(pagu).replace(/\-$/g,''));
-                // $('#sisa-dana-percent').html(' ('+((getNumber(pagu)/pagu)*100).toFixed(0)+'%)');
-
             }
         });
 
-        function calcSum(type, data, tab_id){
-            var arr = _.filter(data, function(col){ return col[2].match(new RegExp(type, "i"));});
-            _.each(arr, function(item, index, list){
-                var parent_row = $('#'+tab_id).DataTable()
-                                .rows( function ( idx, data, node ) {
-                                    return data[0] == item[0] ?
-                                        true : false;
-                                } )
-                                .nodes()
-                                .to$()
-                                .find('td:eq(6)');
-                var v = _.reduce(_.map(_.filter(data, function(row){ return row[1] == item[0]; }), function(arr){ return arr[8]; }), function(a, b){
-                         return a + b; }, 0);
-                // parent_row.text(v);
-                $('#'+tab_id).DataTable().cell(parent_row).data(v);
-            })
-        }
         tabel_riwayat.DataTable({
             columnDefs: [
                 {
@@ -1351,6 +1379,7 @@
             import_data_entry = null;
             var s = $(this).val();
             if(s == '1') {
+                $('#modal-remove-lg').css('max-width', '')
                 $('#modal-remove-lg').addClass('modal-lg');
                 var show = '<div style="height: 480px;position:relative;">'
                             +    '<div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">'
@@ -1538,6 +1567,7 @@
                 $('#entry_jumlah_field').focus();
                 registerTypeaheadEntryElement();
             } else if(s == '0'){
+                $('#modal-remove-lg').css('max-width', '500px')
                 $('#modal-remove-lg').removeClass('modal-lg');
                     var satu_penerima_fields = '<div class="form-group row">'
                             +    '<label class="col-md-3 form-control-label">Jumlah<span> *</span></label>'
@@ -2985,15 +3015,6 @@
                 $( row ).find('td:eq(5)').attr('class', 'format-uang');
                 $( row ).find('td:eq(6)').attr('class', 'format-uang');
                 $( row ).find('td:eq(7)').attr('class', 'text-center');
-            },
-            "footerCallback": function ( row, data, start, end, display ) {
-                // calcSum('akun', data, 'pok_table_edit')
-                // calcSum('skomponen', data, 'pok_table_edit')
-                // calcSum('komponen', data, 'pok_table_edit')
-                // calcSum('soutput', data, 'pok_table_edit')
-                // calcSum('output', data, 'pok_table_edit')
-                // calcSum('kegiatan', data, 'pok_table_edit')
-                // calcSum('program', data, 'pok_table_edit');
             }
         });
 
@@ -3303,6 +3324,12 @@
             data.parent_id = parent_id_cara1;
             data.parent_type = parent_type_cara1;
             if(type == 'detail'){
+                if($('#tbh_program').val() == 'none' || $('#tbh_kegiatan').val() == 'none' || $('#tbh_output').val() == 'none' ||
+                    $('#tbh_soutput').val() == 'none' || $('#tbh_komponen').val() == 'none' || $('#tbh_skomponen').val() == 'none' ||
+                    $('#tbh_akun').val() == 'none'){
+                    generalAlert('Ada level di atas yang belum dipilih.')
+                    return false;
+                }
                 data.nmitem = $('#tbh_uraian').val()
                 data.volkeg = getNumber($('#tbh_vol').val())
                 data.satkeg = $('#tbh_sat').val()
@@ -3319,24 +3346,54 @@
 
                 data.noitem = childs_row.length;
             } else if(type == 'program'){
+                //validasi
+                if($('#tbh_kode').val().match)
+
                 data.kdprogram = $('#tbh_kode').val()
                 data.uraian = $('#tbh_uraian').val()
             } else if(type == 'kegiatan'){
+                if($('#tbh_program').val() == 'none'){
+                    generalAlert('Harap pilih program.')
+                    return false;
+                }
                 data.kdgiat = $('#tbh_kode').val()
                 data.uraian = $('#tbh_uraian').val()
             } else if(type == 'output'){
+                if($('#tbh_program').val() == 'none' || $('#tbh_kegiatan').val() == 'none'){
+                    generalAlert('Ada level di atas yang belum dipilih.')
+                    return false;
+                }
                 data.kdoutput = $('#tbh_kode').val()
                 data.uraian = $('#tbh_uraian').val()
             } else if(type == 'soutput'){
+                if($('#tbh_program').val() == 'none' || $('#tbh_kegiatan').val() == 'none' || $('#tbh_output').val() == 'none'){
+                    generalAlert('Ada level di atas yang belum dipilih.')
+                    return false;
+                }
                 data.kdsoutput = $('#tbh_kode').val()
                 data.ursoutput = $('#tbh_uraian').val()
             } else if(type == 'komponen'){
+                if($('#tbh_program').val() == 'none' || $('#tbh_kegiatan').val() == 'none' || $('#tbh_output').val() == 'none' ||
+                    $('#tbh_soutput').val() == 'none'){
+                    generalAlert('Ada level di atas yang belum dipilih.')
+                    return false;
+                }
                 data.kdkmpnen = $('#tbh_kode').val()
                 data.urkmpnen = $('#tbh_uraian').val()
             } else if(type == 'skomponen'){
+                if($('#tbh_program').val() == 'none' || $('#tbh_kegiatan').val() == 'none' || $('#tbh_output').val() == 'none' ||
+                    $('#tbh_soutput').val() == 'none' || $('#tbh_komponen').val() == 'none'){
+                    generalAlert('Ada level di atas yang belum dipilih.')
+                    return false;
+                }
                 data.kdskmpnen = $('#tbh_kode').val()
                 data.urskmpnen = $('#tbh_uraian').val()
             }  else if(type == 'akun'){
+                if($('#tbh_program').val() == 'none' || $('#tbh_kegiatan').val() == 'none' || $('#tbh_output').val() == 'none' ||
+                    $('#tbh_soutput').val() == 'none' || $('#tbh_komponen').val() == 'none' || $('#tbh_skomponen').val() == 'none'){
+                    generalAlert('Ada level di atas yang belum dipilih.')
+                    return false;
+                }
                 data.kdakun = $('#tbh_kode').val()
                 data.uraian = $('#tbh_uraian').val()
             } 
@@ -3344,35 +3401,6 @@
             data.from = 'cara1';
 
             socket.emit('pok_edit_new_item', data);
-
-            if(type == 'detail'){
-                $('#tbh_uraian').val('')
-                $('#tbh_vol').val('')
-                $('#tbh_sat').val('')
-                $('#tbh_hrg_satuan').val('')
-                $('#tbh_jlh').val('')
-            } else if(type == 'program'){
-                $('#tbh_kode').val('')
-                $('#tbh_uraian').val('')
-            } else if(type == 'kegiatan'){
-                $('#tbh_kode').val('')
-                $('#tbh_uraian').val('')
-            } else if(type == 'output'){
-                $('#tbh_kode').val('')
-                $('#tbh_uraian').val('')
-            } else if(type == 'soutput'){
-                $('#tbh_kode').val('')
-                $('#tbh_uraian').val('')
-            } else if(type == 'komponen'){
-                $('#tbh_kode').val('')
-                $('#tbh_uraian').val('')
-            } else if(type == 'skomponen'){
-                $('#tbh_kode').val('')
-                $('#tbh_uraian').val('')
-            }  else if(type == 'akun'){
-                $('#tbh_kode').val('')
-                $('#tbh_uraian').val('')
-            }
         });  
 
         //Tambah item (cara 2)
@@ -3398,7 +3426,7 @@
             } else if(type == 'kegiatan'){
                 item_badge = {color: 'danger', item: 'output'};
             } else if(type == 'output'){
-                if(state_subitem_selected == 'soutput'){
+                if(state_subitem_selected == 'sub_output' || state_subitem_selected == 'soutput'){
                     item_badge = {color: 'danger', item: 'soutput'};
                 } else{
                     item_badge = {color: 'primary', item: 'komponen'};
@@ -3406,7 +3434,7 @@
             } else if(type == 'soutput'){
                 item_badge = {color: 'primary', item: 'komponen'};
             } else if(type == 'komponen'){
-                if(state_subitem_selected == 'skomponen'){
+                if(state_subitem_selected == 'sub_komponen' || state_subitem_selected == 'skomponen'){
                     item_badge = {color: 'primary', item: 'skomponen'};
                 } else{
                     item_badge = {color: 'warning', item: 'akun'};
@@ -3482,6 +3510,10 @@
             data.parent_id = row_data[1];
             data.parent_type = parent_row.find('span').html();
             if(type == 'detail'){
+                if(!row_data[4] || !row_data[5] || !row_data[6] || !row_data[7] || !row_data[8]){
+                    generalAlert('Harap isi semua kolom (kecuali kolom yang tidak bisa diisi).');
+                    return;
+                }
                 data.nmitem = row_data[4]
                 data.volkeg = getNumber(row_data[5]);
                 data.satkeg = row_data[6]
@@ -3498,34 +3530,95 @@
 
                 data.noitem = childs_row.length;
             } else if(type == 'program'){
-                data.kdprogram = row_data[3].match(/\d*$/)[0];
+                if(!row_data[3].match(/^\d{2}$|\.\d{2}$/)){
+                    generalAlert('Kode program tidak valid.');
+                    return;
+                }
+                if(!row_data[4]){
+                    generalAlert('Uraian wajib diisi.');
+                    return;
+                }
+                data.kdprogram = row_data[3].match(/\d{2}$/)[0]
                 data.uraian = row_data[4]
             } else if(type == 'kegiatan'){
-                data.kdgiat = row_data[3]
+                if(!row_data[3].match(/^\d{4}$|\.\d{4}$/)){
+                    generalAlert('Kode kegiatan tidak valid.');
+                    return;
+                }
+                if(!row_data[4]){
+                    generalAlert('Uraian wajib diisi.');
+                    return;
+                }
+                data.kdgiat = row_data[3].match(/\d{4}$/)[0]
                 data.uraian = row_data[4]
             } else if(type == 'output'){
+                if(!row_data[3].match(/^\d{3}$|\.\d{3}$/)){
+                    generalAlert('Kode output tidak valid.');
+                    return;
+                }
+                if(!row_data[4]){
+                    generalAlert('Uraian wajib diisi.');
+                    return;
+                }
                 data.kdoutput = row_data[3].match(/\d*$/)[0]
                 data.uraian = row_data[4]
             } else if(type == 'soutput'){
+                if(!row_data[3].match(/^\d{3}$|\.\d{3}$/)){
+                    generalAlert('Kode sub output tidak valid.');
+                    return;
+                }
+                if(!row_data[4]){
+                    generalAlert('Uraian wajib diisi.');
+                    return;
+                }
                 data.kdsoutput = row_data[3].match(/\d*$/)[0]
                 data.ursoutput = row_data[4]
             } else if(type == 'komponen'){
-                data.kdkmpnen = row_data[3]
+                if(!row_data[3].match(/^\d{3}$|\.\d{3}$/)){
+                    generalAlert('Kode komponen tidak valid.');
+                    return;
+                }
+                if(!row_data[4]){
+                    generalAlert('Uraian wajib diisi.');
+                    return;
+                }
+                data.kdkmpnen = row_data[3].match(/\d{3}$/)[0]
                 data.urkmpnen = row_data[4]
             } else if(type == 'skomponen'){
-                data.kdskmpnen = row_data[3]
+                if(!row_data[3].match(/^[A-Z]{1}$|\.[A-Z]{1}$/)){
+                    generalAlert('Kode sub komponen tidak valid.');
+                    return;
+                }
+                if(!row_data[4]){
+                    generalAlert('Uraian wajib diisi.');
+                    return;
+                }
+                data.kdskmpnen = row_data[3].match(/[A-Z]{1}$/)[0]
                 data.urskmpnen = row_data[4]
             }  else if(type == 'akun'){
-                data.kdakun = row_data[3]
+                if(!row_data[3].match(/^\d{6}$|\.\d{6}/)){
+                    generalAlert('Kode akun tidak valid.');
+                    return;
+                }
+                if(!row_data[4]){
+                    generalAlert('Uraian wajib diisi.');
+                    return;
+                }
+                data.kdakun = row_data[3].match(/\d{6}/)[0]
                 data.uraian = row_data[4]
             } 
 
-            socket.emit('pok_edit_new_item', data);
+            var this_td = $(this).closest('td');
 
-            tabel_pok_edit.DataTable()
-                .cell($(this).closest('td'))
-                .data(button)
-                .draw(false);
+            socket.emit('pok_edit_new_item', data, function(status){
+                console.log(status)
+                if(status == 'sukses'){
+                    tabel_pok_edit.DataTable()
+                    .cell(this_td)
+                    .data(button)
+                    .draw(false);
+                }
+            });
         })
 
         socket.on('pok_new_id', function(data) {
@@ -3888,6 +3981,7 @@
             $("#pok_unggah_button").prop("disabled",true);
             $("#pok_unggah_button").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#pok_unggah_button").text());
             var formData = new FormData($(this)[0]);
+            $('#pok_table_change').DataTable().clear().draw(false);
 
             $.ajax({
                 url: location.protocol+'//'+window.location.host+'/pok/unggah_pok', 
@@ -4043,8 +4137,292 @@
 
                 $( row ).find('td:eq(5)').attr('class', 'format-uang');
                 $( row ).find('td:eq(6)').attr('class', 'format-uang');
+
+                $( row ).find('td:eq(7)').attr('class', 'text-center');
             }
         });
+
+        $('#tbl-lihat-akun').DataTable({
+            columnDefs: [
+                {
+                    "targets": [ 0 ],
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            paging: false,
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(0)').attr('class', 'text-center');//status
+                $( row ).find('td:eq(2)').attr('class', 'text-center');//vol
+
+                $( row ).find('td:eq(3)').attr('class', 'text-center');//sat
+
+                $( row ).find('td:eq(4)').attr('class', 'format-uang');//hrg sat
+                $( row ).find('td:eq(5)').attr('class', 'format-uang');//jumlah
+                $( row ).find('td:eq(6)').attr('class', 'text-center');//pilihan
+            }
+        });
+
+        $('#pok_table_change').on('click', '.lihat-akun', function(){
+            var selected_data = $('#pok_table_change').DataTable().row($(this).closest('tr')).data();
+            socket.emit('lihat_akun_data', selected_data[0], function(details){
+                $('#tbl-lihat-akun').DataTable().clear();
+                _.each(details, function(detail, index, list){
+                    var status = _.template('<span class="badge badge-<%= color %>"><%= status %></span>');
+                    var changed_detail = $('#pok_table_change').DataTable()
+                                .row( function ( idx, data, node ) {
+                                    return data[0] == detail._id ?
+                                        true : false;
+                                } );
+
+                    if(changed_detail[0].length){
+                        status = changed_detail.data()[1]
+                    } else {
+                        status = status({color: 'default', status: 'tetap'})
+                    }
+                    $('#tbl-lihat-akun').DataTable().row.add( [
+                            detail._id,
+                            status,
+                            detail.nmitem,
+                            detail.volkeg,
+                            detail.satkeg,
+                            formatUang(detail.hargasat),
+                            formatUang(detail.jumlah),
+                            (changed_detail.data())?changed_detail.data()[8].replace(/\<button type\=\"button\" class=\"lihat\-akun\" title\=\"lihat semua detail dalam akun detail ini\"\>\<i class\=\"icon\-layers\"\>\<\/i\>\<\/button\>/g, ''):''
+                        ] );
+                });
+                $('#tbl-lihat-akun').DataTable().draw(false);
+            });
+            $('#lihat-akun-modal-title').text(selected_data[2])
+            $('#lihat-akun-modal').modal('show');
+        })
+
+        //kembalikan & buat baru
+        $('#pok_table_change, #tbl-lihat-akun').on('click', '.kembalikan-buatbaru-detail', function(){
+            var row = $(this).closest('tr');
+            var table = $(this).closest('table');
+            var selected_data = table.DataTable().row(row).data();
+            socket.emit('kembalikan_buatbaru_detail', selected_data[0], function(back_data){
+                if(back_data){
+                    if(selected_data.length == 8){
+                        table.DataTable().row(row).data([
+                            back_data.prev_detail._id,
+                            '<span class="badge badge-default">tetap</span>',
+                            back_data.prev_detail.nmitem,
+                            back_data.prev_detail.volkeg,
+                            back_data.prev_detail.satkeg,
+                            formatUang(back_data.prev_detail.hargasat),
+                            formatUang(back_data.prev_detail.jumlah),
+                            ''
+                        ]);
+                        $('#pok_table_change').DataTable().row(function ( idx, data, node ) {
+                                    return data[0] == back_data.prev_detail._id ?
+                                        true : false;
+                                }).data([
+                            back_data.prev_detail._id,
+                            '<span class="badge badge-default">tetap</span>',
+                            $('#lihat-akun-modal-title').text(),
+                            back_data.prev_detail.nmitem,
+                            back_data.prev_detail.volkeg,
+                            back_data.prev_detail.satkeg,
+                            formatUang(back_data.prev_detail.hargasat),
+                            formatUang(back_data.prev_detail.jumlah),
+                            '<button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>'
+                        ]);
+
+                        table.DataTable().row.add( [
+                            back_data.new_detail._id,
+                            '<span class="badge badge-primary">baru</span>',
+                            back_data.new_detail.nmitem,
+                            back_data.new_detail.volkeg,
+                            back_data.new_detail.satkeg,
+                            formatUang(back_data.new_detail.hargasat),
+                            formatUang(back_data.new_detail.jumlah),
+                            '<button type="button" class="timpa-detail" title="timpa ke detail lain"><i class="icon-link"></i></button>'
+                        ] ).draw(false);
+
+                        $('#pok_table_change').DataTable().row.add( [
+                            back_data.new_detail._id,
+                            '<span class="badge badge-primary">baru</span>',
+                            $('#lihat-akun-modal-title').text(),
+                            back_data.new_detail.nmitem,
+                            back_data.new_detail.volkeg,
+                            back_data.new_detail.satkeg,
+                            formatUang(back_data.new_detail.hargasat),
+                            formatUang(back_data.new_detail.jumlah),
+                            '<button type="button" class="timpa-detail" title="timpa ke detail lain"><i class="icon-link"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>'
+                        ] ).draw(false);
+                    } else {
+                        table.DataTable().row(row).data([
+                            back_data.prev_detail._id,
+                            '<span class="badge badge-default">tetap</span>',
+                            selected_data[2],
+                            back_data.prev_detail.nmitem,
+                            back_data.prev_detail.volkeg,
+                            back_data.prev_detail.satkeg,
+                            formatUang(back_data.prev_detail.hargasat),
+                            formatUang(back_data.prev_detail.jumlah),
+                            '<button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>'
+                        ]);
+
+                        table.DataTable().row.add( [
+                            back_data.new_detail._id,
+                            '<span class="badge badge-primary">baru</span>',
+                            selected_data[2],
+                            back_data.new_detail.nmitem,
+                            back_data.new_detail.volkeg,
+                            back_data.new_detail.satkeg,
+                            formatUang(back_data.new_detail.hargasat),
+                            formatUang(back_data.new_detail.jumlah),
+                            '<button type="button" class="timpa-detail" title="timpa ke detail lain"><i class="icon-link"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>'
+                        ] ).draw(false);
+                    }
+                }
+            })
+        })
+        //kembalikan (dari dihapus)
+        $('#pok_table_change, #tbl-lihat-akun').on('click', '.kembalikan-detail', function(){
+            var row = $(this).closest('tr');
+            var table = $(this).closest('table');
+            var selected_data = table.DataTable().row(row).data();
+            socket.emit('kembalikan_detail', selected_data[0], function(detail){
+                if(detail){
+                    if(selected_data.length == 8){
+                        table.DataTable().row(row).data([
+                            detail._id,
+                            '<span class="badge badge-default">tetap</span>',
+                            detail.nmitem,
+                            detail.volkeg,
+                            detail.satkeg,
+                            formatUang(detail.hargasat),
+                            formatUang(detail.jumlah),
+                            ''
+                        ]);
+                        $('#pok_table_change').DataTable().row(function ( idx, data, node ) {
+                                    return data[0] == detail._id ?
+                                        true : false;
+                                }).data([
+                            detail._id,
+                            '<span class="badge badge-default">tetap</span>',
+                            $('#lihat-akun-modal-title').text(),
+                            detail.nmitem,
+                            detail.volkeg,
+                            detail.satkeg,
+                            formatUang(detail.hargasat),
+                            formatUang(detail.jumlah),
+                            '<button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>'
+                        ]);
+                    } else {
+                        table.DataTable().row(row).data([
+                            detail._id,
+                            '<span class="badge badge-default">tetap</span>',
+                            selected_data[2],
+                            detail.nmitem,
+                            detail.volkeg,
+                            detail.satkeg,
+                            formatUang(detail.hargasat),
+                            formatUang(detail.jumlah),
+                            '<button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>'
+                        ]);
+                    }
+                }
+            })
+        })
+        //timpa
+        var timpa_source_id;
+        var timpa_row;
+        var timpa_table;
+        $('#pok_table_change, #tbl-lihat-akun').on('click', '.timpa-detail', function(){
+            timpa_row = $(this).closest('tr');
+            timpa_table = $(this).closest('table');
+            var selected_data = timpa_table.DataTable().row(timpa_row).data();
+            timpa_source_id = selected_data[0];
+
+            (timpa_table.attr('id') == 'pok_table_change')?$('#timpa-lihat-akun-modal-title').text(selected_data[2]):$('#timpa-lihat-akun-modal-title').text($('#lihat-akun-modal-title').text());
+
+            socket.emit('timpa_need_detail_list', selected_data[0], function(lists){
+                var options ='<option>'
+                        +   '--pilih--'
+                        +'</option>';
+                _.each(lists, function(item, index, list){
+                    options +='<option value="'+item._id+'">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                })
+                
+                $('#timpa_d_blnj_list').empty().append(options);
+            })
+            
+            $('#modal-timpa-detail').modal('show');
+        })
+
+        $('#btn-timpa').click(function(){
+            if($('#timpa_d_blnj_list').val() == '--pilih--'){
+                generalAlert('Harap pilih detail target.')
+                return;
+            }
+            if($('#timpa_d_blnj_list').val() == timpa_source_id){
+                generalAlert('Harap pilih detail yang berbeda.')
+                return;
+            }
+
+            socket.emit('timpa_detail', {target_id: $('#timpa_d_blnj_list').val(), source_id: timpa_source_id}, function(source_detail){
+                if(source_detail){
+                    var selected_data = timpa_table.DataTable().row(timpa_row).data();
+                    if(selected_data.length == 8){
+                        selected_data[0] = $('#timpa_d_blnj_list').val();
+                        selected_data[1] = '<span class="badge badge-success">update</span>'
+                        selected_data[7] = '<button type="button" class="kembalikan-buatbaru-detail" title="kembalikan detail dan buat baru"><i class="icon-action-undo"></i></button>';
+                        timpa_table.DataTable().row(function ( idx, data, node ) {
+                                    return data[0] == $('#timpa_d_blnj_list').val() ?
+                                        true : false;
+                                }).remove().draw(false);
+                        timpa_table.DataTable().row(timpa_row).data(selected_data);
+
+                        $('#pok_table_change').DataTable().row(function ( idx, data, node ) {
+                                    return data[0] == $('#timpa_d_blnj_list').val() ?
+                                        true : false;
+                                }).remove().draw(false);
+
+                        $('#pok_table_change').DataTable().row(function ( idx, data, node ) {
+                                    return data[0] == timpa_source_id ?
+                                        true : false;
+                                }).data([
+                            $('#timpa_d_blnj_list').val(),
+                            '<span class="badge badge-success">update</span>',
+                            $('#lihat-akun-modal-title').text(),
+                            source_detail.nmitem,
+                            source_detail.volkeg,
+                            source_detail.satkeg,
+                            formatUang(source_detail.hargasat),
+                            formatUang(source_detail.jumlah),
+                            '<button type="button" class="kembalikan-buatbaru-detail" title="kembalikan detail dan buat baru"><i class="icon-action-undo"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>'
+                        ]);
+                    } else {
+                        timpa_table.DataTable().row(function ( idx, data, node ) {
+                                    return data[0] == $('#timpa_d_blnj_list').val() ?
+                                        true : false;
+                                }).remove().draw(false);
+                        timpa_table.DataTable().row(timpa_row).data([
+                            $('#timpa_d_blnj_list').val(),
+                            '<span class="badge badge-success">update</span>',
+                            selected_data[2],
+                            source_detail.nmitem,
+                            source_detail.volkeg,
+                            source_detail.satkeg,
+                            formatUang(source_detail.hargasat),
+                            formatUang(source_detail.jumlah),
+                            '<button type="button" class="kembalikan-buatbaru-detail" title="kembalikan detail dan buat baru"><i class="icon-action-undo"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>'
+                        ]);
+                    }
+                }
+                $('#modal-timpa-detail').modal('toggle');
+            })
+        })
 
         socket.on('pok_unduh_finish_xlsx', function(data) {
             $("#pok_unggah_button").prop("disabled",false);
@@ -4053,9 +4431,16 @@
             $('#pok_table_change').DataTable().draw(false);
         })
 
+        socket.on('pok_unduh_gagal_xlsx', function(data) {
+            $("#pok_unggah_button").prop("disabled",false);
+            $("#pok_unggah_button").html('Unggah');
+            generalAlert('File tidak valid.');
+        })
+
         socket.on('pok_unduh_finish_xlsx_add_change', function(data) {
             $('#pok_table_change').DataTable().row.add( data );
         });
+
 
         var detail_id_target_link;
         // $('#pok_table_change').on('click', '.link-realisasi', function(){

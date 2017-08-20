@@ -9,13 +9,7 @@ use simamov;
 // db.pegawai.update({}, {$set: {active: true}}, {multi: true});
 // db.custom_entity.findOne()
 
-// db.pok_detailBelanja.findOne()
-// db.old_pok_akun.drop()
-// db.old_pok_sub_komponen.drop()
-// db.old_pok_komponen.drop()
-// db.old_pok_sub_output.drop()
-// db.old_pok_output.drop()
-// db.old_pok_kegiatan.drop()
+// db.pok_detailBelanja.findOne({nmitem: '-     dosen dan asisten dosen (Transport Lokal)'})
 // show collections
 // db.sppd.findOne({})
 //==================================================
@@ -73,23 +67,14 @@ use simamov;
 // db.setting.find().pretty()
 // db.pok_uraian_akun.drop()
 // db.pok_detailBelanja.find({_id: ObjectId('5986b1f0b25dce2bb0210250')}).pretty()
-// db.pok_akun.findOne({kdakun: '532111'})
-// db.pok_sub_komponen.find({urskmpnen:'tanpa sub Komponen'}).pretty()
+// db.pok_akun.find().pretty()
+// db.pok_sub_komponen.find().pretty()
 // db.pok_komponen.find().length()
 // db.pok_sub_output.findOne()
 // db.pok_output.findOne()
 // db.pok_kegiatan.find()
 // db.pok_program.findOne()
 // db.kab.drop()
-
-// db.old_pok_detailBelanja.find()
-// db.old_pok_akun.findOne({'kdkmpnen': '002'})
-// db.old_pok_sub_komponen.findOne()
-// db.old_pok_komponen.findOne()
-// db.old_pok_sub_output.findOne()
-// db.old_pok_output.findOne()
-// db.old_pok_kegiatan.findOne()
-// db.old_pok_program.findOne() 1498667824 1498588982518
 
 // db.pok_detailBelanja.aggregate(
 //    [
@@ -123,3 +108,98 @@ use simamov;
 // 	"jlh" : 67500000,
 // 	"old_ver" : [ ]
 // }
+
+// var items;
+
+	// async.series([
+	// 	function(cb){
+	// 		//ambil semua custom entity (type: Penerima)
+	// 		CustomEntity.find({type: 'Penerima', active: true}, function(err, aaaaaa){
+	// 			items = aaaaaa;
+	// 			cb(null, '')
+	// 		})
+	// 	},
+	// 	function(cb){
+	// 		var task = [];
+
+	// 		_.each(items, function(item, idx, list){
+	// 			task.push(
+	// 				function(callb){
+	// 					CustomEntity.findOne({_id: new ObjectId(item._id)}, function(err, isExist){
+	// 						if(isExist){
+	// 							//cek apakah ada yg sama namanya
+	// 							CustomEntity.find({nama: item.nama, _id: {$ne: item._id}}, function(err, same_items){
+	// 								var task2 = [];
+
+	// 								_.each(same_items, function(it, idx, list){
+	// 									//iterasi utk setiap yg sama
+	// 									task2.push(
+	// 										function(clb){
+	// 											console.log(item._id, '>', it._id);
+	// 											DetailBelanja.find({'thang': 2017, active: true}, 'realisasi').elemMatch('realisasi', {'penerima_id': it._id}).exec(function(err, result){
+	// 							    					if(!result){
+	// 							    						//simpan
+	// 							    						clb(null, '')
+	// 							    					} else {
+	// 							    						var tsk = [];
+	// 							    						_.each(result, function(detail, idx, list){
+	// 							    							_.each(detail.realisasi, function(real, idx, list){
+	// 							    								tsk.push(
+	// 							    									function(clbk){
+	// 								    									if(it._id == real.penerima_id){
+	// 										    								real.penerima_id = item._id;
+	// 										    								detail.save(function(err){
+	// 										    									clbk(null, '')
+	// 										    								});
+	// 										    							} else {
+	// 										    								clbk(null, '')
+	// 										    							}
+	// 								    								}
+	// 							    								)
+	// 								    						})
+	// 							    						})
+	// 							    						async.series(tsk, function(err, final){
+	// 							    							clb(null, '')
+	// 							    						})
+	// 							    					}
+	// 							    			})
+	// 										}
+	// 									)
+	// 									//ganti semua penerima_id dgn item id
+	// 									//hapus it
+	// 								})
+
+	// 								async.series(task2, function(err, final){
+	// 									var task_a = [];
+	// 									_.each(same_items, function(it, idx, list){
+	// 										task_a.push(
+	// 											function(callbck){
+	// 												CustomEntity.remove({_id: new ObjectId(it._id)}, function(err, status){
+	// 													callbck(null, '')
+	// 												})
+	// 											}
+	// 										)
+	// 									})
+
+	// 									async.series(task_a, function(err, final){
+	// 										callb(null, '')
+	// 									})
+	// 								})
+									
+	// 							})
+	// 						} else {
+	// 							callb(null, '')
+	// 						}
+	// 					})
+	// 				}
+	// 			)
+	// 		})
+
+	// 		async.series(task, function(err, final){
+	// 			cb(null, '')
+	// 		})
+	// 	}
+
+	// ], function(err, final){
+	// 	console.log('finish')
+	// })

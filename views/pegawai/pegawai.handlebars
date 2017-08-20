@@ -225,7 +225,7 @@
 
                         <div class="form-group row">
                             <label for="password">Link ke:</label>
-                            <input type="text" class="form-control" id="nama_penerima_link" name='nama_penerima_link'>
+                            <input type="text" class="form-control" id="nama_penerima_link" name='nama_penerima_link' required>
                             <input type="text" id="nama_penerima_link_id" style="display: none;" name='nama_penerima_link_id'>
                         </div>
                     </div>
@@ -299,6 +299,38 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                 <button id="btn-tambah-pegawai" type="button" class="btn btn-primary">Simpan</button>
             </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+<div class="modal fade" id="modal-target-pgw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <form id="form-ubah-penerima" action="/admin/edit/" method="POST">
+                <div class="modal-header">
+                    <h6 class="modal-title">Pindahkan riwayat</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 15px">
+                        <div class="form-group row">
+                            <label for="password">Pindahkan ke:</label>
+                            <input type="text" class="form-control" id="nama_penerima_ubah" name='nama_penerima_link' required>
+                            <input type="text" id="nama_penerima_ubah_id" style="display: none;" name='nama_penerima_ubah_id'>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button id="btn-link-sipadu-submit" type="submit" class="btn btn-primary">Pindahkan</button>
+                </div>
+            </form>
         </div>
         <!-- /.modal-content -->
     </div>
@@ -950,6 +982,7 @@
                 $( row ).find('td:eq(8)').attr('class', 'text-center');
                 $( row ).find('td:eq(9)').attr('class', 'text-center');
                 $( row ).find('td:eq(11)').attr('class', 'text-center');
+                $( row ).find('td:eq(12)').attr('class', 'text-center');
             },
             "footerCallback": function ( row, data, start, end, display ) {
                 var api = this.api(), data;
@@ -1261,6 +1294,7 @@
 
         //add row ke tabel riwayat
         socket.on('riwayat_tbl_add', function(item) {
+            console.log(item)
             $('#tbl_riwayat').DataTable().row.add( item ).draw(false);
         });
 
@@ -1424,6 +1458,65 @@
                 editor_rp.hide();
             }
         });
+
+        $('#nama_penerima_ubah').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('penerima_list', {'query': q, 'type': 'semua'}, function (data) {
+                                return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $("#nama_penerima_ubah").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
+             $('#nama_penerima_ubah_id').val(datum._id);
+        });
+
+        var ubahp_detail_id;
+        var ubahp_realisasi_id;
+        var ubahp_row;
+        $('#tbl_riwayat').on('click', '.btn-ubah-penerima', function (e) {
+            ubahp_row = $(this).closest('tr');
+            var data =  $('#tbl_riwayat').DataTable().row(ubahp_row).data();
+            ubahp_detail_id = data[1];
+            ubahp_realisasi_id = data[0];
+            $('#modal-target-pgw').modal('show');
+        })
+
+        $('#modal-target-pgw').on('shown.bs.modal', function () {
+            //fokus ke field
+            $('#nama_penerima_ubah').focus();
+        });
+
+        $('#form-ubah-penerima').on('submit', function(e) {
+            if(!$('#nama_penerima_ubah_id').val()){
+                generalAlert('Harap pilih nama dari daftar saran atau silahkan tambahkan pegawai baru.')
+                return false;
+            }
+            e.preventDefault();
+            $("#btn-ubah-penerima").prop("disabled",true);
+            $("#btn-ubah-penerima").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#btn-ubah-penerima").text());
+            var data = {};
+            data = {'realisasi.$.penerima_nama': $('#nama_penerima_ubah').val(), 'realisasi.$.penerima_id': $('#nama_penerima_ubah_id').val()}
+            data['realisasi.$.timestamp'] = Math.round(new Date().getTime()/1000);
+
+            socket.emit('riwayat_edit', {'parent_id': ubahp_detail_id, 'target_id': ubahp_realisasi_id, 'data': data}, function(status){
+                    $("#btn-ubah-penerima").prop("disabled",false);
+                    $("#btn-ubah-penerima").html('Pindahkan');
+
+                    $('#modal-target-pgw').modal('toggle');
+                    generalAlert('Berhasil dipindahkan ke '+$('#nama_penerima_ubah')+'.')
+                    $('#nama_penerima_ubah_id').val('');
+                    $('#nama_penerima_ubah').val('');
+                    $('#tbl_riwayat').DataTable().row(ubahp_row).remove().draw(false);
+            })
+        })
 
         //hapus riwayat
         var target_delete;

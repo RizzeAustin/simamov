@@ -57,10 +57,6 @@ DetailBelanjaSchema.methods.isExist = function(cb) {
         'kdsoutput': this.kdsoutput, 'kdkmpnen': this.kdkmpnen, 'kdskmpnen': this.kdskmpnen, 'kdakun': this.kdakun, 'noitem': this.noitem }, cb);
 };
 
-DetailBelanjaSchema.statics.getAll = function(cb) {
-    return this.model('DetailBelanja').find({}, null, {sort: {nmr:1}}, cb);
-};
-
 DetailBelanjaSchema.path('realisasi').schema.path('pph21').set(function (x) {
     if(!x) x = 0;
     if(!isNaN(x)) return x; 

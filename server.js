@@ -153,6 +153,9 @@ app.use('/admin', admin);
 //LOGOUT
 var logout = require('./controllers/logout.js');
 app.use('/logout', logout);
+//BANTUAN
+var bantuan = require('./controllers/bantuan.js');
+app.use('/bantuan', bantuan);
 
 //route jika halaman tidak ditemukan
 app.use(function(req, res){

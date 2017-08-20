@@ -45,7 +45,7 @@
                                         <tr>
                                             <td>{{nama}}</td>
                                             <td>{{_id}}</td>
-                                            <td>
+                                            <td class="text-center">
                                                 <button type="button" class="btn-st-default" {{#if_eq _id ../setting.ttd_st_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
                                                 <button type="button" class="btn-st-del"><i class="icon-close"></i></button>
                                             </td>
@@ -78,7 +78,7 @@
                                                 <tr>
                                                     <td>{{nama}}</td>
                                                     <td>{{_id}}</td>
-                                                    <td>
+                                                    <td class="text-center">
                                                         <button type="button" class="btn-leg-default" {{#if_eq _id ../setting.ttd_leg_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
                                                         <button type="button" class="btn-leg-del"><i class="icon-close"></i></button>
                                                     </td>
@@ -363,7 +363,7 @@
                                 '<tr>'
                                 +'<td>'+$('#inp-ttd-surat-tugas').val()+'</td>'
                                 +'<td>'+selected_peg_id+'</td>'
-                                +'<td><button type="button" class="btn-st-default">'
+                                +'<td class="text-center"><button type="button" class="btn-st-default">'
                                 +'<i class="icon-pin"></i></button> '
                                 +'<button type="button" class="btn-st-del"><i class="icon-close"></i></button></td>'
                                 +'</tr>'
@@ -388,7 +388,7 @@
                                 '<tr>'
                                 +'<td>'+$('#inp-ttd-legalitas').val()+'</td>'
                                 +'<td>'+selected_peg_id+'</td>'
-                                +'<td><button type="button" class="btn-leg-default">'
+                                +'<td class="text-center"><button type="button" class="btn-leg-default">'
                                 +'<i class="icon-pin"></i></button> '
                                 +'<button type="button" class="btn-leg-del"><i class="icon-close"></i></button></td>'
                                 +'</tr>'

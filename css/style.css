@@ -316,7 +316,19 @@ dd {
   margin-left: 0; }
 
 blockquote {
-  margin: 0 0 1rem; }
+  color: #7f8fa4;
+  font-size: inherit;
+  padding: 1px 24px;
+  margin: 16px 0;
+  border-left: 3px solid #eaeaea;
+}
+
+blockquote p {
+    color: #7f8fa4 !important;
+    margin: 0;
+    font-size: inherit;
+    line-height: 1.5;
+}
 
 a {
   color: #20a8d8;
@@ -3718,10 +3730,10 @@ button.close {
 
 @media (min-width: 576px) {
   .modal-dialog {
-    max-width: 550px;
+    max-width: 760px;
     margin: 30px auto; }
   .modal-sm {
-    max-width: 300px; } }
+    max-width: 400px; } }
 
 @media (min-width: 992px) {
   .modal-lg {

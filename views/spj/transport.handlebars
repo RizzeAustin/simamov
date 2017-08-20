@@ -199,7 +199,11 @@
                     data: formData,
                     async: false,
                     success: function (data) {
-                        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/spj/transport/'+data);
+                        if(data == 'invalid'){
+                            generalAlert('File tidak valid');
+                        }else {
+                            $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/spj/transport/'+data);
+                        }
                         $("#unggah_xlsx_button").prop("disabled",false);
                         $("#unggah_xlsx_button").html('Buat Surat');
                     },

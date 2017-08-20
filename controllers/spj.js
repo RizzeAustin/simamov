@@ -153,6 +153,14 @@ spj.post('/honor', function(req, res){
 					if(/^Periode/.test(item.unit)) periode = item.unit;
 				})
 				.on('done',(error)=>{
+					if(!data.length){
+						res.send('invalid')
+						return;
+					} else if (!data[0].nmr.toString().match(/^\d*$/) || !data[0].jml_sks.toString().match(/^\d*$/) || 
+						!data[0].bruto.toString().match(/^\d*$/) || !data[0].diterima.toString().match(/^\d*$/)) {
+						res.send('invalid')
+						return;
+					}
 					var period_elem = periode.match(/(\d{1,2})\s(\w*)\s(\d{4}).*\,\s(\d{1,2})/);
 					thang = period_elem[3];
 					tgl_buat_honor = period_elem[4] +' '+ period_elem[2] +' '+ period_elem[3];
@@ -370,7 +378,7 @@ spj.post('/honor', function(req, res){
 						async.series([
 							//ambil id
 							function(cb){
-								var matched = getMatchEntitySpecial(data[i]['nama'], pegs);
+								var matched = getMatchEntity(data[i]['nama'], pegs);
 								//jika ditemukan, ==> simpan
 								if(matched){
 									matched.target = data[i]['nama'];
@@ -427,6 +435,7 @@ spj.post('/honor', function(req, res){
 							    			console.log(err)
 							    			return
 							    		}
+							    		sendNotification(req.session.user_id, 'Honor '+data[i]['nama']+' berhasil tercatat di realisasi.')
 							    	})
 								} else {
 									sendNotification(req.session.user_id, 'Honor '+data[i]['nama']+' periode tsb sudah tercatat di realisasi.')
@@ -436,22 +445,22 @@ spj.post('/honor', function(req, res){
 					})
 
 
-					XlsxPopulate.fromFileAsync("./template/similarity.xlsx")
-					    .then(workbook => {
-					    	var row = 1;
-					    	var nmr = 1;
-					    	_.each(research, function(item, index, list){
-					    		var r = workbook.sheet(0).range('A'+row+':D'+row);
-					    		r.value([[nmr,
-					    			item.target,
-					    			item.nama, 
-					    			item.score
-					    		]]);
-					    		row++;
-					    		nmr++;
-					    	})
-					    workbook.toFileAsync('./temp_file/'+new Date().getTime()/1000+'percobaan_without_dotz_space.xlsx');
-	    			})
+					// XlsxPopulate.fromFileAsync("./template/similarity.xlsx")
+					//     .then(workbook => {
+					//     	var row = 1;
+					//     	var nmr = 1;
+					//     	_.each(research, function(item, index, list){
+					//     		var r = workbook.sheet(0).range('A'+row+':D'+row);
+					//     		r.value([[nmr,
+					//     			item.target,
+					//     			item.nama, 
+					//     			item.score
+					//     		]]);
+					//     		row++;
+					//     		nmr++;
+					//     	})
+					//     workbook.toFileAsync('./temp_file/'+new Date().getTime()/1000+'percobaan_without_dotz_space.xlsx');
+	    // 			})
 
 					//riwayat user
 					User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Buat SPJ Honor Dosen periode '+periode}}}, 
@@ -531,6 +540,13 @@ spj.post('/transport', function(req, res){
 					if(/^Periode/.test(item.unit)) periode = item.unit;
 				})
 				.on('done',(error)=>{
+					if(!data.length){
+						res.send('invalid')
+						return;
+					} else if (data[0].field6 || !data[0].nmr.toString().match(/^\d*$/) || !data[0].jumlah.toString().match(/^\d*$/)) {
+						res.send('invalid')
+						return;
+					}
 					var period_elem = periode.match(/(\d{1,2})\s(\w*)\s(\d{4}).*\,\s(\d{1,2})/);
 					thang = period_elem[3];
 					tgl_buat_honor = period_elem[4] +' '+ period_elem[2] +' '+ period_elem[3];
@@ -1002,33 +1018,20 @@ function errorHandler(user_id, message){
 }
 
 function getMatchEntity(name, entities){
+	name = name.replace(/^\s*/g, '').replace(/^\w{2}\.?\s|^\w{2}\.\s?|\s?\,.*$|\s\w{1,3}\.\s?\w{1,4}\.?|\s\w{2}$/g, '');
 	var p = [];
 	_.each(entities, function(e, index, list){
-		e.score = clj_fuzzy.metrics.jaro_winkler(capitalize(name), capitalize(e.nama));
+		e.score = clj_fuzzy.metrics.jaro_winkler(capitalize(name).replace(/\.|\,|\'|\s/g, ''), capitalize(e.nama).replace(/^\w{2}\.?\s|^\w{2}\.\s?|\s?\,.*$|\s\w{1,3}\.\s?\w{1,4}\.?|\s\w{2}$/g, '').replace(/\.|\,|\'|\s/g, ''));
 		p.push(e);
 	})
 
 	var matched = _.max(p, function(e){ return e.score; })
 
-	if(matched.score >= 0.86){
+	if(matched.score >= 0.91){
 		return matched;
 	} else {
 		return null;
 	}
-}
-
-function getMatchEntitySpecial(name, entities){
-	name = name.replace(/dr\.|dr\s|ph\.?\s?d/g, '');
-	var p = [];
-	_.each(entities, function(e, index, list){
-		e.nama = e.nama.replace(/dr\.|dr\s|ph\.?\s?d/g, '');
-		e.score = clj_fuzzy.metrics.jaro_winkler(capitalize(name).replace(/\.|\,|\'|\s/g, ''), capitalize(e.nama).replace(/\.|\,|\'|\s/g, ''));
-		p.push(e);
-	})
-
-	var matched = _.max(p, function(e){ return e.score; })
-
-	return matched;
 }
 
 function capitalize(s){

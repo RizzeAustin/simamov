@@ -889,6 +889,7 @@ function handlePerhitungan(data, cb, res, username, user_id){
     var sppd_template = fs.readFileSync(__dirname+"/../template/sppd_perhitungan.docx","binary");
     var outputDocx = '';
     var sppd_setting = {};
+    var gup_id;
 
     var zip = new JSZip(sppd_template);
     var doc = new Docxtemplater().loadZip(zip);
@@ -898,20 +899,20 @@ function handlePerhitungan(data, cb, res, username, user_id){
         function(cb){
             SettingSPPD.findOne({}).populate('ppk bendahara').exec(function(err, result){
                 data.setting = result;
-                cb(null, '')
+                CustomEntity.findOne({nama: 'GUP', active: true}, function(err, gup){
+                    if(gup){
+                        gup_id = gup._id;
+                        cb(null, '')
+                    } else {
+                        CustomEntity.create({ type: 'Penerima', nama: 'GUP' }, function (err, gup) {
+                          if (err) return handleError(err);
+                          gup_id = gup._id;
+                          cb(null, '')
+                        })
+                    }
+                })
             })
         },
-
-        // function(cb){
-        //  Perhitungan.findOne({_id: data.nomor.match(/^\d*/)[0]}, function(err, perhit){
-        //      if(!perhit){
-        //          Perhitungan.update({_id: data.nomor.match(/^\d*/)[0]}, {$set: data}, function(err, status){
-        //              data._id = data.nomor.match(/\d*$/)[0];
-        //              cb(null, '');
-        //          })
-        //      }
-        //  })
-        // },
 
         function(cb){
             //surtug instance
@@ -1048,20 +1049,20 @@ function handlePerhitungan(data, cb, res, username, user_id){
                         cb(null, '');
                         var thang = st.tgl_buat_perhit.match(/\d{4}$/)[0];
                         DetailBelanja.findOne({'thang': thang, '_id': st.detail, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': st.total_rincian, 'penerima_id': data.surtug.nama_lengkap._id, 
-                            'tgl': data.surtug.tgl_ttd_st}).exec(function(err, result){
+                            'tgl': data.surtug.tgl_ttd_st, ket: 'SPPD No. '+st._id+': '+data.surtug.tugas+', a.n. '+data.nama_lengkap}).exec(function(err, result){
                                 //jika blm pernah
                                 if(!result){
                                     //init total, user
                                     var total_sampai_bln_ini = 0;
                                     var new_entry = {};
                                     new_entry.pengentry =   username;
-                                    new_entry.ket = 'SPPD No. '+st._id+': '+data.surtug.tugas;
+                                    new_entry.ket = 'SPPD No. '+st._id+': '+data.surtug.tugas+', a.n. '+data.nama_lengkap;
                                     new_entry.bukti_no = data.bukti_no || '';
                                     new_entry.spm_no = data.spm_no || '';
-                                    new_entry.penerima_nama = data.nama_lengkap;
+                                    new_entry.penerima_nama = 'GUP';//data.nama_lengkap;
                                     new_entry.tgl = data.surtug.tgl_ttd_st;
                                     new_entry.tgl_timestamp = moment(data.surtug.tgl_ttd_st, "D MMMM YYYY").unix();
-                                    new_entry.penerima_id = data.surtug.nama_lengkap._id;
+                                    new_entry.penerima_id = gup_id;//;data.surtug.nama_lengkap._id;
                                     new_entry.jumlah = st.total_rincian;
                                     new_entry.timestamp = current_timestamp;
                                     DetailBelanja.update({'thang': thang, "_id": data.detail}, {$push: {"realisasi": new_entry}}, {new: true}, function(err, result){
