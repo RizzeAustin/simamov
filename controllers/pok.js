@@ -63,223 +63,6 @@ var mysql = require('mysql');
 //similarity between string
 var clj_fuzzy = require('clj-fuzzy');
 
-	// DetailBelanja.find({'thang': 2017, active: true, realisasi: { $exists: true, $ne: [] }}, 'realisasi', function(err, reals){
-	// 	var tsk = [];
-	// 	var pegs, ce, dosen;
-	// 	tsk.push(
-	// 		function(clbk){
-	// 			Pegawai.find({}, function(err, result){
-	// 				pegs = result;
-	// 				clbk(null, '')
-	// 			})
-	// 		}
-	// 	);
-	// 	tsk.push(
-	// 		function(clbk){
-	// 			CustomEntity.find({type: 'Penerima', active: true}, function(err, result){
-	// 				ce = result;
-	// 				clbk(null, '')
-	// 			})
-	// 		}
-	// 	);
-		
-	// 	tsk.push(
-	// 		function(clbk){
-	// 			var sipadu_db = mysql.createConnection({
-	// 				host: '127.0.0.1',
-	// 				user: 'root',
-	// 				password: '',
-	// 				database: 'sipadu_db'
-	// 			});
-
-	//     		//kueri utk dosen di sipadu
-	//     		var query = 'SELECT * ' +
-	// 					'FROM dosen ' +
-	// 					'WHERE aktif = 1 AND unit <> "STIS"';
-	// 			sipadu_db.connect(function(err){
-	// 				sipadu_db.query(query, function (err, dosens, fields) {
-	// 					if (err){
-	// 					  	console.log(err)
-	// 					  	return;
-	// 					}
-	// 					sipadu_db.end();
-	// 					dosen = _.map(dosens, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit}});
-	// 					clbk(null, '')
-	// 				})
-	// 			})
-	// 		}
-	// 	);
-	// 	_.each(reals, function(detail, idx, list){
-	// 		_.each(detail.realisasi, function(real, idx, list){
-	// 			tsk.push(
-	// 				function(clbk){
-	// 					var matched = getMatchEntity(detail.realisasi.id(real._id).penerima_nama, pegs);
-	// 					if(matched.score >= 0.91){    						
-	// 						// console.log(real.penerima_nama)
-	// 						CustomEntity.findOne({nama: detail.realisasi.id(real._id).penerima_nama, type: 'Penerima'}, function(err, result){
-	// 							if(result){
-	// 								result.remove(function(err, status){
-	// 									DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
- //    										{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
- //    											clbk(null, '')
- //    									})
-	// 								});
-	// 							} else {
-	// 								DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
-	// 									{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
-	// 										clbk(null, '')
-	// 								})
-	// 							}
-	// 						})
- //    					} else {
- //    						matched = getMatchEntity(detail.realisasi.id(real._id).penerima_nama, ce);
- //    						if(matched.score >= 0.91){
-	//     						DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
-	// 								{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
-	// 									clbk(null, '')
-	// 							})
-	//     					} else {
-	//     						matched = getMatchEntity(detail.realisasi.id(real._id).penerima_nama, dosen);
-	//     						if(matched.score >= 0.91){
-	//     							CustomEntity.findOne({'nama': detail.realisasi.id(real._id).penerima_nama.replace(/^\s*/g, ''), type:'Penerima', unit: matched.unit}, function(err, result){
-	//     								if(result){
-	//     									DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
-	// 											{$set: {'realisasi.$.penerima_id': result._id, 'realisasi.$.penerima_nama': result.nama}}, function(err, result){
-	// 												clbk(null, '')
-	// 										})
-	//     								} else {
-	//     									CustomEntity.create({'nama': detail.realisasi.id(real._id).penerima_nama.replace(/^\s*/g, ''), type:'Penerima', unit: matched.unit}, function(err, new_penerima){
-	// 											DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
-	// 												{$set: {'realisasi.$.penerima_id': new_penerima._id, 'realisasi.$.penerima_nama': new_penerima.nama}}, function(err, result){
-	// 													clbk(null, '')
-	// 											})
-	// 										})
-	//     								}
-	//     							})
-	// 	    					} else {
-	// 	    						CustomEntity.create({'nama': detail.realisasi.id(real._id).penerima_nama.replace(/^\s*/g, ''), type:'Penerima'}, function(err, new_penerima){
-	// 	    							ce.push(new_penerima)
-	// 									DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
-	// 										{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
-	// 											clbk(null, '')
-	// 									})
-	// 								})
-	// 	    					}
-	//     					}
-	// 					}
-	// 				}
-	// 			)
-	// 		})
-	// 	})
-	// 	async.series(tsk, function(err, final){
-	// 		console.log('finish')
-	// 	})
-	// })
-
-	// var items;
-
-	// async.series([
-	// 	function(cb){
-	// 		//ambil semua custom entity (type: Penerima)
-	// 		CustomEntity.find({type: 'Penerima', active: true}, function(err, aaaaaa){
-	// 			items = aaaaaa;
-	// 			cb(null, '')
-	// 		})
-	// 	},
-	// 	function(cb){
-	// 		var task = [];
-
-	// 		_.each(items, function(item, idx, list){
-	// 			task.push(
-	// 				function(callb){
-	// 					CustomEntity.findOne({_id: new ObjectId(item._id)}, function(err, isExist){
-	// 						if(isExist){
-	// 							//cek apakah ada yg sama namanya
-	// 							CustomEntity.find({nama: item.nama, _id: {$ne: item._id}}, function(err, same_items){
-	// 								var task2 = [];
-
-	// 								_.each(same_items, function(it, idx, list){
-	// 									//iterasi utk setiap yg sama
-	// 									task2.push(
-	// 										function(clb){
-	// 											console.log(item._id, '>', it._id);
-	// 											DetailBelanja.find({'thang': 2017, active: true}, 'realisasi').elemMatch('realisasi', {'penerima_id': it._id}).exec(function(err, result){
-	// 							    					if(!result){
-	// 							    						//simpan
-	// 							    						clb(null, '')
-	// 							    					} else {
-	// 							    						var tsk = [];
-	// 							    						_.each(result, function(detail, idx, list){
-	// 							    							_.each(detail.realisasi, function(real, idx, list){
-	// 							    								tsk.push(
-	// 							    									function(clbk){
-	// 								    									if(it._id == real.penerima_id){
-	// 										    								real.penerima_id = item._id;
-	// 										    								detail.save(function(err){
-	// 										    									clbk(null, '')
-	// 										    								});
-	// 										    							} else {
-	// 										    								clbk(null, '')
-	// 										    							}
-	// 								    								}
-	// 							    								)
-	// 								    						})
-	// 							    						})
-	// 							    						async.series(tsk, function(err, final){
-	// 							    							clb(null, '')
-	// 							    						})
-	// 							    					}
-	// 							    			})
-	// 										}
-	// 									)
-	// 									//ganti semua penerima_id dgn item id
-	// 									//hapus it
-	// 								})
-
-	// 								async.series(task2, function(err, final){
-	// 									var task_a = [];
-	// 									_.each(same_items, function(it, idx, list){
-	// 										task_a.push(
-	// 											function(callbck){
-	// 												CustomEntity.remove({_id: new ObjectId(it._id)}, function(err, status){
-	// 													callbck(null, '')
-	// 												})
-	// 											}
-	// 										)
-	// 									})
-
-	// 									async.series(task_a, function(err, final){
-	// 										callb(null, '')
-	// 									})
-	// 								})
-									
-	// 							})
-	// 						} else {
-	// 							callb(null, '')
-	// 						}
-	// 					})
-	// 				}
-	// 			)
-	// 		})
-
-	// 		async.series(task, function(err, final){
-	// 			cb(null, '')
-	// 		})
-	// 	}
-
-	// ], function(err, final){
-	// 	console.log('finish')
-	// })
-
-
-	//jika ditemukan, maka ganti semua penerima_id realisasi dgn _id itu dgn _id yg pertama.
-
-	//hapus yang sama itu
-	//1. ambil semua detail yg ada realisasinya
-	//2. cek kesesuain nama dgn database pegawai
-	//3. jika >0.86 set id, jika id != id sebelumnya dan custom entity, maka hapus ce tsb
-	//4. jika tdk,
-
 //Socket.io
 pok.connections;
 
@@ -1594,11 +1377,11 @@ pok.socket = function(io, connections, client){
 
     client.on('penerima_list', function (q, cb){
     	if(q.query){
-    		q.query = q.query.replace(/\\/g, '');
+    		q.query = q.query.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "\\$&");
     	} else if(q.q){
-    		q.q = q.q.replace(/\\/g, '');
+    		q.q = q.q.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "\\$&");
     	} else{
-    		q = q.replace(/\\/g, '');
+    		q = q.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "\\$&");
     	}
     	if(q.type == 'custom_bps_only'){
     		CustomEntity.find({"nama": new RegExp(q.query, "i"), type: 'Penerima', unit: 'BPS', active: true}, 'nama', function(err, custs){
@@ -1746,7 +1529,7 @@ pok.socket = function(io, connections, client){
     						//ganti penerima nama dgn sesuai id
     						item.penerima_nama = matched.nama;
 							DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-								'tgl': item.tgl}).exec(function(err, result){
+								'tgl': item.tgl, 'ket': item.ket}).exec(function(err, result){
 			    					if(!result){
 			    						//simpan
 			    						submit_entry(item, callback);
@@ -1770,7 +1553,7 @@ pok.socket = function(io, connections, client){
 		    						//ganti penerima nama dgn sesuai id
     								item.penerima_nama = matched.nama;
 									DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-										'tgl': item.tgl}).exec(function(err, result){
+										'tgl': item.tgl, 'ket': item.ket}).exec(function(err, result){
 					    					if(!result){
 					    						//simpan
 					    						submit_entry(item, callback);
@@ -1810,7 +1593,7 @@ pok.socket = function(io, connections, client){
 						    						//ganti penerima nama dgn sesuai id
     												item.penerima_nama = matched.nama;
 													DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': item.jumlah, 'penerima_id': item.penerima_id, 
-														'tgl': item.tgl}).exec(function(err, result){
+														'tgl': item.tgl, 'ket': item.ket}).exec(function(err, result){
 									    					if(!result){
 									    						//simpan
 									    						submit_entry(item, callback);

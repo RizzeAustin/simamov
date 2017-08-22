@@ -31,7 +31,7 @@
                                             <span class="help-block text-muted">wilayah</span>  
                                         </div> 
                                         <div class="col-md-6">                                                
-                                            <input type="text" id="t_dari_t4_asal" class="form-control input-group format-uang" name="t_dari_t4_asal" value="{{prov.taksi_dn}}" required readonly="readonly">
+                                            <input type="text" id="t_dari_t4_asal" class="form-control input-group format-uang" name="t_dari_t4_asal" value="{{prov.taksi_dn}}" required>
                                             <span class="help-block text-muted">biaya</span>
                                         </div> 
                                     </div>
@@ -44,7 +44,7 @@
                                             <span class="help-block text-muted">wilayah</span>  
                                         </div> 
                                         <div class="col-md-6">                                                
-                                            <input type="text" id="t_dari_t4_tujuan" class="form-control input-group format-uang" name="t_dari_t4_tujuan" value="" required readonly="readonly">
+                                            <input type="text" id="t_dari_t4_tujuan" class="form-control input-group format-uang" name="t_dari_t4_tujuan" value="" required>
                                             <span class="help-block text-muted">biaya</span>                                             
                                         </div> 
                                     </div>
@@ -383,13 +383,17 @@
         var current_jumlah_hari = '{{st.jumlah_hari}}';
         var posisi_kota = '{{st.posisi_kota}}';
         var kode_output = '{{st.kode_output}}';
+        var jenis_ang = '{{st.jenis_ang}}';
         var kdakun, noitem;
         populate_realisasi(kode_output)
         $("#w_dari_t4_tujuan").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
-            if(datum.data._id == '31'){
+            if(jenis_ang == 'Kendaraan Dinas'){
+                $("#t_dari_t4_tujuan").val(0);
+                $("#t_dari_t4_asal").val(0);
+            } else if(datum.data._id == '31'){
                 $("#t_dari_t4_tujuan").val(formatUang(+datum.data.taksi_dn));
                 $("#t_dari_t4_asal").val(formatUang(+datum.data.taksi_dn));
-            } else {
+            } else if($("#t_dari_t4_asal").autoNumeric('getNumber') != 300000){
                 $("#t_dari_t4_tujuan").val(formatUang(+datum.data.taksi_dn*2));
                 $("#t_dari_t4_asal").val(formatUang(dki_jkt));
             }
@@ -418,13 +422,21 @@
             $("#hotel_biaya").val(0);
 
             $("#harian_hari").val(current_jumlah_hari);
-            $("#harian_biaya").val(formatUang(+datum.data.har_dn_lk));
+            (posisi_kota != 'dalam_kota')?$("#harian_biaya").val(formatUang(+datum.data.har_dn_lk)):$("#harian_biaya").val(formatUang(+datum.data.har_dn_dk));
             $("#harian_total").change();
 
             $("#hotel_hari").val(0);
             $("#hotel_total").change();
             
         });
+
+        $("#t_dari_t4_asal").on("keyup change", function(){
+            $("#totalb_inap").change();
+        })
+
+        $("#t_dari_t4_tujuan").on("keyup change", function(){
+            $("#totalb_inap").change();
+        })
 
         $("#jumlah_menginap").on("keyup change", function(){
             $("#totalb_inap").change();
@@ -761,7 +773,6 @@
             $('#hotel_hari').val('');
             $('#hotel_biaya').val('');
             $('#hotel_total').val('');
-            $('#tgl_buat_perhit').val('');
         }
 
         $('#tbl_riwayat').on('click', '.hitung', function(){
@@ -778,7 +789,10 @@
                     current_gol = response.st.nama_lengkap.gol;
                     current_jumlah_hari = response.st.jumlah_hari;
                     posisi_kota = response.st.posisi_kota;
+                    jenis_ang = response.st.jenis_ang;
                     kode_output = response.st.kode_output;
+
+                    if(posisi_kota == 'dalam_kota') $('#t_dari_t4_asal').autoNumeric('set',  300000 || 0);
 
                     if(!response.perhit) return;
 

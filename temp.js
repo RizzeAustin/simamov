@@ -9,7 +9,7 @@ use simamov;
 // db.pegawai.update({}, {$set: {active: true}}, {multi: true});
 // db.custom_entity.findOne()
 
-// db.pok_detailBelanja.findOne({nmitem: '-     dosen dan asisten dosen (Transport Lokal)'})
+db.pok_detailBelanja.findOne({nmitem: new RegExp('honor dosen', "i")})
 // show collections
 // db.sppd.findOne({})
 //==================================================
@@ -66,7 +66,7 @@ use simamov;
 // db.surat_tugas_biasa.drop()
 // db.setting.find().pretty()
 // db.pok_uraian_akun.drop()
-// db.pok_detailBelanja.find({_id: ObjectId('5986b1f0b25dce2bb0210250')}).pretty()
+// db.pok_detailBelanja.find({}).pretty()
 // db.pok_akun.find().pretty()
 // db.pok_sub_komponen.find().pretty()
 // db.pok_komponen.find().length()
@@ -109,7 +109,138 @@ use simamov;
 // 	"old_ver" : [ ]
 // }
 
-// var items;
+
+
+	// //ambil semuaa detail yg memiliki realisasi
+	// DetailBelanja.find({'thang': 2017, active: true, realisasi: { $exists: true, $ne: [] }}, 'realisasi', function(err, reals){
+	// // init task
+	// 	var tsk = [];
+	// // daftar pegawai utk 
+	// 	var pegs, ce, dosen;
+	// // TASK AMBIL SEMUA PEGAWAI
+	// 	tsk.push(
+	// 		function(clbk){
+	// 			Pegawai.find({}, function(err, result){
+	// 				pegs = result;
+	// 				clbk(null, '')
+	// 			})
+	// 		}
+	// 	);
+	// //TASK AMBIL SEMUA CE
+	// 	tsk.push(
+	// 		function(clbk){
+	// 			CustomEntity.find({type: 'Penerima', active: true}, function(err, result){
+	// 				ce = result;
+	// 				clbk(null, '')
+	// 			})
+	// 		}
+	// 	);
+
+	// //TASK AMBIL DATA DOSEN		
+	// 	tsk.push(
+	// 		function(clbk){
+	// 			var sipadu_db = mysql.createConnection({
+	// 				host: '127.0.0.1',
+	// 				user: 'root',
+	// 				password: '',
+	// 				database: 'sipadu_db'
+	// 			});
+
+	//     		//kueri utk dosen di sipadu
+	//     		var query = 'SELECT * ' +
+	// 					'FROM dosen ' +
+	// 					'WHERE aktif = 1 AND unit <> "STIS"';
+	// 			sipadu_db.connect(function(err){
+	// 				sipadu_db.query(query, function (err, dosens, fields) {
+	// 					if (err){
+	// 					  	console.log(err)
+	// 					  	return;
+	// 					}
+	// 					sipadu_db.end();
+	// 					dosen = _.map(dosens, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit}});
+	// 					clbk(null, '')
+	// 				})
+	// 			})
+	// 		}
+	// 	);
+
+	// //LOOP THROUGH DETAIL
+	// 	_.each(reals, function(detail, idx, list){
+
+	// //LOOP THROUGH SEMUA REALISASI UTK TIAP DETAIL
+
+	// 		_.each(detail.realisasi, function(real, idx, list){
+	// 			tsk.push(
+	// 				function(clbk){
+	// 					var nama = detail.realisasi.id(real._id).penerima_nama;
+	// 					if(detail.realisasi.id(real._id).ket.match(/\[/)){
+	// 						nama = detail.realisasi.id(real._id).ket.replace(/\s*\[\s*|\s*\]\s*.*/g, '')
+	// 						console.log(nama)
+	// 					}
+	// 					var matched = getMatchEntity(nama, pegs);
+	// 					if(matched.score >= 0.91){    						
+	// 						// console.log(real.penerima_nama)
+	// 						CustomEntity.findOne({nama: detail.realisasi.id(real._id).penerima_nama, type: 'Penerima'}, function(err, result){
+	// 							if(result){
+	// 								result.remove(function(err, status){
+	// 									DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+ //    										{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
+ //    											clbk(null, '')
+ //    									})
+	// 								});
+	// 							} else {
+	// 								DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 									{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
+	// 										clbk(null, '')
+	// 								})
+	// 							}
+	// 						})
+ //    					} else {
+ //    						matched = getMatchEntity(nama, ce);
+ //    						if(matched.score >= 0.91){
+	//     						DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 								{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
+	// 									clbk(null, '')
+	// 							})
+	//     					} else {
+	//     						matched = getMatchEntity(nama, dosen);
+	//     						if(matched.score >= 0.91){
+	//     							CustomEntity.findOne({'nama': nama.replace(/^\s*/g, ''), type:'Penerima', unit: matched.unit}, function(err, result){
+	//     								if(result){
+	//     									DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 											{$set: {'realisasi.$.penerima_id': result._id, 'realisasi.$.penerima_nama': result.nama}}, function(err, result){
+	// 												clbk(null, '')
+	// 										})
+	//     								} else {
+	//     									CustomEntity.create({'nama': nama.replace(/^\s*/g, ''), type:'Penerima', unit: matched.unit}, function(err, new_penerima){
+	// 											DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 												{$set: {'realisasi.$.penerima_id': new_penerima._id, 'realisasi.$.penerima_nama': new_penerima.nama}}, function(err, result){
+	// 													clbk(null, '')
+	// 											})
+	// 										})
+	//     								}
+	//     							})
+	// 	    					} else {
+	// 	    						CustomEntity.create({'nama': nama.replace(/^\s*/g, ''), type:'Penerima'}, function(err, new_penerima){
+	// 	    							ce.push(new_penerima)
+	// 									DetailBelanja.findOneAndUpdate({'_id': detail._id, 'realisasi._id': real._id}, 
+	// 										{$set: {'realisasi.$.penerima_id': matched._id, 'realisasi.$.penerima_nama': matched.nama}}, function(err, result){
+	// 											clbk(null, '')
+	// 									})
+	// 								})
+	// 	    					}
+	//     					}
+	// 					}
+	// 				}
+	// 			)
+	// 		})
+	// 	})
+	// 	async.series(tsk, function(err, final){
+	// 		console.log('finish')
+	// 	})
+	// })
+
+	// var items;
 
 	// async.series([
 	// 	function(cb){
@@ -128,7 +259,8 @@ use simamov;
 	// 					CustomEntity.findOne({_id: new ObjectId(item._id)}, function(err, isExist){
 	// 						if(isExist){
 	// 							//cek apakah ada yg sama namanya
-	// 							CustomEntity.find({nama: item.nama, _id: {$ne: item._id}}, function(err, same_items){
+	// 							CustomEntity.find({nama: new RegExp(item.nama, "i"), _id: {$ne: item._id}}, function(err, same_items){
+	// 								console.log(same_items)
 	// 								var task2 = [];
 
 	// 								_.each(same_items, function(it, idx, list){
@@ -203,3 +335,12 @@ use simamov;
 	// ], function(err, final){
 	// 	console.log('finish')
 	// })
+
+
+	//jika ditemukan, maka ganti semua penerima_id realisasi dgn _id itu dgn _id yg pertama.
+
+	//hapus yang sama itu
+	//1. ambil semua detail yg ada realisasinya
+	//2. cek kesesuain nama dgn database pegawai
+	//3. jika >0.86 set id, jika id != id sebelumnya dan custom entity, maka hapus ce tsb
+	//4. jika tdk,

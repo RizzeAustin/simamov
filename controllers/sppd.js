@@ -999,7 +999,7 @@ function handlePerhitungan(data, cb, res, username, user_id){
                         data.tabel_riil = []; 
 
                         var no = 1;
-                        if(data.surtug.prov.nama == "DKI Jakarta" || data.surtug.prov._id == '31'){
+                        if(data.surtug.prov.nama == "DKI Jakarta" || data.surtug.prov._id == '31' || data.t_dari_t4_tujuan == 0){
                             data.tabel_riil.push({
                                 "no":no,
                                 "label":"Transport Lokal",
