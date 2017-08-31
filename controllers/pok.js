@@ -1375,7 +1375,73 @@ pok.socket = function(io, connections, client){
     	});
     })
 
+    client.on('get_pgw_byName', function (nama, cb){
+    	if(!nama){
+    		cb(null);
+    		return;
+    	}
+    	Pegawai.findOne({"nama": nama, active: true}, function(err, pgw){
+    		if(pgw){
+    			cb(pgw);
+    		}else {
+    			Pegawai.find({}, function(err, pgws){
+    				var matched = getMatchEntity(nama, pgws);
+    				if(matched.score >= 0.97){
+    					cb(matched);
+    				} else {
+    					CustomEntity.find({active: true, unit: 'BPS', type: 'Penerima'}, function(err, pgws){
+		    				var matched = getMatchEntity(nama, pgws);
+		    				if(matched.score >= 0.97){
+		    					cb(matched);
+		    				} else {
+		    					CustomEntity.find({active: true, unit: {$ne: 'BPS'}, type: 'Penerima'}, function(err, pgws){
+				    				var matched = getMatchEntity(nama, pgws);
+				    				if(matched.score >= 0.97){
+				    					console.log(matched.score)
+				    					cb(matched);
+				    				} else {
+				    					//kueri utk dosen di sipadu
+				    					var sipadu_db = mysql.createConnection({
+											host: '127.0.0.1',
+											user: 'root',
+											password: '',
+											database: 'sipadu_db'
+										});
+							    		var query = 'SELECT * ' +
+												'FROM dosen ' +
+												'WHERE aktif = 1 AND unit <> "STIS"';
+			    						sipadu_db.connect(function(err){
+			    							sipadu_db.query(query, function (err, dosen, fields) {
+												if (err){
+												  	console.log(err)
+												  	return;
+												}
+												sipadu_db.end();
+												var dosen_refine = _.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit, gol: o.gol_pajak}});
+												var matched = getMatchEntity(nama, dosen_refine);
+												//ambil id ke peg
+						    					if(matched.score >= 0.97){
+						    						cb(matched);
+						    					} else {
+						    						cb(null);
+						    					}
+						    				})
+			    						})
+				    				}
+				    			})
+		    				}
+		    			})
+    				}
+    			})
+    		}
+    	})
+    })
+
     client.on('penerima_list', function (q, cb){
+    	if(q.query == ''){
+    		cb([]);
+    		return;
+    	}
     	if(q.query){
     		q.query = q.query.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "\\$&");
     	} else if(q.q){
@@ -1534,7 +1600,9 @@ pok.socket = function(io, connections, client){
 			    						//simpan
 			    						submit_entry(item, callback);
 			    					} else {
-			    						sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
+			    						// sendNotification(client, item.penerima_nama+', Rp'+item.jumlah+', Tgl '
+						    			// 				+item.tgl+' sudah pernah dientry.')
+			    						client.emit('messagesNoTimeout', item.penerima_nama+', Rp'+item.jumlah+', Tgl '
 						    							+item.tgl+' sudah pernah dientry.')
 			    						callback(null, 'sudah ada')
 			    					}
@@ -1582,11 +1650,11 @@ pok.socket = function(io, connections, client){
 											  	return;
 											}
 											sipadu_db.end();
-											var dosen_refine = _.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit}});
+											var dosen_refine = _.map(dosen, function(o, key){return {_id: o.kode_dosen, nama: o.gelar_depan+((o.gelar_depan?' ':''))+o.nama+' '+o.gelar_belakang, unit: o.unit, gol: o.gol_pajak}});
 											var matched = getMatchEntity(item.penerima_nama, dosen_refine);
 											//ambil id ke peg
 					    					if(matched.score >= 0.91){
-					    						CustomEntity.create({'nama': item.penerima_nama, type:'Penerima', unit: matched.unit}, function(err, new_penerima){
+					    						CustomEntity.create({'nama': item.penerima_nama, type:'Penerima', unit: matched.unit, gol: matched.gol}, function(err, new_penerima){
 													item.penerima_id = new_penerima._id;
 						    						//untuk cross check kesamaan nama nanti
 						    						item.ket = '['+item.penerima_nama+'] '+item.ket;
@@ -1630,7 +1698,7 @@ pok.socket = function(io, connections, client){
     	//jika atomic entry
     	//cek jk sdh pernah dientry
     	DetailBelanja.findOne({'thang': thang, '_id': new_entry._id, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': new_entry.data.jumlah, 'penerima_id': new_entry.data.penerima_id, 
-			'tgl': new_entry.data.tgl}).exec(function(err, result){
+			'tgl': new_entry.data.tgl, 'ket': new_entry.data.ket}).exec(function(err, result){
 				//jika blm pernah
 				if(!result){
 					//validasi tgl entrian
@@ -1643,14 +1711,50 @@ pok.socket = function(io, connections, client){
 			    	//init total, user
 		    		var total_sampai_bln_ini = 0;
 			    	new_entry.data.pengentry = 	client.handshake.session.username || 'admin';
-			    	//jika penerima blm terdaftar
-			    	if(new_entry.data.penerima_id == ''){
-			    		//buat penerima baru
-			    		CustomEntity.create({'nama': new_entry.data.penerima_nama, type:'Penerima'}, function(err, new_penerima){
-			    			//assign id penerima baru yg sdh didaftar
-			    			new_entry.data.penerima_id = new_penerima._id;
-			    			//insert realisasi
-			    			DetailBelanja.update({'thang': thang, "_id": new_entry._id}, {$push: {"realisasi": new_entry.data}}, {new: true}, function(err, result){
+			    	async.series([
+			    		function(cb){
+			    			if(new_entry.data.penerima_id == ''){			    				
+				    			CustomEntity.findOne({nama: new RegExp('^'+new_entry.data.penerima_nama+'$', "i")}, function(err, res){
+			    					if(res){
+			    						new_entry.data.penerima_id = res._id;
+			    						cb(null,'')
+			    					} else{
+			    						cb(null,'')
+			    					}
+								})
+			    			} else{
+			    				cb(null,'');
+			    			}
+			    		}
+			    	], function(err, final){
+			    		//jika penerima blm terdaftar
+				    	if(new_entry.data.penerima_id == ''){
+				    		//buat penerima baru
+				    		CustomEntity.create({'nama': new_entry.data.penerima_nama, type:'Penerima'}, function(err, new_penerima){
+				    			//assign id penerima baru yg sdh didaftar
+				    			new_entry.data.penerima_id = new_penerima._id;
+				    			//insert realisasi
+				    			DetailBelanja.update({'thang': thang, "_id": new_entry._id}, {$push: {"realisasi": new_entry.data}}, {new: true}, function(err, result){
+						    		if (err) {
+						    			console.log(err)
+						    			errorHandler(client, 'Gagal menyimpan.')
+						    			cb('gagal')
+						    			return
+						    		}
+						    		cb('sukses');
+					    			User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Entry realisasi '+new_entry.data.penerima_nama+', Rp'+new_entry.data.jumlah+', Tgl '+new_entry.data.tgl}}}, 
+					    				function(err, status){
+									})
+						    		//sebarkan
+						    		if(new_entry.data.tgl_timestamp >= lower_ts && new_entry.data.tgl_timestamp <= upper_ts){
+						    			if(new_entry.data.tgl_timestamp <= upper_ts) total_sampai_bln_ini += new_entry.data.jumlah;
+						    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': new_entry._id, 'realisasi': new_entry.data.jumlah, 
+						    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
+						    		}
+						    	})
+				    		})
+				    	} else {
+				    		DetailBelanja.update({'thang': thang, "_id": new_entry._id}, {$push: {"realisasi": new_entry.data}}, {new: true}, function(err, result){
 					    		if (err) {
 					    			console.log(err)
 					    			errorHandler(client, 'Gagal menyimpan.')
@@ -1661,38 +1765,19 @@ pok.socket = function(io, connections, client){
 				    			User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Entry realisasi '+new_entry.data.penerima_nama+', Rp'+new_entry.data.jumlah+', Tgl '+new_entry.data.tgl}}}, 
 				    				function(err, status){
 								})
-					    		//sebarkan
 					    		if(new_entry.data.tgl_timestamp >= lower_ts && new_entry.data.tgl_timestamp <= upper_ts){
 					    			if(new_entry.data.tgl_timestamp <= upper_ts) total_sampai_bln_ini += new_entry.data.jumlah;
 					    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': new_entry._id, 'realisasi': new_entry.data.jumlah, 
 					    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
+					    		} else if(new_entry.data.tgl_timestamp <= upper_ts){
+					    			total_sampai_bln_ini += new_entry.data.jumlah;
+					    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': new_entry._id, 'realisasi': 0, 
+					    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
 					    		}
-					    	})
-			    		})
-			    	} else {
-			    		DetailBelanja.update({'thang': thang, "_id": new_entry._id}, {$push: {"realisasi": new_entry.data}}, {new: true}, function(err, result){
-				    		if (err) {
-				    			console.log(err)
-				    			errorHandler(client, 'Gagal menyimpan.')
-				    			cb('gagal')
-				    			return
-				    		}
-				    		cb('sukses');
-			    			User.update({_id: client.handshake.session.user_id}, {$push: {"act": {label: 'Entry realisasi '+new_entry.data.penerima_nama+', Rp'+new_entry.data.jumlah+', Tgl '+new_entry.data.tgl}}}, 
-			    				function(err, status){
-							})
-				    		if(new_entry.data.tgl_timestamp >= lower_ts && new_entry.data.tgl_timestamp <= upper_ts){
-				    			if(new_entry.data.tgl_timestamp <= upper_ts) total_sampai_bln_ini += new_entry.data.jumlah;
-				    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': new_entry._id, 'realisasi': new_entry.data.jumlah, 
-				    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
-				    		} else if(new_entry.data.tgl_timestamp <= upper_ts){
-				    			total_sampai_bln_ini += new_entry.data.jumlah;
-				    			io.sockets.to(thang).emit('pok_entry_update_realisasi', {'parent_id': new_entry._id, 'realisasi': 0, 
-				    				'sum': false, 'total_sampai_bln_ini': total_sampai_bln_ini, 'broadcast': true});
-				    		}
 
-				    	})
-			    	}
+					    	})
+				    	}
+			    	})
 				} else {
 					//jika sdh ada
 					cb(new_entry.data.penerima_nama+', Rp'+new_entry.data.jumlah+', Tgl '+new_entry.data.tgl+' sudah pernah dientry.')
@@ -2384,14 +2469,18 @@ pok.post('/unggah_pok', function(req, res){
 				form.on('fileBegin', function (name, file){
 					file.path = __dirname+'/../uploaded/pok/'+file.name;
 					file_path = file.path;
-					ext = file.path.match(/[^.]\w*$/)[0];
+					console.log(ext,file.path)
+					ext = file.path.match(/[^.]\w*$/i)[0];
 				})
 			} 
 		], function(err, final){
-			if(ext == 'xlsx' || ext == 'xls'){
+			console.log(err,err)
+			if(capitalize(ext) == 'XLSX' || capitalize(ext) == 'XLS'){
 				var pok = new XlsxPOK(file_path, pok_name || 'POK', req.session.username || 'admin', thang || req.session.tahun_anggaran || new Date().getFullYear(), req.session.user_id || 'dummy user');
 			}else if(ext.match(/^s/)) {
 				var pok = new POK(file_path, pok_name || 'POK', req.session.username || 'admin', req.session.user_id || 'ahsbdjasdbasjd');
+			} else {
+				sendNotification(req.session.user_id, 'Format file tidak didukung.')
 			}
 		}
 	)
@@ -3359,7 +3448,7 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp){
 function XlsxPOK(file_path, pok_name, username, thang, user_id){
 	const data = xlsx.parse(file_path);
 	//validasi
-	var is_valid = false;
+	var is_notvalid = false;
 	_.each(data[0].data, function(item, index, list){
 		//kode (kolom 0 di excel)
 		var c0 = item[0];
@@ -3371,44 +3460,43 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 
 		if(c0.match(/^\d{3}\.\d{2}\.\d{2}$/)){ //program
 			if(!item[1]){
-				is_valid = true;
+				is_notvalid = true;
 				return;
 			}
 		}else if(c0.match(/^\d{4}$/)){ //kegiatan
 			if(!item[1]){
-				is_valid = true;
+				is_notvalid = true;
 				return;
 			}
 		}else if(c0.match(/^\d{4}\.\d{3}$/)){ //output
 			if(!item[1]){
-				is_valid = true;
+				is_notvalid = true;
 				return;
 			}
 		}else if(c0.match(/^\d{3}$/)){ //komponen
 			if(!item[1]){
-				is_valid = true;
+				is_notvalid = true;
 				return;
 			}
 		}else if(c0.match(/^\w{1}$/)){ //sub komponen
 			if(!item[1]){
-				is_valid = true;
+				is_notvalid = true;
 				return;
 			}
 		}else if(c0.match(/^\d{6}$/)){ //akun
 			if(!item[1]){
-				is_valid = true;
+				is_notvalid = true;
 				return;
 			}
 		}else if(c0 == ''){ //detail
 			if(!item[1] || item[2] === '' || !item[3] || item[4] === '' || item[5] === ''){
-				console.log('boom')
-				is_valid = true;
+				is_notvalid = true;
 				return;
 			}
 		}
 	})
 
-	if(is_valid){
+	if(is_notvalid){
 		pok.connections[user_id].emit('pok_unduh_gagal_xlsx');
 		return;
 	}

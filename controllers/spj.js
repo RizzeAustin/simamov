@@ -22,10 +22,18 @@ var msopdf = require('node-msoffice-pdf');
 
 var Pegawai = require(__dirname+"/../model/Pegawai.model");
 
+var Program = require(__dirname+"/../model/Program.model");
+var Kegiatan = require(__dirname+"/../model/Kegiatan.model");
+var Output = require(__dirname+"/../model/Output.model");
+var Komponen = require(__dirname+"/../model/Komponen.model");
+var Akun = require(__dirname+"/../model/Akun.model");
 var DetailBelanja = require(__dirname+"/../model/DetailBelanja.model");
+
 var CustomEntity = require(__dirname+"/../model/CustomEntity.model");
 var SettingSPPD = require(__dirname+"/../model/SettingSPPD.model");
 var Setting = require(__dirname+"/../model/Setting.model");
+
+var ObjectId = require('mongoose').Types.ObjectId;
 
 var User = require(__dirname+"/../model/User.model");
 
@@ -77,7 +85,270 @@ spj.socket = function(io, connections, client){
 			cb('sukses');
 		}
     })
+    client.on('buat_spj_lainnya', function (spj, cb){
+    	console.log(spj)
+    	handleSPJLainnya(spj, client, cb)
+    	// cb({outputPdf: '/result/spj/lainnya/rekap_sppd.pdf', spj: spj})
+    })
 
+}
+
+function handleSPJLainnya(spj, client, cb){
+	username = client.handshake.session.username || 'dummy user';
+	var header = {};
+    var rows = spj.data;
+    var file_name, setting;
+	async.series([
+		//kop
+		function(cback){
+			DetailBelanja.findOne( {_id: new ObjectId(spj.target_realisasi)}, 'nmitem kdprogram kdgiat kdoutput kdsoutput kdkmpnen kdskmpnen kdakun', function(err, detail){
+                header.detail = detail.nmitem;
+                Program.findOne( {kdprogram: detail.kdprogram, active: true}, 'uraian', function(err, prog){
+                    header.prog = prog.uraian+' ( 054.01.'+detail.kdprogram+' )';
+                    Kegiatan.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, active: true}, 'uraian', function(err, giat){
+                        header.giat = giat.uraian+' ( '+detail.kdgiat+' )';
+                        Output.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput, active: true}, 'uraian', function(err, outp){
+                            header.outp = outp.uraian+' ( '+detail.kdoutput+' )';
+                            Komponen.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput, kdsoutput: detail.kdsoutput,
+	                            kdkmpnen: detail.kdkmpnen, active: true}, 'urkmpnen', function(err, komp){
+	                            header.komp = komp.urkmpnen+' ( '+detail.kdoutput+'.'+detail.kdkmpnen+' )';
+	                            Akun.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput,
+	                            kdkmpnen: detail.kdkmpnen, kdskmpnen: detail.kdskmpnen, kdakun: detail.kdakun, active: true}, 'uraian', function(err, akun){
+	                                header.akun = akun.uraian+' ( '+detail.kdakun+' )';
+	                                cback(null, '')
+	                            })
+	                        })
+                        })
+                    })
+                })
+            })
+		},
+        function(cback){
+            SettingSPPD.findOne({}, 'ppk bendahara').populate('ppk bendahara').exec(function(err, result){
+                if(!result || !result.ppk || !result.bendahara){
+                    cback('Pengaturan PPK/Bendahara belum ada. Harap tentukan di pengaturan SPPD.', null);
+                    return;
+                }
+                setting = result;
+                cback(null, '');
+            })
+        }
+	], function(err, final){
+		console.log(header)
+		XlsxPopulate.fromFileAsync("./template/spj_template/honor_template.xlsx")
+            .then(workbook => {
+            //Header
+            workbook.definedName("daftar").value(spj.daftar.toUpperCase());
+            workbook.definedName("program").value(header.prog.toUpperCase() || ':   ');
+            workbook.definedName("kegiatan").value(header.giat.toUpperCase() || ':   ');
+            workbook.definedName("output").value(header.outp.toUpperCase() || ':   ');
+            workbook.definedName("komponen").value(header.komp.toUpperCase() || ':   ');
+            workbook.definedName("akun").value(header.akun.toUpperCase() || ':   ');
+            if(spj.periode){
+            	workbook.definedName("periode").value(spj.periode.toUpperCase() || '');
+            } else {
+            	workbook.definedName("periode_title").value('');
+            }
+
+            //data
+            SPJData(workbook, setting, spj, spj.start_row, spj.next_last_jlh_link, spj.total_row_per_page);
+
+            //simpan
+            file_name = Math.round(new Date().getTime()/1000)+' SPJ Honor';
+            workbook.toFileAsync('./temp_file/spj/'+file_name+'.xlsx');
+           }).then(dataa => {
+           		msopdf(null, function(error, office) {
+                    var input = './temp_file/spj/'+file_name+'.xlsx';
+                    var output = './template/output/spj/lainnya/'+file_name+'.pdf';
+	           		if(spj.preview || spj.pdf){
+	                    office.excel({'input': input, 'output': output}, function(error, pdf) {
+	                        if (err) {
+	                            console.error(err);
+	                        }
+	                        //hapus xlsx setelah terconvert
+	                        // fs.unlink(input);
+	                    })
+	                    office.close(null, function(error) {
+	                        cb('/result/spj/lainnya/'+file_name+'.pdf');
+	                        setTimeout(function(){
+	                            fs.unlink(output);
+	                        }, 10000)                        
+	                    })
+	                } else {
+	                    setTimeout(function(){
+	                        cb('/result_temp/spj/'+file_name+'.xlsx');
+	                    }, 100) 
+	                    
+	                    setTimeout(function(){
+	                        fs.unlink(input);
+	                    }, 10000)  
+	                }
+	            })
+           })
+	})
+
+	//data
+	//ttd
+}
+
+function SPJData(workbook, setting, spj, start_row, next_last_jlh_link, total_row_per_page){
+    var column = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
+    var sum_cols = [5,6,7,8];
+    var center_cols = [1,3,4]
+    var money_cols = [5,6,7,8]
+    var last_col = 10;
+	var sisa_item = spj.data.length;
+     var row = start_row;
+     var sum_pos = start_row;
+     var nmr = 1;
+     var total = 0;
+     _.each(spj.data, function(item, index, list){
+     	if(!item.jumlah || !item.penerima_nama) return;
+         var r = workbook.sheet(0).range('A'+row+':'+column[last_col-1]+row);
+         if((sisa_item>(next_last_jlh_link-10) && row == next_last_jlh_link) || (sisa_item>(total_row_per_page-10) && row == next_last_jlh_link)){
+            r.value([['',
+                'Jumlah dipindahkan', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                ''
+            ]]);
+            //=>rumus
+		    _.each(sum_cols, function(col, a, b){
+		    	workbook.sheet(0).row(row).cell(col).formula('SUM('+column[col-1]+sum_pos+':'+column[col-1]+(row-1)+')');
+		    })
+            //=>style
+            var jumlahcells = workbook.sheet(0).range('B'+row+':'+column[sum_cols[0]-2]+row);
+            jumlahcells.merged(true).style('horizontalAlignment', 'center');
+            row++;
+
+            var r = workbook.sheet(0).range('A'+row+':'+column[last_col-1]+row);
+            r.value([['',
+                'Jumlah pindahan', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                ''
+            ]]);
+            //=>rumus
+		    _.each(sum_cols, function(col, a, b){
+		    	workbook.sheet(0).row(row).cell(col).formula(column[col-1]+(row-1));
+		    })
+            // workbook.sheet(0).cell('G'+row).formula('G'+(row-1));
+            // workbook.sheet(0).cell('H'+row).formula('H'+(row-1));
+            //=>style
+            var jumlahcells = workbook.sheet(0).range('B'+row+':'+column[sum_cols[0]-2]+row);
+            jumlahcells.merged(true).style('horizontalAlignment', 'center');
+
+            //update sum position
+            sum_pos = row;
+            next_last_jlh_link = sum_pos + total_row_per_page - 1;
+
+            row++;
+         } else{
+             var value = [nmr,
+                 item.penerima_nama,
+                 item.gol, 
+                 item.jlh_sks,
+                 item.honor_persks,
+                 getNumber(item.jumlah),
+                 getNumber(item.pph21),
+                 getNumber(item.dibayarkan)
+            ];
+
+    		if(nmr % 2 == 0){
+    			value.push('')
+    			value.push(nmr+'. ......')
+    		} else {
+    			value.push(nmr+'. ......')
+    			value.push('')
+    		}
+
+    		r.value([value]);
+
+    		total+=getNumber(item.jumlah);
+            row++;
+            nmr++;
+         }
+     })
+
+    //jumlah
+    row += 1;
+    var r = workbook.sheet(0).range('A'+row+':'+column[last_col-1]+row);
+    r.value([['',
+        'Jumlah', 
+        '', 
+        '', 
+        '', 
+        '', 
+        '', 
+        '', 
+        '', 
+        ''
+    ]]);
+    //terbilang
+    workbook.sheet(0).cell('I'+row).value(terbilang(total));
+    var terb = workbook.sheet(0).range('I'+row+':'+column[last_col-1]+row);
+	terb.merged(true).style({'wrapText': true, 'verticalAlignment': 'center'});
+	//center column
+    _.each(center_cols, function(col, a, b){
+    	workbook.sheet(0).range(column[col-1]+start_row+':'+column[col-1]+row).style('horizontalAlignment', 'center');
+    })
+
+    //=>rumus
+    _.each(sum_cols, function(col, a, b){
+    	workbook.sheet(0).row(row).cell(col).formula('SUM('+column[col-1]+sum_pos+':'+column[col-1]+(row-1)+')');
+    })
+
+    _.each(money_cols, function(col, a, b){
+    	workbook.sheet(0).range(column[col-1]+start_row+':'+column[col-1]+row).style("numberFormat", "#,##0.-");
+    })
+    //=>style
+    r.style("bold", true);
+    var jumlahcells = workbook.sheet(0).range('B'+row+':'+column[sum_cols[0]-2]+row);
+    jumlahcells.merged(true);
+    workbook.sheet(0).range('B'+row+':H'+row).style({'verticalAlignment': 'center', 'horizontalAlignment': 'center'})
+	workbook.sheet(0).row(row).height(78);
+
+    //border
+    var datacolls = workbook.sheet(0).range('A'+start_row+':'+column[last_col-1]+(row));
+    datacolls.style({'leftBorder': true, 'rightBorder': true, 'bottomBorder': true, 'topBorder': true})
+
+    //ttd
+    //=>bendahara
+    row += 2;
+    workbook.sheet(0).range('A'+row+':A'+(row+6)).value([['Lunas pada tanggal'], ['Bendahara Pengeluaran STIS,'], [''], [''], [''], [setting.bendahara.nama], ['NIP '+setting.bendahara._id]]);
+    //=>>style
+    workbook.sheet(0).cell('A'+(row+5)).style('underline', true);
+
+    //=>ppk
+    workbook.sheet(0).range('D'+(row+1)+':D'+(row+6)).value([['Pejabat Pembuat Komitmen,'], [''], [''], [''], [setting.ppk.nama], ['NIP '+setting.ppk._id]]);
+    //=>>style
+    workbook.sheet(0).cell('D'+(row+5)).style('underline', true);
+    workbook.sheet(0).range('D'+(row+1)+':F'+(row+1)).merged(true).style('horizontalAlignment', 'center');
+    workbook.sheet(0).range('D'+(row+5)+':F'+(row+5)).merged(true).style('horizontalAlignment', 'center');
+    workbook.sheet(0).range('D'+(row+6)+':F'+(row+6)).merged(true).style('horizontalAlignment', 'center');
+
+
+    //=>pembuat daftar
+    console.log(spj)
+    workbook.sheet(0).range('H'+row+':H'+(row+6)).value([['Jakarta, '+spj.tgl_buat_spj], ['Pembuat Daftar,'], [''], [''], [''], [spj.pembuat_daftar], ['NIP '+spj.pembuat_daftar_id]]);
+    //=>>style
+    workbook.sheet(0).cell('H'+(row+5)).style('underline', true);
+    workbook.sheet(0).range('H'+row+':'+column[last_col-1]+row).merged(true).style('horizontalAlignment', 'center');
+    workbook.sheet(0).range('H'+(row+1)+':'+column[last_col-1]+(row+1)).merged(true).style('horizontalAlignment', 'center');
+    workbook.sheet(0).range('H'+(row+1)+':'+column[last_col-1]+(row+1)).merged(true).style('horizontalAlignment', 'center');
+    workbook.sheet(0).range('H'+(row+5)+':'+column[last_col-1]+(row+5)).merged(true).style('horizontalAlignment', 'center');
+    workbook.sheet(0).range('H'+(row+6)+':'+column[last_col-1]+(row+6)).merged(true).style('horizontalAlignment', 'center');
 }
 
 spj.get('/honor', function(req, res){
@@ -332,6 +603,9 @@ spj.post('/honor', function(req, res){
 									});
 								}else{
 									res.send(file_name+'.pdf');
+									setTimeout(function(){
+										fs.unlink(output);
+									}, 10000)
 									setTimeout(function(){
 										callb(null, '')
 									}, 2000)
@@ -768,6 +1042,9 @@ spj.post('/transport', function(req, res){
 								}else{
 									res.send(file_name+'.pdf');
 									setTimeout(function(){
+										fs.unlink(output);
+									}, 10000)
+									setTimeout(function(){
 										callb(null, '')
 									}, 2000)
 								} 							
@@ -882,6 +1159,10 @@ spj.post('/transport', function(req, res){
 	        })
 		}
 	)
+});
+
+spj.get('/spj_lainnya', function(req, res){
+	res.render('spj/lainnya', {layout: false, admin: req.session.jenis});
 });
 
 spj.get('/pengaturan', function(req, res){

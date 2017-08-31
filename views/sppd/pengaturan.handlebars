@@ -107,6 +107,17 @@
                                             </span>
                                         </div> 
                                     </div>
+                                </div>  
+                                <div class="col-md-3">   
+                                    <div class="form-group row">
+                                        <h6><i class="icon-user"></i> Pembuat Daftar (Rekap)</h6>
+                                        <div class="input-group">
+                                            <input type="text" id="inp-pembdaf" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.pembdaf}}{{nama}}{{/with}}" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-set-pembdaf" type="submit" class="btn btn-primary">Set</button>
+                                            </span>
+                                        </div> 
+                                    </div>
                                 </div> 
                             </div>
                             <div class="tab-pane" id="biaya2Tabchild" role="tabpanel">
@@ -350,6 +361,12 @@
             }
         })
 
+        $('#inp-pembdaf').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-set-pembdaf').click();
+            }
+        })
+
         $('#btn-ttd-surat-tugas').click(function(){
             if(!$('#inp-ttd-surat-tugas').val() || !selected_peg_id){
                 generalAlert('Isian kosong.');
@@ -422,6 +439,22 @@
                 return;
             }
             socket.emit('set_bend', {nama: $('#inp-bend').val(), _id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+
+        $('#btn-set-pembdaf').click(function(){
+            if(!selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
+            socket.emit('set_pembdaf', {nama: $('#inp-pembdaf').val(), _id: selected_peg_id}, 
                 function(status){
                     if(status == 'sukses'){
                         generalAlert('Berhasil diubah.');

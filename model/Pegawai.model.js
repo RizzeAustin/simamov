@@ -10,6 +10,7 @@ var PegawaiSchema = new Schema({
     "gol" : String,
     "kode_dosen" : String,
     "ce" : String,
+    "alias": [String],
     "active": {
     	type: Boolean,
     	default: true

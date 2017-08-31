@@ -835,6 +835,8 @@
     //untuk hak akses
     var user_aktiv = '{{username}}';
 
+    $('#pok_menu').attr('class', 'nav-link active');
+
 
     $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/handsontable.full.min.css"));
     /////////// UMUM ////////////
@@ -879,7 +881,7 @@
         //search & sort
         //tabel pok entry
         tabel_pok_entry.DataTable({
-            scrollY:        '500px',
+            scrollY:        false,//'500px',
             scrollX:        true,
             scrollCollapse: true,
             fixedColumns:   {
@@ -1637,6 +1639,7 @@
                 $('#entry_jumlah_field').focus();
                 registerTypeaheadEntryElement();
             } else {
+                $('#modal-remove-lg').css('max-width', '')
                 $('#modal-remove-lg').addClass('modal-lg');
                 var show = '<div style="height: 480px;position:relative;">'
                             +    '<div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">'
@@ -1676,7 +1679,7 @@
                             +        '</div>'
                             +        '<div class="row">'
                             +            '<div class="col-md-12">'
-                            +                '<div id="spreadsheet_entry" style="height: 640px; width: 1200px; overflow: hidden;">'
+                            +                '<div id="spreadsheet_entry" style="height: 640px; width: 1200px; overflow: auto;">'
                             +                '</div>'
                             +            '</div>'
                             +        '</div>'
@@ -1718,7 +1721,17 @@
                   colHeaders: ["Tanggal", "Penerima", "Jumlah", "PPh 21", "PPh 22", "PPh 23", "PPn", "Nmr SPM", "Nmr Bukti", "Ket"],
                   columns: [
                     {data: 'tgl', readOnly: true},
-                    {data: 'penerima_nama'},
+                    {
+                        type: 'autocomplete',
+                        source: function (query, process) {
+                            socket.emit('penerima_list', {'query': query, 'type': 'all'}, function (data) {
+                                // return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                                process(_.map(data, function(peg){ return peg.nama}));
+                            });
+                        },
+                        data: 'penerima_nama',
+                        strict: false
+                    },
                     {data: 'jumlah', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
                     {data: 'pph21', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
                     {data: 'pph22', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
@@ -2725,7 +2738,7 @@
             target_delete.hide();
             parent_id = $("#tbh_entry_detail").val();
             $.toast({
-                text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
+                text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm"></i> Batal</a>',
                 textAlign: 'right', 
                 hideAfter: 4000,
                 loader: false,
@@ -2761,7 +2774,7 @@
         socket.on('pok_entry_update_realisasi', function(data) {
 
             //row umum sbg target
-            var target_row = dt
+            var target_row = $('#pok_table_entry').DataTable()
                             .rows(function ( idx, dataa, node ) {
                                 return dataa[0] == data.parent_id ?
                                     true : false;})
@@ -2853,7 +2866,7 @@
             target_row.find('td:eq(11)').text(formatUang(sisa_dana));
 
             if(getNumber(sisa_dana) < 0){
-                target_row.find('td:eq(11)').css("background-color", "yellow")
+                target_row.find('td:eq(11)').css("background-color", "red")
             } else {
                 target_row.find('td:eq(11)').css("background-color", "")
             }
@@ -2866,10 +2879,10 @@
         function updateParentRealisasi(child_td_element, old_child_price, new_child_price, old_child_dtsbi_price, new_child_dtsbi_price){
             //ambil id parent
             if(_.isUndefined(child_td_element.closest('tr').data())) return;
-            var parent_id = tabel_pok_entry.DataTable().row(child_td_element.closest('tr')).data()[1];
+            var parent_id = $('#pok_table_entry').DataTable().row(child_td_element.closest('tr')).data()[1];
 
             //ambil row parent
-            var prt_row = tabel_pok_entry.DataTable()
+            var prt_row = $('#pok_table_entry').DataTable()
                                 .rows( function ( idx, data, node ) {
                                     return data[0] == parent_id ?
                                         true : false;
@@ -2894,7 +2907,7 @@
 
             var sisa_dana = getNumber(parent_pengeluaran_td.find('td:eq(6)').text()) - new_jumlah_tsbi
 
-            tabel_pok_entry.DataTable()
+            $('#pok_table_entry').DataTable()
                 .cell(parent_pengeluaran_td.find('td:eq(9)'))
                 .data(new_jumlah_tsbi)
                 .cell(parent_pengeluaran_td.find('td:eq(7)'))
@@ -2918,7 +2931,7 @@
             parent_pengeluaran_td.find('td:eq(11)').text(formatUang(sisa_dana));
 
             if(getNumber(sisa_dana) < 0){
-                parent_pengeluaran_td.find('td:eq(11)').css("background-color", "yellow")
+                parent_pengeluaran_td.find('td:eq(11)').css("background-color", "red")
             } else {
                 parent_pengeluaran_td.find('td:eq(11)').css("background-color", "")
             }
@@ -2927,7 +2940,7 @@
             if(type != 'program'){
                 updateParentRealisasi(parent_pengeluaran_td, old_jlh, new_jumlah, old_jlh_tsbi, new_jumlah_tsbi);
             } else {
-                var prt_row = tabel_pok_entry.DataTable()
+                var prt_row = $('#pok_table_entry').DataTable()
                         .rows( function ( idx, data, node ) {
                             return data[2] == '<span class="badge badge-default">program</span>' ?
                                 true : false;
@@ -3611,7 +3624,6 @@
             var this_td = $(this).closest('td');
 
             socket.emit('pok_edit_new_item', data, function(status){
-                console.log(status)
                 if(status == 'sukses'){
                     tabel_pok_edit.DataTable()
                     .cell(this_td)
@@ -3652,7 +3664,7 @@
             
             item.hide();
             $.toast({
-                text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
+                text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm"></i> Batal</a>',
                 textAlign: 'right', 
                 hideAfter: 4000,
                 loader: false,
@@ -4773,7 +4785,7 @@
             //update jumlah
             else {
                 $('#pok_table_entry').DataTable().draw(false);
-                var prt_row = tabel_pok_entry.DataTable()
+                var prt_row = $('#pok_table_entry').DataTable()
                         .rows( function ( idx, data, node ) {
                             return data[2] == '<span class="badge badge-default">program</span>' ?
                                 true : false;
@@ -5020,5 +5032,19 @@
                 stack: 2
             })
         }
+
+        function generalAlertNoTimeout(message){
+            $.toast({
+                text: message,
+                textAlign: 'left',
+                hideAfter: false,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
+
+        socket.on('messagesNoTimeout', function(data) {
+            generalAlertNoTimeout(data)
+        });
     });
 </script>

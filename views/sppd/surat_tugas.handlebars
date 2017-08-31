@@ -69,7 +69,7 @@
                                             <input type="radio" id="posisi_kota2" name="posisi_kota" value="dalam_kota">  Dalam Kota (>8 jam)
                                         </label>
                                     </div>
-                                </div>                                                        
+                                </div>
                                 <div class="form-group row">
                                     <label for="tgl_berangkat">Waktu<span> *</span></label>
                                     <div class="form-group row">
@@ -521,7 +521,9 @@
             rowReorder: {
                 enable: false
             },
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
             createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(0)').attr('class', 'text-center');
                 $( row ).find('td:eq(3)').attr('class', 'text-center');
                 $( row ).find('td:eq(4)').attr('class', 'text-center');
                 $( row ).find('td:eq(5)').attr('class', 'text-center');

@@ -21,6 +21,8 @@ var pdftkPath = 'C:\\Program Files (x86)\\PDFtk Server\\bin\\pdftk.exe';
 //Docx to Pdf
 var msopdf = require('node-msoffice-pdf');
 
+const XlsxPopulate = require('xlsx-populate');
+
 var ObjectId = require('mongoose').Types.ObjectId;
 var Komponen = require(__dirname+"/../model/Komponen.model");
 
@@ -34,6 +36,11 @@ var Perhitungan = require(__dirname+"/../model/Perhitungan.model");
 var Representasi = require(__dirname+"/../model/Representasi.model");
 
 var CustomEntity = require(__dirname+"/../model/CustomEntity.model");
+
+var Program = require(__dirname+"/../model/Program.model");
+var Kegiatan = require(__dirname+"/../model/Kegiatan.model");
+var Output = require(__dirname+"/../model/Output.model");
+var Komponen = require(__dirname+"/../model/Komponen.model");
 var Akun = require(__dirname+"/../model/Akun.model");
 var DetailBelanja = require(__dirname+"/../model/DetailBelanja.model");
 
@@ -244,6 +251,23 @@ sppd.socket = function(io, connections, client){
             
         })
     })
+    client.on('set_pembdaf', function (new_pembdaf, cb){
+        console.log(new_pembdaf)
+        SettingSPPD.findOne({}, function(err, setting){
+            if(!setting){
+                var new_setting = new SettingSPPD({pembdaf: new_bend});
+                new_setting.save(function(err, res){
+                    cb('sukses');
+                });
+            } else {
+                SettingSPPD.update({}, {$set: {pembdaf: new_pembdaf}}, {new: true}, function(err, result){
+                    console.log(result)
+                    cb('sukses');
+                })
+            }
+            
+        })
+    })
     client.on('set_default_ttd_st', function (nip, cb){
         SettingSPPD.update({}, {ttd_st_default: nip}, function(err, status){
             cb('sukses');
@@ -430,6 +454,290 @@ sppd.socket = function(io, connections, client){
             cb('sukses');
         }
     })
+    client.on('buat_rekap', function (data, cb){
+        //utk surtug
+        if(data.type == 'surat_tugas'){
+            var header = {};
+            var rows, file_name, setting;
+            async.series([
+
+                function(cback){
+                    Perhitungan.find( {_id: {$in: data.ids}}).populate({path: 'surtug', populate: { path: 'nama_lengkap prov kab org'}}).exec(function(err, perhits){
+                        rows = perhits;
+                        cback(null, '')
+                    })
+                },
+
+                function(cback){
+                    //jika null
+                    if(!rows){
+                        // sendNotification(client, 'Tidak ada data perhitungan.')
+                        cback('Tidak ada data perhitungan.', null);
+                        return;
+                    }
+                    //jika kosong
+                    if(rows.length == 0){
+                        // sendNotification(client, 'Tidak ada data perhitungan.')
+                        cback('Tidak ada data perhitungan.', null)
+                        return;
+                    }
+                    //cek kesamaan detail
+                    var isDifferent = false;
+                    var detail_id = rows[0].detail;
+                    _.each(rows, function(datum, index, list){
+                        data.ids = _.filter(data.ids, function(id){ return id != datum._id; })
+                        if(datum.detail && (detail_id != datum.detail) && !isDifferent){
+                            client.emit('messagesNoTimeout', 'Surtug No. '+datum._id+' memiliki detail realisasi yang berbeda.');
+                            cback('Rekap tidak dibuat.', null);
+                            isDifferent = true;
+                            return;
+                        }
+                    })
+
+                    //jika ada yg blm punya detail
+                    if(data.ids.length != 0){
+                        client.emit('messagesNoTimeout', 'Perhatian: Surtug No. '+data.ids.join(", ")+' blm memiliki perhitungan.');
+                    }
+
+                    //is different spy tdk tereksekusi. return pada each tdk membreak all codes
+                    if(!isDifferent){
+                        DetailBelanja.findOne( {_id: new ObjectId(detail_id)}, 'nmitem kdprogram kdgiat kdoutput kdsoutput kdkmpnen kdskmpnen kdakun', function(err, detail){
+                            header.detail = detail.nmitem;
+                            Program.findOne( {kdprogram: detail.kdprogram, active: true}, 'uraian', function(err, prog){
+                                header.prog = ':   '+prog.uraian+' ( 054.01.'+detail.kdprogram+' )';
+                                Kegiatan.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, active: true}, 'uraian', function(err, giat){
+                                    header.giat = ':   '+giat.uraian+' ( '+detail.kdgiat+' )';
+                                    Komponen.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput, kdsoutput: detail.kdsoutput,
+                                        kdkmpnen: detail.kdkmpnen, active: true}, 'urkmpnen', function(err, komp){
+                                        header.outp = ':   '+komp.urkmpnen+' ( '+detail.kdoutput+'.'+detail.kdkmpnen+' )';
+                                        Akun.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput,
+                                        kdkmpnen: detail.kdkmpnen, kdskmpnen: detail.kdskmpnen, kdakun: detail.kdakun, active: true}, 'uraian', function(err, akun){
+                                            header.akun = ':   '+akun.uraian+' ( '+detail.kdakun+' )';
+                                            cback(null, '')
+                                        })
+                                    })
+                                })
+                            })
+                        })
+                    }
+                },
+                function(cback){
+                    SettingSPPD.findOne({}, 'ppk bendahara').populate('ppk bendahara').exec(function(err, result){
+                        if(!result || !result.ppk || !result.bendahara){
+                            cback('Pengaturan PPK/Bendahara belum ada. Harap tentukan di pengaturan SPPD.', null);
+                            return;
+                        }
+                        setting = result;
+                        cback(null, '');
+                    })
+                }
+
+            ], function(err, final){
+                if(err){
+                    sendNotification(client, err)
+                    cb('')
+                    return;
+                }
+                XlsxPopulate.fromFileAsync("./template/spj_template/rekap_sppd.xlsx")
+                        .then(workbook => {
+
+                        //Header
+                        workbook.definedName("detail").value('Rekap '+rows[0].surtug.tugas);
+                        workbook.definedName("program").value(header.prog || ':   ');
+                        workbook.definedName("kegiatan").value(header.giat || ':   ');
+                        workbook.definedName("output").value(header.outp || ':   ');
+                        workbook.definedName("akun").value(header.akun || ':   ');
+
+                        //data
+                        var sisa_item = rows.length;
+                        var next_last_jlh_link = 40;
+                         var row = 18;
+                         var sum_pos = 18;
+                         var nmr = 1;
+                         _.each(rows, function(item, index, list){
+                             var r = workbook.sheet(0).range('A'+row+':K'+row);
+                             if((sisa_item>11 && row == 40) || (sisa_item>29 && row == next_last_jlh_link)){
+                                r.value([['',
+                                    'Jumlah dipindahkan', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    ''
+                                ]]);
+                                //=>rumus
+                                workbook.sheet(0).cell('G'+row).formula('SUM(G'+sum_pos+':G'+(row-1)+')');
+                                workbook.sheet(0).cell('H'+row).formula('SUM(H'+sum_pos+':H'+(row-1)+')');
+                                workbook.sheet(0).cell('I'+row).formula('SUM(I'+sum_pos+':I'+(row-1)+')');
+                                workbook.sheet(0).cell('J'+row).formula('SUM(J'+sum_pos+':J'+(row-1)+')');
+                                workbook.sheet(0).cell('K'+row).formula('SUM(K'+sum_pos+':K'+(row-1)+')');
+                                //=>style
+                                var jumlahcells = workbook.sheet(0).range('B'+row+':F'+row);
+                                jumlahcells.merged(true).style('horizontalAlignment', 'center');
+                                row++;
+
+                                var r = workbook.sheet(0).range('A'+row+':K'+row);
+                                r.value([['',
+                                    'Jumlah pindahan', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    '', 
+                                    ''
+                                ]]);
+                                //=>rumus
+                                workbook.sheet(0).cell('G'+row).formula('G'+(row-1));
+                                workbook.sheet(0).cell('H'+row).formula('H'+(row-1));
+                                workbook.sheet(0).cell('I'+row).formula('I'+(row-1));
+                                workbook.sheet(0).cell('J'+row).formula('J'+(row-1));
+                                workbook.sheet(0).cell('K'+row).formula('K'+(row-1));
+                                //=>style
+                                var jumlahcells = workbook.sheet(0).range('B'+row+':F'+row);
+                                jumlahcells.merged(true).style('horizontalAlignment', 'center');
+
+                                //update sum position
+                                sum_pos = row;
+                                next_last_jlh_link = sum_pos + 39;
+
+                                row++;
+                             } else{
+                                 r.value([[nmr,
+                                     item.surtug.nama_lengkap.nama,
+                                     item.surtug.nama_lengkap.gol, 
+                                     item.surtug.jumlah_hari,
+                                     item.surtug.lokasi,
+                                     item.surtug.tgl_berangkat,
+                                     item.total_rincian,
+                                     item.harga_tiket || 0,
+                                     0,
+                                     item.hotel_total || 0,
+                                     item.total_rincian
+                                 ]]);
+                                 //=>rumus
+                                 workbook.sheet(0).cell('K'+row).formula('G'+row+'-H'+row+'-I'+row+'-J'+row);
+                                 row++;
+                                 nmr++;
+                             }
+                         })
+
+                        //jumlah
+                        row += 1;
+                        var r = workbook.sheet(0).range('A'+row+':K'+row);
+                        r.value([['',
+                            'Jumlah', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            ''
+                        ]]);
+                        workbook.sheet(0).range('A18:A'+row).style('horizontalAlignment', 'center');
+                        workbook.sheet(0).range('C18:C'+row).style('horizontalAlignment', 'center');
+                        workbook.sheet(0).range('D18:D'+row).style('horizontalAlignment', 'center');
+
+
+                        //=>rumus
+                        workbook.sheet(0).cell('G'+row).formula('SUM(G'+sum_pos+':G'+(row-1)+')');
+                        workbook.sheet(0).cell('H'+row).formula('SUM(H'+sum_pos+':H'+(row-1)+')');
+                        workbook.sheet(0).cell('I'+row).formula('SUM(I'+sum_pos+':I'+(row-1)+')');
+                        workbook.sheet(0).cell('J'+row).formula('SUM(J'+sum_pos+':J'+(row-1)+')');
+                        workbook.sheet(0).cell('K'+row).formula('SUM(K'+sum_pos+':K'+(row-1)+')');
+                        workbook.sheet(0).range('G18:K'+row).style("numberFormat", "#,##0.-");
+                        //=>style
+                        r.style("bold", true);
+                        var jumlahcells = workbook.sheet(0).range('B'+row+':F'+row);
+                        jumlahcells.merged(true).style('horizontalAlignment', 'center');
+
+                        //border
+                        var datacolls = workbook.sheet(0).range('A18'+':K'+(row));
+                        datacolls.style({'leftBorder': true, 'rightBorder': true, 'bottomBorder': true, 'topBorder': false})
+
+
+                         //ttd
+                         //=>bendahara
+                         row += 2;
+                         workbook.sheet(0).range('A'+row+':A'+(row+6)).value([['Lunas pada tanggal'], ['Bendahara Pengeluaran STIS,'], [''], [''], [''], [setting.bendahara.nama], ['NIP '+setting.bendahara._id]]);
+                         //=>>style
+                         workbook.sheet(0).cell('A'+(row+5)).style('underline', true);
+
+                         //=>ppk
+                         workbook.sheet(0).range('E'+(row+1)+':E'+(row+6)).value([['Pejabat Pembuat Komitmen,'], [''], [''], [''], [setting.ppk.nama], ['NIP '+setting.ppk._id]]);
+                         //=>>style
+                         workbook.sheet(0).cell('E'+(row+5)).style('underline', true);
+                         workbook.sheet(0).range('E'+(row+1)+':G'+(row+1)).merged(true).style('horizontalAlignment', 'center');
+                         workbook.sheet(0).range('E'+(row+5)+':G'+(row+5)).merged(true).style('horizontalAlignment', 'center');
+                         workbook.sheet(0).range('E'+(row+6)+':G'+(row+6)).merged(true).style('horizontalAlignment', 'center');
+
+
+                         //=>pembuat daftar
+                         workbook.sheet(0).range('I'+row+':I'+(row+6)).value([['Jakarta, '+data.tgl_buat_rekap], ['Pembuat Daftar,'], [''], [''], [''], [data.pembuat_daftar], ['NIP '+data.pembuat_daftar_id]]);
+                         //=>>style
+                         workbook.sheet(0).cell('I'+(row+5)).style('underline', true);
+                         workbook.sheet(0).range('I'+row+':K'+row).merged(true).style('horizontalAlignment', 'center');
+                         workbook.sheet(0).range('I'+(row+1)+':K'+(row+1)).merged(true).style('horizontalAlignment', 'center');
+                         workbook.sheet(0).range('I'+(row+1)+':K'+(row+1)).merged(true).style('horizontalAlignment', 'center');
+                         workbook.sheet(0).range('I'+(row+5)+':K'+(row+5)).merged(true).style('horizontalAlignment', 'center');
+                         workbook.sheet(0).range('I'+(row+6)+':K'+(row+6)).merged(true).style('horizontalAlignment', 'center');
+
+
+                         //simpan
+                        file_name = Math.round(new Date().getTime()/1000)+' Rekap SPPD '+rows[0]._id+' - '+rows[rows.length-1]._id;
+                        workbook.toFileAsync('./temp_file/rekap/sppd/'+file_name+'.xlsx');
+                 }).then(dataa => {
+                    msopdf(null, function(error, office) {
+                        var input = './temp_file/rekap/sppd/'+file_name+'.xlsx';
+                        var output = './template/output/rekap/sppd/'+file_name+'.pdf';
+                        
+                        if(data.preview || data.pdf){
+                            office.excel({'input': input, 'output': output}, function(error, pdf) {
+                                if (err) {
+                                    console.error(err);
+                                }
+                                //hapus xlsx setelah terconvert
+                                fs.unlink(input);
+                            })
+                            office.close(null, function(error) {
+                                cb('/result/rekap/sppd/'+file_name+'.pdf');
+                                setTimeout(function(){
+                                    fs.unlink(output);
+                                }, 10000)                        
+                            })
+                        } else {
+                            setTimeout(function(){
+                                cb('/result_temp/rekap/sppd/'+file_name+'.xlsx');
+                            }, 100) 
+                            
+                            setTimeout(function(){
+                                fs.unlink(input);
+                            }, 10000)  
+                        }
+                    })
+                 })
+                User.update({_id: new ObjectId(client.handshake.session.user_id)}, {$push: {"act": {label: 'Buat Rekap SPPD No. '+rows[0]._id+' - '+rows[rows.length-1]._id}}}, 
+                    function(err, status){
+                })
+            })
+        }
+    })
+
+    client.on('get_pembuat_daftar', function (data, cb){
+        SettingSPPD.findOne({}).populate('pembdaf').exec(function(err, result){
+            cb(result);
+        })  
+    })
+
 
 };
 
@@ -524,7 +832,7 @@ sppd.get('/perhitungan-old', function(req, res){
 });
 
 sppd.get('/pengaturan', function(req, res){
-    SettingSPPD.findOne({}).populate('ttd_st ttd_leg bendahara ppk').exec(function(err, result){
+    SettingSPPD.findOne({}).populate('ttd_st ttd_leg bendahara ppk pembdaf').exec(function(err, result){
         res.render('sppd/pengaturan', {layout: false, setting: result});
     })  
 });
@@ -643,11 +951,23 @@ function handleSuratTugas(data, cb, res, user_id){
                     } else{
                         data._id = last_nmr_surat;
                     }
+                    if(!data.kab_name){
+                        delete data.kab_name;
+                        delete data.kab;
+                    }
                     //surtug instance
                     var st = new SuratTugas(data);
                     //simpan db
                     st.save(function(err, result){
                         st.populate('nama_lengkap ttd_legalitas ttd_surat_tugas prov kab org', function(err2){
+                            if(!data.kab_name){
+                                SuratTugas.update({_id: data._id}, {$unset: {kab: 1, kab_name: 1 }}, function(err, status){
+                                })
+                            }
+                            if(!data.org_name){
+                                SuratTugas.update({_id: data._id}, {$unset: {org: 1, org_name: 1 }}, function(err, status){
+                                })
+                            }
                             //cek apakah dari tabel Pegawai
                             async.series([
                                 function(cb){
@@ -730,6 +1050,9 @@ function handleSuratTugas(data, cb, res, user_id){
                         });
                     } else {
                         cb({'last_nmr_surat': last_nmr_surat, 'outputPdf': "/result/"+outputPdf.match(/sppd\/.*/)[0]});
+                        setTimeout(function(){
+                            fs.unlink(outputPdf);
+                        }, 10000)  
                     }
                 })
             }
@@ -877,6 +1200,9 @@ function handleSuratTugasBiasa(data, cb, res, user_id){
                         });
                     } else {
                         cb({'last_nmr_surat': last_nmr_surat, 'outputPdf': "/result/"+outputPdf.match(/sppd_biasa\/.*/)[0]});
+                        setTimeout(function(){
+                            fs.unlink(outputPdf);
+                        }, 10000)  
                     }
                 })
             }
@@ -1048,33 +1374,44 @@ function handlePerhitungan(data, cb, res, username, user_id){
                         //end
                         cb(null, '');
                         var thang = st.tgl_buat_perhit.match(/\d{4}$/)[0];
-                        DetailBelanja.findOne({'thang': thang, '_id': st.detail, active: true}, 'realisasi').elemMatch('realisasi', {'jumlah': st.total_rincian, 'penerima_id': data.surtug.nama_lengkap._id, 
-                            'tgl': data.surtug.tgl_ttd_st, ket: 'SPPD No. '+st._id+': '+data.surtug.tugas+', a.n. '+data.nama_lengkap}).exec(function(err, result){
+                        DetailBelanja.findOne({'thang': thang, '_id': st.detail, active: true}, 'realisasi').elemMatch('realisasi', {ket: new RegExp('SPPD No\. '+st._id+'\:', "i")}).exec(function(err, result){
                                 //jika blm pernah
+                                //init total, user
+                                var total_sampai_bln_ini = 0;
+                                var new_entry = {};
+                                new_entry.pengentry =   username;
+                                new_entry.ket = 'SPPD No. '+st._id+': '+data.surtug.tugas+', a.n. '+data.nama_lengkap;
+                                new_entry.bukti_no = data.bukti_no || '';
+                                new_entry.spm_no = data.spm_no || '';
+                                new_entry.penerima_nama = 'GUP';//data.nama_lengkap;
+                                new_entry.tgl = data.surtug.tgl_ttd_st;
+                                new_entry.tgl_timestamp = moment(data.surtug.tgl_ttd_st, "D MMMM YYYY").unix();
+                                new_entry.penerima_id = gup_id;//;data.surtug.nama_lengkap._id;
+                                new_entry.jumlah = st.total_rincian;
+                                new_entry.timestamp = current_timestamp;
                                 if(!result){
-                                    //init total, user
-                                    var total_sampai_bln_ini = 0;
-                                    var new_entry = {};
-                                    new_entry.pengentry =   username;
-                                    new_entry.ket = 'SPPD No. '+st._id+': '+data.surtug.tugas+', a.n. '+data.nama_lengkap;
-                                    new_entry.bukti_no = data.bukti_no || '';
-                                    new_entry.spm_no = data.spm_no || '';
-                                    new_entry.penerima_nama = 'GUP';//data.nama_lengkap;
-                                    new_entry.tgl = data.surtug.tgl_ttd_st;
-                                    new_entry.tgl_timestamp = moment(data.surtug.tgl_ttd_st, "D MMMM YYYY").unix();
-                                    new_entry.penerima_id = gup_id;//;data.surtug.nama_lengkap._id;
-                                    new_entry.jumlah = st.total_rincian;
-                                    new_entry.timestamp = current_timestamp;
                                     DetailBelanja.update({'thang': thang, "_id": data.detail}, {$push: {"realisasi": new_entry}}, {new: true}, function(err, result){
                                         if (err) {
                                             console.log(err)
                                             sendNotification(user_id, 'Gagal menyimpan.')
                                             return
                                         }
-                                        sendNotification(user_id, 'Realisasi berhasil diupdate.')
+                                        sendNotification(user_id, 'Realisasi berhasil disimpan.')
                                     })
                                 } else {
-                                    sendNotification(user_id, 'SPPD sudah pernah tercatat di realisasi.')
+                                    console.log(result)
+                                    _.each(result.realisasi, function(real, idx, list){
+                                        if(real.ket.match(new RegExp('SPPD No\. '+st._id+'\:', "i"))){
+                                            DetailBelanja.findOneAndUpdate({'thang': thang, "_id": data.detail, 'realisasi._id': real._id}, 
+                                                {$set: {'realisasi.$.pengentry': new_entry.pengentry, 'realisasi.$.ket': new_entry.ket,
+                                                'realisasi.$.penerima_nama': new_entry.penerima_nama, 'realisasi.$.tgl': new_entry.tgl, 
+                                                'realisasi.$.tgl_timestamp': new_entry.tgl_timestamp, 'realisasi.$.penerima_id': new_entry.penerima_id, 
+                                                'realisasi.$.jumlah': new_entry.jumlah, 'realisasi.$.timestamp': new_entry.timestamp}}, function(err, result){
+                                                    console.log(result)
+                                                    sendNotification(user_id, 'Realisasi berhasil diupdate.')
+                                            })
+                                        }
+                                    })
                                 }
                         })
                     })
@@ -1106,6 +1443,9 @@ function handlePerhitungan(data, cb, res, username, user_id){
                         });
                     } else {
                         cb({'outputPdf': "/result/"+outputPdf.match(/perhitungan\/.*/)[0]});
+                        setTimeout(function(){
+                            fs.unlink(outputPdf);
+                        }, 10000)  
                     }
                 })
             }
@@ -1221,8 +1561,9 @@ function terbilang(bilangan) {
 
 function sendNotification(user_id, message){
     if(!user_id) return;
-    if(_.isString(user_id)) sppd.connections[user_id].emit('messages', message)
-        else user_id.emit('messages', message)
+    if(_.isString(user_id)){
+        sppd.connections[user_id].emit('messages', message)
+    } else user_id.emit('messages', message)
 }
 
 module.exports = sppd;

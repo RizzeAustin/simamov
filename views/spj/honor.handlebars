@@ -27,7 +27,7 @@
                                             <label for="akun" class="col-md-12" style="padding-left: 0">Realisasi<span> *</span></label>
                                             <div class="form-group row">
                                                 <div class="form-group col-md-12">                                                
-                                                    <span>Detail: </span><span id="detail_label">[Belum ada detail]</span> <a id="link-ganti-detail" href="#"><i class="fa fa-pencil fa-sm mt-2"></i>ganti</a>
+                                                    <span>Detail: </span><span id="detail_label">[Belum ada detail]</span> <a id="link-ganti-detail" href="#"><i class="fa fa-pencil fa-sm"></i>ganti</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -498,5 +498,10 @@
                 position: 'bottom-right'
             })
         }
+        
+        socket.removeListener('messages');
+        socket.on('messages', function(data) {
+            generalAlert(data)
+        });
     })
 </script>

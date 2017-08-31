@@ -18,8 +18,12 @@ var SettingSPPDSchema = new Schema({
     	ref: 'Pegawai'
     },
     bendahara: {
-    	type: String, 
-    	ref: 'Pegawai'
+        type: String, 
+        ref: 'Pegawai'
+    },
+    pembdaf: {
+        type: String, 
+        ref: 'Pegawai'
     },
     last_nmr_surat:Number
 }, { collection: 'setting_sppd', strict: false });

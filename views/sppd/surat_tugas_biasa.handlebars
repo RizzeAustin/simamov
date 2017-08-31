@@ -368,7 +368,9 @@
             rowReorder: {
                 enable: false
             },
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
             createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(0)').attr('class', 'text-center');
                 $( row ).find('td:eq(3)').attr('class', 'text-center');
                 $( row ).find('td:eq(4)').attr('class', 'text-center');
                 $( row ).find('td:eq(5)').attr('class', 'text-center');

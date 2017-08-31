@@ -266,6 +266,7 @@
                                     <table id="tbl_riwayat" class="table" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
+                                                <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
                                                 <th>No. Surat</th>
                                                 <th>Nama</th>
                                                 <th>Tujuan</th>
@@ -278,6 +279,11 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            <div class="row" id="multiple-action" style="margin: 0 auto; margin-bottom: 10px; max-width: 300px;">
+                                <!-- <div id="multiple-action" style="margin: 0 auto; text-align: center; margin-bottom: 10px">
+                                    
+                                </div> -->
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -604,14 +610,27 @@
         var current_month = new Date().getMonth()+1;
         $('#bulan_st_modal option:eq('+current_month+')').prop('selected', true);
         $('#tbl_riwayat').DataTable({
+            columnDefs: [
+                {
+                   'targets': 0,
+                   'searchable':false,
+                   'orderable':false,
+                   'className': 'dt-body-center',
+                   'render': function (data, type, full, meta){
+                       return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(full[0]).html() + '">';
+                   }
+                }
+            ],
             aaSorting: [],
             rowReorder: {
                 enable: false
             },
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
             createdRow: function( row, data, dataIndex ) {
-                $( row ).find('td:eq(3)').attr('class', 'text-center');
+                $( row ).find('td:eq(1)').attr('class', 'text-center');
                 $( row ).find('td:eq(4)').attr('class', 'text-center');
                 $( row ).find('td:eq(5)').attr('class', 'text-center');
+                $( row ).find('td:eq(6)').attr('class', 'text-center');
             }
         });
         //tgl modal riwayat soal
@@ -625,7 +644,196 @@
             }
         });
 
+        function registerRekapElement(){
+            //Input tgl sekarang utk ttd
+            $("#tgl-buat-rekap").val(moment().format('DD MMMM YYYY'));
+
+            //Inisialisasi input tgl Brgkt & Kembali
+            $('#tgl-buat-rekap').datetimepicker({
+                locale: 'id',
+                format: 'DD MMMM YYYY',
+                widgetPositioning: {
+                    horizontal: 'left',
+                    vertical: 'top'
+                }
+            });
+
+            $('#pembuat-daftar').typeahead({
+                    hint: true,
+                    highlight: true,
+                    minLength: 1
+                }, {
+                    source: function(q, p){
+                            {
+                                socket.emit('penerima_list', {'query': q, 'type': 'pegawai_only'}, function (data) {
+                                    return p(_.map(data, function(ur){ return {_id: ur._id, value: ur.nama}}))
+                                });
+                            }
+                    }
+                }
+            );
+            
+            socket.emit('get_pembuat_daftar', 'get data', 
+                function(response){
+                    if(!response) return;
+                        else{
+                            $("#pembuat-daftar_id").val(response.pembdaf._id)
+                            $("#pembuat-daftar").typeahead('val',response.pembdaf.nama)
+                            $("#pembuat-daftar").trigger('blur')
+                        }
+            })
+
+            $("#pembuat-daftar").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+                $("#pembuat-daftar_id").val(datum._id)
+            });
+
+            $('#pembuat-daftar, tgl-buat-rekap').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-multiple-rekap').click();
+            }
+        })
+        }
+
+        $('#example-select-all').on('click', function(){
+
+           if(this.checked){
+
+                $('#multiple-action').html(
+
+                    '<label for="tgl-buat-rekap" style="margin-bottom: 0">Tanggal Buat Rekap<span> *</span></label><input type="text" id="tgl-buat-rekap" class="form-control" name="tgl_buat_rekap" required style="margin-bottom: 3px;">'
+                    +'<label for="pembuat-daftar" style="margin-bottom: 0">Pembuat Daftar<span> *</span></label><input type="text" id="pembuat-daftar" class="form-control input-group" name="pembuat_daftar" required style="margin-bottom: 3px"><input style="display: none;" type="text" id="pembuat-daftar_id" name="pembuat_daftar_id" value="">'
+                    +'<button id="btn-multiple-rekap" type="button" style="height:35px;width:100px;" title="Buat rekapitulasi">Buat Rekap</button><span><pre> </pre></span>'
+                    +'<div class="input-group-btn dropup">'
+                    +    '<button id="download-rekap" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download'
+                    +        '<span class="caret"></span>'
+                    +    '</button>'
+                    +    '<div class="dropdown-menu dropdown-menu-right">'
+                    +        '<a id="unduh_xlsx-rekap" class="dropdown-item" href="#">Xlsx</a>'
+                    +        '<a id="unduh_pdf-rekap" class="dropdown-item" href="#">PDF</a>'
+                    +    '</div>'
+                    +'</div>'
+
+                )
+                registerRekapElement()
+                $('#pembuat-daftar').focus();
+
+           } else {
+               $('#multiple-action').html('');
+           }
+
+           // Get all rows with search applied
+           var rows = $('#tbl_riwayat').DataTable().rows({ 'search': 'applied' }).nodes();
+           // Check/uncheck checkboxes for all rows in the table
+           $('input[type="checkbox"]', rows).prop('checked', this.checked);
+
+           
+        });
+
+        $('#riwayat-surat-tugas tbody').on('change', 'input[type="checkbox"]', function(){
+            var el = $('#example-select-all').get(0);
+           // If checkbox is not checked
+           if(!this.checked){
+              // If "Select all" control is checked and has 'indeterminate' property
+              if(el && el.checked && ('indeterminate' in el)){
+                 // Set visual state of "Select all" control
+                 // as 'indeterminate'
+                 el.indeterminate = true;
+              }
+           }
+           var checked = $('#tbl_riwayat').DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
+
+           if(this.checked){
+
+                el.indeterminate = true;
+
+                $('#multiple-action').html(
+
+                    '<label for="tgl-buat-rekap" style="margin-bottom: 0">Tanggal Buat Rekap<span> *</span></label><input type="text" id="tgl-buat-rekap" class="form-control" name="tgl_buat_rekap" required style="margin-bottom: 3px;">'
+                    +'<label for="pembuat-daftar" style="margin-bottom: 0">Pembuat Daftar<span> *</span></label><input type="text" id="pembuat-daftar" class="form-control input-group" name="pembuat_daftar" required style="margin-bottom: 3px"><input style="display: none;" type="text" id="pembuat-daftar_id" name="pembuat_daftar_id" value="">'
+                    +'<button id="btn-multiple-rekap" type="button" style="height:35px;width:100px;" title="Buat rekapitulasi">Buat Rekap</button><span><pre> </pre></span>'
+                    +'<div class="input-group-btn dropup">'
+                    +    '<button id="download-rekap" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download'
+                    +        '<span class="caret"></span>'
+                    +    '</button>'
+                    +    '<div class="dropdown-menu dropdown-menu-right">'
+                    +        '<a id="unduh_xlsx-rekap" class="dropdown-item" href="#">Xlsx</a>'
+                    +        '<a id="unduh_pdf-rekap" class="dropdown-item" href="#">PDF</a>'
+                    +    '</div>'
+                    +'</div>'
+
+                )
+                registerRekapElement();
+                $('#pembuat-daftar').focus();
+
+           } else if(!checked){
+                el.indeterminate = false;
+                el.checked = false;
+               $('#multiple-action').html('');
+           }
+        });
+
+        function rekap(preview, xlsx, pdf){
+            $.toast().reset('all');
+            if(!$('#tbl_riwayat').DataTable().$('input[type="checkbox"]').serializeObject()['id[]']){
+                generalAlert('Tidak ada surat yang terpilih.')
+                return;
+            }
+            if(!$('#pembuat-daftar').val() || !$('#tgl-buat-rekap').val()){
+                generalAlert('Cek isian wajib.')
+                return;
+            } else if (!$('#pembuat-daftar_id').val()) {
+                generalAlert('Kolom Nama: Harap pilih nama dari daftar saran atau silahkan tambahkan pegawai baru.')
+                return;
+            }
+            if(preview){
+                $("#btn-multiple-rekap").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw font-lg"></i>');
+                $("#btn-multiple-rekap").prop("disabled",true);
+            } else {
+                $("#download-rekap").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw font-lg"></i>');
+                $("#download-rekap").prop("disabled",true);
+            }
+            var checked = $('#tbl_riwayat').DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
+            if(typeof checked === 'string'){
+                checked = [checked];
+            }
+            socket.emit('buat_rekap', {ids: checked, type: 'surat_tugas', 'tgl_buat_rekap': $('#tgl-buat-rekap').val(), 'pembuat_daftar': $('#pembuat-daftar').val(), 'pembuat_daftar_id': $('#pembuat-daftar_id').val(), 'preview': preview, 'xlsx': xlsx, 'pdf': pdf}, function(link_pdf){
+                if(preview){
+                    $("#btn-multiple-rekap").html('Rekap');
+                    $("#btn-multiple-rekap").prop("disabled",false);
+                    if(!link_pdf){
+                        return;
+                    }
+                    generalAlert('Rekap dibuat.')
+                    $("#realTimeView").attr("src", location.protocol+'//'+location.host+link_pdf);
+                    $('#riwayat-surat-tugas').modal('toggle');
+                } else {
+                    $("#download-rekap").html('Download rekap');
+                    $("#download-rekap").prop("disabled",false);
+                    if(!link_pdf){
+                        return;
+                    }
+                    window.open(location.protocol+"//"+$(location).attr('host')+link_pdf,'_blank');
+                }
+            });
+        }
+
+        $('#riwayat-surat-tugas').on('click', '#btn-multiple-rekap', function(){
+            rekap(true,false,false);
+        })
+
+        $('#riwayat-surat-tugas').on('click', '#unduh_xlsx-rekap', function(){
+            rekap(false, true, false);
+        })
+
+        $('#riwayat-surat-tugas').on('click', '#unduh_pdf-rekap', function(){
+            rekap(false, false, true);
+        })
+
         $('#btn-riwayat-surat-tugas').click(function(){
+            //remove tombol multiple hapus
+            $('#example-select-all').prop('checked', false);
+            $('#example-select-all').get(0).indeterminate = false;
+            $('#multiple-action').html('');
             var selected = $('#bulan_st_modal').val();
             socket.emit('riwayat_surat_tugas', {month: selected, type: 'surat_tugas'}, 
                 function(response){
@@ -633,6 +841,7 @@
                     _.each(response, function(surat, i, list){
                         if(surat && surat.nama_lengkap){
                             var row = [
+                                surat._id,
                                 surat._id,
                                 surat.nama_lengkap.nama,
                                 surat.tugas,
@@ -661,6 +870,7 @@
                             if(surat && surat.nama_lengkap){
                                 var row = [
                                     surat._id,
+                                    surat._id,
                                     surat.nama_lengkap.nama,
                                     surat.tugas,
                                     surat.tgl_berangkat,
@@ -681,6 +891,7 @@
                         _.each(response, function(surat, i, list){
                             if(surat && surat.nama_lengkap){
                                 var row = [
+                                    surat._id,
                                     surat._id,
                                     surat.nama_lengkap.nama,
                                     surat.tugas,
@@ -707,6 +918,7 @@
                         if(surat && surat.nama_lengkap){
                             var row = [
                                 surat._id,
+                                surat._id,
                                 surat.nama_lengkap.nama,
                                 surat.tugas,
                                 surat.tgl_berangkat,
@@ -731,6 +943,7 @@
                         _.each(response, function(surat, i, list){
                             if(surat && surat.nama_lengkap){
                                 var row = [
+                                    surat._id,
                                     surat._id,
                                     surat.nama_lengkap.nama,
                                     surat.tugas,
@@ -776,7 +989,7 @@
         }
 
         $('#tbl_riwayat').on('click', '.hitung', function(){
-            var nomor = $(this).closest('tr').find('td:eq(0)').text();
+            var nomor = $(this).closest('tr').find('td:eq(1)').text();
             socket.emit('get_perhitungan', nomor, 
                 function(response){
                     resetForm();
@@ -835,6 +1048,20 @@
             $('#riwayat-surat-tugas').modal('toggle');
         })
 
+        function generalAlertNoTimeout(message){
+            $.toast({
+                text: message,
+                textAlign: 'left',
+                hideAfter: false,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
+
+        function formatUang(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
         function generalAlert(message){
             $.toast({
                 text: message,
@@ -844,9 +1071,13 @@
                 position: 'bottom-right'
             })
         }
+        socket.removeListener('messages');
+        socket.on('messages', function(data) {
+            generalAlert(data)
+        });
 
-        function formatUang(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
+        socket.on('messagesNoTimeout', function(data) {
+            generalAlertNoTimeout(data)
+        });
     });
 </script>

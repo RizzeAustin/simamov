@@ -1,0 +1,662 @@
+<div class="animated fadeIn">
+    <div class="container" style="width: 1290px;">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card-group mb-0">
+                    <div class="card p-2">
+                        <div class="card-block">
+                            <div class="row">
+                                <div class="col-md-12" style="padding-left: 0">
+                                    <h3><i class="icon-docs"></i> SPJ Lainnya</h3>
+                                    <p class="text-muted">Buat SPJ Lainnya</p>
+                                </div>
+                            </div>  
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <div class="form-group row">
+                                        <label for="jenis_item" class="col-md-2 form-control-label no-left-padding">Pilih SPJ:</label>
+                                        <div class="col-md-10">
+                                            <select class="form-control" id="jenis_item" name="jenis_item" size="1">
+                                                <option value="none" selected="selected">--pilih--</option>
+                                                <option value="program">Honor Moderator Skripsi</option>
+                                                <option value="kegiatan">Honor Penguji Skripsi</option>
+                                                <option value="output">Honor Pengawas PMB STIS</option>
+                                                <option value="soutput">Honor </option>
+                                                <option value="komponen">Komponen</option>
+                                                <option value="skomponen">Sub Komponen</option>
+                                                <option value="akun">Akun</option>
+                                                <option value="detail">Detail Belanja</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="akun" class="col-md-12" style="padding-left: 0">Realisasi<span> *</span></label>
+                                <span>Detail:&nbsp;</span><span id="detail_label">[Belum ada detail]</span><a id="link-ganti-detail" href="#">&nbsp;<i class="fa fa-pencil fa-sm"></i>ganti</a>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-12" style="padding-left: 0">
+                                    <label for="tgl_buat_spj">Daftar<span> *</span></label>  
+                                    <textarea type="text" id="daftar" class="form-control" name="daftar" value="" placeholder="Daftar..."></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-7" style="padding-left: 0">
+                                    <label for="tgl_buat_spj">Periode</label>  
+                                    <input type="text" id="periode" class="form-control" name="periode" value="" placeholder="Periode SPJ... (jika ada)">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12" style="padding-left: 0">
+                                    <div class="alert alert-warning col-md-12">
+                                      <span>Jumlah Rp 0 akan diabaikan.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12" style="padding-left: 0">
+                                    <div id="spreadsheet_spj" style="height: 400px; width: 540px; overflow-y: auto;">
+                                    </div>
+                                </div>
+                                <div class="col-md-4" style="padding-left: 0; margin-top: 3px;">
+                                    <div class="alert alert-warning col-md-12" style="margin-bottom: 3px">
+                                        <span>Jumlah: Rp <span id="jumlah-spreadsheed">0</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-4" style="padding-left: 0">
+                                    <label for="tgl_buat_spj">Tanggal Pembuatan Pehitungan<span> *</span></label>  
+                                    <input type="text" id="tgl_buat_spj" class="form-control date" name="tgl_buat_spj" value="" required>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-6" style="padding-left: 0">
+                                    <label for="pembuat-daftar">Pembuat Daftar<span> *</span></label> 
+                                    <input type="text" id="pembuat-daftar" class="form-control" name="pembuat_daftar" value="" required>
+                                    <input style="display: none;" type="text" id="pembuat-daftar_id" name="pembuat_daftar_id" value="">
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 3px">
+                                <button id="buat_surat" class="px-2" type="submit">Buat Surat</button><span><pre> </pre></span>
+                                <div class="input-group-btn dropup">
+                                    <button id="download" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download
+                                        <span class="caret"></span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a id="xlsx" class="dropdown-item download" href="#">Xlsx</a>
+                                        <a id="pdf" class="dropdown-item download" href="#">PDF</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <iframe id="realTimeView" class="preview-pane" type="application/pdf" width="100%" height="690" frameborder="0" style="position:relative;z-index:999;" src=""></iframe>
+            </div>
+        </div>
+    </div>
+    <!--/.row-->
+</div>
+
+
+<div class="modal fade" id="ubah_detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Ubah Detail</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="padding: 15px">
+                    <div class="col-md-12" style="padding: 0">
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_program">Program</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_program" name="tbh_entry_program" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_kegiatan">Kegiatan</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_kegiatan" name="tbh_entry_kegiatan" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_output">Output</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_output" name="tbh_entry_output" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_s_output">Sub Output</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_soutput" name="tbh_entry_s_output" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_komponen">Komponen</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_komponen" name="tbh_entry_komponen" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_s_komponen">Sub Komponen</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_skomponen" name="tbh_entry_s_komponen" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div> 
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_akun">Akun</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_akun" name="tbh_entry_akun" class="form-control pok-entry-dropdown" size="1"></select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-3 form-control-label" for="tbh_d_blnj">Detail Belanja</label>
+                            <div class="col-md-9">
+                                <select id="tbh_entry_detail" name="tbh_entry_d_blnj" class="form-control" size="1"></select>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button id="btn-ubah-detail-submit" type="button" class="btn btn-primary">Simpan</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script src="/js/handsontable.full.min.js"></script>
+
+<script src="/js/moment.min.js"></script>
+<script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+
+<script type="text/javascript">
+    $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/handsontable.full.min.css"));
+    $(document).ready(function(){
+        moment.locale('id');
+        //Inisialisasi pdf viewer
+        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/SPJHonor.pdf');
+
+        $('.date').datetimepicker({
+            locale: 'id',
+            format: 'D MMMM YYYY',
+            useCurrent: false
+        });
+
+        //Input tgl sekarang utk ttd
+        $("#tgl_buat_spj").data("DateTimePicker").date(new Date());
+
+        $('#pembuat-daftar').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('penerima_list', {'query': q, 'type': 'pegawai_only'}, function (data) {
+                                return p(_.map(data, function(ur){ return {_id: ur._id, value: ur.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $("#pembuat-daftar").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+            $("#pembuat-daftar_id").val(datum._id)
+        });
+
+        var container = document.getElementById('spreadsheet_spj');
+        var spj_lainnya, detail_id_target_riwayat;
+        var schema = {penerima_nama: null, gol : null, jlh_sks : null, honor_persks : null, jumlah: null, pph21 : null, dibayarkan : null};
+        var col_widths = [200, 93, 93, 93, 93, 93, 100];
+        var col_headers = ["Nama", "Gol", "Jlh SKS", "Honor/SKS", "Jumlah", "PPh 21", "Jumlah Dibayarkan"];
+        var columns = [
+                {
+                    type: 'autocomplete',
+                    source: function (query, process) {
+                        socket.emit('penerima_list', {'query': query, 'type': 'all'}, function (data) {
+                            process(_.map(data, function(peg){ return peg.nama}));
+                        });
+                    },
+                    data: 'penerima_nama',
+                    strict: false
+                },
+                {data: 'gol'},
+                {data: 'jlh_sks', type: 'numeric'},
+                {data: 'honor_persks', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
+                {data: 'jumlah', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
+                {data: 'pph21', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
+                {data: 'dibayarkan', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'}
+              ];//fungsi umum tambah list
+
+        var parent_code;
+        function populateSelect(lists, type){
+            var options ='<option>'
+                        +   '--pilih--'
+                        +'</option>';
+            
+            _.each(lists, function(item, index, list){
+                if(type == 'program'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else if(item.kdprogram !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdprogram+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    }                    
+                } else if(type == 'kegiatan'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else if(item.kdgiat !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdgiat+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                        parent_code = item.kdprogram;
+                    }                    
+                } else if(type == 'output'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else if(item.kdoutput !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdoutput+' '+(item.uraian || '[uraian blm ada]')
+                                + '</option>';
+                        parent_code = item.kdgiat;
+                    }                    
+                } else if(type == 'soutput'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdsoutput+' '+item.ursoutput
+                                + '</option>';
+                    } else if(lists.length == 1 || item.kdsoutput == parent_code){
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.kdsoutput+' '+item.ursoutput
+                                + '</option>';
+                        parent_code = item.kdoutput;
+                    } else {
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdsoutput+' '+item.ursoutput
+                                + '</option>';
+                    }
+                } else if(type == 'komponen'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdkmpnen+' '+item.urkmpnen
+                                + '</option>';
+                    } else if(item.kdkmpnen !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                                +   item.kdkmpnen+' '+item.urkmpnen
+                                + '</option>';
+                    } else{
+                        options +='<option value="'+item.kdkmpnen+'" selected="selected">'
+                                +   item.kdkmpnen+' '+item.urkmpnen
+                                + '</option>';
+                        parent_code = item.kdsoutput;
+                    }
+                    
+                } else if(type == 'skomponen'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdskmpnen+' '+item.urskmpnen
+                            + '</option>';
+                    } else if(lists.length == 1 || item.kdskmpnen == parent_code){
+                        options +='<option value="'+item._id+'" selected="selected">'
+                            +   item.kdskmpnen+' '+item.urskmpnen
+                            + '</option>';
+                        parent_code = item.kdkmpnen;
+                    } else{
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdskmpnen+' '+item.urskmpnen
+                            + '</option>';
+                    }
+                } else if(type == 'akun'){
+                    if(!parent_code){
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
+                            + '</option>';
+                    } else if(item.kdakun !== parent_code){
+                        options +='<option value="'+item._id+'">'
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
+                            + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                            +   item.kdakun+' '+(item.uraian || '[uraian blm ada]')
+                            + '</option>';
+                        parent_code = item.kdskmpnen;
+                    }
+                } else if(type == 'detail'){
+                    if(!detail_id_target_riwayat){
+                        options +='<option value="'+item._id+'">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                    } else if(item._id !== detail_id_target_riwayat){
+                        options +='<option value="'+item._id+'">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                    } else {
+                        options +='<option value="'+item._id+'" selected="selected">'
+                                +   item.noitem+' '+item.nmitem
+                                + '</option>';
+                        parent_code = item.kdakun;
+                    }
+                }
+            })
+            $('#tbh_entry_'+type).empty().append(options);
+        }
+
+        if(detail_id_target_riwayat){
+            socket.emit('riwayat_init', {'detail_id': detail_id_target_riwayat, 'init': true}, function (data) {
+                populateSelect(data.details, 'detail');
+                $('#detail_label').text($('#tbh_entry_detail option:selected').text().match(/(\d\s)(.*)/)[2])
+                populateSelect(data.akuns, 'akun');
+                populateSelect(data.skomps, 'skomponen');
+                populateSelect(data.komps, 'komponen');
+                populateSelect(data.souts, 'soutput');
+                populateSelect(data.outs, 'output');
+                populateSelect(data.kegs, 'kegiatan');
+                populateSelect(data.progs, 'program');
+            });
+        } else {
+            socket.emit('pok_list', {'type': '', 'syarat': {}, 'sortby': 'kdprogram', 'for': 'riwayat'});
+        }
+
+        $('#link-ganti-detail').click(function(){
+            if(!$('#tbh_entry_detail').val()) socket.emit('pok_list', {'type': '', 'syarat': {}, 'sortby': 'kdprogram', 'for': 'riwayat'});
+            $('#ubah_detail').modal('show');
+        })
+
+        //tambah list
+        socket.on('pok_list_for_riwayat', function(data) {
+            populateSelect(data.items, data.type);
+        })
+
+        $('.pok-entry-dropdown').change(function(){
+            detail_id_target_riwayat = null;
+
+            var type = $(this).attr('id').match(/tbh_entry_(.*)/)[1];
+
+            var kode;
+            if(!$("#tbh_entry_"+type+" option:selected").text().match(/\s?\w+(?=\s)/)) return;
+
+            if(type != 'skomponen') kode = $("#tbh_entry_"+type+" option:selected").text().match(/\d+(?=\s)/)[0]
+                else kode = $("#tbh_entry_"+type+" option:selected").text().match(/\s?\w+(?=\s)/)[0]
+
+            var syarat = {};
+            var sortby;
+
+            if(type == 'program'){
+                syarat.kdprogram = kode;
+                sortby = 'kdgiat';
+                $('#tbh_entry_kegiatan').empty();
+                $('#tbh_entry_output').empty();
+                $('#tbh_entry_soutput').empty();
+                $('#tbh_entry_komponen').empty();
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'kegiatan'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = kode;
+                sortby = 'kdoutput';
+                $('#tbh_entry_output').empty();
+                $('#tbh_entry_soutput').empty();
+                $('#tbh_entry_komponen').empty();
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'output'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = kode;
+                sortby = 'kdsoutput';
+                $('#tbh_entry_soutput').empty();
+                $('#tbh_entry_komponen').empty();
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'soutput'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#tbh_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = kode;
+                sortby = 'kdkmpnen';
+                $('#tbh_entry_komponen').empty();
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'komponen'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#tbh_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = $("#tbh_entry_soutput option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdkmpnen = kode;
+                sortby = 'kdskmpnen';
+                $('#tbh_entry_skomponen').empty();
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'skomponen'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#tbh_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = $("#tbh_entry_soutput option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdkmpnen = $("#tbh_entry_komponen option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdskmpnen = kode;
+                sortby = 'kdakun';
+                $('#tbh_entry_akun').empty();
+                $('#tbh_entry_detail').empty();
+            } else if(type == 'akun'){
+                syarat.kdprogram = $("#tbh_entry_program option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdgiat = $("#tbh_entry_kegiatan option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdoutput = $("#tbh_entry_output option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdsoutput = $("#tbh_entry_soutput option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdkmpnen = $("#tbh_entry_komponen option:selected").text().match(/\d+(?=\s)/)[0];
+                syarat.kdskmpnen = $("#tbh_entry_skomponen option:selected").text().match(/\s?\w+(?=\s)/)[0];
+                syarat.kdakun = kode
+                sortby = 'noitem'
+                $('#tbh_entry_detail').empty();
+            }
+
+            socket.emit('pok_list', {'type': type, 'syarat': syarat, 'sortby': sortby, 'for': 'riwayat'});
+        })
+
+        function createTable(sch, c_widths, c_headers, cols){
+            spj_lainnya = new Handsontable(container, {
+              data: [],
+              dataSchema: sch,
+              rowHeaders: true,
+              colHeaders: true,
+              manualColumnResize: true,
+              colWidths: c_widths,
+              minSpareRows: 1,
+              colHeaders: c_headers,
+              'columns': cols,
+              contextMenu: true
+            });
+
+            Handsontable.hooks.add('afterChange', function(changes, source){
+                var jumlah = 0;
+                var data = spj_lainnya.getSourceData();
+                if(changes){
+                    _.each(changes, function(change, index, list){
+                        if(change[1] != 'penerima_nama'){
+                            return;
+                        }
+                        if(!change[3]) return;
+                        socket.emit('get_pgw_byName', change[3], function (pgw) {
+                            data[change[0]]['gol'] = '';
+                            spj_lainnya.render();
+                            if(pgw && pgw.gol){
+                                data[change[0]]['gol'] = pgw.gol.replace(/\/.*$/g, '');
+                                spj_lainnya.render();
+                            } else {
+                                setTimeout(function(){
+                                    generalAlertStacks('Perhatian: '+change[3]+' tidak memiliki golongan.')
+                                }, 50)
+                            }
+                            
+                        });
+                    })
+                }
+                _.each(spj_lainnya.getSourceData(), function(row, index, list){
+                    jumlah += getNumber(row.jumlah || 0);
+                });
+                $('#jumlah-spreadsheed').text(formatUang(jumlah));
+            });
+        }
+        var opts = {
+              lines: 13 // The number of lines to draw
+            , length: 28 // The length of each line
+            , width: 14 // The line thickness
+            , radius: 42 // The radius of the inner circle
+            , scale: 0.25 // Scales overall size of the spinner
+            , corners: 1 // Corner roundness (0..1)
+            , color: '#000' // #rgb or #rrggbb or array of colors
+            , opacity: 0.25 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 1 // Rounds per second
+            , trail: 60 // Afterglow percentage
+            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: 'spinner' // The CSS class to assign to the spinner
+            , top: '5%' // Top position relative to parent
+            , left: '50%' // Left position relative to parent
+            , shadow: false // Whether to render a shadow
+            , hwaccel: false // Whether to use hardware acceleration
+            , position: 'absolute' // Element positioning
+        }
+        var target = document.getElementById('spreadsheet_spj');
+        var spinner = new Spinner(opts).spin(target);
+        //set timeout spy resource yg dibutuhkan semua sdh diload
+        setTimeout(function(){
+            createTable(schema, col_widths, col_headers, columns)
+            spinner.stop();
+        }, 2000)
+
+        $('#btn-ubah-detail-submit').click(function(){
+            if($('#tbh_entry_detail').val() && $('#tbh_entry_detail option:selected').text() != '--pilih--'){
+                $('#detail_label').text($('#tbh_entry_detail option:selected').text().match(/(\d\s)(.*)/)[2]);
+                detail_id_target_riwayat = $('#tbh_entry_detail').val();
+                // socket.emit('set_honor_detail', {'honor_detail_id': detail_id_target_riwayat}, function (data) {
+                //     if(data == 'sukses'){
+                //         $('#ubah_detail').modal('toggle');
+                //     } else {
+                //         generalAlert('Gagal mengubah detail. Mohon hubungi admin.')
+                //     }                    
+                // });
+                $('#ubah_detail').modal('toggle');
+            }else {
+                generalAlert('Detail belum dipilih.');
+            }
+        });
+
+        function buatSPJ(preview, xlsx, pdf){
+            if(!$('#tbh_entry_detail').val()){
+                $('#ubah_detail').modal('show');
+                generalAlert('Detail untuk realisasi belum dipilih.');
+                return false;
+            }
+            data = spj_lainnya.getSourceData();
+            if(data.length == 1){
+                generalAlert('Tidak ada data yang diinput.');
+                return;
+            }
+            if(preview){
+                $("#buat_surat").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> Buat Surat');
+                $('#buat_surat').prop('disabled', true);
+            }            
+            socket.emit('buat_spj_lainnya', {'data': data, daftar: $('#daftar').val(), periode: $('#periode').val(), 'tgl_buat_spj': $('#tgl_buat_spj').val(), 'timestamp': $('#tgl_buat_spj').data('DateTimePicker').date().unix(), 
+                pembuat_daftar: $('#pembuat-daftar').val(), pembuat_daftar_id: $('#pembuat-daftar_id').val(),
+                'schema': schema, 'col_headers': col_headers, 'col_widths': col_widths, 'columns': columns, start_row: 11, 
+                next_last_jlh_link: 53, total_row_per_page: 59, 'target_realisasi': detail_id_target_riwayat, preview: preview, xlsx: xlsx, pdf: pdf},
+                function(response){
+                    if(response){
+                        if(preview){
+                            $("#realTimeView").attr("src", location.protocol+'//'+location.host+response)
+                            generalAlert('Surat dibuat.');
+                        } else {
+                            window.open(location.protocol+"//"+$(location).attr('host')+response,'_blank');
+                        }
+                    } else {
+                        generalAlert('Gagal buat surat. Hubungi Admin.');
+                    }
+                    $("#buat_surat").html('Buat Surat');
+                    $('#buat_surat').prop('disabled', false);
+            })
+        }
+
+        $('#buat_surat').click(function(){
+            buatSPJ(true, false, false)
+        })
+
+        
+        $('#xlsx').click(function(){
+            buatSPJ(false, true, false);
+        })
+        
+        $('#pdf').click(function(){
+            buatSPJ(false, false, true);
+        })
+
+        function generalAlert(message){
+            $.toast({
+                text: message,
+                textAlign: 'left', 
+                hideAfter: 4000,
+                loader: false,
+                position: 'bottom-right',
+                stack: 2
+            })
+        }
+
+        function generalAlertStacks(message){
+            $.toast({
+                text: message,
+                textAlign: 'left', 
+                hideAfter: 4000,
+                loader: false,
+                position: 'bottom-right',
+                stack: 16
+            })
+        }
+        function formatUang(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function getNumber(obj){
+            if(!obj || obj == '-' || obj == '') return 0;
+            if (typeof obj === 'string' || obj instanceof String) return +obj.replace(/\D/g, '');
+            return +obj;
+        }
+    })
+</script>

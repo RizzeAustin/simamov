@@ -208,10 +208,13 @@
                         <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-doc"></i> SPJ</a>
                         <ul class="nav-dropdown-items">
                             <li class="nav-item">
-                                <a id="suratTugasMenu" class="nav-link" href="spj/honor"><i class="fa fa-credit-card"></i> Honor Dosen</a>
+                                <a class="nav-link" href="spj/honor"><i class="fa fa-credit-card"></i> Honor Dosen</a>
                             </li>
                             <li class="nav-item">
-                                <a id="suratTugasBiasaMenu" class="nav-link" href="spj/transport"><i class="fa fa-bus"></i> Transport Dosen Non STIS</a>
+                                <a class="nav-link" href="spj/transport"><i class="fa fa-bus"></i> Transport Dosen Non STIS</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="spj/spj_lainnya"><i class="icon-docs"></i> SPJ Lainnya</a>
                             </li>
                             {{#if admin}}
                             <li class="nav-item">
@@ -239,10 +242,10 @@
         <main id="main-view" class="main">
 
             <!-- Breadcrumb -->
-            <ol class="breadcrumb">
+            <!-- <ol class="breadcrumb">
                 <li class="breadcrumb-item active"><span id="level3"></span></li>
-            </ol>
-            <div class="container-fluid">
+            </ol> -->
+            <div class="container-fluid" style="padding: 10px 10px;">
                 <div id="ui-view"></div>
             </div>
             <!-- /.conainer-fluid -->
@@ -320,6 +323,7 @@
                 })
             });
 
+            socket.removeListener('messages');
             socket.on('messages', function(data) {
                 GlobalAlert(data)
             });

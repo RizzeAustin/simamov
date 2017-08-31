@@ -9,7 +9,7 @@ use simamov;
 // db.pegawai.update({}, {$set: {active: true}}, {multi: true});
 // db.custom_entity.findOne()
 
-db.pok_detailBelanja.findOne({nmitem: new RegExp('honor dosen', "i")})
+// db.pok_detailBelanja.findOne({nmitem: new RegExp('honor dosen', "i")})
 // show collections
 // db.sppd.findOne({})
 //==================================================
@@ -344,3 +344,14 @@ db.pok_detailBelanja.findOne({nmitem: new RegExp('honor dosen', "i")})
 	//2. cek kesesuain nama dgn database pegawai
 	//3. jika >0.86 set id, jika id != id sebelumnya dan custom entity, maka hapus ce tsb
 	//4. jika tdk,
+
+	
+//backup data
+// mongorestore -d simamov -c pok_program "C:\db\rev6\simamov\pok_program.bson"
+// mongorestore -d simamov -c pok_kegiatan "C:\db\rev6\simamov\pok_kegiatan.bson"
+// mongorestore -d simamov -c pok_output "C:\db\rev6\simamov\pok_output.bson"
+// mongorestore -d simamov -c pok_sub_output "C:\db\rev6\simamov\pok_sub_output.bson"
+// mongorestore -d simamov -c pok_komponen "C:\db\rev6\simamov\pok_komponen.bson"
+// mongorestore -d simamov -c pok_sub_komponen "C:\db\rev6\simamov\pok_sub_komponen.bson"
+// mongorestore -d simamov -c pok_akun "C:\db\rev6\simamov\pok_akun.bson"
+// mongorestore -d simamov -c pok_detailBelanja "C:\db\rev6\simamov\pok_detailBelanja.bson"

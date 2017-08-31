@@ -92,6 +92,7 @@ app.use('/js', express.static(__dirname + '/js'));
 app.use('/fonts', express.static(__dirname + '/fonts'));
 app.use('/img', express.static(__dirname + '/img'));
 app.use('/result', express.static(__dirname + '/template/output'));
+app.use('/result_temp', express.static(__dirname + '/temp_file'));
 app.use('/template', express.static(__dirname + '/template'));
 app.use('/download', express.static(__dirname + '/template/output/riwayat'));
 
