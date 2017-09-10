@@ -155,9 +155,12 @@ function handleSPJLainnya(spj, client, cb){
 
             //simpan
             file_name = Math.round(new Date().getTime()/1000)+' SPJ Honor';
+            checkDirAndCreate('./temp_file/spj/');
             workbook.toFileAsync('./temp_file/spj/'+file_name+'.xlsx');
            }).then(dataa => {
            		msopdf(null, function(error, office) {
+                    checkDirAndCreate('./temp_file/spj/');
+                    checkDirAndCreate('./template/output/spj/lainnya/');
                     var input = './temp_file/spj/'+file_name+'.xlsx';
                     var output = './template/output/spj/lainnya/'+file_name+'.pdf';
 	           		if(spj.preview || spj.pdf){
@@ -171,7 +174,9 @@ function handleSPJLainnya(spj, client, cb){
 	                    office.close(null, function(error) {
 	                        cb('/result/spj/lainnya/'+file_name+'.pdf');
 	                        setTimeout(function(){
-	                            fs.unlink(output);
+	                            if(checkFS(output)){
+                                    fs.unlink(output);
+                                }
 	                        }, 10000)                        
 	                    })
 	                } else {
@@ -180,7 +185,9 @@ function handleSPJLainnya(spj, client, cb){
 	                    }, 100) 
 	                    
 	                    setTimeout(function(){
-	                        fs.unlink(input);
+	                        if(checkFS(input)){
+                                fs.unlink(input);
+                            }
 	                    }, 10000)  
 	                }
 	            })
@@ -353,8 +360,9 @@ function SPJData(workbook, setting, spj, start_row, next_last_jlh_link, total_ro
 
 spj.get('/honor', function(req, res){
 	Setting.findOne({type: 'spj'}).exec(function(err, result){
+        console.log(result)
 		if(result){
-			res.render('spj/honor', {layout: false, admin: req.session.jenis, honor_detail_id: result.get('honor_detail_id')});
+			res.render('spj/honor', {layout: false, admin: req.session.jenis, daftar: result.get('honor_daftar'), honor_detail_id: result.get('honor_detail_id'), pembuat_daftar_honor: result.get('pembuat_daftar_honor')});
 		} else {
 			res.render('spj/honor', {layout: false, admin: req.session.jenis});
 		}
@@ -363,7 +371,7 @@ spj.get('/honor', function(req, res){
 
 spj.post('/honor', function(req, res){
 	var form = new formidable.IncomingForm();
-	var csv_name, file_path, tgl_buat_surat, xlsx, pdf, honor_detail_id, thang, tgl_buat_honor, data = [];
+	var csv_name, file_path, tgl_buat_surat, xlsx, pdf, honor_detail_id, daftar, thang, tgl_buat_honor, pembuat_daftar, pembuat_daftar_id, data = [], header = {};
 	var setting = {};
 
 	var current_timestamp = Math.round(new Date().getTime()/1000);
@@ -384,7 +392,10 @@ spj.post('/honor', function(req, res){
 					xlsx = fields.xlsx_file;
 					pdf = fields.pdf_file;
 					csv_name = fields.csv_name;
-					honor_detail_id = fields.honor_detail_id;
+                    honor_detail_id = fields.honor_detail_id;
+                    daftar = fields.daftar;
+                    pembuat_daftar = fields.pembuat_daftar;
+                    pembuat_daftar_id = fields.pembuat_daftar_id;
 					cb(null, 'File parsed')
 				});
 
@@ -449,6 +460,40 @@ spj.post('/honor', function(req, res){
 					cb(null, '');
 				})
 			},
+            function(cb){
+                DetailBelanja.findOne( {_id: new ObjectId(honor_detail_id)}, 'nmitem kdprogram kdgiat kdoutput kdsoutput kdkmpnen kdskmpnen kdakun', function(err, detail){
+                    header.detail = detail.nmitem;
+                    Program.findOne( {kdprogram: detail.kdprogram, active: true}, 'uraian', function(err, prog){
+                        header.prog = prog.uraian;
+                        header.prog_title = 'PROGRAM (054.01.'+detail.kdprogram+')';
+                        Kegiatan.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, active: true}, 'uraian', function(err, giat){
+                            header.giat = giat.uraian;
+                            header.giat_title = 'KEGIATAN ('+detail.kdgiat+')';
+                            Output.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput, active: true}, 'uraian', function(err, outp){
+                                header.outp = outp.uraian;
+                                header.outp_title = 'OUTPUT ('+detail.kdoutput+')';
+                                Komponen.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput, kdsoutput: detail.kdsoutput,
+                                    kdkmpnen: detail.kdkmpnen, active: true}, 'urkmpnen', function(err, komp){
+                                    header.komp = komp.urkmpnen;
+                                    header.komp_title = 'KOMPONEN ('+detail.kdoutput+'.'+detail.kdkmpnen+')';
+                                    Akun.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput,
+                                    kdkmpnen: detail.kdkmpnen, kdskmpnen: detail.kdskmpnen, kdakun: detail.kdakun, active: true}, 'uraian', function(err, akun){
+                                        header.akun = akun.uraian;
+                                        header.akun_title = 'AKUN ('+detail.kdakun+')';
+                                        cb(null, '')
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            },
+            function(cb){
+                Setting.update({type: 'spj'}, {$set: {'honor_daftar': daftar.toUpperCase(), 'pembuat_daftar_honor': {'pembuat_daftar': pembuat_daftar, 'pembuat_daftar_id': pembuat_daftar_id}}}, {upsert: true}, function(err, result){
+                    if(err) cb('error', null)
+                        else cb(null,'sukses')
+                })
+            }
 		], function(err, final){
 			if(err){
 				sendNotification(req.session.user_id, err);
@@ -458,46 +503,128 @@ spj.post('/honor', function(req, res){
 			// Load an existing workbook
 			XlsxPopulate.fromFileAsync("./template/HonorTemplate.xlsx")
 		    .then(workbook => {
+                //Header
+                workbook.definedName("daftar").value(daftar.toUpperCase());
+
+                workbook.definedName("prog_title").value(header.prog_title.toUpperCase() || '');
+                workbook.definedName("program").value(header.prog.toUpperCase() || '');
+
+                workbook.definedName("giat_title").value(header.giat_title.toUpperCase() || '');
+                workbook.definedName("kegiatan").value(header.giat.toUpperCase() || '');
+
+                workbook.definedName("outp_title").value(header.outp_title.toUpperCase() || '');
+                workbook.definedName("output").value(header.outp.toUpperCase() || '');
+
+                workbook.definedName("komp_title").value(header.komp_title.toUpperCase() || '');
+                workbook.definedName("komponen").value(header.komp.toUpperCase() || '');
+
+                workbook.definedName("akun_title").value(header.akun_title.toUpperCase() || '');
+                workbook.definedName("akun").value(header.akun.toUpperCase() || '');
+
 		    	var row = 11;
 		    	var nmr = 1;
 		    	var sum_pos = 11;
+                var last_sum_sisa_item = data.length;
+                var last_sum, pair_sum;
+                var sisa_item = data.length;
+                var next_last_jlh_link = 32;
+                var total_row_per_page = 23;
+                var end = false;
 		    	_.each(data, function(item, index, list){
 		    		var r = workbook.sheet(0).range('A'+row+':J'+row);
-		    		if(row  == 32 || row == 61 || (row > 89 && (row % 29 == 3))){
-		    			r.value([['',
-			    			'Jumlah dipindahkan', 
-			    			'', 
-			    			'', 
-			    			'', 
-			    			'', 
-			    			'', 
-			    			'',
-			    			'',
-			    			''
-			    		]]);
-			    		workbook.sheet(0).cell('F'+row).formula('SUM(F'+sum_pos+':F'+(row-1)+')');
-			    		workbook.sheet(0).cell('G'+row).formula('SUM(G'+sum_pos+':G'+(row-1)+')');
-			    		workbook.sheet(0).cell('H'+row).formula('SUM(H'+sum_pos+':H'+(row-1)+')');
-		    			row++;
-			    		r = workbook.sheet(0).range('A'+row+':J'+row);
-		    			r.value([['',
-			    			'Jumlah pindahan', 
-			    			'', 
-			    			'', 
-			    			'', 
-			    			'', 
-			    			'', 
-			    			'',
-			    			'',
-			    			''
-			    		]]);
-			    		workbook.sheet(0).cell('F'+row).formula('F'+(row-1));
-			    		workbook.sheet(0).cell('G'+row).formula('G'+(row-1));
-			    		workbook.sheet(0).cell('H'+row).formula('H'+(row-1));
-			    		sum_pos = row;
-		    			row++;
-		    			r = workbook.sheet(0).range('A'+row+':J'+row);
-		    		}
+                    workbook.sheet(0).row(row).height(24);
+                    if((sisa_item >= 3 && (row == next_last_jlh_link || row == 32))){
+                        total_row_per_page = 29;
+                        r.value([['',
+                            'Jumlah dipindahkan', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '',
+                            '',
+                            ''
+                        ]]);
+                        workbook.sheet(0).range('B'+row+':B'+row).style('horizontalAlignment', 'center');
+                        workbook.sheet(0).cell('F'+row).formula('SUM(F'+sum_pos+':F'+(row-1)+')');
+                        workbook.sheet(0).cell('G'+row).formula('SUM(G'+sum_pos+':G'+(row-1)+')');
+                        workbook.sheet(0).cell('H'+row).formula('SUM(H'+sum_pos+':H'+(row-1)+')');
+                        //posisi checkpoint utk kalibrasi ttd
+                        last_sum_sisa_item = sisa_item;
+
+                        row++;
+                        r = workbook.sheet(0).range('A'+row+':J'+row);
+                        workbook.sheet(0).row(row).height(24);
+                        r.value([['',
+                            'Jumlah pindahan', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '',
+                            '',
+                            ''
+                        ]]);
+                        workbook.sheet(0).range('B'+row+':B'+row).style('horizontalAlignment', 'center');
+                        workbook.sheet(0).cell('F'+row).formula('F'+(row-1));
+                        workbook.sheet(0).cell('G'+row).formula('G'+(row-1));
+                        workbook.sheet(0).cell('H'+row).formula('H'+(row-1));
+                        sum_pos = row;
+                        next_last_jlh_link = sum_pos + total_row_per_page - 1;
+                        row++;
+                        r = workbook.sheet(0).range('A'+row+':J'+row);
+                        workbook.sheet(0).row(row).height(24);
+                    }else if((total_row_per_page - last_sum_sisa_item) < 10 && (total_row_per_page - last_sum_sisa_item) >= -1 && sisa_item == 3 && !end){
+                        end = true;
+                        r.value([['',
+                            'Jumlah dipindahkan', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '',
+                            '',
+                            ''
+                        ]]);
+                        workbook.sheet(0).range('B'+row+':B'+row).style('horizontalAlignment', 'center');
+                        workbook.sheet(0).cell('F'+row).formula('SUM(F'+sum_pos+':F'+(row-1)+')');
+                        workbook.sheet(0).cell('G'+row).formula('SUM(G'+sum_pos+':G'+(row-1)+')');
+                        workbook.sheet(0).cell('H'+row).formula('SUM(H'+sum_pos+':H'+(row-1)+')');
+                        last_sum = row;
+                        row++;
+                        for (var i = 0; i < total_row_per_page - last_sum_sisa_item + 1; i++) {
+                            workbook.sheet(0).row(row).height(24);
+                            row++;
+                        }
+                        if(total_row_per_page - last_sum_sisa_item + 2 > 1){
+                            pair_sum = row;
+                        }
+                        r = workbook.sheet(0).range('A'+row+':J'+row);
+                        workbook.sheet(0).row(row).height(24);
+                        r.value([['',
+                            'Jumlah pindahan', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '', 
+                            '',
+                            '',
+                            ''
+                        ]]);
+                        workbook.sheet(0).range('B'+row+':B'+row).style('horizontalAlignment', 'center');
+                        workbook.sheet(0).cell('F'+row).formula('F'+last_sum);
+                        workbook.sheet(0).cell('G'+row).formula('G'+last_sum);
+                        workbook.sheet(0).cell('H'+row).formula('H'+last_sum);
+                        sum_pos = row;
+                        row++;
+                        r = workbook.sheet(0).range('A'+row+':J'+row);
+                        workbook.sheet(0).row(row).height(24);
+                    }
+                    //khusus row nama
 		    		var value = [nmr,
 		    			data[index]['nama'], 
 		    			data[index]['gol'], 
@@ -509,15 +636,22 @@ spj.post('/honor', function(req, res){
 		    		];
 		    		if(nmr % 2 == 0){
 		    			value.push('')
-		    			value.push('  '+nmr+'. …..')
+		    			value.push('  '+nmr+'. ....')
 		    		} else {
-		    			value.push('  '+nmr+'. …..')
+		    			value.push('  '+nmr+'. ....')
 		    			value.push('')
 		    		}
 		    		r.value([value]);
 		    		row++;
+                    sisa_item--;
+                    // console.log((sisa_item))
 		    		nmr++;
 		    	})
+                //format uang
+                workbook.sheet(0).range('E11'+':H'+(row-1)).style('numberFormat', '_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
+                workbook.sheet(0).range('A11'+':J'+(row-1)).style({'verticalAlignment': 'center', 'fontSize': 9});
+                workbook.sheet(0).range('A11'+':A'+(row-1)).style('horizontalAlignment', 'center');
+                workbook.sheet(0).range('C11'+':D'+(row-1)).style('horizontalAlignment', 'center');
 		    	var r = workbook.sheet(0).range('A'+row+':J'+row);
 		    	r.value([['',
 	    			'JUMLAH', 
@@ -541,11 +675,17 @@ spj.post('/honor', function(req, res){
 	    		terb.merged(true).style('wrapText', true);
 	    		workbook.sheet(0).row(row).height(78);
 	    		var active_rows = workbook.sheet(0).range('A11'+':H'+row);
-	    		active_rows.style('border', true)
+	    		active_rows.style('border', true);
 	    		var ttd_cols1 = workbook.sheet(0).range('I11'+':I'+(row));
 	    		ttd_cols1.style({'leftBorder': true, 'rightBorder': false, 'bottomBorder': true, 'topBorder': true})
 	    		var ttd_cols2 = workbook.sheet(0).range('J11'+':J'+(row));
 	    		ttd_cols2.style({'leftBorder': false, 'rightBorder': true, 'bottomBorder': true, 'topBorder': true})
+
+                //row yang dilompat;
+                if(pair_sum){
+                    var jumped_rows = workbook.sheet(0).range('A'+(last_sum+1)+':J'+(pair_sum-1));
+                    jumped_rows.style({'leftBorder': false, 'rightBorder': false, 'bottomBorder': false, 'topBorder': false})
+                }
 
 		    	var r = workbook.sheet(0).range('B'+(row+2)+':H'+(row+8));
 		    	r.value([
@@ -554,22 +694,37 @@ spj.post('/honor', function(req, res){
 		    		[,,,,,,],
 		    		[,,,,,,],
 		    		[,,,,,,],
-		    		['('+setting.bendahara.nama.capitalize()+')',,'('+setting.ppk.nama.capitalize()+')',,,,'(SOFYAN AYATULLOH, SST)'],
-		    		['NIP. '+setting.bendahara._id.capitalize(),,'NIP. '+setting.ppk._id.capitalize(),,,,'NIP. 197208221994121001'],
+		    		['('+setting.bendahara.nama.capitalize()+')',,'('+setting.ppk.nama.capitalize()+')',,,,'('+pembuat_daftar.capitalize()+')'],
+		    		['NIP. '+setting.bendahara._id.capitalize(),,'NIP. '+setting.ppk._id.capitalize(),,,,'NIP. '+pembuat_daftar_id],
 		    		]);
 		    	r.style('fontSize', 11)
+
+                workbook.sheet(0).range('D'+(row+2)+':G'+(row+2)).merged(true);
+                workbook.sheet(0).range('D'+(row+3)+':G'+(row+3)).merged(true);
+                workbook.sheet(0).range('D'+(row+7)+':G'+(row+7)).merged(true);
+                workbook.sheet(0).range('D'+(row+8)+':G'+(row+8)).merged(true);
+
+                workbook.sheet(0).range('H'+(row+2)+':J'+(row+2)).merged(true);
+                workbook.sheet(0).range('H'+(row+3)+':J'+(row+3)).merged(true);
+                workbook.sheet(0).range('H'+(row+7)+':J'+(row+7)).merged(true);
+                workbook.sheet(0).range('H'+(row+8)+':J'+(row+8)).merged(true);
+
+                workbook.sheet(0).range('D'+(row+2)+':G'+(row+8)).style('horizontalAlignment', 'center');
+                workbook.sheet(0).range('H'+(row+2)+':J'+(row+8)).style('horizontalAlignment', 'center');
 
 		    	workbook.sheet(0).range('B'+(row+7)+':H'+(row+7)).style('underline', true);
 		    	workbook.sheet(0).range('B'+(row+8)+':H'+(row+8)).style('underline', false);
 
 		    	workbook.definedName("periode").value(periode);
-
+                checkDirAndCreate('./temp_file/');
 		        return workbook.toFileAsync('./temp_file/'+file_name+'.xlsx');
 		    }).then(dataa => {
 		    	var pegs, css, sipadus;
 		    	async.series([
 		    		function(callb){
 		    			msopdf(null, function(error, office) {
+                        checkDirAndCreate('./temp_file/');
+                        checkDirAndCreate('./template/output/spj/honor/');
 						var input = './temp_file/'+file_name+'.xlsx';//__dirname + '/../temp_file/'+file_name+'.xlsx';
 						var output = './template/output/spj/honor/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
 
@@ -577,7 +732,9 @@ spj.post('/honor', function(req, res){
 				    		res.download(input);
 				    		res.on('finish', function() {
 								// hapus xlsx setelah didownload
-								fs.unlink(input);
+								if(checkFS(input)){
+                                    fs.unlink(input);
+                                }
 								setTimeout(function(){
 									callb(null, '')
 								}, 2000)
@@ -588,7 +745,9 @@ spj.post('/honor', function(req, res){
 							        console.error(err);
 							    }
 							    //hapus xlsx setelah terconvert
-						    	fs.unlink(input);
+						    	if(checkFS(input)){
+                                    fs.unlink(input);
+                                }
 							})
 
 							office.close(null, function(error) {
@@ -596,7 +755,9 @@ spj.post('/honor', function(req, res){
 									res.download(output);
 									res.on('finish', function() {
 										// hapus pdf setelah didownload
-										fs.unlink(output);
+										if(checkFS(output)){
+                                            fs.unlink(output);
+                                        }
 										setTimeout(function(){
 											callb(null, '')
 										}, 2000)
@@ -604,7 +765,9 @@ spj.post('/honor', function(req, res){
 								}else{
 									res.send(file_name+'.pdf');
 									setTimeout(function(){
-										fs.unlink(output);
+										if(checkFS(output)){
+                                            fs.unlink(output);
+                                        }
 									}, 10000)
 									setTimeout(function(){
 										callb(null, '')
@@ -718,24 +881,6 @@ spj.post('/honor', function(req, res){
 						})
 					})
 
-
-					// XlsxPopulate.fromFileAsync("./template/similarity.xlsx")
-					//     .then(workbook => {
-					//     	var row = 1;
-					//     	var nmr = 1;
-					//     	_.each(research, function(item, index, list){
-					//     		var r = workbook.sheet(0).range('A'+row+':D'+row);
-					//     		r.value([[nmr,
-					//     			item.target,
-					//     			item.nama, 
-					//     			item.score
-					//     		]]);
-					//     		row++;
-					//     		nmr++;
-					//     	})
-					//     workbook.toFileAsync('./temp_file/'+new Date().getTime()/1000+'percobaan_without_dotz_space.xlsx');
-	    // 			})
-
 					//riwayat user
 					User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Buat SPJ Honor Dosen periode '+periode}}}, 
 						function(err, status){
@@ -749,7 +894,7 @@ spj.post('/honor', function(req, res){
 spj.get('/transport', function(req, res){
 	Setting.findOne({type: 'spj'}).exec(function(err, result){
 		if(result){
-			res.render('spj/transport', {layout: false, admin: req.session.jenis, transport_detail_id: result.get('transport_detail_id')});
+            res.render('spj/transport', {layout: false, admin: req.session.jenis, daftar: result.get('transport_daftar'), transport_detail_id: result.get('transport_detail_id'), pembuat_daftar_transport: result.get('pembuat_daftar_transport')});
 		} else {
 			res.render('spj/transport', {layout: false, admin: req.session.jenis});
 		}
@@ -758,7 +903,7 @@ spj.get('/transport', function(req, res){
 
 spj.post('/transport', function(req, res){
 	var form = new formidable.IncomingForm();
-	var csv_name, file_path, tgl_buat_surat, xlsx, pdf, transport_detail_id, thang, tgl_buat_honor, data = [];
+	var csv_name, file_path, daftar, pembuat_daftar, pembuat_daftar_id, tgl_buat_surat, xlsx, pdf, transport_detail_id, thang, tgl_buat_honor, header = {}, data = [];
 	var setting = {};
 
 	var current_timestamp = Math.round(new Date().getTime()/1000);
@@ -779,6 +924,9 @@ spj.post('/transport', function(req, res){
 					xlsx = fields.xlsx_file;
 					pdf = fields.pdf_file;
 					csv_name = fields.csv_name;
+                    daftar = fields.daftar;
+                    pembuat_daftar = fields.pembuat_daftar;
+                    pembuat_daftar_id = fields.pembuat_daftar_id;
 					transport_detail_id = fields.transport_detail_id;
 					cb(null, 'File parsed')
 				});
@@ -834,55 +982,78 @@ spj.post('/transport', function(req, res){
 					cb(null, '');
 				})
 			},
+            function(cb){
+                DetailBelanja.findOne( {_id: new ObjectId(transport_detail_id)}, 'nmitem kdprogram kdgiat kdoutput kdsoutput kdkmpnen kdskmpnen kdakun', function(err, detail){
+                    header.detail = detail.nmitem;
+                    Program.findOne( {kdprogram: detail.kdprogram, active: true}, 'uraian', function(err, prog){
+                        header.prog = prog.uraian;
+                        header.prog_title = 'PROGRAM (054.01.'+detail.kdprogram+')';
+                        Kegiatan.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, active: true}, 'uraian', function(err, giat){
+                            header.giat = giat.uraian;
+                            header.giat_title = 'KEGIATAN ('+detail.kdgiat+')';
+                            Output.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput, active: true}, 'uraian', function(err, outp){
+                                header.outp = outp.uraian;
+                                header.outp_title = 'OUTPUT ('+detail.kdoutput+')';
+                                Komponen.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput, kdsoutput: detail.kdsoutput,
+                                    kdkmpnen: detail.kdkmpnen, active: true}, 'urkmpnen', function(err, komp){
+                                    header.komp = komp.urkmpnen;
+                                    header.komp_title = 'KOMPONEN ('+detail.kdoutput+'.'+detail.kdkmpnen+')';
+                                    Akun.findOne( {kdprogram: detail.kdprogram, kdgiat: detail.kdgiat, kdoutput: detail.kdoutput,
+                                    kdkmpnen: detail.kdkmpnen, kdskmpnen: detail.kdskmpnen, kdakun: detail.kdakun, active: true}, 'uraian', function(err, akun){
+                                        header.akun = akun.uraian;
+                                        header.akun_title = 'AKUN ('+detail.kdakun+')';
+                                        cb(null, '')
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            },
+            function(cb){
+                Setting.update({type: 'spj'}, {$set: {'transport_daftar': daftar.toUpperCase(), 'pembuat_daftar_transport': {'pembuat_daftar': pembuat_daftar, 'pembuat_daftar_id': pembuat_daftar_id}}}, {upsert: true}, function(err, result){
+                    if(err) cb('error', null)
+                        else cb(null,'sukses')
+                })
+            }
 		], function(err, final){
 			// Load an existing workbook
 			XlsxPopulate.fromFileAsync("./template/TransportTemplate.xlsx")
 		    .then(workbook => {
-		    	var row = 12;
-		    	var nmr = 1;
-		    	var sum_pos = 12;
+                //Header
+                workbook.definedName("daftar").value(daftar.toUpperCase());
+
+                workbook.definedName("prog_title").value(header.prog_title.toUpperCase() || '');
+                workbook.definedName("program").value(header.prog.toUpperCase() || '');
+
+                workbook.definedName("giat_title").value(header.giat_title.toUpperCase() || '');
+                workbook.definedName("kegiatan").value(header.giat.toUpperCase() || '');
+
+                workbook.definedName("outp_title").value(header.outp_title.toUpperCase() || '');
+                workbook.definedName("output").value(header.outp.toUpperCase() || '');
+
+                workbook.definedName("komp_title").value(header.komp_title.toUpperCase() || '');
+                workbook.definedName("komponen").value(header.komp.toUpperCase() || '');
+
+                workbook.definedName("akun_title").value(header.akun_title.toUpperCase() || '');
+                workbook.definedName("akun").value(header.akun.toUpperCase() || '');
+
+                var row = 12;
+                var nmr = 1;
+                var sum_pos = 12;
+                var last_sum_sisa_item = data.length;
+                var last_sum, pair_sum;
+                var sisa_item = data.length;
+                var next_last_jlh_link = 33;
+                var total_row_per_page = 23;
+                var end = false;
+
 		    	_.each(data, function(item, index, list){
-		    		if(list.length > 43 && nmr == 42){
-		    			var r = workbook.sheet(0).range('A'+row+':H'+row);
-		    			r.value([['',
-			    			'Jumlah dipindahkan', 
-			    			'', 
-			    			'', 
-			    			'', 
-			    			'',
-			    			'', 
-			    			''
-			    		]]);
-			    		// workbook.sheet(0).cell('E'+row).formula('SUM(E'+sum_pos+':E'+(row-1)+')');
-			    		workbook.sheet(0).cell('F'+row).formula('SUM(F'+sum_pos+':F'+(row-1)+')');
-			    		workbook.sheet(0).cell('B'+row).style('horizontalAlignment', 'center');
-			    		workbook.sheet(0).row(row).height(24);
-			    		sum_pos = row;
-
-		    			row += 14;
-
-		    			r = workbook.sheet(0).range('A'+row+':H'+row);
-		    			r.value([['',
-			    			'Jumlah pindahan', 
-			    			'', 
-			    			'', 
-			    			'', 
-			    			'',
-			    			'', 
-			    			''
-			    		]]);
-			    		// workbook.sheet(0).cell('E'+row).formula('E'+(row-1));
-			    		workbook.sheet(0).cell('F'+row).formula('F'+(sum_pos));
-			    		workbook.sheet(0).cell('B'+row).style('horizontalAlignment', 'center');
-			    		sum_pos = row;
-			    		workbook.sheet(0).row(row).height(24);
-		    			row++;
-		    			r = workbook.sheet(0).range('A'+row+':H'+row);
-
-		    		}
 		    		var r = workbook.sheet(0).range('A'+row+':H'+row);
-		    		if(row  == 33 || row == 61 || (row > 89 && (row % 29 == 3))){
-		    			r.value([['',
+		    		// if(row  == 33 || row == 61 || (row > 89 && (row % 29 == 3))){
+                    if((sisa_item >= 3 && (row == next_last_jlh_link || row == 33))){
+		    			total_row_per_page = 30;
+                        r.value([['',
 			    			'Jumlah dipindahkan', 
 			    			'', 
 			    			'', 
@@ -895,6 +1066,9 @@ spj.post('/transport', function(req, res){
 			    		workbook.sheet(0).cell('F'+row).formula('SUM(F'+sum_pos+':F'+(row-1)+')');
 			    		workbook.sheet(0).cell('B'+row).style('horizontalAlignment', 'center');
 			    		workbook.sheet(0).row(row).height(24);
+                        //posisi checkpoint utk kalibrasi ttd
+                        last_sum_sisa_item = sisa_item;
+
 		    			row++;
 			    		r = workbook.sheet(0).range('A'+row+':H'+row);
 		    			r.value([['',
@@ -910,10 +1084,57 @@ spj.post('/transport', function(req, res){
 			    		workbook.sheet(0).cell('F'+row).formula('F'+(row-1));
 			    		workbook.sheet(0).cell('B'+row).style('horizontalAlignment', 'center');
 			    		sum_pos = row;
+                        next_last_jlh_link = sum_pos + total_row_per_page - 1;
 			    		workbook.sheet(0).row(row).height(24);
 		    			row++;
 		    			r = workbook.sheet(0).range('A'+row+':H'+row);
-		    		}
+		    		} else if((total_row_per_page - last_sum_sisa_item) < 10 && (total_row_per_page - last_sum_sisa_item) >= -1 && sisa_item == 3 && !end){
+                        end = true;
+                        var r = workbook.sheet(0).range('A'+row+':H'+row);
+                        r.value([['',
+                            'Jumlah dipindahkan', 
+                            '', 
+                            '', 
+                            '', 
+                            '',
+                            '', 
+                            ''
+                        ]]);
+                        workbook.sheet(0).cell('F'+row).formula('SUM(F'+sum_pos+':F'+(row-1)+')');
+                        workbook.sheet(0).cell('B'+row).style('horizontalAlignment', 'center');
+                        workbook.sheet(0).row(row).height(24);
+                        // sum_pos = row;
+                        last_sum = row
+
+                        row ++;
+
+                        for (var i = 0; i < total_row_per_page - last_sum_sisa_item + 1; i++) {
+                            workbook.sheet(0).row(row).height(24);
+                            row++;
+                        }
+                        if(total_row_per_page - last_sum_sisa_item + 2 > 1){
+                            pair_sum = row;
+                        }
+
+                        r = workbook.sheet(0).range('A'+row+':H'+row);
+                        r.value([['',
+                            'Jumlah pindahan', 
+                            '', 
+                            '', 
+                            '', 
+                            '',
+                            '', 
+                            ''
+                        ]]);
+                        // workbook.sheet(0).cell('E'+row).formula('E'+(row-1));
+                        workbook.sheet(0).cell('F'+row).formula('F'+(last_sum));
+                        workbook.sheet(0).cell('B'+row).style('horizontalAlignment', 'center');
+                        sum_pos = row;
+                        workbook.sheet(0).row(row).height(24);
+                        row++;
+                        r = workbook.sheet(0).range('A'+row+':H'+row);
+
+                    }
 		    		var value = [nmr,
 		    			data[index]['nama'], 
 		    			data[index]['gol'], 
@@ -936,6 +1157,7 @@ spj.post('/transport', function(req, res){
 		    		workbook.sheet(0).cell('D'+row).style('horizontalAlignment', 'center')
 			    	workbook.sheet(0).row(row).height(24);
 		    		row++;
+                    sisa_item--;
 		    		nmr++;
 		    	})
 		    	var r = workbook.sheet(0).range('A'+row+':H'+row);
@@ -958,6 +1180,7 @@ spj.post('/transport', function(req, res){
 	    		var terb = workbook.sheet(0).range('G'+row+':H'+row);
 	    		terb.merged(true).style('wrapText', true);
 	    		workbook.sheet(0).row(row).height(40.50);
+                console.log(row)
 	    		var active_rows = workbook.sheet(0).range('A12'+':H'+row);
 	    		active_rows.style({'border': true, 'fontSize': 9, 'verticalAlignment': 'center'})
 	    		var ttd_cols1 = workbook.sheet(0).range('G12'+':G'+(row));
@@ -965,6 +1188,11 @@ spj.post('/transport', function(req, res){
 	    		var ttd_cols2 = workbook.sheet(0).range('H12'+':H'+(row));
 	    		ttd_cols2.style({'leftBorder': false, 'rightBorder': true, 'bottomBorder': true, 'topBorder': true, 'fontSize': 9, 'verticalAlignment': 'center'})
 
+                //row yang dilompat;
+                if(pair_sum){
+                    var jumped_rows = workbook.sheet(0).range('A'+(last_sum+1)+':H'+(pair_sum-1));
+                    jumped_rows.style({'leftBorder': false, 'rightBorder': false, 'bottomBorder': false, 'topBorder': false})
+                }
 
 	    		var format_uang = workbook.sheet(0).range('E12'+':F'+(row+1));
 	    		format_uang.style('numberFormat', '_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)')
@@ -976,8 +1204,8 @@ spj.post('/transport', function(req, res){
 		    		[,,,,],
 		    		[,,,,],
 		    		[,,,,],
-		    		['('+setting.bendahara.nama.capitalize()+')','('+setting.ppk.nama.capitalize()+')',,,'(SOFYAN AYATULLOH, SST)'],
-		    		['NIP. '+setting.bendahara._id+'','NIP. '+setting.bendahara._id+'',,,'NIP. 197208221994121001'],
+		    		['('+setting.bendahara.nama.capitalize()+')','('+setting.ppk.nama.capitalize()+')',,,'('+pembuat_daftar.capitalize()+')'],
+		    		['NIP. '+setting.bendahara._id+'','NIP. '+setting.bendahara._id+'',,,'NIP. '+pembuat_daftar_id],
 		    		]);
 		    	r.style('fontSize', 11);
 
@@ -996,17 +1224,20 @@ spj.post('/transport', function(req, res){
 
 		    	workbook.sheet(0).range('B'+(row+7)+':F'+(row+7)).style('underline', true);
 
-		    	if(data.length > 43){
-	    			workbook.sheet(0).range('A56:H68').style({'leftBorder': false, 'rightBorder': false, 'bottomBorder': false, 'topBorder': false});
-	    		}
+		    	// if(data.length > 43){
+	    		// 	workbook.sheet(0).range('A56:H68').style({'leftBorder': false, 'rightBorder': false, 'bottomBorder': false, 'topBorder': false});
+	    		// }
 
-		    	workbook.definedName("periode").value(periode)	        
+		    	workbook.definedName("periode").value(periode)	  
+                checkDirAndCreate('./temp_file/');      
 		        return workbook.toFileAsync('./temp_file/'+file_name+'.xlsx');
 		    }).then(dataa => {
 		    	var pegs, css, sipadus;
 		    	async.series([
 		    		function(callb){
 		    			msopdf(null, function(error, office) {
+                        checkDirAndCreate('./temp_file/');
+                        checkDirAndCreate('./template/output/spj/transport/');
 						var input = './temp_file/'+file_name+'.xlsx';//__dirname + '/../temp_file/'+file_name+'.xlsx';
 						var output = './template/output/spj/transport/'+file_name+'.pdf';//__dirname + '/../temp_file/'+file_name+'.pdf';
 
@@ -1014,7 +1245,9 @@ spj.post('/transport', function(req, res){
 				    		res.download(input);
 				    		res.on('finish', function() {
 								// hapus xlsx setelah didownload
-								fs.unlink(input);
+								if(checkFS(input)){
+                                    fs.unlink(input);
+                                }
 								setTimeout(function(){
 									callb(null, '')
 								}, 2000)
@@ -1025,7 +1258,9 @@ spj.post('/transport', function(req, res){
 							        console.error(err);
 							    }
 							    //hapus xlsx setelah terconvert
-						    	fs.unlink(input);
+						    	if(checkFS(input)){
+                                    fs.unlink(input);
+                                }
 
 							})
 
@@ -1034,7 +1269,9 @@ spj.post('/transport', function(req, res){
 									res.download(output);
 									res.on('finish', function() {
 										// hapus pdf setelah didownload
-										fs.unlink(output);
+										if(checkFS(output)){
+                                            fs.unlink(output);
+                                        }
 										setTimeout(function(){
 											callb(null, '')
 										}, 2000)
@@ -1042,7 +1279,9 @@ spj.post('/transport', function(req, res){
 								}else{
 									res.send(file_name+'.pdf');
 									setTimeout(function(){
-										fs.unlink(output);
+										if(checkFS(output)){
+                                            fs.unlink(output);
+                                        }
 									}, 10000)
 									setTimeout(function(){
 										callb(null, '')
@@ -1322,6 +1561,21 @@ function capitalize(s){
 function sendNotification(user_id, message){
 	if(_.isString(user_id)) spj.connections[user_id].emit('messages', message)
 		else user_id.emit('messages', message)
+}
+
+function checkDirAndCreate(addr){
+    if (!fs.existsSync(addr)){
+        fs.mkdirSync(addr);
+    }
+}
+
+
+function checkFS(addr){
+    if (fs.existsSync(addr)){
+        return true;
+    } else{
+        return false;
+    }
 }
 
 module.exports = spj;

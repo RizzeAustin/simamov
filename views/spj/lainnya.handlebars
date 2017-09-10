@@ -506,27 +506,27 @@
             Handsontable.hooks.add('afterChange', function(changes, source){
                 var jumlah = 0;
                 var data = spj_lainnya.getSourceData();
-                if(changes){
-                    _.each(changes, function(change, index, list){
-                        if(change[1] != 'penerima_nama'){
-                            return;
-                        }
-                        if(!change[3]) return;
-                        socket.emit('get_pgw_byName', change[3], function (pgw) {
-                            data[change[0]]['gol'] = '';
-                            spj_lainnya.render();
-                            if(pgw && pgw.gol){
-                                data[change[0]]['gol'] = pgw.gol.replace(/\/.*$/g, '');
-                                spj_lainnya.render();
-                            } else {
-                                setTimeout(function(){
-                                    generalAlertStacks('Perhatian: '+change[3]+' tidak memiliki golongan.')
-                                }, 50)
-                            }
+                // if(changes){
+                //     _.each(changes, function(change, index, list){
+                //         if(change[1] != 'penerima_nama'){
+                //             return;
+                //         }
+                //         if(!change[3]) return;
+                //         socket.emit('get_pgw_byName', change[3], function (pgw) {
+                //             data[change[0]]['gol'] = '';
+                //             spj_lainnya.render();
+                //             if(pgw && pgw.gol){
+                //                 data[change[0]]['gol'] = pgw.gol.replace(/\/.*$/g, '');
+                //                 spj_lainnya.render();
+                //             } else {
+                //                 setTimeout(function(){
+                //                     generalAlertStacks('Perhatian: '+change[3]+' tidak memiliki golongan.')
+                //                 }, 50)
+                //             }
                             
-                        });
-                    })
-                }
+                //         });
+                //     })
+                // }
                 _.each(spj_lainnya.getSourceData(), function(row, index, list){
                     jumlah += getNumber(row.jumlah || 0);
                 });

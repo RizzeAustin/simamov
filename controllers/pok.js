@@ -1904,7 +1904,7 @@ pok.socket = function(io, connections, client){
 			    					var r = workbook.sheet(0).range('K'+sum_pos+':K'+row);
 									r.style({'wrapText':true, 'verticalAlignment': 'center'});
 			    				}
-
+			    				checkDirAndCreate('./template/output/riwayat/pok/');
 						        return workbook.toFileAsync('./template/output/riwayat/pok/'+file_name+'.xlsx');
 						    }).then(dataa => {
 						    	msopdf(null, function(error, office) {
@@ -1919,7 +1919,9 @@ pok.socket = function(io, connections, client){
 										        console.error(err);
 										    }
 										    //hapus xlsx setelah terconvert
-									    	fs.unlink(input);
+									    	if(checkFS(input)){
+	                                            fs.unlink(input);
+	                                        }
 
 										})
 
@@ -2008,7 +2010,7 @@ pok.socket = function(io, connections, client){
 		    					var r = workbook.sheet(0).range('K'+sum_pos+':K'+row);
 								r.style({'wrapText':true, 'verticalAlignment': 'center'});
 		    				}
-
+		    				checkDirAndCreate('./template/output/riwayat/pok/');
 					        return workbook.toFileAsync('./template/output/riwayat/pok/'+file_name+'.xlsx');
 					    }).then(dataa => {
 					    	msopdf(null, function(error, office) {
@@ -2023,7 +2025,9 @@ pok.socket = function(io, connections, client){
 									        console.error(err);
 									    }
 									    //hapus xlsx setelah terconvert
-								    	fs.unlink(input);
+								    	if(checkFS(input)){
+                                            fs.unlink(input);
+                                        }
 
 									})
 
@@ -2118,7 +2122,7 @@ pok.socket = function(io, connections, client){
 	    					var r = workbook.sheet(0).range('K'+sum_pos+':K'+row);
 							r.style({'wrapText':true, 'verticalAlignment': 'center'});
 	    				}
-
+	    				checkDirAndCreate('./template/output/riwayat/pegawai/');
 				        return workbook.toFileAsync('./template/output/riwayat/pegawai/'+file_name+'.xlsx');
 				    }).then(dataa => {
 				    	msopdf(null, function(error, office) {
@@ -2133,7 +2137,9 @@ pok.socket = function(io, connections, client){
 								        console.error(err);
 								    }
 								    //hapus xlsx setelah terconvert
-							    	fs.unlink(input);
+							    	if(checkFS(input)){
+                                        fs.unlink(input);
+                                    }
 
 								})
 
@@ -2379,6 +2385,59 @@ pok.socket = function(io, connections, client){
     		}
     	});
     })
+
+    client.on('pok_summary', function (month, cb){
+    	var y = thang || new Date().getFullYear();
+    	var lower_ts = Math.round(new Date(y, month, 1).getTime()/1000);
+		DetailBelanja.aggregate([
+			{ $match: {active: true, thang: +thang} },
+	        { $project: { realisasi: {tgl_timestamp: 1, jumlah: 1} } },
+	        { $unwind: '$realisasi' },
+	        { $group: {
+	            	_id: null,
+	            	sampai_bln_lalu: {$sum: {$cond: [{$lte : ['$realisasi.tgl_timestamp', lower_ts]}, '$realisasi.jumlah', 0]}},
+	            	sampai_bln_ini: {$sum: '$realisasi.jumlah'}
+	        	}
+	        }
+	    ], function (err, result) {
+	        if (err) {
+	            console.log(err)
+	            return;
+	        }
+	        if(result.length == 0){
+	        	result.push({sampai_bln_lalu: 0, sampai_bln_ini: 0});
+	        }
+	        DetailBelanja.aggregate([
+				{ $match: {active: true, thang: +thang} },
+		        { $project: { jumlah: 1 } },
+		        { $group: {
+		            	_id: null,
+		            	pagu: {$sum: '$jumlah'}
+		        	}
+		        }
+		    ], function (err, pagu) {
+		        if (err) {
+		            console.log(err);
+		            return;
+		        }
+		        DetailBelanja.aggregate([
+					{ $match: {active: true, thang: +thang, realisasi: { $exists: true, $ne: [] }} },
+			        { $project: { nmitem: 1, sisa_dana: { $multiply: [ 100, {$divide: [{ $subtract: [ '$jumlah', { $sum: '$realisasi.jumlah' } ] }, '$jumlah']} ] },
+			        				sisa_dana_rp: { $subtract: [ '$jumlah', { $sum: '$realisasi.jumlah' } ] } } },
+			        { $sort: {sisa_dana: 1} },
+			        { $limit: 5 }
+			    ], function(err, res1){
+			    	if(err){
+			    		console.log(err)
+			    		return;
+			    	}
+			        result[0].pagu = (pagu.length == 0)?0:pagu[0].pagu;
+			        result[0].top_mines = (res1.length == 0)? [{nmitem: 'Blm ada item', sisa_dana: 0}, {nmitem: 'Blm ada item', sisa_dana: 0}, {nmitem: 'Blm ada item', sisa_dana: 0}, {nmitem: 'Blm ada item', sisa_dana: 0}, {nmitem: 'Blm ada item', sisa_dana: 0}]:res1;
+			        cb(result[0]);
+			    })
+		    });
+	    });
+    })
 }
 
 function getRealisasiSum(client, lower_ts, upper_ts, bypass){
@@ -2477,7 +2536,7 @@ pok.post('/unggah_pok', function(req, res){
 			console.log(err,err)
 			if(capitalize(ext) == 'XLSX' || capitalize(ext) == 'XLS'){
 				var pok = new XlsxPOK(file_path, pok_name || 'POK', req.session.username || 'admin', thang || req.session.tahun_anggaran || new Date().getFullYear(), req.session.user_id || 'dummy user');
-			}else if(ext.match(/^s/)) {
+			} else if(ext.match(/^s/)) {
 				var pok = new POK(file_path, pok_name || 'POK', req.session.username || 'admin', req.session.user_id || 'ahsbdjasdbasjd');
 			} else {
 				sendNotification(req.session.user_id, 'Format file tidak didukung.')
@@ -2492,8 +2551,8 @@ pok.get('/download/:type/:month', function(req, res){
 	var y = req.session.tahun_anggaran || new Date().getFullYear();
 	var m = req.params.month;
 	var thang = req.session.tahun_anggaran || new Date().getFullYear();
-	var month = ['JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'OKTOBER', 
-		'SEPTEMBER', 'NOVEMBER', 'DESEMBER']	 
+	var month = ['JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 
+		'OKTOBER', 'NOVEMBER', 'DESEMBER']	 
 	// Create a new instance of a Workbook class 
 	var pok_wb = new xl.Workbook({
 		defaultFont: {
@@ -3241,14 +3300,18 @@ pok.get('/download/:type/:month', function(req, res){
 							        console.error(err);
 							    }
 							    //hapus xlsx setelah terconvert
-						    	fs.unlink(input);
+						    	if(checkFS(input)){
+                                    fs.unlink(input);
+                                }
 							})
 
 							office.close(null, function(error) {
 	  							res.download(output);
 	  							res.on('finish', function() {
 	  								//hapus pdf setelah didownload
-									fs.unlink(output);
+									if(checkFS(output)){
+                                        fs.unlink(output);
+                                    }
 								});
 							})
 
@@ -4213,6 +4276,21 @@ function getNumber(obj){
     if(!obj || obj == '-' || obj == '') return 0;
     if (typeof obj === 'string' || obj instanceof String) return +obj.replace(/\D/g, '');
     return +obj;
+}
+
+function checkDirAndCreate(addr){
+    if (!fs.existsSync(addr)){
+        fs.mkdirSync(addr);
+    }
+}
+
+
+function checkFS(addr){
+    if (fs.existsSync(addr)){
+        return true;
+    } else{
+        return false;
+    }
 }
 
 module.exports = pok;

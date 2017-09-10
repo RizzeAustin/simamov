@@ -1,5 +1,8 @@
 use simamov;
 // show collections
+// db.getCollection('bruteforce-store').findOne({})
+// db.my_api_limits_coll.ensureIndex({expires: 1}, {expireAfterSeconds: 0});
+// show collections
 // db.user.update({_id: ObjectId('597d4b39094160252c595640')}, {$set:{jenis: 1}})
 // db.user.find().pretty()
 // db.custom_entity.find({nip: '13.7960'}).pretty()
@@ -13,7 +16,7 @@ use simamov;
 // show collections
 // db.sppd.findOne({})
 //==================================================
-// db.pok_detailBelanja.drop()
+db.pok_detailBelanja.drop()
 // db.pok_akun.drop()
 // db.pok_sub_komponen.drop()
 // db.pok_komponen.drop()

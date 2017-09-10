@@ -5,7 +5,7 @@
   $.ajaxLoad = true;
 
       //required when $.ajaxLoad = true
-    $.defaultPage = 'home';
+    $.defaultPage = 'pok';
     $.subPagesDirectory = '/';
     $.page404 = '404';
     $.login = 'login';

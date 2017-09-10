@@ -1,12 +1,15 @@
 <div class="animated fadeIn">
     <div class="card" id="new">
-        <div class="card-header"><i class="icon-calculator"></i> Petunjuk Operasional Kegiatan (POK)</div>
+        <div class="card-header"><i class="icon-calculator"></i> Pengelolaan Petunjuk Operasional Kegiatan (POK)</div>
             <div class="card-block">
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
-                                <a id="pok_entry_tab" class="nav-link active" data-toggle="tab" href="#entrychild" role="tab" aria-control="entrychild"><i class="icon-eye"></i> Entri</a>
+                                <a id="pok_summary_tab" class="nav-link active" data-toggle="tab" href="#summarychild" role="tab" aria-control="entrychild"><i class="icon-speedometer"></i> Summary</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="pok_entry_tab" class="nav-link" data-toggle="tab" href="#entrychild" role="tab" aria-control="entrychild"><i class="icon-eye"></i> Entri</a>
                             </li>
                             {{#if admin}}
                             <li class="nav-item">
@@ -18,7 +21,29 @@
                             {{/if}}
                         </ul> 
                         <div class="tab-content">
-                            <div class="tab-pane active" id="entrychild" role="tabpanel">
+                            <div class="tab-pane active" id="summarychild" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-12" style="padding-left: 0">
+                                        <p>Selamat Datang, {{username}}!</p>
+                                    </div>
+                                </div>
+                                <!-- <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="text-center pok-title" style="margin-bottom: 10px">
+                                            Realisasi Anggaran {{tahun_anggaran}}
+                                        </h6>
+                                    </div>
+                                </div> -->
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div id="container" style="width: 100%; height: 420px; margin: 0 auto"></div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div id="top_mines" style="width: 100%; height: 420px; margin: 0 auto"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="entrychild" role="tabpanel">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h6 class="text-center pok-title" style="margin-bottom: 10px">
@@ -42,7 +67,7 @@
                                             <div class="card-block p-0 clearfix">
                                                 <i class="fa fa-calendar-check-o bg-primary p-2 font-2xl mr-1 float-left"></i>
                                                 <div class="h6 text-primary mb-0 pt-1">Rp <span id="realisasi-bulan-lalu">0</span><span id="realisasi-bulan-lalu-percent" style="font-size: 0.7rem"> (0%)</span></div>
-                                                <div class="text-muted text-uppercase font-weight-bold font-xs">Bulan Lalu</div>
+                                                <div class="text-muted text-uppercase font-weight-bold font-xs">Sampai Bulan Lalu</div>
                                             </div>
                                         </div>
                                     </div>
@@ -828,6 +853,12 @@
 <script src="/js/moment.min.js"></script>
 <script src="/js/locale/id.js"></script>
 <script src="/js/bootstrap-datetimepicker.js"></script>
+
+<script src="/js/highcharts.js"></script>
+<script src="/js/data.js"></script>
+<script src="/js/drilldown.js"></script>
+<script src="/js/exporting.js"></script>
+<script src="/js/offline-exporting.js"></script>
 
 <script type="text/javascript">
     socket = io.connect($(location).attr('host'));
@@ -2167,7 +2198,7 @@
         }
         var target = document.getElementById('entrychild');
         var target2 = document.getElementById('utamachild');
-        var spinner = new Spinner(opts).spin(target);
+        var spinner = new Spinner(opts);
         //Tombol riwayat
         var detail_id_target_riwayat;
         tabel_pok_entry.on('click', '.riwayat', function () {
@@ -2866,7 +2897,7 @@
             target_row.find('td:eq(11)').text(formatUang(sisa_dana));
 
             if(getNumber(sisa_dana) < 0){
-                target_row.find('td:eq(11)').css("background-color", "red")
+                target_row.find('td:eq(11)').css("background-color", "yellow")
             } else {
                 target_row.find('td:eq(11)').css("background-color", "")
             }
@@ -2931,7 +2962,7 @@
             parent_pengeluaran_td.find('td:eq(11)').text(formatUang(sisa_dana));
 
             if(getNumber(sisa_dana) < 0){
-                parent_pengeluaran_td.find('td:eq(11)').css("background-color", "red")
+                parent_pengeluaran_td.find('td:eq(11)').css("background-color", "yellow")
             } else {
                 parent_pengeluaran_td.find('td:eq(11)').css("background-color", "")
             }
@@ -2988,7 +3019,7 @@
         //////////EDIT
         //search & sort
         //tabel pok edit
-        tabel_pok_edit.DataTable({
+        $('#pok_table_edit').DataTable({
             //scrollY:        "500px",
             //scrollX:        true,
             //scrollCollapse: true,
@@ -3127,7 +3158,7 @@
 
         socket.on('pok_id_update_uraian_akun', function(dataa) {
             if(dataa.akuns.length == 1){
-                var row_affected = tabel_pok_edit.DataTable()
+                var row_affected = $('#pok_table_edit').DataTable()
                                     .rows( function ( idx, data, node ) {
                                         return data[0] == dataa.akuns[0]._id ?
                                             true : false;
@@ -3139,13 +3170,13 @@
                                         .to$()
                                         .find('td:eq(2)');
 
-                tabel_pok_edit.DataTable()
+                $('#pok_table_edit').DataTable()
                     .cell(uraian_td)
                     .data(dataa.uraian)
                     .draw(false);
             } else {
                 _.each(dataa.akuns, function(element, index, list){
-                    var row_affected = tabel_pok_edit.DataTable()
+                    var row_affected = $('#pok_table_edit').DataTable()
                                         .rows( function ( idx, data, node ) {
                                             return data[0] == element._id ?
                                                 true : false;
@@ -3157,7 +3188,7 @@
                                             .to$()
                                             .find('td:eq(2)');
 
-                    tabel_pok_edit.DataTable()
+                    $('#pok_table_edit').DataTable()
                         .cell(uraian_td)
                         .data(dataa.uraian)
                         .draw(false);
@@ -3349,7 +3380,7 @@
                 data.hargasat = getNumber($('#tbh_hrg_satuan').val());
                 data.jumlah = data.volkeg * data.hargasat
 
-                var childs_row = tabel_pok_edit.DataTable()
+                var childs_row = $('#pok_table_edit').DataTable()
                             .rows( function ( idx, data, node ) {
                                 return data[1] == parent_id_cara1 ?
                                     true : false;
@@ -3418,14 +3449,14 @@
 
         //Tambah item (cara 2)
         state_subitem_selected = '';
-        tabel_pok_edit.on('click keyup', '.tambah', function () {
+        $('#pok_table_edit').on('click keyup', '.tambah', function () {
             if(row_to_delete) {
                 row_to_delete.remove().draw(false);
                 row_to_delete = null;
             }
             $.toast().reset('all');
             var type = $(this).closest('tr').find('span').html();
-            var parent_id = tabel_pok_edit.DataTable()
+            var parent_id = $('#pok_table_edit').DataTable()
                                 .row($(this).closest('tr'))
                                 .data()[0]
 
@@ -3458,7 +3489,7 @@
                 item_badge = {color: 'success', item: 'detail'};
             }
             
-            var table = tabel_pok_edit.DataTable();
+            var table = $('#pok_table_edit').DataTable();
         
             //insert a test row
             table.row.add(['',parent_id, badge(item_badge), '', '', '', '', '', '', '<button type="button" class="simpan-baru"><i class="icon-check"></i></button> <button type="button" class="hapus-item"> <i class="icon-close"></i></button>']);
@@ -3475,7 +3506,7 @@
                 table.row(i-1).data(insertedRow);
             }     
             //refresh the page
-            tabel_pok_edit.DataTable().draw(false);
+            $('#pok_table_edit').DataTable().draw(false);
 
             
             if(type == 'akun'){
@@ -3488,7 +3519,7 @@
         })
         //Lanjutan cara 2 (Simpan)
         var row_last_submit;
-        tabel_pok_edit.on('click keyup', '.simpan-baru', function () {
+        $('#pok_table_edit').on('click keyup', '.simpan-baru', function () {
             var add_only = ['kegiatan','skomponen','akun', 'soutput'];
             var multiple_add = ['output','komponen'];
 
@@ -3508,9 +3539,9 @@
                  button = '<button type="button" class="hapus-item"><i class="icon-close"></i></button>';
             }
 
-            row_last_submit = tabel_pok_edit.DataTable().row($(this).closest('tr'));
+            row_last_submit = $('#pok_table_edit').DataTable().row($(this).closest('tr'));
             var row_data = row_last_submit.data();
-            var parent_row = tabel_pok_edit.DataTable()
+            var parent_row = $('#pok_table_edit').DataTable()
                         .rows( function ( idx, data, node ) {
                             return data[0] == row_data[1] ?
                                 true : false;
@@ -3533,7 +3564,7 @@
                 data.hargasat = getNumber(row_data[7]);
                 data.jumlah = getNumber(row_data[8]);
 
-                var childs_row = tabel_pok_edit.DataTable()
+                var childs_row = $('#pok_table_edit').DataTable()
                             .rows( function ( idx, data, node ) {
                                 return data[1] == row_data[1] ?
                                     true : false;
@@ -3625,7 +3656,7 @@
 
             socket.emit('pok_edit_new_item', data, function(status){
                 if(status == 'sukses'){
-                    tabel_pok_edit.DataTable()
+                    $('#pok_table_edit').DataTable()
                     .cell(this_td)
                     .data(button)
                     .draw(false);
@@ -3644,7 +3675,7 @@
         //hapus item/ batalkan penambahan
         var row_to_delete;
         var row_to_delete_type;
-        tabel_pok_edit.on('click', '.hapus-item', function () {
+        $('#pok_table_edit').on('click', '.hapus-item', function () {
             if(row_to_delete) {
                 if(row_to_delete_type != 'program'){
                     updateParentJumlah(row_to_delete.nodes().to$().find('td:eq(6)'), 
@@ -3696,7 +3727,7 @@
         function removeChilds(row_to_delete, remove){
             var row_to_delete_type = $(row_to_delete.data()[2]).text()
             if(row_to_delete_type != 'detail'){
-                var childs = tabel_pok_edit.DataTable()
+                var childs = $('#pok_table_edit').DataTable()
                             .rows( function ( idx, data, node ) {
                                 return data[1] == row_to_delete.data()[0] ?
                                     true : false;
@@ -3727,7 +3758,7 @@
         var editor;
         var active;
         var active_temp;
-        tabel_pok_edit.on('dblclick', 'tr td', function () {
+        $('#pok_table_edit').on('dblclick', 'tr td', function () {
             active = $(this);
             var type = active.closest('tr').find('span').html();
             if(state_active_editor || active.is(':nth-child(1)') || active.is(':nth-child(7)') 
@@ -3785,7 +3816,7 @@
             editor.select();
         })
 
-        tabel_pok_edit.on('blur keydown', 'input,textarea', function (e) {
+        $('#pok_table_edit').on('blur keydown', 'input,textarea', function (e) {
             var type = active.closest('tr').find('span').html();
             //jika enter anggap blur (krn klo tidak, di fired 2 kali)
             if (e.which === 13){
@@ -3803,7 +3834,7 @@
                     if(editor.val() == ''){
                         editor.val('-');
                     }
-                    tabel_pok_edit.DataTable()
+                    $('#pok_table_edit').DataTable()
                         .cell(active_temp)
                         .data(editor.val())
                         .draw(false);
@@ -3824,7 +3855,7 @@
                     if(editor.val() == ''){
                         editor.val('-');
                     }
-                    tabel_pok_edit.DataTable()
+                    $('#pok_table_edit').DataTable()
                         .cell(active)
                         .data(editor.val())
                         .draw(false);
@@ -3835,7 +3866,7 @@
                     }
                 }
                 //update db
-                var row_data = tabel_pok_edit.DataTable().row(editor.closest('tr')).data();
+                var row_data = $('#pok_table_edit').DataTable().row(editor.closest('tr')).data();
                 if(!row_data[0]){
                     active_temp = null;
                     active = null;
@@ -3921,7 +3952,7 @@
             updateParentJumlah(target, getNumber(target.html()), multiply_result);
 
             //update datatable jumlah
-            tabel_pok_edit.DataTable()
+            $('#pok_table_edit').DataTable()
                 .cell(target)
                 .data(multiply_result)
                 .draw(false);
@@ -3935,10 +3966,10 @@
         function updateParentJumlah(child_td_element, old_child_price, new_child_price){
             //ambil id parent
             if(_.isUndefined(child_td_element.closest('tr').data())) return;
-            var parent_id = tabel_pok_edit.DataTable().row(child_td_element.closest('tr')).data()[1];
+            var parent_id = $('#pok_table_edit').DataTable().row(child_td_element.closest('tr')).data()[1];
 
             //ambil row parent
-            var prt_row = tabel_pok_edit.DataTable()
+            var prt_row = $('#pok_table_edit').DataTable()
                                 .rows( function ( idx, data, node ) {
                                     return data[0] == parent_id ?
                                         true : false;
@@ -3956,7 +3987,7 @@
 
             var new_jumlah = old_jlh - getNumber(old_child_price) + getNumber(new_child_price);
 
-            tabel_pok_edit.DataTable()
+            $('#pok_table_edit').DataTable()
                 .cell(parent_jumlah_td)
                 .data(formatUang(new_jumlah));
             //tampilan
@@ -4711,7 +4742,215 @@
             , position: 'absolute' // Element positioning
         }
 
-        socket.emit('pok_row_init', 'entry');
+        Highcharts.setOptions({
+            global: {
+                useUTC: false,
+                
+            },
+            lang: {
+              decimalPoint: '.',
+              thousandsSep: ','
+            }
+        });
+
+        function summaryUpdate(response){
+            realisasi_bulan_lalu = response.sampai_bln_lalu;
+            sampai_bln_ini = response.sampai_bln_ini;
+            realisasi_bulan_ini = sampai_bln_ini - realisasi_bulan_lalu;
+            pagu = response.pagu;
+            sisa_dana = pagu - sampai_bln_ini;
+
+            $('#s_realisasi-bulan-ini').html(formatUang(realisasi_bulan_ini).replace(/\-$/g,''));
+            var bulan_ini_p = ((getNumber(realisasi_bulan_ini)/pagu)*100).toFixed(2)
+            $('#s_realisasi-bulan-ini-percent').html(' ('+bulan_ini_p+'%)');
+            // summaryChart.series[1].setData([+bulan_ini_p]);
+
+            $('#s_realisasi-bulan-lalu').html(formatUang(realisasi_bulan_lalu).replace(/\-$/g,''));
+            var bulan_lalu_p = ((getNumber(realisasi_bulan_lalu)/pagu)*100).toFixed(2)
+            $('#s_realisasi-bulan-lalu-percent').html(' ('+bulan_lalu_p+'%)');
+            // summaryChart.series[2].setData([+bulan_lalu_p]);
+
+            $('#s_sampai-bln-ini').html(formatUang(sampai_bln_ini).replace(/\-$/g,''));
+            $('#s_sampai-bln-ini-percent').html(' ('+((getNumber(sampai_bln_ini)/pagu)*100).toFixed(2)+'%)');
+
+            $('#s_sisa-dana').html(formatUang(sisa_dana).replace(/\-$/g,''));
+            var sisa_dana_p = ((getNumber(sisa_dana)/pagu)*100).toFixed(2);
+            $('#s_sisa-dana-percent').html(' ('+sisa_dana_p+'%)');
+            // summaryChart.series[0].setData([+sisa_dana_p]);
+
+            var summaryChart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column',
+                    style: {
+                        fontFamily: 'Helvetica'
+                    }
+                },
+                title: {
+                    text: 'Realisasi Anggaran',
+                    style: {
+                        fontSize: '1rem'
+                    }
+                },
+                xAxis: {
+                    type: 'Program',
+                    categories: ['{{tahun_anggaran}}']
+                },
+                yAxis: {
+                    title: {
+                        text: 'Persentase (%)'
+                    },
+                    softMin: 0, max: 100,
+                    tickInterval: 5
+
+                },
+                legend: {
+                    enabled: true
+                },
+                credits: {
+                    enabled: false
+                },
+                colors: [
+                "#B4BAB5",
+                "#3046CD",
+                "#42E055"],
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.y:.2f}%'
+                        },
+                        stacking: 'normal'
+                    }
+                },
+
+                tooltip: {
+                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                    pointFormat: '<span style="color:{point.color}"><b>{point.y:.2f}%</b> (Rp{point.jumlah:,.0f}) dari total anggaran<br/>'
+                },
+
+                exporting: {
+                    chartOptions: {
+                        plotOptions: {
+                            series: {
+                                dataLabels: {
+                                    enabled: true
+                                }
+                            }
+                        }
+                    },
+                    fallbackToExportServer: false
+                },
+
+                series: [{
+                    name: 'Sisa Dana',
+                    data: [{y: +sisa_dana_p, jumlah: sisa_dana}]
+                }, {
+                    name: 'Bulan Ini',
+                    data: [{y: +bulan_ini_p, jumlah: realisasi_bulan_ini}]
+                }, {
+                    name: 'Sampai Bulan Lalu',
+                    data: [{y: +bulan_lalu_p, jumlah: realisasi_bulan_lalu}]
+                }]
+            });
+
+            var top_mines = Highcharts.chart('top_mines', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Sisa Dana Terendah',
+                    style: {
+                        fontSize: '1rem'
+                    }
+                },
+                yAxis: {
+                    softMin: 0,
+                    title: {
+                        text: 'Persentase (%)'
+                    }
+                    // ,
+                    // stackLabels: {
+                    //     enabled: true,
+                    //     align: 'center'
+                    // }
+                },
+                xAxis: {
+                    categories: ['1', '2', '3', '4', '5']
+                },
+                credits: {
+                    enabled: false
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{series.name}</span><table>',
+                    pointFormat: '<tr><td style="padding:0">Sisa dana: <b>{point.y:,.2f}% (Rp{point.sisa_dana_rp:,.0f})</b></td></tr>',
+                    footerFormat: '</table>',
+                    useHTML: true
+                },
+
+                //to keep the itemWidth
+                legend: {
+                    enabled: true,
+                    width:555,
+                    itemWidth:500,
+                    itemStyle: {
+                        width:500
+                    }
+                },
+
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.y:.2f}%'
+                        },
+                        stacking: 'normal'
+                    }
+                },
+                series: [{
+                    name: (response.top_mines[0])?response.top_mines[0].nmitem:'Blm ada item',
+                    data: [{y: (response.top_mines[0])?+response.top_mines[0].sisa_dana.toFixed(2):0, 
+                        sisa_dana_rp: (response.top_mines[0])?+response.top_mines[0].sisa_dana_rp:0}, null, null, null, null]
+
+                }, {
+                    name: (response.top_mines[1])?response.top_mines[1].nmitem:'Blm ada item',
+                    data: [null, {y: (response.top_mines[1])?+response.top_mines[1].sisa_dana.toFixed(2):0, 
+                        sisa_dana_rp: (response.top_mines[1])?+response.top_mines[1].sisa_dana_rp:0}, null, null, null]
+
+                }, {
+                    name: (response.top_mines[2])?response.top_mines[2].nmitem:'Blm ada item',
+                    data: [null, null, {y: (response.top_mines[2])?+response.top_mines[2].sisa_dana.toFixed(2):0, 
+                        sisa_dana_rp: (response.top_mines[2])?+response.top_mines[2].sisa_dana_rp:0}, null, null]
+
+                }, {
+                    name: (response.top_mines[3])?response.top_mines[3].nmitem:'Blm ada item',
+                    data: [null, null, null, {y: (response.top_mines[3])?+response.top_mines[3].sisa_dana.toFixed(2):0, 
+                        sisa_dana_rp: (response.top_mines[3])?+response.top_mines[3].sisa_dana_rp:0}, null]
+
+                }, {
+                    name: (response.top_mines[4])?response.top_mines[4].nmitem:'Blm ada item',
+                    data: [null, null, null, null, {y: (response.top_mines[4])?+response.top_mines[4].sisa_dana.toFixed(2):0, 
+                        sisa_dana_rp: (response.top_mines[4])?+response.top_mines[4].sisa_dana_rp:0}]
+
+                }]
+            });        
+        }
+
+        socket.emit('pok_summary', new Date().getMonth(), function(response){
+            summaryUpdate(response);
+        });
+
+        $('#pok_summary_tab').one('click', function(e) {
+            socket.emit('pok_summary', new Date().getMonth(), function(response){
+                summaryUpdate(response)
+            });
+        })
+
+        $('#pok_entry_tab').one('click', function(e) {
+            spinner.spin(target);
+            socket.emit('pok_row_init', 'entry');
+        })
 
         $('#pok_edit_tab').one('click', function(e) {
             spinner.spin(target2);
@@ -4726,17 +4965,6 @@
             // $("#pok_table tbody").append(data);
             $('#pok_table_'+data.tabel).DataTable().row.add( data.row );
             cb();
-            //format uang
-            // var prt_row = $('#pok_table_'+data.tabel).DataTable()
-            //                 .rows( function ( idx, dataa, node ) {
-            //                     return dataa[0] == data.row[0] ?
-            //                         true : false;
-            //                 } );
-            // prt_row
-            //     .nodes()
-            //     .to$()
-            //     .find('td.format-uang')
-                // .autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
         })
 
         socket.on('pok_edit_update_jlh', function(data) {
@@ -4756,15 +4984,11 @@
             $('#pok_table_'+data.tabel).DataTable()
                 .cell(parent_jumlah_td)
                 .data(formatUang(data.new_jumlah));
-
-            // //format uang
-            // setAutoNumeric(parent_jumlah_td, data.new_jumlah);
-            // parent_jumlah_td.text(formatUang(data.new_jumlah))
         })
 
         socket.on('pok_item_deleted', function(id) {
-            tabel_pok_edit_dt = tabel_pok_edit.DataTable();
-            var item_row = tabel_pok_edit.DataTable()
+            tabel_pok_edit_dt = $('#pok_table_edit').DataTable();
+            var item_row = $('#pok_table_edit').DataTable()
                                 .rows( function ( idx, data, node ) {
                                     return data[0] ==id ?
                                         true : false;
@@ -4774,7 +4998,7 @@
             var type = item_row.nodes().to$().find('td:eq(0)').text();
             if(type == 'detail') item_row.remove().draw(false)
                 else {
-                    removeChilds(tabel_pok_edit.DataTable().row(item_row.nodes().to$()), 'remove');
+                    removeChilds($('#pok_table_edit').DataTable().row(item_row.nodes().to$()), 'remove');
                     item_row.remove().draw(false);
                 }
             generalAlert('Satu item '+type+' telah dihapus.');
@@ -4880,7 +5104,7 @@
                 cell9 = '<button type="button" class="tambah"><i class="icon-plus"></i></button> <button type="button" class="hapus-item"><i class="icon-close"></i></button>'
             }
 
-            var parent_row = tabel_pok_edit.DataTable()
+            var parent_row = $('#pok_table_edit').DataTable()
                         .rows( function ( idx, data, node ) {
                             return data[1] == new_pok_item.parent_id ?
                                 true : false;
@@ -4888,7 +5112,7 @@
                         .nodes()
                         .to$();
 
-            var table = tabel_pok_edit.DataTable();
+            var table = $('#pok_table_edit').DataTable();
         
             //insert a test row
             table.row.add([cell0, cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9]);
@@ -4905,13 +5129,13 @@
                 table.row(i-1).data(insertedRow);
             }     
             //refresh the page
-            tabel_pok_edit.DataTable().draw(false);
+            $('#pok_table_edit').DataTable().draw(false);
             if(new_pok_item.type == 'detail') updateParentJumlah(parent_row.find('td:eq(6)'), 0, getNumber(cell8));
             generalAlert('Baru: '+'1 ['+new_pok_item.type+'] ditambahkan.');
         })
 
         socket.on('pok_item_change', function(item) {
-            var row_affected = tabel_pok_edit.DataTable()
+            var row_affected = $('#pok_table_edit').DataTable()
                                 .rows( function ( idx, data, node ) {
                                     return data[0] ==item._id ?
                                         true : false;
@@ -5000,7 +5224,7 @@
                             .to$()
                             .find('td:eq('+index+')');
 
-            tabel_pok_edit.DataTable()
+            $('#pok_table_edit').DataTable()
                 .cell(target_td)
                 .data(new_value)
                 .draw(false);

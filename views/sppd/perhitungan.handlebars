@@ -137,7 +137,7 @@
                                             <span class="help-block text-muted">biaya<br>(maks. Rp<span id="maks-hotel">0</span>)</span>                                            
                                         </div>  
                                         <div class="col-md-5"> 
-                                            <input type="text" id="hotel_total" class="form-control input-group format-uang" name="hotel_total" required readonly="readonly">
+                                            <input type="text" id="hotel_total" class="form-control input-group format-uang" name="hotel_total" required>
                                             <span class="help-block text-muted">total</span>                                            
                                         </div> 
                                     </div>
@@ -483,7 +483,9 @@
         })
 
         $("#hotel_total").on("change", function(){
-            $("#hotel_total").val(formatUang(+$("#hotel_hari").val() * $("#hotel_biaya").autoNumeric('getNumber')));
+            if($("#hotel_hari").val()){
+                $("#hotel_total").val(formatUang(+$("#hotel_hari").val() * $("#hotel_biaya").autoNumeric('getNumber')));
+            }
             $("#total_rincian").change();
         })
 

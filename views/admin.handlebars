@@ -242,6 +242,10 @@
     //tambah user
     $('#tambah_user').on('submit', function(e) {
         e.preventDefault();
+        if($('#password').val().length < 6){
+            generalAlert('Password minimal 6 karakter.');
+            return false;
+        }
         $.ajax({
             url : $(this).attr('action'),
             type: "POST",
@@ -284,6 +288,10 @@
     })
     $('#edit_user').on('submit', function(e) {
         e.preventDefault();
+        if($('#password_edit').val() && $('#password_edit').val().length < 6){
+            generalAlert('Password minimal 6 karakter.');
+            return false;
+        }
         $.ajax({
             url : $(this).attr('action'),
             type: "POST",

@@ -28,11 +28,22 @@
                                             <label for="nomor">Tanggal Pembuatan Surat<span> *</span></label>
                                             <input type="text" id="tgl_buat_surat" name="tgl_buat_surat" class="form-control" required>
                                             <input id="transport_detail_id" style="display: none;" type="text" name="transport_detail_id" value="{{transport_detail_id}}">
-                                        </div> 
+                                        </div>  
+                                        <div class="form-group row">
+                                            <label for="tgl_buat_spj">Daftar<span> *</span></label>  
+                                            <textarea type="text" id="daftar" class="form-control" name="daftar" rows="3" placeholder="Daftar..." required>{{daftar}}</textarea>
+                                        </div>
                                         <div class="form-group row">
                                             <label for="nomor">File csv<span> *</span></label>
                                             <input id="csv_file" name="pok_file" type="file" class="form-control" accept=".csv" required/>
                                         </div> 
+                                        <div class="form-group row">
+                                            <div class="col-md-6" style="padding-left: 0">
+                                                <label for="pembuat-daftar">Pembuat Daftar<span> *</span></label> 
+                                                <input type="text" id="pembuat-daftar" class="form-control" name="pembuat_daftar" value="{{pembuat_daftar_transport.pembuat_daftar}}" required>
+                                                <input style="display: none;" type="text" id="pembuat-daftar_id" name="pembuat_daftar_id" value="{{pembuat_daftar_transport.pembuat_daftar_id}}">
+                                            </div>
+                                        </div>
                                         <div class="form-group row">
                                             <label for="akun" class="col-md-12" style="padding-left: 0">Realisasi<span> *</span></label>
                                             <div class="form-group row">
@@ -165,6 +176,27 @@
                 vertical: 'bottom'
             }
         });
+
+        $('#pembuat-daftar').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('penerima_list', {'query': q, 'type': 'pegawai_only'}, function (data) {
+                                return p(_.map(data, function(ur){ return {_id: ur._id, value: ur.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $("#pembuat-daftar").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+            $("#pembuat-daftar_id").val(datum._id)
+        });
+
+        $("#daftar").focus();
 
         // submit unggah csv
         var download_surat = false;

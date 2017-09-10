@@ -10,6 +10,24 @@ var Program = require(__dirname+"/../model/Program.model");
 //buat router khusus login
 var login = express.Router();
 
+//anti bruteforce
+var ExpressBrute = require('express-brute');
+var MongoStore = require('express-brute-mongo');
+var MongoClient = require('mongodb').MongoClient;
+
+var store = new MongoStore(function (ready) {
+  MongoClient.connect('mongodb://127.0.0.1:27017/simamov', function(err, db) {
+    if (err) throw err;
+    ready(db.collection('bruteforce-store'));
+  });
+});
+
+var bruteforce = new ExpressBrute(store, {
+	freeRetries: 1000,
+	minWait:5*60*1000, // 5 menit
+	maxWait: 5*60*1000
+});
+
 //Socket.io
 login.connections;
 
@@ -41,17 +59,23 @@ login.get('/', function(req, res){
 	})
 });
 //route POST /login
-login.post('/', function(req, res){
+login.post('/', bruteforce.prevent, function(req, res){
 	//hashing pass utk pengecekan
 	var hash = crypto.createHmac('sha256', req.body.password)
                    .digest('hex');
 	//cek login ke db
 	User.findOne({ 'username':  req.body.username, 'password': hash, active: true}, function (err, user) {
+		if(req.session.last_try_ts){
+			if(req.session.last_try_ts + 300 < Math.round(new Date().getTime()/1000)){
+				req.session.last_try_ts = 0;
+				req.session.login_failed = 0;
+			}
+		}
 		if (err) {
 			//jika koneksi error
 			res.send('Database bermasalah, mohon hubungi admin');
 			return;
-		} else if(!user){
+		} else if(!user || req.session.login_failed > 4){
 			//jika user tdk ada
 			var href = '';
 			if(req.query.href){
@@ -67,7 +91,19 @@ login.post('/', function(req, res){
 						thang.push({thang: i});
 					}
 				}
-				res.render('login', {layout: false, href: href, message: 'User atau password salah', 'thang': thang, 'this_year': new Date().getFullYear()});
+				var message = 'Username atau password salah'
+				if(!req.session.login_failed){
+					req.session.login_failed = 1;
+				} else{
+					req.session.login_failed += 1;
+				}
+				if(req.session.login_failed > 4){
+					message = 'Anda salah memasukkan username/password 5 kali. Silahkan masukkan lagi setelah 5 menit.';
+					if(!req.session.last_try_ts){
+						req.session.last_try_ts = Math.round(new Date().getTime()/1000);
+					}					
+				}
+				res.render('login', {layout: false, href: href, message: message, 'thang': thang, 'this_year': new Date().getFullYear()});
 			})
 			return;
 		}

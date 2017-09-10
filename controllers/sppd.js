@@ -694,6 +694,7 @@ sppd.socket = function(io, connections, client){
 
                          //simpan
                         file_name = Math.round(new Date().getTime()/1000)+' Rekap SPPD '+rows[0]._id+' - '+rows[rows.length-1]._id;
+                        checkDirAndCreate('./temp_file/rekap/sppd/');
                         workbook.toFileAsync('./temp_file/rekap/sppd/'+file_name+'.xlsx');
                  }).then(dataa => {
                     msopdf(null, function(error, office) {
@@ -706,12 +707,16 @@ sppd.socket = function(io, connections, client){
                                     console.error(err);
                                 }
                                 //hapus xlsx setelah terconvert
-                                fs.unlink(input);
+                                if(checkFS(input)){
+                                    fs.unlink(input);
+                                }
                             })
                             office.close(null, function(error) {
                                 cb('/result/rekap/sppd/'+file_name+'.pdf');
                                 setTimeout(function(){
-                                    fs.unlink(output);
+                                    if(checkFS(output)){
+                                        fs.unlink(output);
+                                    }
                                 }, 10000)                        
                             })
                         } else {
@@ -720,7 +725,9 @@ sppd.socket = function(io, connections, client){
                             }, 100) 
                             
                             setTimeout(function(){
-                                fs.unlink(input);
+                                if(checkFS(input)){
+                                    fs.unlink(input);
+                                }
                             }, 10000)  
                         }
                     })
@@ -982,6 +989,7 @@ function handleSuratTugas(data, cb, res, user_id){
                                 }
 
                             ], function(err, finish){
+                                checkDirAndCreate(__dirname+'/../template/output/sppd')
                                 if(list.length == 1){
                                     if(!st._id) st._id = data._id;
                                     outputDocx = __dirname+"/../template/output/sppd/"+current_timestamp+"_"+st._id+"-SPD-STIS-"
@@ -1035,7 +1043,9 @@ function handleSuratTugas(data, cb, res, user_id){
             if(data.docx){
                 res.download(outputDocx);
                 res.on('finish', function() {
-                    fs.unlink(outputDocx);
+                    if(checkFS(outputDocx)){
+                        fs.unlink(outputDocx);
+                    }
                 });
                 return;
             } else{
@@ -1046,12 +1056,16 @@ function handleSuratTugas(data, cb, res, user_id){
                     if(data.pdf){
                         res.download(outputPdf);
                         res.on('finish', function() {
-                            fs.unlink(outputPdf);
+                            if(checkFS(outputPdf)){
+                                fs.unlink(outputPdf);
+                            }
                         });
                     } else {
                         cb({'last_nmr_surat': last_nmr_surat, 'outputPdf': "/result/"+outputPdf.match(/sppd\/.*/)[0]});
                         setTimeout(function(){
-                            fs.unlink(outputPdf);
+                            if(checkFS(outputPdf)){
+                                fs.unlink(outputPdf);
+                            }
                         }, 10000)  
                     }
                 })
@@ -1138,6 +1152,7 @@ function handleSuratTugasBiasa(data, cb, res, user_id){
             //simpan db
             st.save(function(err, result){
                 st.populate('nama_lengkap ttd_legalitas ttd_surat_tugas', function(err2){
+                    checkDirAndCreate(__dirname+"/../template/output/sppd_biasa")
                     outputDocx = __dirname+"/../template/output/sppd_biasa/"+current_timestamp+"_02722."+st._id+"-"
                                     +(st.tgl_berangkat.match(/\d{4}$/)[0])+"-"
                                     +st.nama_lengkap.nama+".docx";
@@ -1185,7 +1200,9 @@ function handleSuratTugasBiasa(data, cb, res, user_id){
             if(data.docx){
                 res.download(outputDocx);
                 res.on('finish', function() {
-                    fs.unlink(outputDocx);
+                    if(checkFS(outputDocx)){
+                        fs.unlink(outputDocx);
+                    }
                 });
                 return;
             } else{
@@ -1196,12 +1213,16 @@ function handleSuratTugasBiasa(data, cb, res, user_id){
                     if(data.pdf){
                         res.download(outputPdf);
                         res.on('finish', function() {
-                            fs.unlink(outputPdf);
+                            if(checkFS(outputPdf)){
+                                fs.unlink(outputPdf);
+                            }
                         });
                     } else {
                         cb({'last_nmr_surat': last_nmr_surat, 'outputPdf': "/result/"+outputPdf.match(/sppd_biasa\/.*/)[0]});
                         setTimeout(function(){
-                            fs.unlink(outputPdf);
+                            if(checkFS(outputPdf)){
+                                fs.unlink(outputPdf);
+                            }
                         }, 10000)  
                     }
                 })
@@ -1271,6 +1292,7 @@ function handlePerhitungan(data, cb, res, username, user_id){
                             }
                         }
                     ], function(err, final){
+                        checkDirAndCreate(__dirname+"/../template/output/perhitungan/")
                         outputDocx = __dirname+"/../template/output/perhitungan/"+current_timestamp+" Perhitungan "+st._id+"-"
                                     +(st.tgl_buat_perhit.match(/\d{4}$/)[0])+"-"
                                     +st.surtug.nama_lengkap.nama+".docx";
@@ -1428,7 +1450,9 @@ function handlePerhitungan(data, cb, res, username, user_id){
             if(data.docx){
                 res.download(outputDocx);
                 res.on('finish', function() {
-                    fs.unlink(outputDocx);
+                    if(checkFS(outputDocx)){
+                        fs.unlink(outputDocx);
+                    }
                 });
                 return;
             } else{
@@ -1439,12 +1463,16 @@ function handlePerhitungan(data, cb, res, username, user_id){
                     if(data.pdf){
                         res.download(outputPdf);
                         res.on('finish', function() {
-                            fs.unlink(outputPdf);
+                            if(checkFS(outputPdf)){
+                                fs.unlink(outputPdf);
+                            }
                         });
                     } else {
                         cb({'outputPdf': "/result/"+outputPdf.match(/perhitungan\/.*/)[0]});
                         setTimeout(function(){
-                            fs.unlink(outputPdf);
+                            if(checkFS(outputPdf)){
+                                fs.unlink(outputPdf);
+                            }
                         }, 10000)  
                     }
                 })
@@ -1459,7 +1487,9 @@ function convertToPDF(outputDocx, outputPdf, cb){
           if (error) {
                 res.send("Error");
            } else { 
-                fs.unlink(outputDocx);
+                if(checkFS(outputDocx)){
+                    fs.unlink(outputDocx);
+                }
            }
        });
 
@@ -1564,6 +1594,21 @@ function sendNotification(user_id, message){
     if(_.isString(user_id)){
         sppd.connections[user_id].emit('messages', message)
     } else user_id.emit('messages', message)
+}
+
+function checkDirAndCreate(addr){
+    if (!fs.existsSync(addr)){
+        fs.mkdirSync(addr);
+    }
+}
+
+
+function checkFS(addr){
+    if (fs.existsSync(addr)){
+        return true;
+    } else{
+        return false;
+    }
 }
 
 module.exports = sppd;
