@@ -4811,8 +4811,8 @@
                 },
                 colors: [
                 "#cfd8dc",
-                "#25f227",
-                "#27a8cf"],
+                "#90ed7d",
+                "#7cb5ec"],
                 plotOptions: {
                     series: {
                         borderWidth: 0,
@@ -4934,18 +4934,27 @@
                         sisa_dana_rp: (response.top_mines[4])?+response.top_mines[4].sisa_dana_rp:0}]
 
                 }]
-            });        
+            });
         }
 
         socket.emit('pok_summary', new Date().getMonth(), function(response){
             summaryUpdate(response);
-        });
-
-        $('#pok_summary_tab').one('click', function(e) {
-            socket.emit('pok_summary', new Date().getMonth(), function(response){
-                summaryUpdate(response)
+            Highcharts.setOptions({
+                plotOptions: {
+                    series: {
+                        animation: false
+                    }
+                }
             });
-        })
+
+            setInterval(
+                function(){
+                    socket.emit('pok_summary', new Date().getMonth(), function(response){
+                        summaryUpdate(response);
+                    });
+                }
+            ,1000);
+        });
 
         $('#pok_entry_tab').one('click', function(e) {
             spinner.spin(target);
