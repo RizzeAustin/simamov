@@ -521,7 +521,7 @@
             var selected = $(this).val();
             socket.emit('representasi_biaya', {'jenis_pgw': selected, 'posisi_kota': posisi_kota}, 
                 function(response){
-                    $('#representasi').autoNumeric('set', response);
+                    $('#representasi').autoNumeric('set', response * +$('#harian_hari').val());
                     $("#total_riil").change();
             })
         })

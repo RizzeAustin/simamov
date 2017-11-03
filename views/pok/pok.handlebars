@@ -2065,6 +2065,7 @@
                 var new_entry = {};
                 new_entry._id = detail_id_target;
                 var spm = $("#entry_spmno_field").val();
+                var tgl_ = $("#entry_tgl_field").val()
                 //init autonumeric spy bisa get unformatted[workaround]
                 $('#pph21, #pph22, #pph23, #ppn').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
                 new_entry.data = {
@@ -2087,6 +2088,7 @@
                     $("#entri_submit").html('Simpan');
                     form_entri_pok[0].reset();
                     $("#entry_spmno_field").val(spm)
+                    $("#entry_tgl_field").val(tgl_)
                     $('#entry_penerima_id_field').val('');
                     $('#entry_jumlah_field').focus();
                     $("#entri_submit").prop("disabled",false);
@@ -4953,7 +4955,7 @@
                         summaryUpdate(response);
                     });
                 }
-            ,1000);
+            ,10000);
         });
 
         $('#pok_entry_tab').one('click', function(e) {

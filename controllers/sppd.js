@@ -949,6 +949,7 @@ function handleSuratTugas(data, cb, res, user_id){
 
                     //nomor surat
                     if(list.length == 1 && data.nomor.match(/^\d*/)[0] != last_nmr_surat && (+data.nomor.match(/^\d*/)[0] < last_nmr_surat)){
+                        data._id = data.nomor.match(/^\d*/)[0];
                         SuratTugas.update({_id: data.nomor.match(/^\d*/)[0]}, {$set: data}, function(err, status){
                             data._id = data.nomor.match(/^\d*/)[0];
                         })

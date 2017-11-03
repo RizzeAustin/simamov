@@ -16,7 +16,7 @@ use simamov;
 // show collections
 // db.sppd.findOne({})
 //==================================================
-db.pok_detailBelanja.drop()
+// db.pok_detailBelanja.drop()
 // db.pok_akun.drop()
 // db.pok_sub_komponen.drop()
 // db.pok_komponen.drop()
@@ -65,11 +65,11 @@ db.pok_detailBelanja.drop()
 // 	"dalam_kota" : 100000
 // })
 // db.perhitungan.find().pretty()
-// db.surat_tugas.find().pretty()
+// db.surat_tugas.find({}).pretty()
 // db.surat_tugas_biasa.drop()
 // db.setting.find().pretty()
 // db.pok_uraian_akun.drop()
-// db.pok_detailBelanja.find({}).pretty()
+// db.pok_detailBelanja.remove({active: false})
 // db.pok_akun.find().pretty()
 // db.pok_sub_komponen.find().pretty()
 // db.pok_komponen.find().length()
