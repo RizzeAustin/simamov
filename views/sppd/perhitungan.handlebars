@@ -1,0 +1,1085 @@
+<div class="animated fadeIn">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card-group mb-0">
+                    <div class="card p-2">
+                        <div class="card-block">
+                            <div class="row">
+                                <h3><i class="icon-check"></i> Perhitungan</h3>
+                                <p class="text-muted">Pengeluaran Riil, Perincian, dan Kwitansi</p>
+                            </div>
+                            <form id="suratTugas" action="/sppd/perhitungan" method="POST">  
+                                <div class="form-group row">
+                                    <label for="nomor">Nomor Surat</label>
+                                    <div class="input-group">
+                                        <input type="text" id="nomor" name="nomor" class="form-control" value="{{st._id}}/SPD/STIS/{{fullYear}}" readonly="readonly">
+                                        <span class="input-group-btn">
+                                            <button id="btn-riwayat-surat-tugas" type="button" class="btn btn-secondary"><i class="icon-list"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="nomor">Nama</label>
+                                    <input type="text" id="nama_lengkap" name="nama_lengkap" class="form-control" value="{{st.nama_lengkap.nama}}" required readonly="readonly">
+                                </div>                                                                       
+                                <div class="form-group row">
+                                    <label for="datetimepicker1">Transport lokal dari tempat asal<span> *</span></label>                                  
+                                    <div class="form-group row">
+                                        <div class="col-md-6">                                                
+                                            <input type="text" id="w_dari_t4_asal" class="form-control input-group" name="w_dari_t4_asal" value="DKI Jakarta" required readonly="readonly">
+                                            <span class="help-block text-muted">wilayah</span>  
+                                        </div> 
+                                        <div class="col-md-6">                                                
+                                            <input type="text" id="t_dari_t4_asal" class="form-control input-group format-uang" name="t_dari_t4_asal" value="{{prov.taksi_dn}}" required>
+                                            <span class="help-block text-muted">biaya</span>
+                                        </div> 
+                                    </div>
+                                </div>                                                                    
+                                <div class="form-group row">
+                                    <label for="datetimepicker1">Transport lokal ke tempat tujuan<span> *</span></label>                                  
+                                    <div class="form-group row">
+                                        <div class="col-md-6">                                                
+                                            <input type="text" id="w_dari_t4_tujuan" class="form-control input-group" name="w_dari_t4_tujuan" required>
+                                            <span class="help-block text-muted">wilayah</span>  
+                                        </div> 
+                                        <div class="col-md-6">                                                
+                                            <input type="text" id="t_dari_t4_tujuan" class="form-control input-group format-uang" name="t_dari_t4_tujuan" value="" required>
+                                            <span class="help-block text-muted">biaya</span>                                             
+                                        </div> 
+                                    </div>
+                                </div>                                                                      
+                                <div class="form-group row">
+                                    <label>B. Penginapan<span> *</span></label>                                  
+                                    <div class="form-group row">
+                                        <div class="col-md-4">                                                
+                                            <input type="text" id="jumlah_menginap" class="form-control input-group format-uang" name="jumlah_menginap" autocomplete="off" required>
+                                            <span class="help-block text-muted">jml hari</span>
+                                        </div> 
+                                        <div class="col-md-4">                                                
+                                            <input type="text" id="biaya_inap" class="form-control input-group format-uang" name="biaya_inap" value="" required readonly="readonly">
+                                            <input id="b_inap_price_form" class="format-uang" style="display: none;" type="text" name="b_inap_price">
+                                            <span class="help-block text-muted">biaya <br>(<span id="b_inap_price">0</span> x 30%)</span>                                           
+                                        </div> 
+                                        <div class="col-md-4">                                                
+                                            <input type="text" id="totalb_inap" class="form-control input-group format-uang" name="totalb_inap" value="" required readonly="readonly">
+                                            <span class="help-block text-muted">total</span>                                           
+                                        </div> 
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="jenis_pgw">Representasi<span> *</span></label>
+                                    <div class="col-md-12">
+                                        <label class="radio-inline" for="jenis_pgw1">
+                                            <input id="jenis_pgw1" type="radio" name="jenis_pgw" value="none" checked="checked">Lainnya
+                                        </label>
+                                        <label class="radio-inline" for="jenis_pgw2" style="margin-left: 10px">
+                                            <input type="radio" id="jenis_pgw2" name="jenis_pgw" value="pejabat_negara">Pejabat Negara
+                                        </label>
+                                        <label class="radio-inline" for="jenis_pgw3" style="margin-left: 10px">
+                                            <input type="radio" id="jenis_pgw3" name="jenis_pgw" value="eselon1">Eselon I
+                                        </label>
+                                        <label class="radio-inline" for="jenis_pgw4" style="margin-left: 10px">
+                                            <input type="radio" id="jenis_pgw4" name="jenis_pgw" value="eselon2">Eselon II
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-6" style="padding-left: 0">                               
+                                        <input type="text" id="representasi" class="form-control input-group format-uang" name="representasi" readonly="readonly">
+                                    </div>
+                                </div>                                                                   
+                                <div class="form-group row">
+                                    <div class="col-md-6" style="padding-left: 0">    
+                                        <label for="datetimepicker1">Total Riil</label>                                  
+                                        <input type="text" id="total_riil" class="form-control input-group format-uang" name="total_riil" value="" readonly="readonly">
+                                    </div>
+                                </div>                                      
+                                <div class="form-group row">
+                                    <label for="w_tiket_tujuan">Tiket</label>
+                                    <div class="form-group row">
+                                        <div class="col-md-6">                                                
+                                            <input type="text" id="w_tiket_tujuan" class="form-control input-group" name="w_tiket_tujuan">
+                                            <span class="help-block text-muted">tujuan</span>  
+                                        </div> 
+                                        <div class="col-md-6">                                                
+                                            <input type="text" id="harga_tiket" name="harga_tiket" class="form-control format-uang">
+                                            <span class="help-block text-muted">harga (maks. Rp<span id="maks-tiket">0</span>)</span>                                             
+                                        </div> 
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="nomor">Uang harian<span> *</span></label>                               
+                                    <div class="form-group row">                                    
+                                        <div class="col-md-3">      
+                                            <input type="text" id="harian_hari" name="harian_hari" class="form-control format-uang" required>
+                                            <span class="help-block text-muted">jml hari</span>  
+                                        </div> 
+                                        <div class="col-md-4"> 
+                                            <input type="text" id="harian_biaya" class="form-control input-group format-uang" name="harian_biaya" required readonly="readonly">
+                                            <span class="help-block text-muted">biaya</span>  
+                                        </div>  
+                                        <div class="col-md-5"> 
+                                            <input type="text" id="harian_total" name="harian_total" class="form-control format-uang" required readonly="readonly"> 
+                                            <span class="help-block text-muted">total</span>  
+                                        </div> 
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label>Hotel<span> *</span></label>                                
+                                    <div class="form-group row">                                    
+                                        <div class="col-md-3">      
+                                            <input type="text" id="hotel_hari" name="hotel_hari" class="form-control format-uang" required>
+                                            <span class="help-block text-muted">jml hari</span> 
+                                        </div> 
+                                        <div class="col-md-4"> 
+                                            <input type="text" id="hotel_biaya" class="form-control input-group format-uang" name="hotel_biaya" required>
+                                            <span class="help-block text-muted">biaya<br>(maks. Rp<span id="maks-hotel">0</span>)</span>                                            
+                                        </div>  
+                                        <div class="col-md-5"> 
+                                            <input type="text" id="hotel_total" class="form-control input-group format-uang" name="hotel_total" required>
+                                            <span class="help-block text-muted">total</span>                                            
+                                        </div> 
+                                    </div>
+                                </div>                                                                     
+                                <div class="form-group row">
+                                    <div class="col-md-6" style="padding-left: 0">    
+                                        <label for="nomor">Total Perincian</label>                             
+                                        <input type="text" id="total_rincian" name="total_rincian" class="form-control format-uang" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="akun" class="col-md-12" style="padding-left: 0">Realisasi<span> *</span></label>
+                                    <div class="form-group row">
+                                        <div class="form-group col-md-6">                                                
+                                            <select id="akun" name="akun" class="form-control">
+                                            </select>
+                                            <span class="help-block text-muted">akun</span>  
+                                        </div> 
+                                        <div class="form-group col-md-6">                                                
+                                            <select id="detail" name="detail" class="form-control">
+                                            </select>
+                                            <span class="help-block text-muted">detail</span>
+                                        </div> 
+                                        <!-- <div class="form-group col-md-6">                                                
+                                            <input type="text" id="spm_no" name="spm_no" class="form-control">
+                                            <span class="help-block text-muted">nmr. SPM</span>  
+                                        </div> 
+                                        <div class="form-group col-md-6">                                                
+                                            <input type="text" id="bukti_no" name="bukti_no" class="form-control">
+                                            <span class="help-block text-muted">nmr. bukti</span>
+                                        </div>  -->
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-6" style="padding-left: 0">
+                                        <label for="tgl_buat_perhit">Tanggal Pembuatan Pehitungan<span> *</span></label>  
+                                        <input type="text" id="tgl_buat_perhit" class="form-control" name="tgl_buat_perhit" value="" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <button id="generateLetter" type="submit" class="px-2">Buat Surat</button><span><pre> </pre></span>
+                                    {{#if admin}}
+                                    <div class="input-group-btn">
+                                        <button id="download" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download
+                                            <span class="caret"></span>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a id="unduh_docx" class="dropdown-item" href="#">Docx</a>
+                                            <a id="unduh_pdf" class="dropdown-item" href="#">PDF</a>
+                                        </div>
+                                    </div>
+                                    {{/if}}
+                                </div>
+                            </form>                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <iframe id="realTimeView" class="preview-pane" type="application/pdf" width="100%" height="690" frameborder="0" style="position:relative;z-index:999;" src=""></iframe>
+            </div>
+        </div>
+    </div>
+    <!--/.row-->
+</div>
+
+<div class="modal fade" id="riwayat-surat-tugas" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-primary modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Riwayat Surat Perhitungan</span></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0 15px;">
+                <div style="padding: 15px; padding-bottom: 0">
+                    <div style="height: 510px;position:relative;">
+                        <div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">
+                            <div class="row" style="margin-bottom: 20px">
+                                <div class="col-md-6">  
+                                    <div class="row" style="margin-bottom: 5px">
+                                        <div class="col-md-12">
+                                            <strong>Berdasarkan waktu :</strong>
+                                        </div>
+                                    </div>
+                                    <form id="riwayat_form" method="post" action="/pok/riwayat_pengeluaran">
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <div class="radio">
+                                                    <label for="tampil-riwayat-by-range">
+                                                        <input type="radio" id="tampil-riwayat-by-range" name="tampil_riwayat" value="0"> Periode <input id="riwayat-lower_ts" type="text"> - <input id="riwayat-upper_ts" type="text">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <div class="radio">
+                                                    <label for="tampil-riwayat-by-month">
+                                                        <input type="radio" id="tampil-riwayat-by-month" name="tampil_riwayat" value="1" checked="checked"> Bulan 
+                                                        <select id="bulan_st_modal" name="bulan_st_modal" size="1">
+                                                            <option value="none">--pilih--</option>
+                                                            <option value="0">Januari</option>
+                                                            <option value="1">Februari</option>
+                                                            <option value="2">Maret</option>
+                                                            <option value="3">April</option>
+                                                            <option value="4">Mei</option>
+                                                            <option value="5">Juni</option>
+                                                            <option value="6">Juli</option>
+                                                            <option value="7">Agustus</option>
+                                                            <option value="8">September</option>
+                                                            <option value="9">Oktober</option>
+                                                            <option value="10">November</option>
+                                                            <option value="11">Desember</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="tbl_riwayat" class="table" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" name="select_all" value="1" id="example-select-all"></th>
+                                                <th>No. Surat</th>
+                                                <th>Nama</th>
+                                                <th>Tujuan</th>
+                                                <th>Tgl. Berangkat</th>
+                                                <th>Tgl. Kembali</th>
+                                                <th>Pilihan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <div class="row" id="multiple-action" style="margin: 0 auto; margin-bottom: 10px; max-width: 300px;">
+                                <!-- <div id="multiple-action" style="margin: 0 auto; text-align: center; margin-bottom: 10px">
+                                    
+                                </div> -->
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script src="/js/moment.min.js"></script>
+<script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".format-uang").autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+        //function
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+    
+        //Inisialisasi pdf viewer
+        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/sppd_perhitungan.pdf');
+
+        //Input tgl sekarang utk ttd
+        $("#tgl_buat_perhit").val(moment().format('D MMMM YYYY'));
+
+        //Inisialisasi input tgl Brgkt & Kembali
+        $('#tgl_buat_perhit').datetimepicker({
+            locale: 'id',
+            format: 'D MMMM YYYY'
+        });
+
+        $('#w_dari_t4_tujuan').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            if(!$("#kabupaten").val()) $("#kabupaten_id").val('');
+                            socket.emit('prov_list', {'q': q, 'kab': ''}, function (data) {
+                                return p(_.map(data, function(prov){ return {data: prov || 0, value: prov.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $("#w_dari_t4_tujuan").focus();
+
+        function populate_realisasi(kdkmpnen){
+            socket.emit('populate_akun', kdkmpnen.match(/\d*$/)[0], 
+                function(response){
+                    akun_opt = '';
+                    _.each(response, function(akun, i, list){
+                        akun_opt += '<option value='+akun.kdakun+' '+(kdakun == akun.kdakun ? "selected" : "")+'>' + akun.kdakun + ' ' + (akun.uraian || 'uraian blm ada') + '</option>'
+                    })
+                    $('#akun').html(akun_opt);
+                    socket.emit('populate_detail', {kdkmpnen: kdkmpnen.match(/\d*$/)[0], kdakun: $('#akun').val()}, 
+                        function(response){
+                            detail_opt = '';
+                            _.each(response, function(detail, i, list){
+                                detail_opt += '<option value='+detail._id+' '+(noitem == detail._id ? "selected" : "")+'>' + detail.noitem + ' ' + (detail.nmitem || 'uraian blm ada') + '</option>'
+                            })
+                            $('#detail').html(detail_opt);
+                    })
+            })
+        }
+
+        $('#akun').change(function(){
+            socket.emit('populate_detail', {kdkmpnen: kode_output.match(/\d*$/)[0], kdakun: $('#akun').val()}, 
+                function(response){
+                    detail_opt = '';
+                    _.each(response, function(detail, i, list){
+                        detail_opt += '<option value='+detail._id+'>' + detail.noitem + ' ' + (detail.nmitem || 'uraian blm ada') + '</option>'
+                    })
+                    $('#detail').html(detail_opt);
+            })
+        })
+
+        var dki_jkt = '{{prov.taksi_dn}}';
+        var current_gol = '{{st.nama_lengkap.gol}}';
+        var current_jumlah_hari = '{{st.jumlah_hari}}';
+        var posisi_kota = '{{st.posisi_kota}}';
+        var kode_output = '{{st.kode_output}}';
+        var jenis_ang = '{{st.jenis_ang}}';
+        var kdakun, noitem;
+        populate_realisasi(kode_output)
+        $("#w_dari_t4_tujuan").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+            if(jenis_ang == 'Kendaraan Dinas'){
+                $("#t_dari_t4_tujuan").val(0);
+                $("#t_dari_t4_asal").val(0);
+            } else if(datum.data._id == '31'){
+                $("#t_dari_t4_tujuan").val(formatUang(+datum.data.taksi_dn));
+                $("#t_dari_t4_asal").val(formatUang(+datum.data.taksi_dn));
+            } else if($("#t_dari_t4_asal").autoNumeric('getNumber') != 300000){
+                $("#t_dari_t4_tujuan").val(formatUang(+datum.data.taksi_dn*2));
+                $("#t_dari_t4_asal").val(formatUang(dki_jkt));
+            }
+            if(/iv/i.test(current_gol)){
+                $("#biaya_inap").val(formatUang(+datum.data.inap_dn_es3_g4*0.3));
+                $("#b_inap_price_form").val(formatUang(datum.data.inap_dn_es3_g4));
+                $("#b_inap_price").text(formatUang(datum.data.inap_dn_es3_g4));
+                $("#maks-hotel").text(formatUang(datum.data.inap_dn_es3_g4));
+                $("#hotel_biaya").autoNumeric("update", {maximumValue: datum.data.inap_dn_es3_g4});
+            } else if(/iii/i.test(current_gol)){
+                $("#biaya_inap").val(formatUang(+datum.data.inap_dn_es4_g3*0.3));
+                $("#b_inap_price_form").val(formatUang(datum.data.inap_dn_es4_g3));
+                $("#b_inap_price").text(formatUang(datum.data.inap_dn_es4_g3));
+                $("#maks-hotel").text(formatUang(datum.data.inap_dn_es4_g3));
+                $("#hotel_biaya").autoNumeric("update", {maximumValue: datum.data.inap_dn_es4_g3});
+            } else if(/i|ii/i.test(current_gol)){
+                $("#biaya_inap").val(formatUang(+datum.data.inap_dn_g12*0.3));
+                $("#b_inap_price_form").val(formatUang(datum.data.inap_dn_g12));
+                $("#b_inap_price").text(formatUang(datum.data.inap_dn_g12));
+                $("#maks-hotel").text(formatUang(datum.data.inap_dn_g12));
+                $("#hotel_biaya").autoNumeric("update", {maximumValue: datum.data.inap_dn_g12});
+            }
+            $("#jumlah_menginap").val(0);
+            $("#jumlah_menginap").change();
+
+            $("#hotel_biaya").val(0);
+
+            $("#harian_hari").val(current_jumlah_hari);
+            (posisi_kota != 'dalam_kota')?$("#harian_biaya").val(formatUang(+datum.data.har_dn_lk)):$("#harian_biaya").val(formatUang(+datum.data.har_dn_dk));
+            $("#harian_total").change();
+
+            $("#hotel_hari").val(0);
+            $("#hotel_total").change();
+            
+        });
+
+        $("#t_dari_t4_asal").on("keyup change", function(){
+            $("#totalb_inap").change();
+        })
+
+        $("#t_dari_t4_tujuan").on("keyup change", function(){
+            $("#totalb_inap").change();
+        })
+
+        $("#jumlah_menginap").on("keyup change", function(){
+            $("#totalb_inap").change();
+        })
+
+        $("#totalb_inap").on("change", function(){
+            $("#totalb_inap").val(formatUang(+$("#jumlah_menginap").val() * $("#biaya_inap").autoNumeric('getNumber')));
+            $("#total_riil").change();
+        })
+
+        $("#total_riil").on("change", function(){
+            $("#total_riil").val(formatUang($("#t_dari_t4_asal").autoNumeric('getNumber') 
+                                    + $("#t_dari_t4_tujuan").autoNumeric('getNumber')
+                                    + $("#totalb_inap").autoNumeric('getNumber')
+                                    + $("#representasi").autoNumeric('getNumber')));
+            $("#total_rincian").change();
+        })
+
+        $("#harga_tiket").on("keyup change", function(){
+            $("#total_rincian").change();
+        })
+
+        $("#harian_hari").on("keyup change", function(){
+            $("#harian_total").change();
+        })
+
+        $("#harian_total").on("change", function(){
+            $("#harian_total").val(formatUang(+$("#harian_hari").val() * $("#harian_biaya").autoNumeric('getNumber')));
+            $("#total_rincian").change();
+        })
+
+        $("#hotel_hari").on("keyup change", function(){
+            $("#hotel_total").change();
+        })
+
+        $("#hotel_biaya").on("keyup change", function(){
+            $("#hotel_total").change();
+        })
+
+        $("#hotel_total").on("change", function(){
+            if($("#hotel_hari").val()){
+                $("#hotel_total").val(formatUang(+$("#hotel_hari").val() * $("#hotel_biaya").autoNumeric('getNumber')));
+            }
+            $("#total_rincian").change();
+        })
+
+        $("#total_rincian").on("change", function(){
+            $("#total_rincian").val(formatUang($("#total_riil").autoNumeric('getNumber') 
+                                    + $("#harga_tiket").autoNumeric('getNumber')
+                                    + $("#harian_total").autoNumeric('getNumber')
+                                    + $("#hotel_total").autoNumeric('getNumber')));
+        })
+
+        $('#w_tiket_tujuan').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('kab_tiket_list', q, function (data) {
+                                return p(_.map(data, function(kab){ return {data: kab, value: kab.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $("#w_tiket_tujuan").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+            $('#harga_tiket').val('');
+            $('#harga_tiket').autoNumeric("update", {maximumValue: datum.data.tiket_jkt_e});
+            $("#maks-tiket").text(formatUang(datum.data.tiket_jkt_e));
+        });
+
+        $("input[name='jenis_pgw']").change(function(e){
+            var selected = $(this).val();
+            socket.emit('representasi_biaya', {'jenis_pgw': selected, 'posisi_kota': posisi_kota}, 
+                function(response){
+                    $('#representasi').autoNumeric('set', response * +$('#harian_hari').val());
+                    $("#total_riil").change();
+            })
+        })
+
+        function checkInput(){
+            if($('#w_dari_t4_tujuan').val()=='' || $('#jumlah_menginap').val()=='' || $('#harian_hari').val()==''
+                || $('#hotel_hari').val()==''
+                || $('#hotel_biaya').val()==''){
+                 return false
+            } else{
+                return true;
+            }
+        }
+
+        //Reload pdf viewer
+        var download_surat = false;
+        $('#suratTugas').on('submit', function(e) {
+            var total_hari = $("#jumlah_menginap").autoNumeric('getNumber') + $("#hotel_hari").autoNumeric('getNumber');
+            if(total_hari > current_jumlah_hari){
+                generalAlert('Jumlah hari penginapan + hotel harus <= '+current_jumlah_hari)
+                e.preventDefault();
+                return;
+            }
+            if(download_surat){
+                download_surat = false;
+                return true;
+            } else {
+                $('#docx').remove();
+                $('#pdf').remove();
+            }
+            e.preventDefault();
+            $('#generateLetter').prop('disabled', true);
+            $("#generateLetter").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>'+$("#generateLetter").text());
+
+            var data = $('#suratTugas').serializeObject();
+
+            socket.emit('perhitungan', data, 
+                function(response){
+                    if(response){
+                        $("#realTimeView").attr("src", location.protocol+'//'+location.host+response.outputPdf)
+                        generalAlert('Surat dibuat.');
+                    } else {
+                        generalAlert('Gagal buat surat. Hubungi Admin.');
+                    }
+                    $("#generateLetter").html('Buat Surat');
+                    $('#generateLetter').prop('disabled', false);
+            })
+        });
+
+        $('#unduh_docx').click(function(){
+            if(!checkInput()){
+                 generalAlert('Input ada yang kosong.');
+                 return;
+            };
+            $('#docx').remove();
+            $('#pdf').remove(); 
+            
+            $('<input />').attr('type', 'hidden')
+              .attr('name', "docx")
+              .attr('id', "docx")
+              .attr('value', true)
+              .appendTo('#suratTugas');
+
+            download_surat = true;
+
+            $('#suratTugas').submit();
+        })
+
+        $('#unduh_pdf').click(function(){   
+            if(!checkInput()){
+                 generalAlert('Input ada yang kosong.');
+                 return;
+            };  
+            $('#docx').remove();
+            $('#pdf').remove();
+            
+            $('<input />').attr('type', 'hidden')
+              .attr('name', "pdf")
+              .attr('id', "pdf")
+              .attr('value', true)
+              .appendTo('#suratTugas');
+
+            download_surat = true;
+
+            $('#suratTugas').submit();
+        })
+
+        var current_month = new Date().getMonth()+1;
+        $('#bulan_st_modal option:eq('+current_month+')').prop('selected', true);
+        $('#tbl_riwayat').DataTable({
+            columnDefs: [
+                {
+                   'targets': 0,
+                   'searchable':false,
+                   'orderable':false,
+                   'className': 'dt-body-center',
+                   'render': function (data, type, full, meta){
+                       return '<input type="checkbox" name="id[]" value="' + $('<div/>').text(full[0]).html() + '">';
+                   }
+                }
+            ],
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(1)').attr('class', 'text-center');
+                $( row ).find('td:eq(4)').attr('class', 'text-center');
+                $( row ).find('td:eq(5)').attr('class', 'text-center');
+                $( row ).find('td:eq(6)').attr('class', 'text-center');
+            }
+        });
+        //tgl modal riwayat soal
+        $('#riwayat-lower_ts, #riwayat-upper_ts').datetimepicker({
+            locale: 'id',
+            format: 'D MMMM YYYY',
+            useCurrent: false,
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'bottom'
+            }
+        });
+
+        function registerRekapElement(){
+            //Input tgl sekarang utk ttd
+            $("#tgl-buat-rekap").val(moment().format('DD MMMM YYYY'));
+
+            //Inisialisasi input tgl Brgkt & Kembali
+            $('#tgl-buat-rekap').datetimepicker({
+                locale: 'id',
+                format: 'DD MMMM YYYY',
+                widgetPositioning: {
+                    horizontal: 'left',
+                    vertical: 'top'
+                }
+            });
+
+            $('#pembuat-daftar').typeahead({
+                    hint: true,
+                    highlight: true,
+                    minLength: 1
+                }, {
+                    source: function(q, p){
+                            {
+                                socket.emit('penerima_list', {'query': q, 'type': 'pegawai_only'}, function (data) {
+                                    return p(_.map(data, function(ur){ return {_id: ur._id, value: ur.nama}}))
+                                });
+                            }
+                    }
+                }
+            );
+            
+            socket.emit('get_pembuat_daftar', 'get data', 
+                function(response){
+                    if(!response) return;
+                        else{
+                            $("#pembuat-daftar_id").val(response.pembdaf._id)
+                            $("#pembuat-daftar").typeahead('val',response.pembdaf.nama)
+                            $("#pembuat-daftar").trigger('blur')
+                        }
+            })
+
+            $("#pembuat-daftar").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+                $("#pembuat-daftar_id").val(datum._id)
+            });
+
+            $('#pembuat-daftar, tgl-buat-rekap').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-multiple-rekap').click();
+            }
+        })
+        }
+
+        $('#example-select-all').on('click', function(){
+
+           if(this.checked){
+
+                $('#multiple-action').html(
+
+                    '<label for="tgl-buat-rekap" style="margin-bottom: 0">Tanggal Buat Rekap<span> *</span></label><input type="text" id="tgl-buat-rekap" class="form-control" name="tgl_buat_rekap" required style="margin-bottom: 3px;">'
+                    +'<label for="pembuat-daftar" style="margin-bottom: 0">Pembuat Daftar<span> *</span></label><input type="text" id="pembuat-daftar" class="form-control input-group" name="pembuat_daftar" required style="margin-bottom: 3px"><input style="display: none;" type="text" id="pembuat-daftar_id" name="pembuat_daftar_id" value="">'
+                    +'<button id="btn-multiple-rekap" type="button" style="height:35px;width:100px;" title="Buat rekapitulasi">Buat Rekap</button><span><pre> </pre></span>'
+                    +'<div class="input-group-btn dropup">'
+                    +    '<button id="download-rekap" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download'
+                    +        '<span class="caret"></span>'
+                    +    '</button>'
+                    +    '<div class="dropdown-menu dropdown-menu-right">'
+                    +        '<a id="unduh_xlsx-rekap" class="dropdown-item" href="#">Xlsx</a>'
+                    +        '<a id="unduh_pdf-rekap" class="dropdown-item" href="#">PDF</a>'
+                    +    '</div>'
+                    +'</div>'
+
+                )
+                registerRekapElement()
+                $('#pembuat-daftar').focus();
+
+           } else {
+               $('#multiple-action').html('');
+           }
+
+           // Get all rows with search applied
+           var rows = $('#tbl_riwayat').DataTable().rows({ 'search': 'applied' }).nodes();
+           // Check/uncheck checkboxes for all rows in the table
+           $('input[type="checkbox"]', rows).prop('checked', this.checked);
+
+           
+        });
+
+        $('#riwayat-surat-tugas tbody').on('change', 'input[type="checkbox"]', function(){
+            var el = $('#example-select-all').get(0);
+           // If checkbox is not checked
+           if(!this.checked){
+              // If "Select all" control is checked and has 'indeterminate' property
+              if(el && el.checked && ('indeterminate' in el)){
+                 // Set visual state of "Select all" control
+                 // as 'indeterminate'
+                 el.indeterminate = true;
+              }
+           }
+           var checked = $('#tbl_riwayat').DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
+
+           if(this.checked){
+
+                el.indeterminate = true;
+
+                $('#multiple-action').html(
+
+                    '<label for="tgl-buat-rekap" style="margin-bottom: 0">Tanggal Buat Rekap<span> *</span></label><input type="text" id="tgl-buat-rekap" class="form-control" name="tgl_buat_rekap" required style="margin-bottom: 3px;">'
+                    +'<label for="pembuat-daftar" style="margin-bottom: 0">Pembuat Daftar<span> *</span></label><input type="text" id="pembuat-daftar" class="form-control input-group" name="pembuat_daftar" required style="margin-bottom: 3px"><input style="display: none;" type="text" id="pembuat-daftar_id" name="pembuat_daftar_id" value="">'
+                    +'<button id="btn-multiple-rekap" type="button" style="height:35px;width:100px;" title="Buat rekapitulasi">Buat Rekap</button><span><pre> </pre></span>'
+                    +'<div class="input-group-btn dropup">'
+                    +    '<button id="download-rekap" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download'
+                    +        '<span class="caret"></span>'
+                    +    '</button>'
+                    +    '<div class="dropdown-menu dropdown-menu-right">'
+                    +        '<a id="unduh_xlsx-rekap" class="dropdown-item" href="#">Xlsx</a>'
+                    +        '<a id="unduh_pdf-rekap" class="dropdown-item" href="#">PDF</a>'
+                    +    '</div>'
+                    +'</div>'
+
+                )
+                registerRekapElement();
+                $('#pembuat-daftar').focus();
+
+           } else if(!checked){
+                el.indeterminate = false;
+                el.checked = false;
+               $('#multiple-action').html('');
+           }
+        });
+
+        function rekap(preview, xlsx, pdf){
+            $.toast().reset('all');
+            if(!$('#tbl_riwayat').DataTable().$('input[type="checkbox"]').serializeObject()['id[]']){
+                generalAlert('Tidak ada surat yang terpilih.')
+                return;
+            }
+            if(!$('#pembuat-daftar').val() || !$('#tgl-buat-rekap').val()){
+                generalAlert('Cek isian wajib.')
+                return;
+            } else if (!$('#pembuat-daftar_id').val()) {
+                generalAlert('Kolom Nama: Harap pilih nama dari daftar saran atau silahkan tambahkan pegawai baru.')
+                return;
+            }
+            if(preview){
+                $("#btn-multiple-rekap").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw font-lg"></i>');
+                $("#btn-multiple-rekap").prop("disabled",true);
+            } else {
+                $("#download-rekap").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw font-lg"></i>');
+                $("#download-rekap").prop("disabled",true);
+            }
+            var checked = $('#tbl_riwayat').DataTable().$('input[type="checkbox"]').serializeObject()['id[]'];
+            if(typeof checked === 'string'){
+                checked = [checked];
+            }
+            socket.emit('buat_rekap', {ids: checked, type: 'surat_tugas', 'tgl_buat_rekap': $('#tgl-buat-rekap').val(), 'pembuat_daftar': $('#pembuat-daftar').val(), 'pembuat_daftar_id': $('#pembuat-daftar_id').val(), 'preview': preview, 'xlsx': xlsx, 'pdf': pdf}, function(link_pdf){
+                if(preview){
+                    $("#btn-multiple-rekap").html('Rekap');
+                    $("#btn-multiple-rekap").prop("disabled",false);
+                    if(!link_pdf){
+                        return;
+                    }
+                    generalAlert('Rekap dibuat.')
+                    $("#realTimeView").attr("src", location.protocol+'//'+location.host+link_pdf);
+                    $('#riwayat-surat-tugas').modal('toggle');
+                } else {
+                    $("#download-rekap").html('Download rekap');
+                    $("#download-rekap").prop("disabled",false);
+                    if(!link_pdf){
+                        return;
+                    }
+                    window.open(location.protocol+"//"+$(location).attr('host')+link_pdf,'_blank');
+                }
+            });
+        }
+
+        $('#riwayat-surat-tugas').on('click', '#btn-multiple-rekap', function(){
+            rekap(true,false,false);
+        })
+
+        $('#riwayat-surat-tugas').on('click', '#unduh_xlsx-rekap', function(){
+            rekap(false, true, false);
+        })
+
+        $('#riwayat-surat-tugas').on('click', '#unduh_pdf-rekap', function(){
+            rekap(false, false, true);
+        })
+
+        $('#btn-riwayat-surat-tugas').click(function(){
+            //remove tombol multiple hapus
+            $('#example-select-all').prop('checked', false);
+            $('#example-select-all').get(0).indeterminate = false;
+            $('#multiple-action').html('');
+            var selected = $('#bulan_st_modal').val();
+            socket.emit('riwayat_surat_tugas', {month: selected, type: 'surat_tugas'}, 
+                function(response){
+                    $('#tbl_riwayat').DataTable().clear();
+                    _.each(response, function(surat, i, list){
+                        if(surat && surat.nama_lengkap){
+                            var row = [
+                                surat._id,
+                                surat._id,
+                                surat.nama_lengkap.nama,
+                                surat.tugas,
+                                surat.tgl_berangkat,
+                                surat.tgl_kembali,
+                                '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                            ]
+                            $('#tbl_riwayat').DataTable().row.add( row );
+                        }
+                    });
+                    $('#tbl_riwayat').DataTable().draw(false);
+            })
+            $('#riwayat-surat-tugas').modal('show');
+        });
+
+        $("input[name='tampil_riwayat']").change(function(e){
+            var s = $(this).val();
+            if(s == '0') {
+                if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
+                var lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()
+                var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix() + 86399;
+                socket.emit('riwayat_surat_tugas', {'lower_ts': lower_ts, 'upper_ts': upper_ts, type: 'surat_tugas'}, 
+                    function(response){
+                        $('#tbl_riwayat').DataTable().clear();
+                        _.each(response, function(surat, i, list){
+                            if(surat && surat.nama_lengkap){
+                                var row = [
+                                    surat._id,
+                                    surat._id,
+                                    surat.nama_lengkap.nama,
+                                    surat.tugas,
+                                    surat.tgl_berangkat,
+                                    surat.tgl_kembali,
+                                    '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                                ]
+                                $('#tbl_riwayat').DataTable().row.add( row );
+                            }
+                        });
+                        $('#tbl_riwayat').DataTable().draw(false);
+                })
+            } else {
+                var selected = $('#bulan_st_modal').val();
+                if(selected == 'none') return;
+                socket.emit('riwayat_surat_tugas', {month: selected, type: 'surat_tugas'}, 
+                    function(response){
+                        $('#tbl_riwayat').DataTable().clear();
+                        _.each(response, function(surat, i, list){
+                            if(surat && surat.nama_lengkap){
+                                var row = [
+                                    surat._id,
+                                    surat._id,
+                                    surat.nama_lengkap.nama,
+                                    surat.tugas,
+                                    surat.tgl_berangkat,
+                                    surat.tgl_kembali,
+                                    '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                                ]
+                                $('#tbl_riwayat').DataTable().row.add( row );
+                            }
+                        });
+                        $('#tbl_riwayat').DataTable().draw(false);
+                })
+            }
+        });
+
+        $('#bulan_st_modal').change(function(){
+            if(!$('#tampil-riwayat-by-month').is(':checked')) return;
+            var selected = $(this).val();
+            if(selected == 'none') return;
+            socket.emit('riwayat_surat_tugas', {month: selected, type: 'surat_tugas'}, 
+                function(response){
+                    $('#tbl_riwayat').DataTable().clear();
+                    _.each(response, function(surat, i, list){
+                        if(surat && surat.nama_lengkap){
+                            var row = [
+                                surat._id,
+                                surat._id,
+                                surat.nama_lengkap.nama,
+                                surat.tugas,
+                                surat.tgl_berangkat,
+                                surat.tgl_kembali,
+                                '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                            ]
+                            $('#tbl_riwayat').DataTable().row.add( row );
+                        }
+                    });
+                    $('#tbl_riwayat').DataTable().draw(false);
+            })
+        });
+
+        $('#riwayat-lower_ts, #riwayat-upper_ts').on('dp.change', function(e){
+            if($('#tampil-riwayat-by-range').is(':checked')){
+                if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
+                var lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()
+                var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix() + 86399;
+                socket.emit('riwayat_surat_tugas', {'lower_ts': lower_ts, 'upper_ts': upper_ts, type: 'surat_tugas'}, 
+                    function(response){
+                        $('#tbl_riwayat').DataTable().clear();
+                        _.each(response, function(surat, i, list){
+                            if(surat && surat.nama_lengkap){
+                                var row = [
+                                    surat._id,
+                                    surat._id,
+                                    surat.nama_lengkap.nama,
+                                    surat.tugas,
+                                    surat.tgl_berangkat,
+                                    surat.tgl_kembali,
+                                    '<button type="button" class="hitung"><i class="icon-check"></i></button>'
+                                ]
+                                $('#tbl_riwayat').DataTable().row.add( row );
+                            }
+                        });
+                        $('#tbl_riwayat').DataTable().draw(false);
+                })
+            }
+        });
+
+        function resetForm(){
+            $('#nama_lengkap').val('');
+
+            // $('#w_dari_t4_asal').val('');
+            // $('#t_dari_t4_asal').val('');
+            $('#w_dari_t4_tujuan').val('');
+            $('#t_dari_t4_tujuan').val('');
+
+            $('#jumlah_menginap').val('');
+            $('#biaya_inap').val('');
+            $('#totalb_inap').val('');
+
+            $("input[name='jenis_pgw'][value='none']").prop('checked', true);
+            $('#representasi').val('');
+
+            $('#total_riil').val('');
+
+            $('#w_tiket_tujuan').val('');
+            $('#harga_tiket').val('');
+
+            $('#harian_hari').val('');
+            $('#harian_biaya').val('');
+            $('#harian_total').val('');
+
+            $('#hotel_hari').val('');
+            $('#hotel_biaya').val('');
+            $('#hotel_total').val('');
+        }
+
+        $('#tbl_riwayat').on('click', '.hitung', function(){
+            var nomor = $(this).closest('tr').find('td:eq(1)').text();
+            socket.emit('get_perhitungan', nomor, 
+                function(response){
+                    resetForm();
+                    var nomor_temp =  $('#nomor').val();
+                    $('#nomor').val(
+                        nomor_temp.replace(/^\d*/, response.st._id)
+                    );
+                    // $("#nama_lengkap").tokenfield('createToken', {_id: response.nama_lengkap._id, value: response.nama_lengkap.nama});
+                    $("#nama_lengkap").val(response.st.nama_lengkap.nama);
+                    current_gol = response.st.nama_lengkap.gol;
+                    current_jumlah_hari = response.st.jumlah_hari;
+                    posisi_kota = response.st.posisi_kota;
+                    jenis_ang = response.st.jenis_ang;
+                    kode_output = response.st.kode_output;
+
+                    if(posisi_kota == 'dalam_kota') $('#t_dari_t4_asal').autoNumeric('set',  300000 || 0);
+
+                    if(!response.perhit) return;
+
+                    $('#w_dari_t4_tujuan').val(response.perhit.w_dari_t4_tujuan || '');
+
+                    $('#t_dari_t4_tujuan').autoNumeric('set', response.perhit.t_dari_t4_tujuan || 0);
+
+                    $('#jumlah_menginap').val(response.perhit.jumlah_menginap || 0);
+                    $('#biaya_inap').autoNumeric('set', response.perhit.biaya_inap || 0);
+                    $('#totalb_inap').autoNumeric('set', response.perhit.totalb_inap || 0);
+
+                    $("input[name='jenis_pgw'][value='"+response.perhit.jenis_pgw+"']").prop('checked', true);
+                    $('#representasi').autoNumeric('set', response.perhit.representasi || 0);
+
+                    $('#total_riil').autoNumeric('set', response.perhit.total_riil || 0);
+
+                    $('#w_tiket_tujuan').val(response.perhit.w_tiket_tujuan || '');
+                    $('#harga_tiket').autoNumeric('set', response.perhit.harga_tiket || 0);
+
+                    $('#harian_hari').val(response.perhit.harian_hari || 0);
+                    $('#harian_biaya').autoNumeric('set', response.perhit.harian_biaya || 0);
+                    $('#harian_total').autoNumeric('set', response.perhit.harian_total || 0);
+
+                    $('#hotel_hari').val(response.perhit.hotel_hari || 0);
+                    $('#hotel_biaya').autoNumeric('set', response.perhit.hotel_biaya || 0);
+                    $('#b_inap_price_form').autoNumeric('set', response.perhit.b_inap_price || 0);
+                    $('#b_inap_price').text(formatUang(response.perhit.b_inap_price) || 0);
+                    $('#maks-hotel').text(formatUang(response.perhit.b_inap_price) || 0);
+                    $('#hotel_total').autoNumeric('set', response.perhit.hotel_total || 0);
+
+                    $('#total_rincian').autoNumeric('set', response.perhit.total_rincian || 0);
+
+                    kdakun = response.perhit.akun;
+                    noitem = response.perhit.detail;
+
+                    populate_realisasi(kode_output);
+
+                    $('#tgl_buat_perhit').val(response.perhit.tgl_buat_perhit || '');
+            })
+            $('#riwayat-surat-tugas').modal('toggle');
+        })
+
+        function generalAlertNoTimeout(message){
+            $.toast({
+                text: message,
+                textAlign: 'left',
+                hideAfter: false,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
+
+        function formatUang(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function generalAlert(message){
+            $.toast({
+                text: message,
+                textAlign: 'left', 
+                hideAfter: 4000,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
+        socket.removeListener('messages');
+        socket.on('messages', function(data) {
+            generalAlert(data)
+        });
+
+        socket.on('messagesNoTimeout', function(data) {
+            generalAlertNoTimeout(data)
+        });
+    });
+</script>

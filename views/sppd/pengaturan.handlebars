@@ -1,0 +1,1030 @@
+<div class="animated fadeIn">
+    <div class="card" id="new">
+        <div class="card-header"><i class="icon-wrench"></i> Pengaturan SPPD</div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#home3" role="tab" aria-controls="home"><i class="icon-paper-clip"></i> Tanda Tangan</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="biaya2Tab" class="nav-link" data-toggle="tab" href="#biaya2Tabchild" role="tab" aria-controls="biaya2Tabchild"><i class="icon-wallet"></i> Biaya-Biaya</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="tiketPesawatTab" class="nav-link" data-toggle="tab" href="#tiketPesawatTabchild" role="tab" aria-controls="tiketPesawatTabchild"><i class="icon-plane"></i> Tiket</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="templateTab" class="nav-link" data-toggle="tab" href="#templateTabchild" role="tab" aria-controls="templateTabchild"><i class="icon-doc"></i> Template</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="home3" role="tabpanel">
+                                <div class="col-md-3">   
+                                    <div class="form-group row">
+                                    <h6><i class="icon-user-follow"></i> Penanda Tangan Surat Tugas</h6> 
+                                        <div class="input-group">
+                                            <input id="inp-ttd-surat-tugas" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-ttd-surat-tugas" class="btn btn-primary">+</button>
+                                            </span>
+                                        </div>                                    
+                                    </div>
+                                </div>                           
+                                <table id="tbl-ttd-st" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama</th>
+                                            <th>NIP</th>
+                                            <th>Pilihan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                            
+                                    {{#each setting.ttd_st}}
+                                        <tr>
+                                            <td>{{nama}}</td>
+                                            <td>{{_id}}</td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn-st-default" {{#if_eq _id ../setting.ttd_st_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
+                                                <button type="button" class="btn-st-del"><i class="icon-close"></i></button>
+                                            </td>
+                                        </tr>
+                                    {{/each}}  
+                                    </tbody>
+                                </table>  
+
+                                <div class="col-md-3">   
+                                    <div class="form-group row">
+                                        <h6><i class="icon-user-follow"></i> Penanda Tangan Legalitas</h6>
+                                        <div class="input-group">
+                                            <input id="inp-ttd-legalitas" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-ttd-legalitas" type="submit" class="btn btn-primary">+</button>
+                                            </span>
+                                        </div> 
+                                    </div>
+                                </div>
+                                        <table id="tbl-ttd-leg" class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama</th>
+                                                    <th>NIP</th>
+                                                    <th>Pilihan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {{#each setting.ttd_leg}}
+                                                <tr>
+                                                    <td>{{nama}}</td>
+                                                    <td>{{_id}}</td>
+                                                    <td class="text-center">
+                                                        <button type="button" class="btn-leg-default" {{#if_eq _id ../setting.ttd_leg_default}}disabled="disabled"{{/if_eq}}><i class="icon-pin"></i></button>
+                                                        <button type="button" class="btn-leg-del"><i class="icon-close"></i></button>
+                                                    </td>
+                                                </tr>
+                                            {{/each}}                                            
+                                            </tbody>
+                                        </table>
+                                <div class="col-md-3">   
+                                    <div class="form-group row">
+                                        <h6><i class="icon-user"></i> Pejabat Pembuat Komitmen</h6>
+                                        <div class="input-group">
+                                            <input type="text" id="inp-ppk" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.ppk}}{{nama}}{{/with}}" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-set-ppk" type="submit" class="btn btn-primary">Set</button>
+                                            </span>
+                                        </div> 
+                                    </div>
+                                </div> 
+                                <div class="col-md-3">   
+                                    <div class="form-group row">
+                                        <h6><i class="icon-user"></i> Bendahara Pengeluaran STIS</h6>
+                                        <div class="input-group">
+                                            <input type="text" id="inp-bend" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.bendahara}}{{nama}}{{/with}}" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-set-bend" type="submit" class="btn btn-primary">Set</button>
+                                            </span>
+                                        </div> 
+                                    </div>
+                                </div>  
+                                <div class="col-md-3">   
+                                    <div class="form-group row">
+                                        <h6><i class="icon-user"></i> Pembuat Daftar (Rekap)</h6>
+                                        <div class="input-group">
+                                            <input type="text" id="inp-pembdaf" name="nama" class="form-control pegawai-autocomplete" placeholder="Ketikkan nama" value="{{#with setting.pembdaf}}{{nama}}{{/with}}" required>
+                                            <span class="input-group-btn">
+                                                <button id="btn-set-pembdaf" type="submit" class="btn btn-primary">Set</button>
+                                            </span>
+                                        </div> 
+                                    </div>
+                                </div> 
+                            </div>
+                            <div class="tab-pane" id="biaya2Tabchild" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="text-center pok-title">
+                                            Tabel Representasi
+                                        </h6>
+                                    </div>
+                                </div>
+                                <table id="tbl-representasi" class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th class="text-center" style="vertical-align: middle">Uraian</th>
+                                            <th class="text-center" style="vertical-align: middle">Luar Kota</th>
+                                            <th class="text-center" style="vertical-align: middle">Dalam Kota > 8 jam</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                           
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="text-center pok-title">
+                                            Tabel Uang Harian
+                                        </h6>
+                                    </div>
+                                </div>
+                                <table id="tbl-biaya-biaya" class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Id</th>
+                                            <th width="5%" rowspan="2" class="text-center" style="vertical-align: middle">No.</th>
+                                            <th width="20%" rowspan="2" class="text-center" style="vertical-align: middle">Provinsi</th>
+                                            <th width="10%" rowspan="2" class="text-center" style="vertical-align: middle">Taksi</th>
+                                            <th width="25%" colspan="3" scope="colgroup" class="text-center">Uang Harian</th>
+                                            <th width="35%" colspan="5" scope="colgroup" class="text-center">Tarif Hotel</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center">Luar kota</th>
+                                            <th class="text-center">Dalam kota > 8 jam</th>
+                                            <th class="text-center" style="vertical-align: middle">Diklat</th>
+                                            <th class="text-center" style="vertical-align: middle">Eselon I</th>
+                                            <th class="text-center" style="vertical-align: middle">Eselon II</th>
+                                            <th class="text-center">Eselon III/Gol. IV</th>
+                                            <th class="text-center">Eselon IV/Gol. III</th>
+                                            <th class="text-center" style="vertical-align: middle">Gol. I/II</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                           
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="tiketPesawatTabchild" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h6 class="text-center pok-title">
+                                            Tabel Satuan Biaya Tiket
+                                        </h6>
+                                    </div>
+                                </div>
+                                <table id="tiket" class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2">Id</th>
+                                            <th width="2%" rowspan="2" class="text-center" style="vertical-align: middle">No.</th>
+                                            <th width="40%" rowspan="2" class="text-center" style="vertical-align: middle">Kota</th>
+                                            <th width="55%" colspan="2" class="text-center">Pesawat (dari Jakarta)</th>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-center">Bisnis</th>
+                                            <th class="text-center">Ekonomi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{#each kota}}             
+                                        <tr name="{{name}}">
+                                            <td>{{label}}</td>
+                                            <td jenis="tiket_jkt_b" class="money">{{tiket_jkt_b}}</td>
+                                            <td jenis="tiket_jkt_e" class="money">{{tiket_jkt_e}}</td>
+                                        </tr>
+                                    {{/each}}                                            
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="templateTabchild" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6>Surat Tugas</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button id="btn-st-template" type="button">Download Template</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px;">
+                                            <div class="col-md-6">
+                                                <form id="form-surat-tugas" enctype="multipart/form-data" method="post" action="/sppd/pengaturan/unggah_template/st" class="form-template">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <input id="template_file" name="template_file" type="file" accept=".docx" required/>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="row" style="margin-top: 10px">
+                                                        <div class="col-md-12">
+                                                            <button id="btn-form-surat-tugas" type="submit">Unggah</button> 
+                                                            <button jenis="st" class="pulihkan-template" type="button">Pulihkan</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6>Surat Tugas Biasa</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button id="btn-stb-template" type="button">Download Template</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px;">
+                                            <div class="col-md-6">
+                                                <form id="form-surat-tugas-biasa" enctype="multipart/form-data" method="post" action="/sppd/pengaturan/unggah_template/stb" class="form-template">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <input id="template_file" name="template_file" type="file" accept=".docx" required/>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="row" style="margin-top: 10px">
+                                                        <div class="col-md-12">
+                                                            <button id="btn-form-surat-tugas-biasa" type="submit">Unggah</button> 
+                                                            <button jenis="stb" class="pulihkan-template" type="button">Pulihkan</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6>Surat Perhitungan</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button id="btn-sp-template" type="button">Download Template</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px;">
+                                            <div class="col-md-6">
+                                                <form id="form-surat-perhitungan" enctype="multipart/form-data" method="post" action="/sppd/pengaturan/unggah_template/sp" class="form-template">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <input id="template_file" name="template_file" type="file" accept=".docx" required/>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="row" style="margin-top: 10px">
+                                                        <div class="col-md-12">
+                                                            <button id="btn-form-surat-perhitungan" type="submit">Unggah</button> 
+                                                            <button jenis="sp" class="pulihkan-template" type="button">Pulihkan</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    socket = io.connect($(location).attr('host'));
+    loadCSS("/css/typeahead.css");
+
+    $(document).ready(function(){
+        //init state id peg umum
+        var selected_peg_id = '';
+        //register auto complete
+        $('.pegawai-autocomplete').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('penerima_list', {'query': q, 'type': 'pegawai_only'}, function (data) {
+                                return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        //update id peg
+        $(".pegawai-autocomplete").on("typeahead:selected typeahead:autocompleted", function(e, datum) {
+            selected_peg_id = datum._id;
+        });
+
+        $('#inp-ttd-surat-tugas').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-ttd-surat-tugas').click();
+            }
+        })
+
+        $('#inp-ttd-legalitas').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-ttd-legalitas').click();
+            }
+        })
+
+        $('#inp-ppk').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-set-ppk').click();
+            }
+        })
+
+        $('#inp-bend').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-set-bend').click();
+            }
+        })
+
+        $('#inp-pembdaf').keyup(function(e){
+            if(e.keyCode == 13){
+                $('#btn-set-pembdaf').click();
+            }
+        })
+
+        $('#btn-ttd-surat-tugas').click(function(){
+            if(!$('#inp-ttd-surat-tugas').val() || !selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
+            socket.emit('add_ttd_st', {_id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil ditambahkan.');
+                        $('#tbl-ttd-st tbody').append(
+                                '<tr>'
+                                +'<td>'+$('#inp-ttd-surat-tugas').val()+'</td>'
+                                +'<td>'+selected_peg_id+'</td>'
+                                +'<td class="text-center"><button type="button" class="btn-st-default">'
+                                +'<i class="icon-pin"></i></button> '
+                                +'<button type="button" class="btn-st-del"><i class="icon-close"></i></button></td>'
+                                +'</tr>'
+                            );
+                        $('#inp-ttd-surat-tugas').val('');
+                    } else {
+                        generalAlert('Gagal ditambahkan. Hubungi Admin.');
+                    }
+            })
+        })
+
+        $('#btn-ttd-legalitas').click(function(){
+            if(!$('#inp-ttd-legalitas').val() || !selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
+            socket.emit('add_ttd_leg', {_id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil ditambahkan.');
+                        $('#tbl-ttd-leg tbody').append(
+                                '<tr>'
+                                +'<td>'+$('#inp-ttd-legalitas').val()+'</td>'
+                                +'<td>'+selected_peg_id+'</td>'
+                                +'<td class="text-center"><button type="button" class="btn-leg-default">'
+                                +'<i class="icon-pin"></i></button> '
+                                +'<button type="button" class="btn-leg-del"><i class="icon-close"></i></button></td>'
+                                +'</tr>'
+                            );
+                        $('#inp-ttd-legalitas').val('');
+                    } else {
+                        generalAlert('Gagal ditambahkan. Hubungi Admin.');
+                    }
+            })
+        })
+
+        $('#btn-set-ppk').click(function(){
+            if(!selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
+            socket.emit('set_ppk', {nama: $('#inp-ppk').val(), _id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+
+        $('#btn-set-bend').click(function(){
+            if(!selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
+            socket.emit('set_bend', {nama: $('#inp-bend').val(), _id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+
+        $('#btn-set-pembdaf').click(function(){
+            if(!selected_peg_id){
+                generalAlert('Isian kosong.');
+                return;
+            }
+            socket.emit('set_pembdaf', {nama: $('#inp-pembdaf').val(), _id: selected_peg_id}, 
+                function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+
+        //tombol ttd st
+        $('#tbl-ttd-st').on('click', '.btn-st-default', function(){
+            var element = $(this);
+            var prev = element.closest('tr').siblings().find("[disabled='disabled']");
+            socket.emit('set_default_ttd_st', {_id: $(this).closest('tr').find('td:eq(1)').text()}, 
+                function(status){
+                    if(status == 'sukses'){
+                        element.attr('disabled', 'disabled');
+                        prev.removeAttr('disabled');
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+        $('#tbl-ttd-st').on('click', '.btn-st-del', function(){
+            var element = $(this).closest('tr');
+            socket.emit('ttd_st_remove', $(this).closest('tr').find('td:eq(1)').text(), 
+                function(status){
+                    if(status == 'sukses'){
+                        element.remove();
+                        generalAlert('Berhasil diubah.');
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+
+        //tombol ttd leg
+        $('#tbl-ttd-leg').on('click', '.btn-leg-default', function(){
+            var element = $(this);
+            var prev = element.closest('tr').siblings().find("[disabled='disabled']");
+            socket.emit('set_default_ttd_leg', {_id: $(this).closest('tr').find('td:eq(1)').text()}, 
+                function(status){
+                    if(status == 'sukses'){
+                        element.attr('disabled', 'disabled');
+                        prev.removeAttr('disabled');
+                        generalAlert('Berhasil diubah.');
+                        
+                    } else {
+                        generalAlert('Gagal diubah. Hubungi Admin.');
+                    }
+            })
+        })
+        $('#tbl-ttd-leg').on('click', '.btn-leg-del', function(){
+            var element = $(this).closest('tr');
+            socket.emit('ttd_leg_remove', $(this).closest('tr').find('td:eq(1)').text(), 
+                function(status){
+                    if(status == 'sukses'){
+                        element.remove();
+                        generalAlert('Berhasil dihapus.');
+                    } else {
+                        generalAlert('Gagal dihapus. Hubungi Admin.');
+                    }
+            })
+        })
+
+        //############ biaya-biaya
+
+
+        $('#tbl-representasi').DataTable({
+            columnDefs: [
+                {
+                    "targets": [ 0 ],
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            paging: false,
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(1)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(2)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+            }
+        });
+
+        $('#tbl-biaya-biaya').DataTable({
+            columnDefs: [
+                {
+                    "targets": [ 0 ],
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            paging: false,
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(0)').attr('class', 'text-center');
+                $( row ).find('td:eq(2)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(3)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(4)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(5)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(6)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(7)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(8)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(9)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(10)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(11)').attr('class', 'format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+            }
+        });
+
+        $("#biaya2Tab").click(function(){
+            socket.emit('biaya2_list', '', 
+                function(response){
+                    $('#tbl-biaya-biaya').DataTable().clear();
+                    $('#tbl-representasi').DataTable().clear();
+                    _.each(response.prov, function(prov, i, list){
+                        var row = [
+                            prov._id,
+                            i+1,
+                            prov.nama,
+                            prov.taksi_dn || 0,
+                            prov.har_dn_lk || 0,
+                            prov.har_dn_dk || 0,
+                            prov.har_dn_dik || 0,
+                            prov.inap_dn_es1 || 0,
+                            prov.inap_dn_es2 || 0,
+                            prov.inap_dn_es3_g4 || 0,
+                            prov.inap_dn_es4_g3 || 0,
+                            prov.inap_dn_g12 || 0
+                        ]
+                        $('#tbl-biaya-biaya').DataTable().row.add( row );
+                    });
+                    $('#tbl-biaya-biaya').DataTable().draw(false);
+
+                    _.each(response.reps, function(rep, i, list){
+                        var row = [
+                            rep._id,
+                            rep.uraian,
+                            rep.luar_kota || 0,
+                            rep.dalam_kota || 0
+                        ]
+                        $('#tbl-representasi').DataTable().row.add( row );
+                    });
+                    $('#tbl-representasi').DataTable().draw(false);
+            })
+        })
+
+        var Representasi = {};
+
+        //Inline editor tabel biaya2
+        Representasi.state_active_editor_entry = false;
+        Representasi.editor_entry;
+        Representasi.active_entry;
+        $("#tbl-representasi").on('dblclick', 'tr td', function () {
+            Representasi.active_entry = $(this);
+            if(Representasi.state_active_editor_entry){
+                $.toast({
+                    text: 'Anda tidak dapat mengedit sel tersebut.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                })
+                return;
+            }
+            Representasi.state_active_editor_entry = true;
+            var cloneProperties = ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+                          'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+                          'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
+
+            if(Representasi.active_entry.hasClass('format-uang')){
+                Representasi.editor_entry = $('<input type="text" class="format-uang">').val(getNumber(Representasi.active_entry.text())).hide().appendTo(Representasi.active_entry.parent());
+            } else {
+                Representasi.editor_entry = $('<textarea></textarea>').val(Representasi.active_entry.text()).hide().appendTo(Representasi.active_entry.parent());
+            }
+
+            Representasi.editor_entry.css('position', 'absolute');
+            Representasi.editor_entry
+                .show()
+                .offset(Representasi.active_entry.offset())
+                .css(Representasi.active_entry.css(cloneProperties))
+                .width(Representasi.active_entry.width())
+                .height(Representasi.active_entry.height())
+                .focus();
+            Representasi.editor_entry.select();
+        });
+
+        $("#tbl-representasi").on('blur keydown', 'input,textarea', function (e) {
+            //jika enter anggap blur (krn klo tidak, di fired 2 kali)
+            if (e.which === 13){
+                $(this).blur();
+            } else if (e.which === 0){//jika blur ==> keycode nya 0
+                if(Representasi.editor_entry.val() !== Representasi.active_entry.text()){
+                    if(Representasi.editor_entry.val() == ''){
+                        Representasi.editor_entry.val(0);
+                    }
+                    var row = $("#tbl-representasi").DataTable().row(Representasi.active_entry.closest('tr'));
+                    var data = {};
+
+                    if(Representasi.active_entry.is(':nth-child(1)')){
+                        data.uraian = Representasi.editor_entry.val();
+                    } else if(Representasi.active_entry.is(':nth-child(2)')){
+                        data.luar_kota = getNumber(Representasi.editor_entry.val());
+                    } else{
+                        data.dalam_kota = getNumber(Representasi.editor_entry.val());
+                    }
+
+                    socket.emit('representasi_edit', {'_id': row.data()[0], 'data': data}, function(status){
+                            if(status === 'sukses'){
+                                $("#tbl-representasi").DataTable()
+                                    .cell(Representasi.active_entry)
+                                    .data(Representasi.editor_entry.val())
+                                    .draw(false);
+                                generalAlert('Berhasil diedit.');
+                                Representasi.active_entry = null;
+                                Representasi.state_active_editor_entry = false;
+                                Representasi.editor_entry.hide(); 
+                            } else {
+                                generalAlert('Gagal diedit. Hubungi admin.');
+                            }
+                    });                     
+                } else {
+                    Representasi.active_entry = null;
+                    Representasi.state_active_editor_entry = false;
+                    Representasi.editor_entry.hide();  
+                }
+            } else if(e.which === 27){
+                Representasi.active_entry = null;
+                Representasi.state_active_editor_entry = false;
+                Representasi.editor_entry.hide();
+            }
+        });
+
+        //Inline editor tabel biaya2
+        var state_active_editor_entry = false;
+        var editor_entry;
+        var active_entry;
+        $("#tbl-biaya-biaya").on('dblclick', 'tr td', function () {
+            active_entry = $(this);
+            if(state_active_editor_entry || active_entry.is(':nth-child(1)')){
+                $.toast({
+                    text: 'Anda tidak dapat mengedit sel tersebut.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                })
+                return;
+            }
+            state_active_editor_entry = true;
+            var cloneProperties = ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+                          'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+                          'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
+
+            if(active_entry.hasClass('format-uang')){
+                editor_entry = $('<input type="text" class="format-uang">').val(getNumber(active_entry.text())).hide().appendTo(active_entry.parent());
+            } else {
+                editor_entry = $('<textarea></textarea>').val(active_entry.text()).hide().appendTo(active_entry.parent());
+            }
+
+            editor_entry.css('position', 'absolute');
+            editor_entry
+                .show()
+                .offset(active_entry.offset())
+                .css(active_entry.css(cloneProperties))
+                .width(active_entry.width())
+                .height(active_entry.height())
+                .focus();
+            editor_entry.select();
+        });
+
+        $("#tbl-biaya-biaya").on('blur keydown', 'input,textarea', function (e) {
+            //jika enter anggap blur (krn klo tidak, di fired 2 kali)
+            if (e.which === 13){
+                $(this).blur();
+            } else if (e.which === 0){//jika blur ==> keycode nya 0
+                if(editor_entry.val() !== active_entry.text()){
+                    if(editor_entry.val() == ''){
+                        editor_entry.val(0);
+                    }
+                    var row = $("#tbl-biaya-biaya").DataTable().row(active_entry.closest('tr'));
+                    var data = {};
+
+                    if(active_entry.is(':nth-child(2)')){
+                        data.nama = editor_entry.val();
+                    } else if(active_entry.is(':nth-child(3)')){
+                        data.taksi_dn = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(4)')){
+                        data.har_dn_lk = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(5)')){
+                        data.har_dn_dk = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(6)')){
+                        data.har_dn_dik = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(7)')){
+                        data.inap_dn_es1 = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(8)')){
+                        data.inap_dn_es2 = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(9)')){
+                        data.inap_dn_es3_g4 = getNumber(editor_entry.val());
+                    } else if(active_entry.is(':nth-child(10)')){
+                        data.inap_dn_es4_g3 = getNumber(editor_entry.val());
+                    } else {
+                        data.inap_dn_g12 = getNumber(editor_entry.val());
+                    }
+
+                    socket.emit('prov_biaya2_edit', {'_id': row.data()[0], 'data': data}, function(status){
+                            if(status === 'sukses'){
+                                $("#tbl-biaya-biaya").DataTable()
+                                    .cell(active_entry)
+                                    .data(editor_entry.val())
+                                    .draw(false);
+                                generalAlert('Berhasil diedit.');
+                                active_entry = null;
+                                state_active_editor_entry = false;
+                                editor_entry.hide(); 
+                            } else {
+                                generalAlert('Gagal diedit. Hubungi admin.');
+                            }
+                    });                     
+                } else {
+                    active_entry = null;
+                    state_active_editor_entry = false;
+                    editor_entry.hide();  
+                }
+            } else if(e.which === 27){
+                active_entry = null;
+                state_active_editor_entry = false;
+                editor_entry.hide();
+            }
+        });
+
+        //############ tiket
+        $('#tiket').DataTable({
+            columnDefs: [
+                {
+                    "targets": [ 0 ],
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            pageLength: 50,
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(0)').attr('class', 'text-center');
+                $( row ).find('td:eq(2)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $( row ).find('td:eq(3)').attr('class','format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+            }
+        });
+
+        var opts = {
+              lines: 13 // The number of lines to draw
+            , length: 28 // The length of each line
+            , width: 14 // The line thickness
+            , radius: 42 // The radius of the inner circle
+            , scale: 0.25 // Scales overall size of the spinner
+            , corners: 1 // Corner roundness (0..1)
+            , color: '#000' // #rgb or #rrggbb or array of colors
+            , opacity: 0.25 // Opacity of the lines
+            , rotate: 0 // The rotation offset
+            , direction: 1 // 1: clockwise, -1: counterclockwise
+            , speed: 1 // Rounds per second
+            , trail: 60 // Afterglow percentage
+            , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+            , zIndex: 2e9 // The z-index (defaults to 2000000000)
+            , className: 'spinner' // The CSS class to assign to the spinner
+            , top: '50%' // Top position relative to parent
+            , left: '50%' // Left position relative to parent
+            , shadow: false // Whether to render a shadow
+            , hwaccel: false // Whether to use hardware acceleration
+            , position: 'absolute' // Element positioning
+        }
+        var target = document.getElementById('new')
+        var spinner = new Spinner(opts)
+
+        $("#tiketPesawatTab").click(function(){
+            spinner.spin(target);
+            socket.emit('tiket_list', '', 
+                function(response){
+                    $('#tiket').DataTable().clear();
+                    _.each(response, function(kab, i, list){
+                        var row = [
+                            kab._id,
+                            i+1,
+                            kab.nama,
+                            kab.tiket_jkt_b || 0,
+                            kab.tiket_jkt_e || 0
+                        ]
+                        $('#tiket').DataTable().row.add( row );
+                    });
+                    $('#tiket').DataTable().draw(false);
+                    spinner.stop();
+            })
+        })
+
+        var Tiket = {};
+
+        //Inline editor tabel biaya2
+        Tiket.state_active_editor_entry = false;
+        Tiket.editor_entry;
+        Tiket.active_entry;
+        $("#tiket").on('dblclick', 'tr td', function () {
+            Tiket.active_entry = $(this);
+            if(Tiket.state_active_editor_entry || Tiket.active_entry.is(':nth-child(1)')){
+                $.toast({
+                    text: 'Anda tidak dapat mengedit sel tersebut.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                })
+                return;
+            }
+            Tiket.state_active_editor_entry = true;
+            var cloneProperties = ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+                          'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+                          'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
+
+            if(Tiket.active_entry.hasClass('format-uang')){
+                Tiket.editor_entry = $('<input type="text" class="format-uang">').val(getNumber(Tiket.active_entry.text())).hide().appendTo(Tiket.active_entry.parent());
+            } else {
+                Tiket.editor_entry = $('<textarea></textarea>').val(Tiket.active_entry.text()).hide().appendTo(Tiket.active_entry.parent());
+            }
+
+            Tiket.editor_entry.css('position', 'absolute');
+            Tiket.editor_entry
+                .show()
+                .offset(Tiket.active_entry.offset())
+                .css(Tiket.active_entry.css(cloneProperties))
+                .width(Tiket.active_entry.width())
+                .height(Tiket.active_entry.height())
+                .focus();
+            Tiket.editor_entry.select();
+        });
+
+        $("#tiket").on('blur keydown', 'input,textarea', function (e) {
+            //jika enter anggap blur (krn klo tidak, di fired 2 kali)
+            if (e.which === 13){
+                $(this).blur();
+            } else if (e.which === 0){//jika blur ==> keycode nya 0
+                if(Tiket.editor_entry.val() !== Tiket.active_entry.text()){
+                    if(Tiket.editor_entry.val() == ''){
+                        Tiket.editor_entry.val(0);
+                    }
+                    var row = $("#tiket").DataTable().row(Tiket.active_entry.closest('tr'));
+                    var data = {};
+
+                    if(Tiket.active_entry.is(':nth-child(2)')){
+                        data.nama = Tiket.editor_entry.val();
+                    } else if(Tiket.active_entry.is(':nth-child(3)')){
+                        data.tiket_jkt_b = getNumber(Tiket.editor_entry.val());
+                    } else{
+                        data.tiket_jkt_e = getNumber(Tiket.editor_entry.val());
+                    }
+
+                    socket.emit('kab_tiket_edit', {'_id': row.data()[0], 'data': data}, function(status){
+                            if(status === 'sukses'){
+                                $("#tiket").DataTable()
+                                    .cell(Tiket.active_entry)
+                                    .data(Tiket.editor_entry.val())
+                                    .draw(false);
+                                generalAlert('Berhasil diedit.');
+                                Tiket.active_entry = null;
+                                Tiket.state_active_editor_entry = false;
+                                Tiket.editor_entry.hide(); 
+                            } else {
+                                generalAlert('Gagal diedit. Hubungi admin.');
+                            }
+                    });                     
+                } else {
+                    Tiket.active_entry = null;
+                    Tiket.state_active_editor_entry = false;
+                    Tiket.editor_entry.hide();  
+                }
+            } else if(e.which === 27){
+                Tiket.active_entry = null;
+                Tiket.state_active_editor_entry = false;
+                Tiket.editor_entry.hide();
+            }
+        });
+
+        $("#btn-st-template").click(function(){
+            location.href = location.protocol+'//'+window.location.host+'/template/surat_tugas.docx';
+        })
+
+        $("#btn-stb-template").click(function(){
+            location.href = location.protocol+'//'+window.location.host+'/template/surat_tugas_biasa.docx';
+        })
+
+        $("#btn-sp-template").click(function(){
+            location.href = location.protocol+'//'+window.location.host+'/template/sppd_perhitungan.docx';
+        })
+
+        $(".pulihkan-template").click(function(){
+            socket.emit('pulihkan_template', $(this).attr('jenis'), function(status){
+                    if(status === 'sukses'){
+                        generalAlert('Berhasil dipulihkan.');
+                    } else {
+                        generalAlert('Gagal dipulihkan. Mohon hubungi admin.');
+                    }
+            });  
+        })
+
+        //submit unggah pok
+        $('.form-template').on('submit', function(e) {
+            e.preventDefault();
+            var id = $(this).attr('id');
+            var url = $(this).attr('action');
+            $("#btn"+id).prop("disabled",true);
+            $("#btn"+id).html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#btn"+id).text());
+            var formData = new FormData($(this)[0]);
+
+            $.ajax({
+                url: location.protocol+'//'+window.location.host+url,
+                type: 'POST',
+                data: formData,
+                async: false,
+                error: function(){
+                    $("#pok_unggah_button").prop("disabled",false);
+                    $("#pok_unggah_button").html('Unggah');
+                },
+                success: function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Template berhasil diupdate');
+                    } else {
+                        generalAlert('Gagal diupdate. Mohon hubungi admin.');
+                    }
+                    $("#btn"+id).prop("disabled",false);
+                    $("#btn"+id).html('Unggah');
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        });
+
+
+        function getNumber(obj){
+            if(!obj || obj == '-' || obj == '') return 0;
+            if (typeof obj === 'string' || obj instanceof String) return +obj.replace(/\D/g, '');
+            return +obj;
+        }
+
+        function getNumber(obj){
+            if(!obj || obj == '-' || obj == '') return 0;
+            if (typeof obj === 'string' || obj instanceof String) return +obj.replace(/\D/g, '');
+            return +obj;
+        }
+
+        function generalAlert(message){
+            $.toast({
+                text: message,
+                textAlign: 'left', 
+                hideAfter: 4000,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
+    })
+</script>
