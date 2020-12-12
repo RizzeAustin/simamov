@@ -3512,6 +3512,7 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 	const data = xlsx.parse(file_path);
 	//validasi
 	var is_notvalid = false;
+	// console.log(data[0].data);
 	_.each(data[0].data, function(item, index, list){
 		//kode (kolom 0 di excel)
 		var c0 = item[0];
@@ -3520,6 +3521,7 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 		} else{
 			c0 = item[0].toString().replace(/^\s+|\s+$/g,'');
 		}
+		console.log(item);
 
 		if(c0.match(/^\d{3}\.\d{2}\.\d{2}$/)){ //program
 			if(!item[1]){
@@ -3552,8 +3554,25 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id){
 				return;
 			}
 		}else if(c0 == ''){ //detail
-			if(!item[1] || item[2] === '' || !item[3] || item[4] === '' || item[5] === ''){
+			if(!item[1]){
 				is_notvalid = true;
+				console.log('1 salah bang');
+				return;
+			} else if (item[2] === ''){
+				is_notvalid = true;
+				console.log('2 salah bang');
+				return;
+			} else if (!item[3]){
+				is_notvalid = true;
+				console.log('3 salah bang');
+				return;
+			} else if (item[4] === ''){
+				is_notvalid = true;
+				console.log('4 salah bang');
+				return;
+			} else if (item[5] === ''){
+				is_notvalid = true;
+				console.log('5 salah bang');
 				return;
 			}
 		}

@@ -1,3 +1,5 @@
+// mongorestore -d simamov D:\simamov\db\simamov
+
 //====== MODUL ======//
 //load framework express
 var express = require('express');
@@ -157,6 +159,9 @@ app.use('/logout', logout);
 //BANTUAN
 var bantuan = require('./controllers/bantuan.js');
 app.use('/bantuan', bantuan);
+//LOKET
+var loket = require('./controllers/loket.js');
+app.use('/loket', loket);
 
 //route jika halaman tidak ditemukan
 app.use(function(req, res){
@@ -190,6 +195,7 @@ io.on('connection', function(client) {
 	pegawai.socket(io, connections, client);
 	admin.socket(io, connections, client);
 	login.socket(io, connections, client);
+	loket.socket(io, connections, client);
 
 	client.on('join', function(data) {
     	client.emit('messages', 'Terhubung ke server.');

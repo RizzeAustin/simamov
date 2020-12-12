@@ -1,0 +1,94 @@
+<div class="animated fadeIn">
+    <div class="card" id="new">
+        <div class="card-header"><i class="icon-pencil"></i> E-LOKET</div>
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a id="pok_summary_tab" class="nav-link" data-toggle="tab" href="#pengajuan" role="tab"
+                                aria-control=""><i class="icon-bell"></i> Pengajuan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="pok_entry_tab" class="nav-link active" data-toggle="tab" href="#diproses" role="tab"
+                                aria-control=""><i class="icon-hourglass"></i> Diproses</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="pok_edit_tab" class="nav-link" data-toggle="tab" href="#ditolak" role="tab"
+                                aria-control=""><i class="icon-close"></i> Ditolak</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane" id="pengajuan" role="tabpanel">
+                            <h1>HALO INI FORM PENGAJUAN</h1>
+                            <form id="loket_submit" method="POST" action="loket/submit">
+                                <div class="form-group row">
+                                    <label for="">Program</label>
+                                    <input type="text" id="pok_program" name="pok_name" class="form-control">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Kegiatan</label>
+                                    <input type="text" id="pok_kegiatan" name="pok_kegiatan" class="form-control">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Output</label>
+                                    <input type="text" id="pok_output" name="pok_output" class="form-control">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">SubOutput</label>
+                                    <input type="text" id="pok_suboutput" name="pok_suboutput" class="form-control">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Komponen</label>
+                                    <input type="text" id="pok_komponen" name="pok_komponen" class="form-control">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">SubKomponen</label>
+                                    <input type="text" id="pok_subkomponen" name="pok_subkomponen" class="form-control">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Akun</label>
+                                    <input type="text" id="pok_akun" name="pok_akun" class="form-control">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Detail</label>
+                                    <input type="text" id="pok_detail" name="pok_detail" class="form-control">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="">Jumlah Dana</label>
+                                    <input type="text" id="pok_dana" name="pok_dana" class="form-control">
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="entri_submit" type="submit" class="btn btn-primary">Minta Dana</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane active" id="diproses" role="tabpanel">
+                            <h1>HALO INI LIST DIPROSES</h1>
+                        </div>
+                        <div class="tab-pane" id="ditolak" role="tabpanel">
+                            <h1>HALO INI LIST DITOLAK</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    socket = io.connect($(location).attr('host'));
+
+    //untuk hak akses
+    var user_aktiv = '{{username}}';
+
+    $(document).ready(function () {
+
+        socket.on('form_penarikan', function (data) {
+            generalAlert('Form telah disubmit');
+        })
+
+    });
+
+</script>
