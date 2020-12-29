@@ -1,1 +1,1 @@
-SIMAMOV v1.0
+SIMAMOV --v
