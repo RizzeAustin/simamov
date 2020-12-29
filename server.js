@@ -1,5 +1,7 @@
 // mongorestore -d simamov D:\simamov\db\simamov
 
+// mongorestore --host "127.0.0.1:27017/skripsi_221709865" --username 221709865 --password L232efzfYmtUuGI --authenticationDatabase admin -d simamov /home/221709865/simamov/db/simamov
+
 //====== MODUL ======//
 //load framework express
 var express = require('express');
@@ -160,7 +162,7 @@ app.use('/logout', logout);
 var bantuan = require('./controllers/bantuan.js');
 app.use('/bantuan', bantuan);
 //LOKET
-var loket = require('./controllers/loket.js');
+var loket = require('./controllers/loketController.js');
 app.use('/loket', loket);
 
 //route jika halaman tidak ditemukan

@@ -1,3 +1,4 @@
+const { date } = require('jszip/lib/defaults');
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
@@ -7,22 +8,23 @@ var LoketSchema = new Schema({
         type: Number,
         default: new Date().getFullYear()
     },
-    'kdprogram': String,
-    'kdgiat': String,
-    'kdoutput': String,
-    'kdsoutput': String,
-    'kdkmpnen': String,
-    'kdskmpnen': String,
-    'kdakun': String,
-    // 'noitem': Number,
-    'uraian': String,
-    'uraianbaru': String,
+    'tanggalpersetujuan':{
+        'validator': Date,
+        'reviewer': Date,
+        'bendahara': Date,
+        'ditolak': Array,
+    },
     'jumlah': Number,
+    'keterangandana': String,
+    'dokumen': {
+        'A': Boolean,
+        'B': Boolean,
+        'C': Boolean,
+    },
     'status': {
         type: String,
-        default: 'menunggu'
+        default: 'validasi'
     },
-    'ditolak': Array,
     'timestamp': {
         type: Number,
         required: true
@@ -30,7 +32,10 @@ var LoketSchema = new Schema({
     'pengentry': {
         type: String,
         ref: 'User'
-    }
+    },
+    'unit': String,
+    'namapetugas': String,
+    'keteranganpetugas': String,
 }, { collection: 'loket', strict: false });
 
 module.exports = mongoose.model('Loket', LoketSchema);

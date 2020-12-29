@@ -41,12 +41,27 @@ loket.socket = function(io, connections, client){
 }
 
 loket.get('/', function (req, res){
-    res.render('loket/loket', {layout: false, admin: req.session.jenis});
+
+    DetailBelanja.find({kdakun: '522192', jumlah: {$gte: 4000000}}, function (err, data) {
+        if (err) console.log(err)
+        // console.log(data)
+        // console.log(data[0].jumlah)
+        for (let index = 0; index < data.length; index++) {
+            console.log(data[index].jumlah)
+        }
+
+        res.render('loket/loket_bendahara', {
+            layout: false, 
+            admin: req.session.jenis,
+            duit: data[0].jumlah
+        });
+    })
+
 })
 
 loket.post('/submit', function(req, res){
     console.log('form penarikan disubmit');
-    loket.connections[req.session.user_id].emit('form_penarikan');
+    // loket.connections[req.session.user_id].emit('form_penarikan');
 })
 
 
