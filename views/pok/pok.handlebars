@@ -163,6 +163,22 @@
                                             <label for="jenis_item" class="col-md-3 form-control-label no-left-padding">Tambah:</label>
                                             <div class="col-md-9">
                                                 <select class="col-md-9 form-control" id="jenis_item" name="jenis_item" size="1">
+                                                    {{#each thang}}
+                                                    <option value="none" selected="selected">--pilih--</option>
+                                                    <option value="program">Program</option>
+                                                    <option value="kegiatan">Kegiatan</option>
+                                                    <option value="output">Output</option>
+                                                    <option value="soutput">Sub Output</option>
+                                                    <option value="komponen">Komponen</option>
+                                                    <option value="skomponen">Sub Komponen</option>
+                                                    <option value="akun">Akun</option>
+                                                    <option value="detail">Detail Belanja</option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+                                            <label for="jenis_item" class="col-md-3 form-control-label no-left-padding">Tambah:</label>
+                                            <div class="col-md-9">
+                                                <select class="col-md-9 form-control" id="jenis_item" name="jenis_item" size="1">
                                                     <option value="none" selected="selected">--pilih--</option>
                                                     <option value="program">Program</option>
                                                     <option value="kegiatan">Kegiatan</option>

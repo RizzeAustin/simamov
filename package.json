@@ -20,6 +20,8 @@
     "csvtojson": "1.1.7",
     "docxtemplater": "3.0.6",
     "dotenv": "4.0.0",
+    "edge": "^7.10.1",
+    "edge-js": "^14.3.2",
     "excel4node": "1.2.1",
     "express": "4.15.3",
     "express-brute": "1.0.1",
