@@ -1,7 +1,9 @@
 // mongorestore -d simamov D:\simamov\db\simamov
 
 //server
-// mongorestore --host "127.0.0.1:27017/skripsi_221709865" --username 221709865 --password L232efzfYmtUuGI --authenticationDatabase admin -d simamov /home/221709865/simamov/db/simamov
+// mongorestore --host "127.0.0.1:27017" --username 221709865 --password L232efzfYmtUuGI --authenticationDatabase skripsi_221709865 -d skripsi_221709865 /home/221709865/simamov/db/simamov
+// mongo --username 221709865 --password L232efzfYmtUuGI --authenticationDatabase skripsi_221709865
+
 
 //====== MODUL ======//
 //load framework express
