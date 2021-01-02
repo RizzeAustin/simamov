@@ -47,8 +47,8 @@
                                             <label for="" class="col-md-2 form-control-label">
                                                 Keterangan Pengajuan Dana</label>
                                             <div class="col">
-                                                <input type="text" id="keterangandana" name="keterangandana"
-                                                    class="form-control form-control-lg">
+                                                <textarea class="form-control" id="keterangandana" name="keterangandana"
+                                                    rows="3"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -83,6 +83,14 @@
                                                         Dokumen C
                                                     </label>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-md-2 form-control-label">
+                                                Surat Pertanggung Jawaban</label>
+                                            <div class="col input-group">
+                                                <input type="file" class="form-control" id="filespj" name="filespj"
+                                                    aria-label="Unggah" accept=".xlsx,.xls">
                                             </div>
                                         </div>
                                     </div>
@@ -154,9 +162,9 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button id="tolak_pengajuan" type="submit" class="btn btn-danger">
+                                    <button id="tolak_btn" type="submit" class="btn btn-danger">
                                         Tolak pengajuan</button>
-                                    <button id="konfirmasi_validator" type="submit" class="btn btn-success">
+                                    <button id="konfirmasi_reviewer_btn" type="submit" class="btn btn-success">
                                         Konfirmasi Pengajuan</button>
                                 </div>
                             </form>
@@ -185,7 +193,35 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="konfirmasi_tolak_form" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-primary" role="document" style="max-width: 500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Keterangan Penolakan</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0 15px;">
+                <div style="padding: 15px;">
+                    <div class="row">
+                        <div class="col">
+                            <textarea class="form-control" id="keterangan_penolakan_validator" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Batalkan</button>
+                <button type="button" class="btn btn-danger" id="tolak_validator_btn">Konfirmasi</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div>
+<!-- /.modal -->
 
 <script src="/js/handsontable.full.min.js"></script>
 <script src="/js/moment.min.js"></script>
@@ -201,7 +237,7 @@
     $('#pok_dana').val({{ duit }});
 </script>
 
-{{!--
+
 <script type="text/javascript">
     socket = io.connect($(location).attr('host'));
 
@@ -210,10 +246,13 @@
 
     $(document).ready(function () {
 
-        socket.on('form_penarikan', function (data) {
-            generalAlert('Form telah disubmit');
+        //        socket.on('form_penarikan', function (data) {
+        //            generalAlert('Form telah disubmit');
+        //        })
+        $('#tolak_btn').click(function () {
+            //tampilkan modal
+            $('#konfirmasi_tolak_form').modal('show');
         })
-
     });
 
-</script> --}}
+</script>

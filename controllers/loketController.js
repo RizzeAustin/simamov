@@ -40,7 +40,7 @@ loket.socket = function(io, connections, client){
     
 }
 
-loket.get('/', function (req, res){
+loket.get('/user', function (req, res){
 
     DetailBelanja.find({kdakun: '522192', jumlah: {$gte: 4000000}}, function (err, data) {
         if (err) console.log(err)
@@ -50,13 +50,48 @@ loket.get('/', function (req, res){
             console.log(data[index].jumlah)
         }
 
-        res.render('loket/loket_bendahara', {
+        res.render('loket/loket_user', {
             layout: false, 
             admin: req.session.jenis,
             duit: data[0].jumlah
         });
     })
 
+})
+
+loket.get('/validator', function (req, res) {
+    res.render('loket/loket_validator',{
+        layout: false, 
+        admin: req.session.jenis,
+    })
+})
+
+loket.get('/reviewer', function (req, res) {
+    res.render('loket/loket_reviewer',{
+        layout: false, 
+        admin: req.session.jenis,
+    })
+})
+
+loket.get('/bendahara', function (req, res) {
+    res.render('loket/loket_bendahara',{
+        layout: false, 
+        admin: req.session.jenis,
+    })
+})
+
+loket.get('/bank', function (req, res) {
+    res.render('loket/loket_bank',{
+        layout: false, 
+        admin: req.session.jenis,
+    })
+})
+
+loket.get('/arsiparis', function (req, res) {
+    res.render('loket/loket_arsiparis',{
+        layout: false, 
+        admin: req.session.jenis,
+    })
 })
 
 loket.post('/submit', function(req, res){
