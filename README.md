@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 SIMAMOV v1.0
 -----------
 
@@ -46,6 +45,4 @@ Fungsi secara umum:
 
 
 Untuk Persyaratan Sistem, Instalasi, dan Panduan Penggunaan, klik <a href="https://git.stis.ac.id/Shamad/simamov/wikis/home">di sini</a>.
-=======
 SIMAMOV --v
->>>>>>> 8f74f561b98aa30e6fc45be9fbb3cb1f60668186
