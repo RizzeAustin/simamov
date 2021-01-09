@@ -8,11 +8,12 @@ var LoketSchema = new Schema({
         type: Number,
         default: new Date().getFullYear()
     },
-    'tanggalpersetujuan':{
+    'tanggalpersetujuan': {
         'validator': Date,
         'reviewer': Date,
         'bendahara': Date,
-        'ditolak': Array,
+        'bank': Date,
+        'arsiparis': Date,
     },
     'jumlah': Number,
     'keterangandana': String,
@@ -23,7 +24,7 @@ var LoketSchema = new Schema({
     },
     'status': {
         type: String,
-        default: 'validasi'
+        default: 'validator'
     },
     'timestamp': {
         type: Number,
@@ -34,8 +35,22 @@ var LoketSchema = new Schema({
         ref: 'User'
     },
     'unit': String,
-    'namapetugas': String,
+    'namapetugas': {
+        'validator': String,
+        'reviewer': String,
+        'bendahara': String,
+        'bank': String,
+        'arsiparis': String,
+    },
     'keteranganpetugas': String,
+    'kdprogram': String,
+    'kdkegiatan': String,
+    'kdoutput': String,
+    'kdsoutput': String,
+    'kdkomponen': String,
+    'kdskomponen': String,
+    'kdakun': String,
+    'detail': String,
 }, { collection: 'loket', strict: false });
 
 module.exports = mongoose.model('Loket', LoketSchema);
