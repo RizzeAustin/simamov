@@ -1,0 +1,152 @@
+<div class="animated fadeIn">
+    <div class="card" id="new">
+        <div class="card-header"><i class="icon-wrench"></i> Pengaturan SPJ</div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a id="templateTab" class="nav-link active" data-toggle="tab" href="#templateTabchild" role="tab" aria-controls="templateTabchild"><i class="icon-doc"></i> Template</a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="templateTabchild" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6>SPJ Honor</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button id="btn-honor-template" type="button">Download Template</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px;">
+                                            <div class="col-md-6">
+                                                <form id="form-honor" enctype="multipart/form-data" method="post" action="/spj/pengaturan/unggah_template/honor" class="form-template">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <input id="template_file" name="template_file" type="file" accept=".xlsx" required/>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="row" style="margin-top: 10px">
+                                                        <div class="col-md-12">
+                                                            <button id="btn-form-honor" type="submit">Unggah</button> 
+                                                            <button jenis="honor" class="pulihkan-template" type="button">Pulihkan</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6>SPJ Transport Dosen Non STIS</h6>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button id="btn-transport-template" type="button">Download Template</button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px;">
+                                            <div class="col-md-6">
+                                                <form id="form-transport" enctype="multipart/form-data" method="post" action="/spj/pengaturan/unggah_template/transport" class="form-template">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <input id="template_file" name="template_file" type="file" accept=".xlsx" required/>
+                                                        </div>
+                                                    </div> 
+                                                    <div class="row" style="margin-top: 10px">
+                                                        <div class="col-md-12">
+                                                            <button id="btn-form-transport" type="submit">Unggah</button> 
+                                                            <button jenis="transport" class="pulihkan-template" type="button">Pulihkan</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    socket = io.connect($(location).attr('host'));
+
+    $(document).ready(function(){
+        $("#btn-transport-template").click(function(){
+            location.href = location.protocol+'//'+window.location.host+'/template/TransportTemplate.xlsx';
+        })
+
+        $("#btn-honor-template").click(function(){
+            location.href = location.protocol+'//'+window.location.host+'/template/HonorTemplate.xlsx';
+        })
+
+        $(".pulihkan-template").click(function(){
+            socket.emit('spj_pulihkan_template', $(this).attr('jenis'), function(status){
+                    if(status === 'sukses'){
+                        generalAlert('Berhasil dipulihkan.');
+                    } else {
+                        generalAlert('Gagal dipulihkan. Mohon hubungi admin.');
+                    }
+            });  
+        })
+
+        //submit unggah pok
+        $('.form-template').on('submit', function(e) {
+            e.preventDefault();
+            var id = $(this).attr('id');
+            var url = $(this).attr('action');
+            $("#btn"+id).prop("disabled",true);
+            $("#btn"+id).html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#btn"+id).text());
+            var formData = new FormData($(this)[0]);
+
+            $.ajax({
+                url: location.protocol+'//'+window.location.host+url,
+                type: 'POST',
+                data: formData,
+                async: false,
+                error: function(){
+                    $("#pok_unggah_button").prop("disabled",false);
+                    $("#pok_unggah_button").html('Unggah');
+                },
+                success: function(status){
+                    if(status == 'sukses'){
+                        generalAlert('Template berhasil diupdate');
+                    } else {
+                        generalAlert('Gagal diupdate. Mohon hubungi admin.');
+                    }
+                    $("#btn"+id).prop("disabled",false);
+                    $("#btn"+id).html('Unggah');
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        });
+
+        function generalAlert(message){
+            $.toast({
+                text: message,
+                textAlign: 'left', 
+                hideAfter: 4000,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
+    })
+</script>

@@ -1,0 +1,198 @@
+<div class="animated fadeIn">
+    <div class="card" id="new">
+        <div class="card-header"><i class="icon-speedometer"></i> Beranda</div>
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>Selamat Datang, {{username}}!</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="container" style="width: 710px; height: 500px; margin: 0 auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/.row-->
+</div>
+
+<script src="/js/highcharts.js"></script>
+<script src="/js/data.js"></script>
+<script src="/js/drilldown.js"></script>
+
+
+<script type="text/javascript">
+    socket = io.connect($(location).attr('host'));
+    $(document).ready(function(){
+        // Create the chart
+        Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+                style: {
+                    fontFamily: 'Helvetica'
+                }
+            },
+            title: {
+                text: 'Realisasi Anggaran STIS, September 2017'
+            },
+            subtitle: {
+                text: 'Nilai realisasi per 8 September 2017.'
+            },
+            xAxis: {
+                type: 'Program',
+                categories: ['Realisasi 2017']
+            },
+            yAxis: {
+                title: {
+                    text: 'Persentase (%)'
+                },
+                softMin: 0, max: 100,
+                tickInterval: 5
+
+            },
+            legend: {
+                enabled: true
+            },
+            credits: {
+                enabled: false
+            },
+            colors: [
+            "#B4BAB5",
+            "#3046CD",
+            "#42E055"],
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y:.1f}%'
+                    },
+                    stacking: 'normal'
+                }
+            },
+
+            tooltip: {
+                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat: '<span style="color:{point.color}"><b>{point.y:.2f}%</b> dari total anggaran<br/>'
+            },
+
+            series: [{
+                name: 'Sisa Dana',
+                data: [{
+                    name: 'Animals',
+                    y: 45
+                }]
+            }, {
+                name: 'Bulan Ini',
+                data: [{
+                    name: 'Animals',
+                    y: 5
+                }]
+            }, {
+                name: 'Sampai Bulan Lalu',
+                data: [{
+                    name: 'Animals',
+                    y: 50
+                }]
+            }]
+            // ,
+            // drilldown: {
+            //     activeDataLabelStyle: {
+            //         color: 'white',
+            //         textShadow: '0 0 2px black, 0 0 2px black'
+            //     },
+            //     series: [{
+            //         id: 'animals',
+            //         name: 'Animals',
+            //         data: [
+            //             ['Cats', 4],
+            //             ['Dogs', 2],
+            //             ['Cows', 1],
+            //             ['Sheep', 2],
+            //             ['Pigs', 1]
+            //         ]
+            //     }, {
+            //         id: 'fruits',
+            //         name: 'Fruits',
+            //         data: [
+            //             ['Apples', 4],
+            //             ['Oranges', 2]
+            //         ]
+            //     }, {
+            //         id: 'cars',
+            //         name: 'Cars',
+            //         data: [
+            //             ['Toyota', 4],
+            //             ['Opel', 2],
+            //             ['Volkswagen', 2]
+            //         ]
+            //     },{
+            //         id: 'animals2',
+            //         name: 'Animals2',
+            //         data: [
+            //             ['Cats', -3],
+            //             ['Dogs', 5],
+            //             ['Cows', 6],
+            //             ['Sheep', 2],
+            //             ['Pigs', 2]
+            //         ]
+            //     }, {
+            //         id: 'fruits2',
+            //         name: 'Fruits2',
+            //         data: [
+            //             ['Apples', 1],
+            //             ['Oranges', 5]
+            //         ]
+            //     }, {
+            //         id: 'cars2',
+            //         name: 'Cars2',
+            //         data: [
+            //             ['Toyota', 2],
+            //             ['Opel', 3],
+            //             ['Volkswagen', 2]
+            //         ]
+            //     }]
+            // }
+        });
+
+
+        // series: [{
+        //     name: 'Program Dukungan Manajemen dan Pelaksanaan Tugas Teknis Lainnya BPS',
+        //     colorByPoint: true,
+        //     data: [{
+        //         name: 'Kegiatan',
+        //         y: 5,
+        //         drilldown: 'animals'
+        //     },['Dogs', 2]]
+        // }],
+        // drilldown: {
+        //     series: [{
+        //         id: 'animals',
+        //         name: 'Penyelenggaraan Sekolah Tinggi Ilmu Statistik (STIS)',
+        //         data: [{
+        //             name: 'Cats',
+        //             y: 4,
+        //             drilldown: 'cats'
+        //         },{
+        //             name: 'Cats222',
+        //             y: 4,
+        //             drilldown: 'cats2'
+        //         }, ['Dogs', 2],
+        //             ['Cows', 1],
+        //             ['Sheep', 2],
+        //             ['Pigs', 1]
+        //         ]
+        //     }, {
+
+        //         id: 'cats',
+        //         data: [1, 2, 3]
+        //     }, {
+
+        //         id: 'cats2',
+        //         data: [1, 2, 3]
+        //     }]
+        // }
+    })
+</script>
