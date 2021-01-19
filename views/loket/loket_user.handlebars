@@ -4,121 +4,139 @@
         <div class="card-block">
             <div class="row">
                 <div class="col-md-12">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a id="form_pengajuan_dana" class="nav-link" data-toggle="tab" href="#pengajuandana"
-                                role="tab" aria-control=""><i class="icon-bell"></i> Form Pengajuan Dana</a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="daftar_pengajuan_dana" class="nav-link active" data-toggle="tab" href="#statusdana"
-                                role="tab" aria-control=""><i class="icon-hourglass"></i> Daftar Pengajuan Dana</a>
-                        </li>
-                    </ul>
                     <div class="tab-content">
-                        {{!-- loket pengajuan --}}
-                        <div class="tab-pane row" id="pengajuandana" role="tabpanel">
-                            <form id="loket_submit" method="POST" action="loket/submit" class="modal-body">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Nama Pengguna</label>
-                                            <div class="col">
-                                                <select class="form-control" id="nama_pengguna" name="nama_pengguna">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Unit Pengguna</label>
-                                            <div class="col">
-                                                <select class="form-control" id="unit_pengguna" name="unit_pengguna">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Tanggal Pengajuan</label>
-                                            <div class="col">
-                                                <input type="date" id="tanggalpengajuan" name="tanggalpengajuan"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">
-                                                Keterangan Pengajuan Dana</label>
-                                            <div class="col">
-                                                <textarea class="form-control" id="keterangandana" name="keterangandana"
-                                                    rows="3"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Jumlah Dana</label>
-                                            <label class="ml-2 form-control-label" for="">Rp</label>
-                                            <div class="col">
-                                                <input type="text" id="jumlahdana" name="jumlahdana"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Dokumen</label>
-                                            <div class="col ml-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="dokumenA">
-                                                    <label class="form-check-label" for="dokumenA">
-                                                        Dokumen A
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="dokumenB">
-                                                    <label class="form-check-label" for="dokumenB">
-                                                        Dokumen B
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="dokumenC">
-                                                    <label class="form-check-label" for="dokumenC">
-                                                        Dokumen C
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">
-                                                Surat Pertanggung Jawaban</label>
-                                            <div class="col input-group">
-                                                <input type="file" class="form-control" id="filespj" name="filespj"
-                                                    aria-label="Unggah" accept=".xlsx,.xls">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button id="entri_submit" type="submit" class="btn btn-primary">
-                                                Ajukan Penarikan</button>
+                        {{!-- form pengajuan user --}}
+                        <div class="row col">
+                            <h5>UNIT</h5>
+                        </div>
+                        <form id="loketUnit" method="POST" action="loket/unitSubmit" class="modal-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Unit</label>
+                                        <div class="col">
+                                            <input type="text" name="loketUnit" id="loketUnit" class="form-control">
                                         </div>
                                     </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Kode Unit</label>
+                                        <div class="col">
+                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Operator</label>
+                                        <div class="col">
+                                            <input type="text" name="loketOperator" id="loketOperator"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Detail Pengajuan</label>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col ml-1 form-control-label">Program</label>
+                                        <div class="col-md-10">
+                                            <input type="text" name="loketProgram" id="loketProgram"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col ml-1 form-control-label">Kegiatan</label>
+                                        <div class="col-md-10">
+                                            <input type="text" name="loketKegiatan" id="loketKegiatan"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col ml-1 form-control-label">Output</label>
+                                        <div class="col-md-10">
+                                            <input type="text" name="loketOutput" id="loketOutput" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col ml-1 form-control-label">Komponen</label>
+                                        <div class="col-md-10">
+                                            <input type="text" name="loketKomponen" id="loketKomponen"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col ml-1 form-control-label">Akun</label>
+                                        <div class="col-md-10">
+                                            <input type="text" name="loketAkun" id="loketAkun" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col ml-1 form-control-label">Tgl Pelaksanaan</label>
+                                        <div class="col-md-10">
+                                            <input type="date" name="loketTglPelaksanaan" id="loketTglPelaksanaan"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col ml-1 form-control-label">Detail SPJ</label>
+                                        <div class="col-md-10">
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col ml-1 form-control-label">Nilai</label>
+                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <div class="col-md-9">
+                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Checklist</label>
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2" style="text-align:center">Unit</label>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">SPJ</label>
+                                        <input class="col-md-2 form-check" type="checkbox" value="True"
+                                            name="checklistSpjUnit" id="checklistSpjUnit">
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">Daftar Hadir</label>
+                                        <input class="col-md-2 form-check" type="checkbox" value="True"
+                                            name="checklistDaftarHadirUnit" id="checklistDaftarHadirUnit">
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">Dokumentasi</label>
+                                        <input class="col-md-2 form-check" type="checkbox" value="True"
+                                            name="checklistDokumentasiUnit" id="checklistDokumentasiUnit">
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">Notulensi</label>
+                                        <input class="col-md-2 form-check" type="checkbox" value="True"
+                                            name="checklistNotulensiUnit" id="checklistNotulensiUnit">
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">CV Narasumber</label>
+                                        <input class="col-md-2 form-check" type="checkbox" value="True"
+                                            name="checklistCvUnit" id="checklistCvUnit">
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Upload SPJ</label>
+                                        <div class="col input-group">
+                                            <input type="file" class="form-control" name="filespj" id="filespj"
+                                                aria-label="Unggah" accept=".xlsx,.xls">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button id="simpan" type="submit" class="btn btn-primary">Simpan</button>
+                                        <button id="kirim" type="submit" class="btn btn-success">Kirim</button>
+                                    </div>
                                 </div>
-                            </form>
-                        </div>
-                        {{!-- list pengajuan --}}
-                        <div class="tab-pane active" id="statusdana" role="tabpanel">
-                            <table id="table_loket_user" class="table table-bordered" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Pengguna</th>
-                                        <th>Unit</th>
-                                        <th>tanggal Pengajuan</th>
-                                        <th>Jumlah Dana</th>
-                                        <th>Status</th>
-                                        <th>Keterangan Pengajuan Dana</th>
-                                        <th>Pilihan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

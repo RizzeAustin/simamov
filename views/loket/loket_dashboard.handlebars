@@ -1,0 +1,117 @@
+<div class="animated fadeIn">
+    <div class="card" id="new">
+        <div class="card-header"><i class="icon-pencil"></i> E-LOKET</div>
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tab-content">
+                        {{!-- table transaksi selesai --}}
+                        <div class="row col">
+                            <h5>I. TRANSAKSI SELESAI</h5>
+                        </div>
+                        <table id="tableSelesai" class="table table-bordered" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nomor Transaksi</th>
+                                    <th>Tgl Selesai Transaksi</th>
+                                    <th>Tgl Pembayaran</th>
+                                    <th>Nilai Pengajuan</th>
+                                    <th>Pajak</th>
+                                    <th>Nilai Pembayaran</th>
+                                    <th>Metode Pembayaran</th>
+                                    <th>Deskripsi</th>
+                                    <th>Cek Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        {{!-- table pengajuan --}}
+                        <div class="row col">
+                            <h5>II. PENGAJUAN</h5>
+                        </div>
+                        <table id="tablePengajuan" class="table table-bordered" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kode Unit</th>
+                                    <th>Nomor Transaksi</th>
+                                    <th>Tgl Pengajuan</th>
+                                    <th>Nilai Pengajuan</th>
+                                    <th>Deskripsi</th>
+                                    <th>Posisi</th>
+                                    <th>Status</th>
+                                    <th>Catatan</th>
+                                    <th>Cek Akun</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        {{!-- realisasi --}}
+                        <div class="row col">
+                            <h5 class="row col-12">III. REALISASI</h5><br>
+                            <h6 class="row col-12">a. Realisasi per unit</h6><br>
+                            <h6 class="row col-12">b. Total realisasi</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/handsontable.full.min.js"></script>
+<script src="/js/moment.min.js"></script>
+<script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+<script src="/js/highcharts.js"></script>
+<script src="/js/data.js"></script>
+<script src="/js/drilldown.js"></script>
+<script src="/js/exporting.js"></script>
+<script src="/js/offline-exporting.js"></script>
+
+<script>
+    console.log({{ daftarP }})
+</script>
+
+
+{{!--
+<script id="tabPengajuan">
+    { {#each daftar } }
+    <tr>
+        <td></td>
+        <td>{{ kodeUnit }}</td>
+        <td>{{ nomorTransaksi }}</td>
+        <td>{{ tanggal.pengajuan }}</td>
+        <td>{{ nilaiPengajuan }}</td>
+        <td>{{ detail }}</td>
+        <td>{{ posisi }}</td>
+        <td>{{ status }}</td>
+        <td>{{ catatan }}</td>
+        <td></td>
+    </tr>
+    {
+        {
+            /each } }
+</script>
+
+
+<script type="text/javascript">
+            socket = io.connect($(location).attr('host'));
+
+            //untuk hak akses
+            var user_aktiv = '{{username}}';
+
+            $(document).ready(function () {
+
+                var templateTablePengajuan = $('#tabPengajuan');
+                var tablePengajuan = Handlebars.compile(templateTablePengajuan);
+
+                $('#tablePengajuan').html(tablePengajuan);
+
+
+            });
+
+</script> --}}
