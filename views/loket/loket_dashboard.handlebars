@@ -72,46 +72,15 @@
 <script src="/js/exporting.js"></script>
 <script src="/js/offline-exporting.js"></script>
 
-<script>
-    console.log({{ daftarP }})
-</script>
-
-
-{{!--
-<script id="tabPengajuan">
-    { {#each daftar } }
-    <tr>
-        <td></td>
-        <td>{{ kodeUnit }}</td>
-        <td>{{ nomorTransaksi }}</td>
-        <td>{{ tanggal.pengajuan }}</td>
-        <td>{{ nilaiPengajuan }}</td>
-        <td>{{ detail }}</td>
-        <td>{{ posisi }}</td>
-        <td>{{ status }}</td>
-        <td>{{ catatan }}</td>
-        <td></td>
-    </tr>
-    {
-        {
-            /each } }
-</script>
-
 
 <script type="text/javascript">
-            socket = io.connect($(location).attr('host'));
+    const socket = io.connect($(location).attr('host'));
 
-            //untuk hak akses
-            var user_aktiv = '{{username}}';
+    //untuk hak akses
+    var user_aktiv = '{{username}}';
 
-            $(document).ready(function () {
+    $(document).ready(function () {
+        console.log({{ daftarP }})
+    });
 
-                var templateTablePengajuan = $('#tabPengajuan');
-                var tablePengajuan = Handlebars.compile(templateTablePengajuan);
-
-                $('#tablePengajuan').html(tablePengajuan);
-
-
-            });
-
-</script> --}}
+</script>

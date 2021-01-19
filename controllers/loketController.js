@@ -42,34 +42,33 @@ loket.socket = function(io, connections, client) {
     loket.connections = connections;
     loket.io = io;
 
+    io.on('connect', () => {
+        Loket.find({}, function(err, data) {
+            if (err) console.log(err)
 
-    // Loket.find({}, function(err, data) {
-    //     if (err) {
-    //         errorHandler(client, 'Database Error. Mohon hubungi admin.');
-    //         return;
-    //     }
+            _.each(data, function(dataLoket) {
+                const temp = []
+                temp.push(
+                    dataLoket.kodeUnit,
+                    dataLoket.nomorTransaksi,
+                    dataLoket.tanggal.pengajuan,
+                    dataLoket.nilaiPengajuan,
+                    dataLoket.detail,
+                    dataLoket.posisi,
+                    dataLoket.status,
+                    dataLoket.catatan,
+                )
+                daftarPengajuan.push(temp)
+            })
 
-    //     _.each(data, function(dataLoket) {
-    //         daftarPengajuan.push(
-    //             dataLoket.kodeUnit,
-    //             dataLoket.nomorTransaksi,
-    //             dataLoket.tanggal.pengajuan,
-    //             dataLoket.nilaiPengajuan,
-    //             dataLoket.detail,
-    //             dataLoket.posisi,
-    //             dataLoket.status,
-    //             dataLoket.catatan,
-    //         )
-    //     })
-
-    // })
-
-    Loket.find({}, function(err, data) {
-        console.log(data)
+            // daftarPengajuan = JSON.stringify(Object.assign({}, daftarPengajuan))
+            // daftarPengajuan = Object.assign({}, daftarPengajuan)
+            // console.log(daftarPengajuan)
+        })
     })
 
-
 }
+
 
 loket.get('/dashboard', function(req, res) {
 
