@@ -29,58 +29,44 @@ var Loket = require(__dirname + "/../model/Loket.model");
 //Short syntax tool
 var _ = require("underscore");
 const { json } = require('body-parser');
-const { db } = require('../model/Loket.model');
+const { db, count, translateAliases } = require('../model/Loket.model');
 
 //Socket.io
 loket.connections;
 loket.io;
 
-var daftarPengajuan = [];
+//untuk menyimpan daftar pengajuan user
+var daftarPengajuan;
 
 loket.socket = function(io, connections, client) {
 
     loket.connections = connections;
     loket.io = io;
 
-    io.on('connect', () => {
-        Loket.find({}, function(err, data) {
+    io.on('connection', (socket) => {
+        Loket.find({}, (err, data) => {
             if (err) console.log(err)
-
-            _.each(data, function(dataLoket) {
-                const temp = []
-                temp.push(
-                    dataLoket.kodeUnit,
-                    dataLoket.nomorTransaksi,
-                    dataLoket.tanggal.pengajuan,
-                    dataLoket.nilaiPengajuan,
-                    dataLoket.detail,
-                    dataLoket.posisi,
-                    dataLoket.status,
-                    dataLoket.catatan,
-                )
-                daftarPengajuan.push(temp)
-            })
-
-            // daftarPengajuan = JSON.stringify(Object.assign({}, daftarPengajuan))
-            // daftarPengajuan = Object.assign({}, daftarPengajuan)
-            // console.log(daftarPengajuan)
+                // console.log(JSON.parse(JSON.stringify(data)))
+            daftarPengajuan = JSON.parse(JSON.stringify(data))
         })
     })
 
 }
 
 
+// --------------------   ROUTER   -----------------------
+
 loket.get('/dashboard', function(req, res) {
 
     res.render('loket/loket_dashboard', {
         layout: false,
         admin: req.session.jenis,
-        daftarP: daftarPengajuan,
+        daftar: daftarPengajuan,
     })
 
 })
 
-loket.get('/user', async(req, res) => {
+loket.get('/user', function(req, res) {
 
     // DetailBelanja.find({ kdakun: '522192', jumlah: { $gte: 4000000 } }, function(err, data) {
     //     if (err) console.log(err)
@@ -100,81 +86,118 @@ loket.get('/user', async(req, res) => {
 })
 
 loket.post('/unitSubmit', function(req, res) {
-    // buat nomor transaksi
-    let a = new Date().getFullYear().toString()
-    let b = new Date().getMonth() + 1
-    if (b < 11) {
-        b = '0' + b
-    } else {
-        b = b.toString()
-    }
-
-    const tiket = new Loket({
-        nomorTransaksi: a + b + req.body.loketKodeUnit.toString(),
-        unit: req.body.loketUnit,
-        kodeUnit: req.body.loketKodeUnit,
-        operator: req.body.loketOperator,
-        tanggal: {
-            pengajuan: new Date().toDateString,
-            pelaksanaan: req.body.loketTglPelaksanaan,
-        },
-        detail: req.body.loketDetail,
-        nilaiPengajuan: req.body.loketNilai,
-        checklist: {
-            spj: req.body.checklistSpjUnit,
-            daftarHadir: req.body.checklistDaftarHadirUnit,
-            dokumentasi: req.body.checklistDokumentasiUnit,
-            notulensi: req.body.checklistNotulensiUnit,
-            cvNarasumber: req.body.checklistCvUnit,
-        },
-        filespj: req.body.filespj,
-        posisi: 'validator',
-        status: 'belum selesai'
-    })
 
     try {
+        const tiket = new Loket({
+            nomorTransaksi: noTransaksi(req.body.loketKodeUnit),
+            unit: req.body.loketUnit,
+            kodeUnit: req.body.loketKodeUnit,
+            operator: req.body.loketOperator,
+            tanggal: {
+                pengajuan: new Date(),
+                pelaksanaan: req.body.loketTglPelaksanaan,
+            },
+            detail: req.body.loketDetail,
+            nilaiPengajuan: req.body.loketNilai,
+            checklist: {
+                spj: req.body.checklistSpjUnit,
+                daftarHadir: req.body.checklistDaftarHadirUnit,
+                dokumentasi: req.body.checklistDokumentasiUnit,
+                notulensi: req.body.checklistNotulensiUnit,
+                cvNarasumber: req.body.checklistCvUnit,
+            },
+            filespj: req.body.filespj,
+            posisi: 'ppk',
+            status: 'belum selesai'
+        })
+
+        // console.log('nomor transaksi: ' + noTransaksi(req.body.loketKodeUnit))
+
         tiket.save()
-        console.log(JSON.parse(tiket))
+        console.log(tiket)
+        JSON.parse(JSON.stringify(tiket))
     } catch (error) {
-        res.json({ message: error })
+        console.log(error)
     }
 
 })
 
-// loket.get('/validator', function (req, res) {
-//     res.render('loket/loket_validator',{
-//         layout: false, 
-//         admin: req.session.jenis,
-//     })
-// })
+// --------------------   FUNCTION   -----------------------
 
-// loket.get('/reviewer', function (req, res) {
-//     res.render('loket/loket_reviewer',{
-//         layout: false, 
-//         admin: req.session.jenis,
-//     })
-// })
+// javascript create JSON object from two dimensional Array
+function arrayToJSONObject(arr) {
+    //header
+    var keys = arr[0];
 
-// loket.get('/bendahara', function (req, res) {
-//     res.render('loket/loket_bendahara',{
-//         layout: false, 
-//         admin: req.session.jenis,
-//     })
-// })
+    //vacate keys from main array
+    var newArr = arr.slice(1, arr.length);
 
-// loket.get('/bank', function (req, res) {
-//     res.render('loket/loket_bank',{
-//         layout: false, 
-//         admin: req.session.jenis,
-//     })
-// })
+    var formatted = [],
+        data = newArr,
+        cols = keys,
+        l = cols.length;
+    for (var i = 0; i < data.length; i++) {
+        var d = data[i],
+            o = {};
+        for (var j = 0; j < l; j++)
+            o[cols[j]] = d[j];
+        formatted.push(o);
+    }
+    return formatted;
+}
 
-// loket.get('/arsiparis', function (req, res) {
-//     res.render('loket/loket_arsiparis',{
-//         layout: false, 
-//         admin: req.session.jenis,
+// fungsi membiat nomor transaksi
+function noTransaksi(kodeUnit) {
+    let noUrut = 1
+    let tahun = new Date().getFullYear()
+    let bulan = new Date().getMonth()
+
+    bulan++
+    if (bulan < 10) {
+        bulan = '0' + bulan
+    }
+
+    Loket.count({}, function(err, count) {
+        if (err) console.log(err)
+        noUrut += count
+        if (noUrut < 10) {
+            noUrut = '00' + noUrut
+        } else if (noUrut < 100) {
+            noUrut = '0' + noUrut
+        }
+    })
+
+    return `${tahun}${bulan}${kodeUnit}${noUrut}`
+}
+
+// function noTransaksi(tahun, bulan, kodeUnit) {
+//     const noUrut = 1
+
+//     Loket.count({}, function(err, count) {
+//         if (err) console.log(err)
+//         noUrut =+ count
+
 //     })
-// })
+//     return `${tahun}${bulan}${kodeUnit}${noUrut}`
+
+// }
+
+// function noTransaksi() {
+//     const hitung = () => new Promise((fulfill, reject) => {
+//         Loket.count({}, (err, count) => {
+//             if (err) return reject(err)
+//             return fulfill(count)
+//         })
+//     })
+
+//     let a = 1
+//     hitung()
+//         .then(() => {
+//             a = a + hasil
+//             console.log('hasil: ' + hasil)
+//             console.log('a: ' + a)
+//         })
+// }
 
 // loket.post('/submit', function(req, res){
 //     console.log('form penarikan disubmit');

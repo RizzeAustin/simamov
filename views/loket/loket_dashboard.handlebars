@@ -55,6 +55,7 @@
                             <h6 class="row col-12">a. Realisasi per unit</h6><br>
                             <h6 class="row col-12">b. Total realisasi</h6>
                         </div>
+                        <div id="ting"></div>
                     </div>
                 </div>
             </div>
@@ -72,15 +73,39 @@
 <script src="/js/exporting.js"></script>
 <script src="/js/offline-exporting.js"></script>
 
+<script id="dataTabel" type="text/x-handlebars-template">
+    {{#each daftar}}  
+        <tr>
+            <td>nomer</td>
+            <td>{{this.kodeUnit}}</td>
+            <td>{{this.nomorTransaksi}}</td>
+            <td>{{this.tanggal.pengajuan}}</td>
+            <td>{{this.nilaiPengajuan}}</td>
+            <td>{{this.detail}}</td>
+            <td>{{this.posisi}}</td>
+            <td>{{this.status}}</td>
+            <td>catatan</td>
+        </tr>
+    {{/each}}
+</script>
 
 <script type="text/javascript">
-    const socket = io.connect($(location).attr('host'));
+    // const socket = io.connect($(location).attr('host'));
+
+    var socket = io();
 
     //untuk hak akses
-    var user_aktiv = '{{username}}';
+    // var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
-        console.log({{ daftarP }})
+           
+            var source = $("#dataTabel").html();
+        //    var template = Handlebars.compile(source);
+            console.log(source);
+        //    var html = template({{ testing }});
+        //    $('#tablePengajuan tbody').html(html);
+            $('#tablePengajuan tbody').html(source);
     });
+
 
 </script>

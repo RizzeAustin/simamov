@@ -4,9 +4,9 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var LoketSchema = new Schema({
-    'nomorTransaksi': Number,
+    'nomorTransaksi': String,
     'unit': String,
-    'kodeUnit': Number,
+    'kodeUnit': String,
     'operator': String,
     'kdprogram': String,
     'kdkegiatan': String,
