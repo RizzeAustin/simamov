@@ -55,7 +55,10 @@
                             <h6 class="row col-12">a. Realisasi per unit</h6><br>
                             <h6 class="row col-12">b. Total realisasi</h6>
                         </div>
-                        <div id="ting"></div>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail">
+                            TEST MODAL
+                        </button>
+
                     </div>
                 </div>
             </div>
@@ -63,6 +66,34 @@
     </div>
 </div>
 
+
+{{!-- --------------------------- MODAL ------------------------------ --}}
+
+<div class="modal fade" id="modalDetail" role="dialog" data-backdrop="static" aria-labelledby="modalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="">Detail tiket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row" id="modalDetailTiket">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-primary">Periksa Tiket</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{{!-- --------------------------- SCRIPT ------------------------------ --}}
 <script src="/js/handsontable.full.min.js"></script>
 <script src="/js/moment.min.js"></script>
 <script src="/js/locale/id.js"></script>
@@ -73,10 +104,29 @@
 <script src="/js/exporting.js"></script>
 <script src="/js/offline-exporting.js"></script>
 
-<script id="dataTabel" type="text/x-handlebars-template">
-    {{#each daftar}}  
-        <tr>
-            <td>nomer</td>
+<script id="daftarSelesai" type="text/x-handlebars-template">
+    {{#each daftarSelesai}}
+        <tr id="{{this._id}}">
+            <td></td>
+            <td>{{this.nomorTransaksi}}</td>
+            <td>{{this.tanggal.selesai}}</td>
+            <td>{{this.tanggal.transfer}}</td>
+            <td>{{this.nilaiPengajuan}}</td>
+            <td>{{this.nilaiPajak}}</td>
+            <td>{{this.nilaiTransfer}}</td>
+            <td></td>
+            <td>{{this.detail}}</td>
+            <td>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailSelesai">Lihat Detail</button>
+                <button type="button" class="btn btn-primary">Download SPJ</button>
+            </td>
+        </tr>
+    {{/each}}
+</script>
+<script id="daftarPengajuan" type="text/x-handlebars-template">
+    {{#each daftarPengajuan}}  
+        <tr id="{{this._id}}">
+            <td></td>
             <td>{{this.kodeUnit}}</td>
             <td>{{this.nomorTransaksi}}</td>
             <td>{{this.tanggal.pengajuan}}</td>
@@ -84,7 +134,10 @@
             <td>{{this.detail}}</td>
             <td>{{this.posisi}}</td>
             <td>{{this.status}}</td>
-            <td>catatan</td>
+            <td>{{this.catatan}}</td>
+            <td>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailPengajuan">Lihat Detail</button>
+            </td>
         </tr>
     {{/each}}
 </script>
@@ -98,13 +151,114 @@
     // var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
-           
-            var source = $("#dataTabel").html();
-        //    var template = Handlebars.compile(source);
-            console.log(source);
-        //    var html = template({{ testing }});
-        //    $('#tablePengajuan tbody').html(html);
-            $('#tablePengajuan tbody').html(source);
+
+        function formatTanggal(tgl) {
+            let s = Date.parse(tgl);
+            let d = new Date(s);
+            let tahun = d.getFullYear();
+            let bulan = d.getMonth() + 1;
+            let hari = d.getDate();
+            return `${hari}/${bulan}/${tahun}`
+        }
+
+        //iterasi tabel selsai dan pengjuan
+        var daftarPengajuan = $("#daftarPengajuan").html();
+        $("#tablePengajuan tbody").html(daftarPengajuan);
+
+        var daftarSelesai = $("#daftarSelesai").html();
+        $("#tableSelesai tbody").html(daftarSelesai);
+
+        //lihat detail row terpilih
+        var tableBtnDetail = $("table :button");
+
+        tableBtnDetail.click(function () {
+            var data = $(this).closest('tr').attr('id');
+            //console.log('idtiket:' + data);
+            //console.log('idbutton: ' + this.id)
+            socket.emit('mintaDetailTiket', data);
+        })
+
+        socket.on('kirimDetailTiket', function (detail) {
+
+            //ambil nilai di checklist
+            var check = [];
+            for (key in detail.checklist) {
+                if (detail.checklist.hasOwnProperty(key)) {
+                    var value = detail.checklist[key];
+                    if (value[0] == true) {
+                        check.push(key)
+                    }
+                }
+            };
+
+            var templatePengajuan =
+                '<div class="col-12">' +
+                '<div class="row">' +
+                '<label class="col-2">Unit</label>' +
+                '<p class="col">' + detail.unit + '</p>' +
+                '</div>' +
+                '<div class="row">' +
+                '<label class="col-2">Kode Unit</label>' +
+                '<p class="col">' + detail.kodeUnit + '</p>' +
+                '</div>' +
+                '<div class="row">' +
+                '<label class="col-2">Operator</label>' +
+                '<p class="col">' + detail.operator + '</p>' +
+                '</div>' +
+                '<div class="row">' +
+                '<label class="col-2">Detail POK</label>' +
+                '<div class="col-1">' +
+                '<p>Program</p>' +
+                '<p>Kegiatan</p>' +
+                '<p>Output</p>' +
+                '<p>Komponen</p>' +
+                '<p>Akun</p>' +
+                '</div>' +
+                '<div class="col">' +
+                '<p>' + '</p>' +
+                '<p>' + '</p>' +
+                '<p>' + '</p>' +
+                '<p>' + '</p>' +
+                '<p>' + '</p>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<label class="col-2">Tanggal Pelaksanaan</label>' +
+                '<p class="col">' + detail.tanggal.pelaksanaan + '</p>' +
+                '</div>' +
+                '<div class="row">' +
+                '<label class="col-2">Detail</label>' +
+                '<p class="col">' + detail.detail + '</p>' +
+                '</div>' +
+                '<div class="row">' +
+                '<label class="col-2">Nilai</label>' +
+                '<p class="col">' + detail.nilaiPengajuan + '</p>' +
+                '</div>' +
+                '<div class="row">' +
+                '<label class="col-2">Checklist</label>' +
+                '<p class="col">' + check + '</p>' +
+                '</div>' +
+                '<div class="row">' +
+                '<label class="col-2">SPJ</label>' +
+                '<p class="col">' + detail.spj + '</p>' +
+                '</div>' +
+                '</div >';
+
+            var templateSelesai =
+                '<div>' +
+                '<p>kosong pak</p>' +
+                '</div>';
+
+            if (detail.status == 'selesai') {
+                $('#modalDetailTiket').html(templateSelesai);
+            } else {
+                $('#modalDetailTiket').html(templatePengajuan);
+            };
+
+        })
+
+
+
     });
 
 

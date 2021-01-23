@@ -4,37 +4,279 @@
         <div class="card-block">
             <div class="row">
                 <div class="col-md-12">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a id="daftar_pengajuan_dana" class="nav-link active" data-toggle="tab" href="#statusdana"
-                                role="tab" aria-control=""><i class="icon-hourglass"></i> Daftar Pengajuan Dana</a>
-                        </li>
-                    </ul>
                     <div class="tab-content">
-                        {{!-- list pengajuan --}}
-                        <div class="tab-pane active" id="statusdana" role="tabpanel">
-                            <table id="table_loket_user" class="table table-bordered" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Pengguna</th>
-                                        <th>Unit</th>
-                                        <th>tanggal Pengajuan</th>
-                                        <th>Jumlah Dana</th>
-                                        <th>Status</th>
-                                        <th>Keterangan Pengajuan Dana</th>
-                                        <th>Pilihan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
+                        {{!-- form pengajuan user --}}
+                        <div class="row col">
+                            <h5><strong>- OPERATOR BANK -</strong></h5>
                         </div>
+                        <form id="loketPpk" method="POST" action="loket/bankKirim" class="modal-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group row">
+                                        <label for="loketNamaUnit" class="col-md-2 form-control-label">Unit</label>
+                                        <div class="col">
+                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit"
+                                                class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketKodeUnit" class="col-md-2 form-control-label">Kode Unit</label>
+                                        <div class="col">
+                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit"
+                                                class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketOperator" class="col-md-2 form-control-label">Operator</label>
+                                        <div class="col">
+                                            <input type="text" name="loketOperator" id="loketOperator"
+                                                class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Detail Pengajuan</label>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketProgram" class="col ml-1 form-control-label">Program</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketProgram" id="loketProgram" class="form-select" disabled>
+                                                <option Selected>Pilih Program</option>
+                                            </select>
+                                            <input name="loketProgramOk" id="loketProgramOk" class="form-check col-1"
+                                                type="checkbox" value="True" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketKegiatan" class="col ml-1 form-control-label">Kegiatan</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketKegiatan" id="loketKegiatan" class="form-select"
+                                                disabled>
+                                                <option selected>Pilih Kegiatan</option>
+                                            </select>
+                                            <input name="loketKegiatanOk" id="loketKegiatanOk" class="form-check col-1"
+                                                type="checkbox" value="True" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketOutput" class="col ml-1 form-control-label">Output</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketOutput" id="loketOutput" class="form-select" disabled>
+                                                <option Selected>Pilih Output</option>
+                                            </select>
+                                            <input name="loketOutputOk" id="loketOutputOk" class="form-check col-1"
+                                                type="checkbox" value="True" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketKomponen" class="col ml-1 form-control-label">Komponen</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketKomponen" id="loketKomponen" class="form-select"
+                                                disabled>
+                                                <option Selected>Pilih Komponen</option>
+                                            </select>
+                                            <input name="loketKomponenOk" id="loketKomponenOk" class="form-check col-1"
+                                                type="checkbox" value="True" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketAkun" class="col ml-1 form-control-label">Akun</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketAkun" id="loketAkun" class="form-select" disabled>
+                                                <option Selected>Pilih Akun</option>
+                                            </select>
+                                            <input name="loketAkunOk" id="loketAkunOk" class="form-check col-1"
+                                                type="checkbox" value="True" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketTglPelaksanaan" class="col ml-1 form-control-label">Tanggal
+                                            Pelaksanaan</label>
+                                        <div class="col-md-10">
+                                            <input type="date" name="loketTglPelaksanaan" id="loketTglPelaksanaan"
+                                                class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketDetail" class="col ml-1 form-control-label">Detail SPJ</label>
+                                        <div class="col-md-10">
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control"
+                                                disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketNilai" class="col ml-1 form-control-label">Nilai</label>
+                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <div class="col-md-9">
+                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control"
+                                                disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Checklist</label>
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-1" style="text-align:center">Unit</label>
+                                        <label for="" class="col-md-1" style="text-align:center">PPK</label>
+                                        <label for="" class="col-md-1" style="text-align:center">PPSPM</label>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">SPJ</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistSpjUnit" name="checklistSpjUnit" id="checklistSpjUnit"
+                                            disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistSpjPpk" name="checklistSpjPpk" id="checklistSpjPpk"
+                                            disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistSpjPpspm" name="checklistSpjPpspm"
+                                            id="checklistSpjPpspm" disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">Daftar Hadir</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDaftarHadirUnit" name="checklistDaftarHadirUnit"
+                                            id="checklistDaftarHadirUnit" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDaftarHadirPpk" name="checklistDaftarHadirPpk"
+                                            id="checklistDaftarHadirPpk" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDaftarHadirPpspm" name="checklistDaftarHadirPpspm"
+                                            id="checklistDaftarHadirPpspm" disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">Dokumentasi</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDokumentasiUnit" name="checklistDokumentasiUnit"
+                                            id="checklistDokumentasiUnit" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDokumentasiPpk" name="checklistDokumentasiPpk"
+                                            id="checklistDokumentasiPpk" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDokumentasiPpspm" name="checklistDokumentasiPpspm"
+                                            id="checklistDokumentasiPpspm" disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">Notulensi</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistNotulensiUnit" name="checklistNotulensiUnit"
+                                            id="checklistNotulensiUnit" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistNotulensiPpk" name="checklistNotulensiPpk"
+                                            id="checklistNotulensiPpk" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistNotulensiPpspm" name="checklistNotulensiPpspm"
+                                            id="checklistNotulensiPpspm" disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">CV Narasumber</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistCvUnit" name="checklistCvUnit" id="checklistCvUnit"
+                                            disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistCvPpk" name="checklistCvPpk" id="checklistCvPpk"
+                                            disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm"
+                                            disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketAdkSpj" class="col-md-2 form-control-label">ADK SPJ</label>
+                                        <div class="col">
+                                            <p id="loketAdkSpj"></p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketSpp" class="col-md-2 form-control-label">SPP</label>
+                                        <div class="col">
+                                            <select name="loketSpp" id="loketSpp" form="form-select" disabled>
+                                                <option selected></option>
+                                                <option value="sudah">Sudah</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketCatatanPpk" class="col-md-2 form-control-label">Catatan
+                                            PPK</label>
+                                        <div class="col">
+                                            <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control"
+                                                disabled></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketCatatanPpspm" class="col-md-2 form-control-label">Catatan
+                                            PPSPM</label>
+                                        <div class="col">
+                                            <textarea name="loketCatatanPpspm" id="loketCatatanPpspm"
+                                                class="form-control" disabled></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketCatatanReviewer" class="col-md-2 form-control-label">Catatan
+                                            Reviewer</label>
+                                        <div class="col">
+                                            <textarea name="loketCatatanReviewer" id="loketCatatanReviewer"
+                                                class="form-control" disabled></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketMetodeTransfer" class="col-md-2 form-control-label">Metode
+                                            Transfer</label>
+                                        <div class="col">
+                                            <select name="loketMetodeTransfer" id="loketMetodeTransfer"
+                                                form="form-select" disabled>
+                                                <option selected></option>
+                                                <option value="cms">CMS</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketNilaiPajak" class="col ml-1 form-control-label">Nilai
+                                            Pajak</label>
+                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <div class="col-md-9">
+                                            <input type="text" name="loketNilaiPajak" id="loketNilaiPajak"
+                                                class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketNilaiTransfer" class="col ml-1 form-control-label">Nilai
+                                            Transfer</label>
+                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <div class="col-md-9">
+                                            <input type="text" name="loketNilaiTransfer" id="loketNilaiTransfer"
+                                                class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketStatusTransfer" class="col-md-2 form-control-label">Status
+                                            Transfer</label>
+                                        <div class="col">
+                                            <p id="loketStatusTransfer"></p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketTglTransfer" class="col-md-2 form-control-label">Tanggal
+                                            Transfer</label>
+                                        <div class="col">
+                                            <p id="loketTglTransfer"></p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button id="kirimFormBank" type="submit" class="btn btn-primary">Kirim Email ke
+                                            Penerima</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <script src="/js/handsontable.full.min.js"></script>
@@ -47,23 +289,17 @@
 <script src="/js/exporting.js"></script>
 <script src="/js/offline-exporting.js"></script>
 
-<script>
-    $('#pok_dana').val({{ duit }});
-</script>
-
-{{!--
 <script type="text/javascript">
-    socket = io.connect($(location).attr('host'));
+    //socket = io.connect($(location).attr('host'));
+    var socket = io()
 
     //untuk hak akses
-    var user_aktiv = '{{username}}';
+    //var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
 
-        socket.on('form_penarikan', function (data) {
-            generalAlert('Form telah disubmit');
-        })
+
 
     });
 
-</script> --}}
+</script>

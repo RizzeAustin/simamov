@@ -35,19 +35,30 @@ const { db, count, translateAliases } = require('../model/Loket.model');
 loket.connections;
 loket.io;
 
-//untuk menyimpan daftar pengajuan user
-var daftarPengajuan;
-
 loket.socket = function(io, connections, client) {
 
     loket.connections = connections;
     loket.io = io;
 
     io.on('connection', (socket) => {
-        Loket.find({}, (err, data) => {
+        Loket.find({ status: 'belum selesai' }, (err, data) => {
             if (err) console.log(err)
-                // console.log(JSON.parse(JSON.stringify(data)))
             daftarPengajuan = JSON.parse(JSON.stringify(data))
+                // console.log(daftarPengajuan)
+        });
+
+        Loket.find({ status: 'selesai' }, (err, data) => {
+            if (err) console.log(err)
+            daftarSelesai = JSON.parse(JSON.stringify(data))
+                // console.log(daftarSelesai)
+        });
+    })
+
+    client.on('mintaDetailTiket', function(id) {
+        Loket.findById(id, function(err, data) {
+            if (err) console.log(err)
+            var detail = JSON.parse(JSON.stringify(data))
+            client.emit('kirimDetailTiket', detail)
         })
     })
 
@@ -61,41 +72,65 @@ loket.get('/dashboard', function(req, res) {
     res.render('loket/loket_dashboard', {
         layout: false,
         admin: req.session.jenis,
-        daftar: daftarPengajuan,
+        daftarPengajuan: daftarPengajuan,
+        daftarSelesai: daftarSelesai,
     })
 
 })
 
 loket.get('/user', function(req, res) {
-
-    // DetailBelanja.find({ kdakun: '522192', jumlah: { $gte: 4000000 } }, function(err, data) {
-    //     if (err) console.log(err)
-    //         // console.log(data)
-    //         // console.log(data[0].jumlah)
-    //     for (let index = 0; index < data.length; index++) {
-    //         console.log(data[index].jumlah)
-    //     }
-    // })
-
     res.render('loket/loket_user', {
         layout: false,
         admin: req.session.jenis,
-        // duit: data[0].jumlah
     });
-
 })
 
-loket.post('/unitSubmit', function(req, res) {
+loket.get('/ppk', function(req, res) {
+    res.render('loket/loket_ppk', {
+        layout: false,
+        admin: req.session.jenis,
+    });
+})
+
+loket.get('/ppspm', function(req, res) {
+    res.render('loket/loket_ppspm', {
+        layout: false,
+        admin: req.session.jenis,
+    });
+})
+
+loket.get('/reviewer', function(req, res) {
+    res.render('loket/loket_reviewer', {
+        layout: false,
+        admin: req.session.jenis,
+    });
+})
+
+loket.get('/bendahara', function(req, res) {
+    res.render('loket/loket_bendahara', {
+        layout: false,
+        admin: req.session.jenis,
+    });
+})
+
+loket.get('/bank', function(req, res) {
+    res.render('loket/loket_bank', {
+        layout: false,
+        admin: req.session.jenis,
+    });
+})
+
+loket.post('/unitKirim', function(req, res) {
 
     try {
         const tiket = new Loket({
             nomorTransaksi: noTransaksi(req.body.loketKodeUnit),
-            unit: req.body.loketUnit,
+            unit: req.body.loketNamaUnit,
             kodeUnit: req.body.loketKodeUnit,
             operator: req.body.loketOperator,
             tanggal: {
                 pengajuan: new Date(),
-                pelaksanaan: req.body.loketTglPelaksanaan,
+                pelaksanaan: new Date(req.body.loketTglPelaksanaan),
             },
             detail: req.body.loketDetail,
             nilaiPengajuan: req.body.loketNilai,
@@ -109,17 +144,96 @@ loket.post('/unitSubmit', function(req, res) {
             filespj: req.body.filespj,
             posisi: 'ppk',
             status: 'belum selesai'
-        })
+        });
 
         // console.log('nomor transaksi: ' + noTransaksi(req.body.loketKodeUnit))
 
-        tiket.save()
-        console.log(tiket)
-        JSON.parse(JSON.stringify(tiket))
+        tiket.save();
+        console.log(tiket);
+        console.log('------------------------------');
+        console.log(JSON.parse(JSON.stringify(tiket)));
     } catch (error) {
         console.log(error)
     }
 
+})
+
+loket.post('/ppkTolak', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/ppkKirim', function(req, res) {
+
+    try {
+        res.render('loket/loket_dashboard', {
+            layout: false,
+            admin: req.session.jenis,
+            daftarPengajuan: daftarPengajuan,
+            daftarSelesai: daftarSelesai,
+        })
+        console.log('maaf anda telah ditolak ppk kirim')
+    } catch (error) {
+        console.log(error)
+    }
+
+
+
+})
+
+loket.post('/ppspmTolak', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/ppspmKirimReviewer', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/ppspmKirimBinagram', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/reviewerTolak', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/reviewerProses', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/bendaharaProses', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/bendaharaKirimArsiparis', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/bendaharaKirimBmn', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/bendaharaInputRealisasi', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/bendaharaInputPajak', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
+})
+
+loket.post('/bankKirim', function(req, res) {
+    console.log(req.body.loketCatatanPpk)
+    console.log('maaf anda telah ditolak')
 })
 
 // --------------------   FUNCTION   -----------------------
@@ -168,6 +282,14 @@ function noTransaksi(kodeUnit) {
     })
 
     return `${tahun}${bulan}${kodeUnit}${noUrut}`
+}
+
+//membuat tanggal lebih mudah dibaca
+function formatTanggal(tgl) {
+    let tahun = tgl.getFullYear();
+    let bulan = tgl.getMonth() + 1;
+    let hari = tgl.getDate();
+    return `${hari}/${bulan}/${tahun}`
 }
 
 // function noTransaksi(tahun, bulan, kodeUnit) {
