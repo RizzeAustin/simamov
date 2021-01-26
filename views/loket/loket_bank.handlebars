@@ -12,25 +12,26 @@
                         <form id="loketPpk" method="POST" action="loket/bankKirim" class="modal-body">
                             <div class="row">
                                 <div class="col-6">
+                                    <input name="tiketId" type="hidden" value="{{data._id}}">
                                     <div class="form-group row">
                                         <label for="loketNamaUnit" class="col-md-2 form-control-label">Unit</label>
                                         <div class="col">
                                             <input type="text" name="loketNamaUnit" id="loketNamaUnit"
-                                                class="form-control" disabled>
+                                                class="form-control" value="{{data.unit}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketKodeUnit" class="col-md-2 form-control-label">Kode Unit</label>
                                         <div class="col">
                                             <input type="text" name="loketKodeUnit" id="loketKodeUnit"
-                                                class="form-control" disabled>
+                                                class="form-control" value="{{data.kodeUnit}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketOperator" class="col-md-2 form-control-label">Operator</label>
                                         <div class="col">
                                             <input type="text" name="loketOperator" id="loketOperator"
-                                                class="form-control" disabled>
+                                                class="form-control" value="{{data.operator}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -40,7 +41,7 @@
                                         <label for="loketProgram" class="col ml-1 form-control-label">Program</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketProgram" id="loketProgram" class="form-select" disabled>
-                                                <option Selected>Pilih Program</option>
+                                                <option Selected>{{data.kdprogram}} {{data.uraianProgram}}</option>
                                             </select>
                                             <input name="loketProgramOk" id="loketProgramOk" class="form-check col-1"
                                                 type="checkbox" value="True" disabled>
@@ -51,7 +52,7 @@
                                         <div class="col-md-10 input-group">
                                             <select name="loketKegiatan" id="loketKegiatan" class="form-select"
                                                 disabled>
-                                                <option selected>Pilih Kegiatan</option>
+                                                <option selected>{{data.kdkegiatan}} {{data.uraianKegiatan}}</option>
                                             </select>
                                             <input name="loketKegiatanOk" id="loketKegiatanOk" class="form-check col-1"
                                                 type="checkbox" value="True" disabled>
@@ -61,7 +62,7 @@
                                         <label for="loketOutput" class="col ml-1 form-control-label">Output</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketOutput" id="loketOutput" class="form-select" disabled>
-                                                <option Selected>Pilih Output</option>
+                                                <option Selected>{{data.kdoutput}} {{data.uraianOutput}}</option>
                                             </select>
                                             <input name="loketOutputOk" id="loketOutputOk" class="form-check col-1"
                                                 type="checkbox" value="True" disabled>
@@ -72,7 +73,7 @@
                                         <div class="col-md-10 input-group">
                                             <select name="loketKomponen" id="loketKomponen" class="form-select"
                                                 disabled>
-                                                <option Selected>Pilih Komponen</option>
+                                                <option Selected>{{data.kdkomponen}} {{data.uraianKomponen}}</option>
                                             </select>
                                             <input name="loketKomponenOk" id="loketKomponenOk" class="form-check col-1"
                                                 type="checkbox" value="True" disabled>
@@ -82,7 +83,7 @@
                                         <label for="loketAkun" class="col ml-1 form-control-label">Akun</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketAkun" id="loketAkun" class="form-select" disabled>
-                                                <option Selected>Pilih Akun</option>
+                                                <option Selected>{{data.kdakun}} {{data.uraianAkun}}</option>
                                             </select>
                                             <input name="loketAkunOk" id="loketAkunOk" class="form-check col-1"
                                                 type="checkbox" value="True" disabled>
@@ -99,7 +100,7 @@
                                     <div class="form-group row">
                                         <label for="loketDetail" class="col ml-1 form-control-label">Detail SPJ</label>
                                         <div class="col-md-10">
-                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control"
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" value="{{data.detail}}"
                                                 disabled>
                                         </div>
                                     </div>
@@ -107,7 +108,7 @@
                                         <label for="loketNilai" class="col ml-1 form-control-label">Nilai</label>
                                         <label class="ml-2 form-control-label" for="">Rp</label>
                                         <div class="col-md-9">
-                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control"
+                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}"
                                                 disabled>
                                         </div>
                                     </div>
@@ -186,16 +187,13 @@
                                     <div class="form-group row">
                                         <label for="loketAdkSpj" class="col-md-2 form-control-label">ADK SPJ</label>
                                         <div class="col">
-                                            <p id="loketAdkSpj"></p>
+                                            <p id="loketAdkSpj">{{data.filespj}}</p>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketSpp" class="col-md-2 form-control-label">SPP</label>
                                         <div class="col">
-                                            <select name="loketSpp" id="loketSpp" form="form-select" disabled>
-                                                <option selected></option>
-                                                <option value="sudah">Sudah</option>
-                                            </select>
+                                            <p>{{data.spp}}</p>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -203,7 +201,7 @@
                                             PPK</label>
                                         <div class="col">
                                             <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control"
-                                                disabled></textarea>
+                                                disabled>{{data.catatan.ppk}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -211,7 +209,7 @@
                                             PPSPM</label>
                                         <div class="col">
                                             <textarea name="loketCatatanPpspm" id="loketCatatanPpspm"
-                                                class="form-control" disabled></textarea>
+                                                class="form-control" disabled>{{data.catatan.ppspm}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -219,18 +217,14 @@
                                             Reviewer</label>
                                         <div class="col">
                                             <textarea name="loketCatatanReviewer" id="loketCatatanReviewer"
-                                                class="form-control" disabled></textarea>
+                                                class="form-control" disabled>{{data.catatan.reviewer}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketMetodeTransfer" class="col-md-2 form-control-label">Metode
                                             Transfer</label>
                                         <div class="col">
-                                            <select name="loketMetodeTransfer" id="loketMetodeTransfer"
-                                                form="form-select" disabled>
-                                                <option selected></option>
-                                                <option value="cms">CMS</option>
-                                            </select>
+                                            <p>{{data.metodeTransfer}}</p>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -239,7 +233,7 @@
                                         <label class="ml-2 form-control-label" for="">Rp</label>
                                         <div class="col-md-9">
                                             <input type="text" name="loketNilaiPajak" id="loketNilaiPajak"
-                                                class="form-control" disabled>
+                                                class="form-control" value="{{data.nilaiPajak}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -248,21 +242,25 @@
                                         <label class="ml-2 form-control-label" for="">Rp</label>
                                         <div class="col-md-9">
                                             <input type="text" name="loketNilaiTransfer" id="loketNilaiTransfer"
-                                                class="form-control" disabled>
+                                                class="form-control" value="{{data.nilaiTransfer}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketStatusTransfer" class="col-md-2 form-control-label">Status
                                             Transfer</label>
                                         <div class="col">
-                                            <p id="loketStatusTransfer"></p>
+                                            <select name="loketStatusTransfer" id="loketStatusTransfer" class="form-select">
+                                                <option selected></option>
+                                                <option value="ditransfer">Telah Ditransfer</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketTglTransfer" class="col-md-2 form-control-label">Tanggal
                                             Transfer</label>
                                         <div class="col">
-                                            <p id="loketTglTransfer"></p>
+                                            <input type="date" name="loketTglTransfer" id="loketTglTransfer"
+                                                class="form-control">
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -289,6 +287,12 @@
 <script src="/js/exporting.js"></script>
 <script src="/js/offline-exporting.js"></script>
 
+{{!-- autofill form --}}
+<script id="tglPelaksanaan" type="text/x-handlebars-template">
+    {{data.tanggal.pelaksanaan}}
+</script>
+
+{{!-- main script --}}
 <script type="text/javascript">
     //socket = io.connect($(location).attr('host'));
     var socket = io()
@@ -297,7 +301,35 @@
     //var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
+        //autofill form
+        var t1 = $("#tglPelaksanaan").html()
+        var t2 = new Date(t1)
+        $("#loketTglPelaksanaan").val(t2.getFullYear()+'-'+t2.getMonth()+1+'-'+t2.getDate())
+        var spj = [{{data.checklist.spj}}]
+        var hadir = [{{data.checklist.daftarHadir}}]
+        var dok = [{{data.checklist.dokumentasi}}]
+        var not = [{{data.checklist.notulensi}}]
+        var cv = [{{data.checklist.cvNarasumber}}]
+        
+        if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
+        if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
+        if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
+        if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
+        if (cv[0]) $("#checklistCvUnit").attr("checked", true)
+        if (spj[1]) $("#checklistSpjPpk").attr("checked", true)
+        if (hadir[1]) $("#checklistDaftarHadirPpk").attr("checked", true)
+        if (dok[1]) $("#checklistDokumentasiPpk").attr("checked", true)
+        if (not[1]) $("#checklistNotulensiPpk").attr("checked", true)
+        if (cv[1]) $("#checklistCvPpk").attr("checked", true)
+        if (spj[2]) $("#checklistSpjPpspm").attr("checked", true)
+        if (hadir[2]) $("#checklistDaftarHadirPpspm").attr("checked", true)
+        if (dok[2]) $("#checklistDokumentasiPpspm").attr("checked", true)
+        if (not[2]) $("#checklistNotulensiPpspm").attr("checked", true)
+        if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
 
+        $('#kirimFormBank').click(function () {
+            alert("Email pemberitahuan telah dikirimkan ke penerima")
+        })
 
 
     });

@@ -1,4 +1,5 @@
 const { date } = require('jszip/lib/defaults');
+const { string } = require('jszip/lib/support');
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
@@ -9,12 +10,15 @@ var LoketSchema = new Schema({
     'kodeUnit': String,
     'operator': String,
     'kdprogram': String,
+    'uraianProgram': String,
     'kdkegiatan': String,
+    'uraianKegiatan': String,
     'kdoutput': String,
-    'kdsoutput': String,
+    'uraianOutput': String,
     'kdkomponen': String,
-    'kdskomponen': String,
+    'uraianKomponen': String,
     'kdakun': String,
+    'uraianAkun': String,
     'detail': String,
     'nilaiPengajuan': Number,
     'checklist': {
@@ -25,8 +29,8 @@ var LoketSchema = new Schema({
         'cvNarasumber': [{ type: Boolean }],
     },
     'fileSpj': Buffer,
-    'spp': String,
-    'catatanPetugas': {
+    'spp': String, //sudah
+    'catatan': {
         'ppk': String,
         'ppspm': String,
         'reviewer': String,
@@ -34,15 +38,15 @@ var LoketSchema = new Schema({
     'metodeTransfer': String,
     'nilaiPajak': Number,
     'nilaiTransfer': Number,
-    'statusTransfer': String,
+    'statusTransfer': String, //sudah
     'tanggal': {
         'pengajuan': String,
         'pelaksanaan': String,
         'transfer': String,
         'selesai': String,
     },
-    'posisi': String,
-    'status': String,
+    'posisi': String, //ppk, ppspm, reviewer, bendahara, operatorBank
+    'status': String, //belum selesai, selesai, ditolak, dibatalkan
 
 
 }, { collection: 'loket', strict: false });

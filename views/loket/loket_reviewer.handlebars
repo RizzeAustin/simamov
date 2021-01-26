@@ -12,25 +12,26 @@
                         <form id="loketPpk" method="POST" class="modal-body">
                             <div class="row">
                                 <div class="col-6">
+                                    <input name="tiketId" type="hidden" value="{{data._id}}">
                                     <div class="form-group row">
                                         <label for="loketNamaUnit" class="col-md-2 form-control-label">Unit</label>
                                         <div class="col">
                                             <input type="text" name="loketNamaUnit" id="loketNamaUnit"
-                                                class="form-control" disabled>
+                                                class="form-control" value="{{data.unit}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketKodeUnit" class="col-md-2 form-control-label">Kode Unit</label>
                                         <div class="col">
                                             <input type="text" name="loketKodeUnit" id="loketKodeUnit"
-                                                class="form-control" disabled>
+                                                class="form-control" value="{{data.kodeUnit}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketOperator" class="col-md-2 form-control-label">Operator</label>
                                         <div class="col">
                                             <input type="text" name="loketOperator" id="loketOperator"
-                                                class="form-control" disabled>
+                                                class="form-control" value="{{data.operator}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -97,7 +98,7 @@
                                     <div class="form-group row">
                                         <label for="loketDetail" class="col ml-1 form-control-label">Detail SPJ</label>
                                         <div class="col-md-10">
-                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control"
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" value="{{data.detail}}"
                                                 disabled>
                                         </div>
                                     </div>
@@ -105,7 +106,7 @@
                                         <label for="loketNilai" class="col ml-1 form-control-label">Nilai</label>
                                         <label class="ml-2 form-control-label" for="">Rp</label>
                                         <div class="col-md-9">
-                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control"
+                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}"
                                                 disabled>
                                         </div>
                                     </div>
@@ -184,16 +185,13 @@
                                     <div class="form-group row">
                                         <label for="loketAdkSpj" class="col-md-2 form-control-label">ADK SPJ</label>
                                         <div class="col">
-                                            <p id="loketAdkSpj"></p>
+                                            <p id="loketAdkSpj">{{data.filespj}}</p>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketSpp" class="col-md-2 form-control-label">SPP</label>
                                         <div class="col">
-                                            <select name="loketSpp" id="loketSpp" form="form-select" disabled>
-                                                <option selected></option>
-                                                <option value="sudah">Sudah</option>
-                                            </select>
+                                            <p>{{data.spp}}</p>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -201,7 +199,7 @@
                                             PPK</label>
                                         <div class="col">
                                             <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control"
-                                                disabled></textarea>
+                                                disabled>{{data.catatan.ppk}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -209,7 +207,7 @@
                                             PPSPM</label>
                                         <div class="col">
                                             <textarea name="loketCatatanPpspm" id="loketCatatanPpspm"
-                                                class="form-control" disabled></textarea>
+                                                class="form-control" disabled>{{data.catatan.ppspm}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -217,12 +215,12 @@
                                             Reviewer</label>
                                         <div class="col">
                                             <textarea name="loketCatatanReviewer" id="loketCatatanReviewer"
-                                                class="form-control"></textarea>
+                                                class="form-control">{{data.catatan.reviewer}}</textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="tolakFormReviewer" type="submit" class="btn btn-danger"
-                                            formaction="loket/reviewerTolak">Tolak</button>
+                                        <button id="pendingFormReviewer" type="submit" class="btn btn-danger"
+                                            formaction="loket/reviewerPending">Pending</button>
                                         <button id="prosesFormReviewer" type="submit" class="btn btn-success"
                                             formaction="loket/reviewerProses">Proses</button>
                                     </div>
@@ -246,6 +244,74 @@
 <script src="/js/exporting.js"></script>
 <script src="/js/offline-exporting.js"></script>
 
+{{!-- autofill form --}}
+<script id="tglPelaksanaan" type="text/x-handlebars-template">
+    {{data.tanggal.pelaksanaan}}
+</script>
+
+{{!-- iterasi select pok --}}
+<script id="program" type="text/x-handlebars-template">
+    {{#if data.kdprogram}}
+        <option value="{{data.kdprogram}}" selected>{{data.kdprogram}} {{data.uraianProgram}}</option>
+        {{#each program}}
+            <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
+        {{/each}}
+    {{else}}
+        {{#each program}}
+            <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
+        {{/each}}
+    {{/if}}
+</script>
+<script id="kegiatan" type="text/x-handlebars-template">
+    {{#if data.kdkegiatan}}
+        <option value="{{data.kdkegiatan}}" selected>{{data.kdkegiatan}} {{data.uraianKegiatan}}</option>
+        {{#each kegiatan}}
+            <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
+        {{/each}}
+    {{else}}
+        {{#each kegiatan}}
+            <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
+        {{/each}}
+    {{/if}}
+</script>
+<script id="output" type="text/x-handlebars-template">
+    {{#if data.kdoutput}}
+        <option value="{{data.kdoutput}}" selected>{{data.kdoutput}} {{data.uraianOutput}}</option>
+        {{#each output}}
+            <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
+        {{/each}}
+    {{else}}
+        {{#each output}}
+            <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
+        {{/each}}
+    {{/if}}
+</script>
+<script id="komponen" type="text/x-handlebars-template">
+    {{#if data.kdkomponen}}
+        <option value="{{data.kdkomponen}}" selected>{{data.kdkomponen}} {{data.uraianKomponen}}</option>
+        {{#each komponen}}
+            <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
+        {{/each}}
+    {{else}}
+        {{#each komponen}}
+            <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
+        {{/each}}
+    {{/if}}
+</script>
+<script id="akun" type="text/x-handlebars-template">
+    {{#if data.kdakun}}
+        <option value="{{data.kdakun}}" selected>{{data.kdakun}} {{data.uraianAkun}}</option>
+        {{#each akun}}
+            <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
+        {{/each}}
+    {{else}}
+        {{#each akun}}
+            <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
+        {{/each}}
+    {{/if}}
+</script>
+
+{{!-- main script --}}
 <script type="text/javascript">
     //socket = io.connect($(location).attr('host'));
     var socket = io()
@@ -254,9 +320,147 @@
     //var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
+        //autofill form
+        var t1 = $("#tglPelaksanaan").html()
+        var t2 = new Date(t1)
+        $("#loketTglPelaksanaan").val(t2.getFullYear()+'-'+t2.getMonth()+1+'-'+t2.getDate())
+        var spj = [{{data.checklist.spj}}]
+        var hadir = [{{data.checklist.daftarHadir}}]
+        var dok = [{{data.checklist.dokumentasi}}]
+        var not = [{{data.checklist.notulensi}}]
+        var cv = [{{data.checklist.cvNarasumber}}]
+        
+        if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
+        if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
+        if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
+        if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
+        if (cv[0]) $("#checklistCvUnit").attr("checked", true)
+        if (spj[1]) $("#checklistSpjPpk").attr("checked", true)
+        if (hadir[1]) $("#checklistDaftarHadirPpk").attr("checked", true)
+        if (dok[1]) $("#checklistDokumentasiPpk").attr("checked", true)
+        if (not[1]) $("#checklistNotulensiPpk").attr("checked", true)
+        if (cv[1]) $("#checklistCvPpk").attr("checked", true)
+        if (spj[2]) $("#checklistSpjPpspm").attr("checked", true)
+        if (hadir[2]) $("#checklistDaftarHadirPpspm").attr("checked", true)
+        if (dok[2]) $("#checklistDokumentasiPpspm").attr("checked", true)
+        if (not[2]) $("#checklistNotulensiPpspm").attr("checked", true)
+        if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
 
+        //iterasi select pok on autofill
+        var pokProgram = $("#program").html()
+        $("#loketProgram").append(pokProgram)
+        var pokKegiatan = $("#kegiatan").html()
+        $("#loketKegiatan").append(pokKegiatan)
+        var pokOutput = $("#output").html()
+        $("#loketOutput").append(pokOutput)
+        var pokKomponen = $("#komponen").html()
+        $("#loketKomponen").append(pokKomponen)
+        var pokAkun = $("#akun").html()
+        $("#loketAkun").append(pokAkun)
 
+        //iterasi select pok
+        $("#loketProgram").change(function(){
+            if ($("#loketProgram").val()!="Pilih Program"){
+                console.log($("#loketProgram").val())
+                socket.emit('mintaKegiatan', $("#loketProgram").val())
+            } else {
+                $("#loketKegiatan").empty().append('<option selected>Pilih Kegiatan</option>')
+                $("#loketOutput").empty().append('<option selected>Pilih Output</option>')
+                $("#loketKomponen").empty().append('<option selected>Pilih Komponen</option>')
+                $("#loketAkun").empty().append('<option selected>Pilih Akun</option>')
+            }
+        })
 
+        socket.on('terimaKegiatan', function(kegiatan){
+            let sama = false
+            $("#loketKegiatan").empty().append('<option selected>Pilih Kegiatan</option>')
+            for (let i=0; i<kegiatan.length;i++){
+                $('#loketKegiatan option').each( function() {if (kegiatan[i].kdgiat == this.value) sama = true})
+                if (!sama) {
+                    let s = '<option value="'+kegiatan[i].kdgiat+'">'+kegiatan[i].kdgiat+' '+kegiatan[i].uraian+'</option>'
+                    $("#loketKegiatan").append(s)
+                }
+                sama = false
+            }
+        })
+
+        $("#loketKegiatan").change(function(){
+            if ($("#loketKegiatan").val()!="Pilih Kegiatan"){
+                console.log($("#loketKegiatan").val())
+                let s = [$("#loketProgram").val(), $("#loketKegiatan").val()]
+                socket.emit('mintaOutput', s)
+            } else {
+                $("#loketOutput").empty().append('<option selected>Pilih Output</option>')
+                $("#loketKomponen").empty().append('<option selected>Pilih Komponen</option>')
+                $("#loketAkun").empty().append('<option selected>Pilih Akun</option>')
+            }
+        })
+
+        socket.on('terimaOutput', function(output){
+            let sama = false
+            $("#loketOutput").empty().append('<option selected>Pilih Output</option>')
+            for (let i=0; i<output.length;i++){
+                $('#loketOutput option').each( function() {if (output[i].kdoutput == this.value) sama = true})
+                if (!sama) {
+                    let s = '<option value="'+output[i].kdoutput+'">'+output[i].kdoutput+' '+output[i].uraian+'</option>'
+                    $("#loketOutput").append(s)
+                }
+                sama = false
+            }
+        })
+
+        $("#loketOutput").change(function(){
+            if ($("#loketOutput").val()!="Pilih Output"){
+                console.log($("#loketOutput").val())
+                let s = [$("#loketProgram").val(), $("#loketKegiatan").val(), $("#loketOutput").val()]
+                socket.emit('mintaKomponen', s)
+            } else {
+                $("#loketKomponen").empty().append('<option selected>Pilih Komponen</option>')
+                $("#loketAkun").empty().append('<option selected>Pilih Akun</option>')
+            }
+        })
+
+        socket.on('terimaKomponen', function(komponen){
+            let sama = false
+            $("#loketKomponen").empty().append('<option selected>Pilih Komponen</option>')
+            for (let i=0; i<komponen.length;i++){
+                $('#loketKomponen option').each( function() {if (komponen[i].kdkmpnen == this.value) sama = true})
+                if (!sama) {
+                    let s = '<option value="'+komponen[i].kdkmpnen+'">'+komponen[i].kdkmpnen+' '+komponen[i].urkmpnen+'</option>'
+                    $("#loketKomponen").append(s)
+                }
+                sama = false
+            }
+        })
+
+        $("#loketKomponen").change(function(){
+            if ($("#loketKomponen").val()!="Pilih Komponen"){
+                console.log($("#loketKomponen").val())
+                let s = [$("#loketProgram").val(), $("#loketKegiatan").val(), $("#loketOutput").val(), $("#loketKomponen").val()]
+                socket.emit('mintaAkun', s)
+            } else {$("#loketAkun").empty().append('<option selected>Pilih Akun</option>')}
+        })
+
+        socket.on('terimaAkun', function(akun){
+            let sama = false
+            $("#loketAkun").empty().append('<option selected>Pilih Akun</option>')
+            for (let i=0; i<akun.length;i++){
+                $('#loketAkun option').each( function() {if (akun[i].kdakun == this.value) sama = true})
+                if (!sama) {
+                    let s = '<option value="'+akun[i].kdakun+'">'+akun[i].kdakun+' '+akun[i].uraian+'</option>'
+                    $("#loketAkun").append(s)
+                }
+                sama = false
+            }
+        })
+
+        //alert permintaan diproses
+        $('#pendingFormReviewer').click(function () {
+            alert("Tiket telah Dipending")
+        })
+        $('#prosesFormReviewer').click(function () {
+            alert("Tiket telah diteruskan ke Bendahara")
+        })
     });
 
 </script>

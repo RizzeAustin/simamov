@@ -9,7 +9,8 @@
                         <div class="row col">
                             <h5>I. TRANSAKSI SELESAI</h5>
                         </div>
-                        <table id="tableSelesai" class="table table-bordered" width="100%">
+                        <table id="tableSelesai" class="table table-bordered"
+                            width="100%">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -31,7 +32,8 @@
                         <div class="row col">
                             <h5>II. PENGAJUAN</h5>
                         </div>
-                        <table id="tablePengajuan" class="table table-bordered" width="100%">
+                        <table id="tablePengajuan" class="table table-bordered"
+                            width="100%">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -55,9 +57,9 @@
                             <h6 class="row col-12">a. Realisasi per unit</h6><br>
                             <h6 class="row col-12">b. Total realisasi</h6>
                         </div>
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail">
-                            TEST MODAL
-                        </button>
+                        <button type="button" class="btn btn-primary"
+                            data-toggle="modal" data-target="#modalDetail">TEST
+                            MODAL</button>
 
                     </div>
                 </div>
@@ -69,13 +71,15 @@
 
 {{!-- --------------------------- MODAL ------------------------------ --}}
 
-<div class="modal fade" id="modalDetail" role="dialog" data-backdrop="static" aria-labelledby="modalLabel"
+<div class="modal fade" id="modalDetail" role="dialog" data-backdrop="static"
+    aria-labelledby="modalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="">Detail tiket</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                <button type="button" class="close" data-dismiss="modal"
+                    aria-label="Close"><span
                         aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -83,8 +87,8 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary">Periksa Tiket</button>
+                <button type="button" class="btn btn-secondary"
+                    data-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
@@ -114,11 +118,11 @@
             <td>{{this.nilaiPengajuan}}</td>
             <td>{{this.nilaiPajak}}</td>
             <td>{{this.nilaiTransfer}}</td>
-            <td></td>
+            <td>{{this.metodeTransfer}}</td>
             <td>{{this.detail}}</td>
             <td>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailSelesai">Lihat Detail</button>
-                <button type="button" class="btn btn-primary">Download SPJ</button>
+                <button type="button" class="btn btn-primary" name="downloadSpjTiket" id="downloadSpjTiket" >Download SPJ</button>
             </td>
         </tr>
     {{/each}}
@@ -134,7 +138,11 @@
             <td>{{this.detail}}</td>
             <td>{{this.posisi}}</td>
             <td>{{this.status}}</td>
-            <td>{{this.catatan}}</td>
+            <td>
+                ppk: {{#if this.catatan.ppk}}{{this.catatan.ppk}}{{else}}-{{/if}}<br>
+                ppspm: {{#if this.catatan.ppspm}}{{this.catatan.ppspm}}{{else}}-{{/if}}<br>
+                reviewer: {{#if this.catatan.reviewer}}{{this.catatan.reviewer}}{{else}}-{{/if}}
+            </td>
             <td>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailPengajuan">Lihat Detail</button>
             </td>
@@ -152,114 +160,236 @@
 
     $(document).ready(function () {
 
-        function formatTanggal(tgl) {
-            let s = Date.parse(tgl);
-            let d = new Date(s);
-            let tahun = d.getFullYear();
-            let bulan = d.getMonth() + 1;
-            let hari = d.getDate();
-            return `${hari}/${bulan}/${tahun}`
-        }
+        //reset modal
+        $(".modal").on("hidden.bs.modal", function() {
+            $(".modal-body").html('')
+            $(".modal-footer").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>');
+        });
 
         //iterasi tabel selsai dan pengjuan
-        var daftarPengajuan = $("#daftarPengajuan").html();
-        $("#tablePengajuan tbody").html(daftarPengajuan);
-
-        var daftarSelesai = $("#daftarSelesai").html();
-        $("#tableSelesai tbody").html(daftarSelesai);
+        var dPengajuan = $("#daftarPengajuan").html()
+        $("#tablePengajuan tbody").html(dPengajuan)
+        var dSelesai = $("#daftarSelesai").html()
+        $("#tableSelesai tbody").html(dSelesai)
 
         //lihat detail row terpilih
-        var tableBtnDetail = $("table :button");
-
+        var tableBtnDetail = $("table :button")
         tableBtnDetail.click(function () {
-            var data = $(this).closest('tr').attr('id');
-            //console.log('idtiket:' + data);
+            var id = $(this).closest('tr').attr('id')
+            //console.log('idtiket:' + data)
             //console.log('idbutton: ' + this.id)
-            socket.emit('mintaDetailTiket', data);
+            socket.emit('mintaDetailTiket', id)
         })
 
-        socket.on('kirimDetailTiket', function (detail) {
+        socket.on('terimaDetailTiket', function (detail) {
 
             //ambil nilai di checklist
-            var check = [];
-            for (key in detail.checklist) {
-                if (detail.checklist.hasOwnProperty(key)) {
-                    var value = detail.checklist[key];
-                    if (value[0] == true) {
-                        check.push(key)
+            var check = []
+            if (detail.posisi == 'PPK') {
+                for (key in detail.checklist) {
+                    if (detail.checklist.hasOwnProperty(key)) {
+                        var value = detail.checklist[key];
+                        if (value[0] == true) {
+                            var l = ' '+key
+                            check.push(l)
+                        }
                     }
                 }
-            };
+            } else if (detail.posisi == 'PPSPM') {
+                for (key in detail.checklist) {
+                    if (detail.checklist.hasOwnProperty(key)) {
+                        var value = detail.checklist[key];
+                        if (value[0] == true && value[1] == true) {
+                            var l = ' '+key
+                            check.push(l)
+                        }
+                    }
+                }
+            } else {
+                for (key in detail.checklist) {
+                    if (detail.checklist.hasOwnProperty(key)) {
+                        var value = detail.checklist[key];
+                        if (value[0] == true && value[1] == true && value[2] == true) {
+                            var l = ' '+key
+                            check.push(l)
+                        }
+                    }
+                }
+            }
+
+            //ambil nilai di catatan
+            var catat = []
+            for (key in detail.catatan) {
+                if (detail.catatan.hasOwnProperty(key)) {
+                    var value = detail.catatan[key];
+                    catat.push(value)
+                }
+            }
 
             var templatePengajuan =
                 '<div class="col-12">' +
-                '<div class="row">' +
-                '<label class="col-2">Unit</label>' +
-                '<p class="col">' + detail.unit + '</p>' +
-                '</div>' +
-                '<div class="row">' +
-                '<label class="col-2">Kode Unit</label>' +
-                '<p class="col">' + detail.kodeUnit + '</p>' +
-                '</div>' +
-                '<div class="row">' +
-                '<label class="col-2">Operator</label>' +
-                '<p class="col">' + detail.operator + '</p>' +
-                '</div>' +
-                '<div class="row">' +
-                '<label class="col-2">Detail POK</label>' +
-                '<div class="col-1">' +
-                '<p>Program</p>' +
-                '<p>Kegiatan</p>' +
-                '<p>Output</p>' +
-                '<p>Komponen</p>' +
-                '<p>Akun</p>' +
-                '</div>' +
-                '<div class="col">' +
-                '<p>' + '</p>' +
-                '<p>' + '</p>' +
-                '<p>' + '</p>' +
-                '<p>' + '</p>' +
-                '<p>' + '</p>' +
-                '</div>' +
-                '</div>' +
-                '<div class="row">' +
-                '<label class="col-2">Tanggal Pelaksanaan</label>' +
-                '<p class="col">' + detail.tanggal.pelaksanaan + '</p>' +
-                '</div>' +
-                '<div class="row">' +
-                '<label class="col-2">Detail</label>' +
-                '<p class="col">' + detail.detail + '</p>' +
-                '</div>' +
-                '<div class="row">' +
-                '<label class="col-2">Nilai</label>' +
-                '<p class="col">' + detail.nilaiPengajuan + '</p>' +
-                '</div>' +
-                '<div class="row">' +
-                '<label class="col-2">Checklist</label>' +
-                '<p class="col">' + check + '</p>' +
-                '</div>' +
-                '<div class="row">' +
-                '<label class="col-2">SPJ</label>' +
-                '<p class="col">' + detail.spj + '</p>' +
-                '</div>' +
-                '</div >';
+                    '<input id="modalTiketId" type="hidden" value="'+detail._id+'">'+
+                    '<div class="row">' +
+                        '<label class="col-2">Unit</label>' +
+                        '<p class="col">' + detail.unit + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Kode Unit</label>' +
+                        '<p class="col">' + detail.kodeUnit + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Operator</label>' +
+                        '<p class="col">' + detail.operator + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Detail POK</label>' +
+                        '<div class="col-1">' +
+                            '<p>Program</p>' +
+                            '<p>Kegiatan</p>' +
+                            '<p>Output</p>' +
+                            '<p>Komponen</p>' +
+                            '<p>Akun</p>' +
+                        '</div>' +
+                        '<div class="col">' +
+                            '<p>: ' + detail.kdprogram +' '+ detail.uraianProgram + '</p>' +
+                            '<p>: ' + detail.kdkegiatan +' '+ detail.uraianKegiatan + '</p>' +
+                            '<p>: ' + detail.kdoutput +' '+ detail.uraianOutput + '</p>' +
+                            '<p>: ' + detail.kdkomponen +' '+ detail.uraianKomponen + '</p>' +
+                            '<p>: ' + detail.kdakun +' '+ detail.uraianAkun + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Tanggal Pelaksanaan</label>' +
+                        '<p class="col">' + detail.tanggal.pelaksanaan + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Detail</label>' +
+                        '<p class="col">' + detail.detail + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Nilai</label>' +
+                        '<p class="col">' + detail.nilaiPengajuan + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Checklist</label>' +
+                        '<p class="col">' + check + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">SPJ</label>' +
+                        '<p class="col">' + detail.filespj + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">SPP</label>' +
+                        '<p class="col">' + detail.spp + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Catatan PPK</label>' +
+                        '<p class="col">' + catat[0] + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Catatan PPSPM</label>' +
+                        '<p class="col">' + catat[1] + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Catatan Reviewer</label>' +
+                        '<p class="col">' + catat[2] + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Metode Transfer</label>' +
+                        '<p class="col">' + detail.metodeTransfer + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Nilai Pajak</label>' +
+                        '<p class="col">' + detail.nilaiPajak + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Nilai Transfer</label>' +
+                        '<p class="col">' + detail.nilaiTransfer + '</p>' +
+                    '</div>' +
+                    '<div class="row">' +
+                        '<label class="col-2">Tanggal Transfer</label>' +
+                        '<p class="col">' + detail.tanggal.transfer + '</p>' +
+                    '</div>' +
+                '</div >'
 
-            var templateSelesai =
-                '<div>' +
-                '<p>kosong pak</p>' +
-                '</div>';
+            $('#modalDetailTiket').html(templatePengajuan)
 
-            if (detail.status == 'selesai') {
-                $('#modalDetailTiket').html(templateSelesai);
-            } else {
-                $('#modalDetailTiket').html(templatePengajuan);
-            };
+            if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai'){
+                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketPpk" onCLick="modalPeriksaPpk()">Periksa Tiket PPK</button>')
+            } else if (!document.getElementById("periksaTiketPpspm") && detail.posisi == "PPSPM" && detail.status == 'Belum selesai'){
+                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketPpspm" onCLick="modalPeriksaPpspm()">Periksa Tiket PPSPM</button>')
+            } else if (!document.getElementById("periksaTiketReviewer") && detail.posisi == "Reviewer" && detail.status == 'Belum selesai'){
+                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketReviewer" onCLick="modalPeriksaReviewer()">Periksa Tiket Reviewer</button>')
+            } else if (!document.getElementById("periksaTiketBendahara") && detail.posisi == "Bendahara" && detail.status == 'Belum selesai'){
+                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketBendahara" onCLick="modalPeriksaBendahara()">Periksa Tiket Bendahara</button>')
+            } else if (!document.getElementById("periksaTiketBank") && detail.posisi == "Operator Bank" && detail.status == 'Belum selesai'){
+                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketBank" onCLick="modalPeriksaBank()">Periksa Tiket Operator Bank</button>')
+            }
 
         })
 
-
-
     });
+
+    //fungsi
+    function formatTanggal(tgl) {
+        let s = Date.parse(tgl)
+        let d = new Date(s)
+        let tahun = d.getFullYear()
+        let bulan = d.getMonth() + 1
+        let hari = d.getDate()
+        return `${hari}/${bulan}/${tahun}`
+    }
+
+    // Fungsi tombol periksa di modal detail
+    function modalPeriksaPpk(){
+        var tiketId = document.getElementById("modalTiketId").value
+        console.log(tiketId)
+        var form = $('<form action="/loket/ppk" method="post">' +
+                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
+            '</form>');
+        $('.modal-body').append(form);
+        form.submit();
+    }
+
+    function modalPeriksaPpspm(){
+        var tiketId = document.getElementById("modalTiketId").value
+        console.log(tiketId)
+        var form = $('<form action="/loket/ppspm" method="post">' +
+                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
+            '</form>');
+        $('.modal-body').append(form);
+        form.submit();
+    }
+
+    function modalPeriksaReviewer(){
+        var tiketId = document.getElementById("modalTiketId").value
+        console.log(tiketId)
+        var form = $('<form action="/loket/reviewer" method="post">' +
+                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
+            '</form>');
+        $('.modal-body').append(form);
+        form.submit();
+    }
+
+    function modalPeriksaBendahara(){
+        var tiketId = document.getElementById("modalTiketId").value
+        console.log(tiketId)
+        var form = $('<form action="/loket/bendahara" method="post">' +
+                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
+            '</form>');
+        $('.modal-body').append(form);
+        form.submit();
+    }
+
+    function modalPeriksaBank(){
+        var tiketId = document.getElementById("modalTiketId").value
+        console.log(tiketId)
+        var form = $('<form action="/loket/bank" method="post">' +
+                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
+            '</form>');
+        $('.modal-body').append(form);
+        form.submit();
+    }
 
 
 </script>
