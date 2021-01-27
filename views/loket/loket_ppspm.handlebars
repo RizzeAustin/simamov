@@ -7,7 +7,7 @@
                     <div class="tab-content">
                         {{!-- form pengajuan user --}}
                         <div class="row col">
-                            <h5><strong>- REVIEWER -</strong></h5>
+                            <h5><strong>- PPSPM -</strong></h5>
                         </div>
                         <form id="loketPpk" method="POST" class="modal-body">
                             <div class="row">
@@ -41,7 +41,7 @@
                                         <label for="loketProgram" class="col ml-1 form-control-label">Program</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketProgram" id="loketProgram" class="form-select">
-                                                <option Selected>Pilih Program</option>
+                                                <option selected>Pilih Program</option>
                                             </select>
                                             <input name="loketProgramOk" id="loketProgramOk" class="form-check col-1"
                                                 type="checkbox" value="True">
@@ -128,7 +128,7 @@
                                             disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
                                             aria-label="checklistSpjPpspm" name="checklistSpjPpspm"
-                                            id="checklistSpjPpspm" disabled>
+                                            id="checklistSpjPpspm">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -141,7 +141,7 @@
                                             id="checklistDaftarHadirPpk" disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
                                             aria-label="checklistDaftarHadirPpspm" name="checklistDaftarHadirPpspm"
-                                            id="checklistDaftarHadirPpspm" disabled>
+                                            id="checklistDaftarHadirPpspm">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -154,7 +154,7 @@
                                             id="checklistDokumentasiPpk" disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
                                             aria-label="checklistDokumentasiPpspm" name="checklistDokumentasiPpspm"
-                                            id="checklistDokumentasiPpspm" disabled>
+                                            id="checklistDokumentasiPpspm">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -167,7 +167,7 @@
                                             id="checklistNotulensiPpk" disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
                                             aria-label="checklistNotulensiPpspm" name="checklistNotulensiPpspm"
-                                            id="checklistNotulensiPpspm" disabled>
+                                            id="checklistNotulensiPpspm">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -179,8 +179,7 @@
                                             aria-label="checklistCvPpk" name="checklistCvPpk" id="checklistCvPpk"
                                             disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm"
-                                            disabled>
+                                            aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm">
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketAdkSpj" class="col-md-2 form-control-label">ADK SPJ</label>
@@ -192,6 +191,10 @@
                                         <label for="loketSpp" class="col-md-2 form-control-label">SPP</label>
                                         <div class="col">
                                             <p>{{data.spp}}</p>
+                                            {{!-- <select name="loketSpp" id="loketSpp" form="form-select" disabled>
+                                                <option selected></option>
+                                                <option value="sudah">Sudah</option>
+                                            </select> --}}
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -207,22 +210,16 @@
                                             PPSPM</label>
                                         <div class="col">
                                             <textarea name="loketCatatanPpspm" id="loketCatatanPpspm"
-                                                class="form-control" disabled>{{data.catatan.ppspm}}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketCatatanReviewer" class="col-md-2 form-control-label">Catatan
-                                            Reviewer</label>
-                                        <div class="col">
-                                            <textarea name="loketCatatanReviewer" id="loketCatatanReviewer"
-                                                class="form-control">{{data.catatan.reviewer}}</textarea>
+                                                class="form-control">{{data.catatan.ppspm}}</textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="pendingFormReviewer" type="submit" class="btn btn-danger"
-                                            formaction="loket/reviewerPending">Pending</button>
-                                        <button id="prosesFormReviewer" type="submit" class="btn btn-success"
-                                            formaction="loket/reviewerProses">Proses</button>
+                                        <button id="tolakFormPpspm" type="submit" class="btn btn-danger"
+                                            formaction="loket/ppspmTolak">Tolak</button>
+                                        <button id="kirimFormPpspmReviewer" type="submit" class="btn btn-success"
+                                            formaction="loket/ppspmKirimReviewer">Kirim<br><small>(Reviewer)</small></button>
+                                        <button id="kirimFormPpspmBinagram" type="submit" class="btn btn-success"
+                                            formaction="loket/ppspmKirimBinagram">Kirim<br><small>(Binagram)</small></button>
                                     </div>
                                 </div>
                             </div>
@@ -320,6 +317,7 @@
     //var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
+
         //autofill form
         var t1 = $("#tglPelaksanaan").html()
         var t2 = new Date(t1)
@@ -455,12 +453,16 @@
         })
 
         //alert permintaan diproses
-        $('#pendingFormReviewer').click(function () {
-            alert("Tiket telah Dipending")
+        $('#tolakFormPpspm').click(function () {
+            alert("Tiket telah Ditolak")
         })
-        $('#prosesFormReviewer').click(function () {
-            alert("Tiket telah diteruskan ke Bendahara")
+        $('#kirimFormPpspmReviewer').click(function () {
+            alert("Tiket telah diteruskan ke Reviewer")
         })
+        $('#kirimFormPpspmBinagram').click(function () {
+            alert("Tiket telah diteruskan ke Binagram")
+        })
+
     });
 
 </script>

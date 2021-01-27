@@ -4,224 +4,272 @@
         <div class="card-block">
             <div class="row">
                 <div class="col-md-12">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a id="daftar_pengajuan_dana" class="nav-link active" data-toggle="tab" href="#statusdana"
-                                role="tab" aria-control=""><i class="icon-hourglass"></i> Daftar Pengajuan Dana</a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="form_pengajuan_dana" class="nav-link" data-toggle="tab" href="#periksavalidator"
-                                role="tab" aria-control=""><i class="icon-bell"></i> Periksa Pengajuan</a>
-                        </li>
-                    </ul>
                     <div class="tab-content">
-                        {{!-- pemeriksaan loket operator/validator --}}
-                        <div class="tab-pane row" id="periksavalidator" role="tabpanel">
-                            <form id="loket_submit" method="POST" action="loket/submit" class="modal-body">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Nama Pengguna</label>
-                                            <div class="col">
-                                                <select class="form-control" id="nama_pengguna" name="nama_pengguna">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Unit Pengguna</label>
-                                            <div class="col">
-                                                <select class="form-control" id="unit_pengguna" name="unit_pengguna">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Tanggal Pengajuan</label>
-                                            <div class="col">
-                                                <input type="date" id="tanggalpengajuan" name="tanggalpengajuan"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">
-                                                Keterangan Pengajuan Dana</label>
-                                            <div class="col">
-                                                <textarea class="form-control" id="keterangandana" name="keterangandana"
-                                                    rows="3"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Jumlah Dana</label>
-                                            <label class="ml-2 form-control-label" for="">Rp</label>
-                                            <div class="col">
-                                                <input type="text" id="jumlahdana" name="jumlahdana"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Dokumen</label>
-                                            <div class="col ml-2">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="dokumenA">
-                                                    <label class="form-check-label" for="dokumenA">
-                                                        Dokumen A
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="dokumenB">
-                                                    <label class="form-check-label" for="dokumenB">
-                                                        Dokumen B
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value=""
-                                                        id="dokumenC">
-                                                    <label class="form-check-label" for="dokumenC">
-                                                        Dokumen C
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">
-                                                Surat Pertanggung Jawaban</label>
-                                            <div class="col input-group">
-                                                <input type="file" class="form-control" id="filespj" name="filespj"
-                                                    aria-label="Unggah" accept=".xlsx,.xls">
-                                            </div>
+                        {{!-- form pengajuan user --}}
+                        <div class="row col">
+                            <h5><strong>- BENDAHARA -</strong></h5>
+                        </div>
+                        <form id="loketPpk" method="POST" class="modal-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <input name="tiketId" type="hidden" value="{{data._id}}">
+                                    <div class="form-group row">
+                                        <label for="loketNamaUnit" class="col-md-2 form-control-label">Unit</label>
+                                        <div class="col">
+                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit"
+                                                class="form-control" value="{{data.unit}}" disabled>
                                         </div>
                                     </div>
-                                    <div class="col">
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Program</label>
-                                            <div class="col">
-                                                <select class="form-control" id="pok_program" name="pok_program">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Kegiatan</label>
-                                            <div class="col">
-                                                <select class="form-control" id="pok_kegiatan" name="pok_kegiatan">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Output</label>
-                                            <div class="col">
-                                                <select class="form-control" id="pok_output" name="pok_output">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Sub Output</label>
-                                            <div class="col">
-                                                <select class="form-control" id="pok_suboutput" name="pok_suboutput">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Komponen</label>
-                                            <div class="col">
-                                                <select class="form-control" id="pok_komponen" name="pok_komponen">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Sub Komponen</label>
-                                            <div class="col">
-                                                <select class="form-control" id="pok_subkomponen"
-                                                    name="pok_subkomponen">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Akun</label>
-                                            <div class="col">
-                                                <select class="form-control" id="pok_akun" name="pok_akun">
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label for="" class="col-md-2 form-control-label">Detail</label>
-                                            <div class="col">
-                                                <input type="text" id="pok_detail" name="pok_detail"
-                                                    class="form-control">
-                                            </div>
+                                    <div class="form-group row">
+                                        <label for="loketKodeUnit" class="col-md-2 form-control-label">Kode Unit</label>
+                                        <div class="col">
+                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit"
+                                                class="form-control" value="{{data.kodeUnit}}" disabled>
                                         </div>
                                     </div>
+                                    <div class="form-group row">
+                                        <label for="loketOperator" class="col-md-2 form-control-label">Operator</label>
+                                        <div class="col">
+                                            <input type="text" name="loketOperator" id="loketOperator"
+                                                class="form-control" value="{{data.operator}}" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Detail Pengajuan</label>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketProgram" class="col ml-1 form-control-label">Program</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketProgram" id="loketProgram" class="form-select">
+                                                <option Selected>Pilih Program</option>
+                                            </select>
+                                            <input name="loketProgramOk" id="loketProgramOk" class="form-check col-1"
+                                                type="checkbox" value="True">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketKegiatan" class="col ml-1 form-control-label">Kegiatan</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketKegiatan" id="loketKegiatan" class="form-select">
+                                                <option selected>Pilih Kegiatan</option>
+                                            </select>
+                                            <input name="loketKegiatanOk" id="loketKegiatanOk" class="form-check col-1"
+                                                type="checkbox" value="True">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketOutput" class="col ml-1 form-control-label">Output</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketOutput" id="loketOutput" class="form-select">
+                                                <option Selected>Pilih Output</option>
+                                            </select>
+                                            <input name="loketOutputOk" id="loketOutputOk" class="form-check col-1"
+                                                type="checkbox" value="True">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketKomponen" class="col ml-1 form-control-label">Komponen</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketKomponen" id="loketKomponen" class="form-select">
+                                                <option Selected>Pilih Komponen</option>
+                                            </select>
+                                            <input name="loketKomponenOk" id="loketKomponenOk" class="form-check col-1"
+                                                type="checkbox" value="True">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketAkun" class="col ml-1 form-control-label">Akun</label>
+                                        <div class="col-md-10 input-group">
+                                            <select name="loketAkun" id="loketAkun" class="form-select">
+                                                <option Selected>Pilih Akun</option>
+                                            </select>
+                                            <input name="loketAkunOk" id="loketAkunOk" class="form-check col-1"
+                                                type="checkbox" value="True">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketTglPelaksanaan" class="col ml-1 form-control-label">Tanggal
+                                            Pelaksanaan</label>
+                                        <div class="col-md-10">
+                                            <input type="date" name="loketTglPelaksanaan" id="loketTglPelaksanaan"
+                                                class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketDetail" class="col ml-1 form-control-label">Detail SPJ</label>
+                                        <div class="col-md-10">
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" value="{{data.detail}}"
+                                                disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketNilai" class="col ml-1 form-control-label">Nilai</label>
+                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <div class="col-md-9">
+                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}"
+                                                disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-md-2 form-control-label">Checklist</label>
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-1" style="text-align:center">Unit</label>
+                                        <label for="" class="col-md-1" style="text-align:center">PPK</label>
+                                        <label for="" class="col-md-1" style="text-align:center">PPSPM</label>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">SPJ</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistSpjUnit" name="checklistSpjUnit" id="checklistSpjUnit"
+                                            disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistSpjPpk" name="checklistSpjPpk" id="checklistSpjPpk"
+                                            disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistSpjPpspm" name="checklistSpjPpspm"
+                                            id="checklistSpjPpspm" disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">Daftar Hadir</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDaftarHadirUnit" name="checklistDaftarHadirUnit"
+                                            id="checklistDaftarHadirUnit" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDaftarHadirPpk" name="checklistDaftarHadirPpk"
+                                            id="checklistDaftarHadirPpk" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDaftarHadirPpspm" name="checklistDaftarHadirPpspm"
+                                            id="checklistDaftarHadirPpspm" disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">Dokumentasi</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDokumentasiUnit" name="checklistDokumentasiUnit"
+                                            id="checklistDokumentasiUnit" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDokumentasiPpk" name="checklistDokumentasiPpk"
+                                            id="checklistDokumentasiPpk" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistDokumentasiPpspm" name="checklistDokumentasiPpspm"
+                                            id="checklistDokumentasiPpspm" disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">Notulensi</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistNotulensiUnit" name="checklistNotulensiUnit"
+                                            id="checklistNotulensiUnit" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistNotulensiPpk" name="checklistNotulensiPpk"
+                                            id="checklistNotulensiPpk" disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistNotulensiPpspm" name="checklistNotulensiPpspm"
+                                            id="checklistNotulensiPpspm" disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-2"></div>
+                                        <label for="" class="col-md-2 form-control-label">CV Narasumber</label>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistCvUnit" name="checklistCvUnit" id="checklistCvUnit"
+                                            disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistCvPpk" name="checklistCvPpk" id="checklistCvPpk"
+                                            disabled>
+                                        <input class="col-md-1 form-check" type="checkbox" value="True"
+                                            aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm"
+                                            disabled>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketAdkSpj" class="col-md-2 form-control-label">ADK SPJ</label>
+                                        <div class="col">
+                                            <p id="loketAdkSpj">{{data.filespj}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketSpp" class="col-md-2 form-control-label">SPP</label>
+                                        <div class="col">
+                                            <p>{{data.spp}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketCatatanPpk" class="col-md-2 form-control-label">Catatan
+                                            PPK</label>
+                                        <div class="col">
+                                            <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control"
+                                                disabled>{{data.catatan.ppk}}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketCatatanPpspm" class="col-md-2 form-control-label">Catatan
+                                            PPSPM</label>
+                                        <div class="col">
+                                            <textarea name="loketCatatanPpspm" id="loketCatatanPpspm"
+                                                class="form-control" disabled>{{data.catatan.ppspm}}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketCatatanReviewer" class="col-md-2 form-control-label">Catatan
+                                            Reviewer</label>
+                                        <div class="col">
+                                            <textarea name="loketCatatanReviewer" id="loketCatatanReviewer"
+                                                class="form-control" disabled>{{data.catatan.reviewer}}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketMetodeTransfer" class="col-md-2 form-control-label">Metode
+                                            Transfer</label>
+                                        <div class="col">
+                                            <select name="loketMetodeTransfer" id="loketMetodeTransfer" class="form-select">
+                                                <option selected></option>
+                                                <option value="cms">CMS</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketNilaiPajak" class="col ml-1 form-control-label">Nilai
+                                            Pajak</label>
+                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <div class="col-md-9">
+                                            <input type="text" name="loketNilaiPajak" id="loketNilaiPajak"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketNilaiTransfer" class="col ml-1 form-control-label">Nilai
+                                            Transfer</label>
+                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <div class="col-md-9">
+                                            <input type="text" name="loketNilaiTransfer" id="loketNilaiTransfer"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer" id="mainfooter">
+                                        <button id="prosesFormBendahara" type="submit" class="btn btn-success"
+                                            formaction="loket/bendaharaProses">Proses</button>
+                                        <button id="kirimFormBendaharaArsiparis" type="submit" class="btn btn-primary"
+                                            formaction="loket/bendaharaKirimArsiparis">Kirim<br><small>(Arsiparis)</small></button>
+                                        <button id="kirimFormBendaharaOperatorBmn" type="submit" class="btn btn-primary"
+                                            formaction="loket/bendaharaKirimBmn">Kirim<br><small>(Operator
+                                                BMN)</small></button>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button id="loketInputRealisasi" class="btn btn-primary" type="submit"
+                                            formaction="loket/bendaharaInputRealisasi">Input Realisasi</button>
+                                        <button id="loektInputPajak" class="btn btn-primary" type="submit"
+                                            formaction="loket/bendaharaInputPajak">Input Pajak</button>
+                                    </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button id="tolak_btn" type="submit" class="btn btn-danger">
-                                        Tolak pengajuan</button>
-                                    <button id="konfirmasi_bendahara_btn" type="submit" class="btn btn-success">
-                                        Konfirmasi Pengajuan</button>
-                                </div>
-                            </form>
-                        </div>
-                        {{!-- list pengajuan --}}
-                        <div class="tab-pane active" id="statusdana" role="tabpanel">
-                            <table id="table_loket_user" class="table table-bordered" width="100%">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Pengguna</th>
-                                        <th>Unit</th>
-                                        <th>tanggal Pengajuan</th>
-                                        <th>Jumlah Dana</th>
-                                        <th>Status</th>
-                                        <th>Keterangan Pengajuan Dana</th>
-                                        <th>Pilihan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<div class="modal fade" id="konfirmasi_tolak_form" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
-    <div class="modal-dialog modal-primary" role="document" style="max-width: 500px;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title">Keterangan Penolakan</h6>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding: 0 15px;">
-                <div style="padding: 15px;">
-                    <div class="row">
-                        <div class="col">
-                            <textarea class="form-control" id="keterangan_penolakan_validator" rows="3"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal">Batalkan</button>
-                <button type="button" class="btn btn-danger" id="tolak_validator_btn">Konfirmasi</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
 
 <script src="/js/handsontable.full.min.js"></script>
 <script src="/js/moment.min.js"></script>
@@ -233,26 +281,227 @@
 <script src="/js/exporting.js"></script>
 <script src="/js/offline-exporting.js"></script>
 
-<script>
-    $('#pok_dana').val({{ duit }});
+{{!-- autofill form --}}
+<script id="tglPelaksanaan" type="text/x-handlebars-template">
+    {{data.tanggal.pelaksanaan}}
 </script>
 
+{{!-- iterasi select pok --}}
+<script id="program" type="text/x-handlebars-template">
+    {{#if data.kdprogram}}
+        <option value="{{data.kdprogram}}" selected>{{data.kdprogram}} {{data.uraianProgram}}</option>
+        {{#each program}}
+            <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
+        {{/each}}
+    {{else}}
+        {{#each program}}
+            <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
+        {{/each}}
+    {{/if}}
+</script>
+<script id="kegiatan" type="text/x-handlebars-template">
+    {{#if data.kdkegiatan}}
+        <option value="{{data.kdkegiatan}}" selected>{{data.kdkegiatan}} {{data.uraianKegiatan}}</option>
+        {{#each kegiatan}}
+            <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
+        {{/each}}
+    {{else}}
+        {{#each kegiatan}}
+            <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
+        {{/each}}
+    {{/if}}
+</script>
+<script id="output" type="text/x-handlebars-template">
+    {{#if data.kdoutput}}
+        <option value="{{data.kdoutput}}" selected>{{data.kdoutput}} {{data.uraianOutput}}</option>
+        {{#each output}}
+            <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
+        {{/each}}
+    {{else}}
+        {{#each output}}
+            <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
+        {{/each}}
+    {{/if}}
+</script>
+<script id="komponen" type="text/x-handlebars-template">
+    {{#if data.kdkomponen}}
+        <option value="{{data.kdkomponen}}" selected>{{data.kdkomponen}} {{data.uraianKomponen}}</option>
+        {{#each komponen}}
+            <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
+        {{/each}}
+    {{else}}
+        {{#each komponen}}
+            <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
+        {{/each}}
+    {{/if}}
+</script>
+<script id="akun" type="text/x-handlebars-template">
+    {{#if data.kdakun}}
+        <option value="{{data.kdakun}}" selected>{{data.kdakun}} {{data.uraianAkun}}</option>
+        {{#each akun}}
+            <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
+        {{/each}}
+    {{else}}
+        {{#each akun}}
+            <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
+        {{/each}}
+    {{/if}}
+</script>
 
+{{!-- main script --}}
 <script type="text/javascript">
-    socket = io.connect($(location).attr('host'));
+    //socket = io.connect($(location).attr('host'));
+    var socket = io()
 
     //untuk hak akses
-    var user_aktiv = '{{username}}';
+    //var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
+        //autofill form
+        var t1 = $("#tglPelaksanaan").html()
+        var t2 = new Date(t1)
+        $("#loketTglPelaksanaan").val(t2.getFullYear()+'-'+t2.getMonth()+1+'-'+t2.getDate())
+        var spj = [{{data.checklist.spj}}]
+        var hadir = [{{data.checklist.daftarHadir}}]
+        var dok = [{{data.checklist.dokumentasi}}]
+        var not = [{{data.checklist.notulensi}}]
+        var cv = [{{data.checklist.cvNarasumber}}]
+        
+        if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
+        if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
+        if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
+        if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
+        if (cv[0]) $("#checklistCvUnit").attr("checked", true)
+        if (spj[1]) $("#checklistSpjPpk").attr("checked", true)
+        if (hadir[1]) $("#checklistDaftarHadirPpk").attr("checked", true)
+        if (dok[1]) $("#checklistDokumentasiPpk").attr("checked", true)
+        if (not[1]) $("#checklistNotulensiPpk").attr("checked", true)
+        if (cv[1]) $("#checklistCvPpk").attr("checked", true)
+        if (spj[2]) $("#checklistSpjPpspm").attr("checked", true)
+        if (hadir[2]) $("#checklistDaftarHadirPpspm").attr("checked", true)
+        if (dok[2]) $("#checklistDokumentasiPpspm").attr("checked", true)
+        if (not[2]) $("#checklistNotulensiPpspm").attr("checked", true)
+        if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
 
-        //        socket.on('form_penarikan', function (data) {
-        //            generalAlert('Form telah disubmit');
-        //        })
-        $('#tolak_btn').click(function () {
-            //tampilkan modal
-            $('#konfirmasi_tolak_form').modal('show');
+        //iterasi select pok on autofill
+        var pokProgram = $("#program").html()
+        $("#loketProgram").append(pokProgram)
+        var pokKegiatan = $("#kegiatan").html()
+        $("#loketKegiatan").append(pokKegiatan)
+        var pokOutput = $("#output").html()
+        $("#loketOutput").append(pokOutput)
+        var pokKomponen = $("#komponen").html()
+        $("#loketKomponen").append(pokKomponen)
+        var pokAkun = $("#akun").html()
+        $("#loketAkun").append(pokAkun)
+
+        //iterasi select pok
+        $("#loketProgram").change(function(){
+            if ($("#loketProgram").val()!="Pilih Program"){
+                console.log($("#loketProgram").val())
+                socket.emit('mintaKegiatan', $("#loketProgram").val())
+            } else {
+                $("#loketKegiatan").empty().append('<option selected>Pilih Kegiatan</option>')
+                $("#loketOutput").empty().append('<option selected>Pilih Output</option>')
+                $("#loketKomponen").empty().append('<option selected>Pilih Komponen</option>')
+                $("#loketAkun").empty().append('<option selected>Pilih Akun</option>')
+            }
         })
+
+        socket.on('terimaKegiatan', function(kegiatan){
+            let sama = false
+            $("#loketKegiatan").empty().append('<option selected>Pilih Kegiatan</option>')
+            for (let i=0; i<kegiatan.length;i++){
+                $('#loketKegiatan option').each( function() {if (kegiatan[i].kdgiat == this.value) sama = true})
+                if (!sama) {
+                    let s = '<option value="'+kegiatan[i].kdgiat+'">'+kegiatan[i].kdgiat+' '+kegiatan[i].uraian+'</option>'
+                    $("#loketKegiatan").append(s)
+                }
+                sama = false
+            }
+        })
+
+        $("#loketKegiatan").change(function(){
+            if ($("#loketKegiatan").val()!="Pilih Kegiatan"){
+                console.log($("#loketKegiatan").val())
+                let s = [$("#loketProgram").val(), $("#loketKegiatan").val()]
+                socket.emit('mintaOutput', s)
+            } else {
+                $("#loketOutput").empty().append('<option selected>Pilih Output</option>')
+                $("#loketKomponen").empty().append('<option selected>Pilih Komponen</option>')
+                $("#loketAkun").empty().append('<option selected>Pilih Akun</option>')
+            }
+        })
+
+        socket.on('terimaOutput', function(output){
+            let sama = false
+            $("#loketOutput").empty().append('<option selected>Pilih Output</option>')
+            for (let i=0; i<output.length;i++){
+                $('#loketOutput option').each( function() {if (output[i].kdoutput == this.value) sama = true})
+                if (!sama) {
+                    let s = '<option value="'+output[i].kdoutput+'">'+output[i].kdoutput+' '+output[i].uraian+'</option>'
+                    $("#loketOutput").append(s)
+                }
+                sama = false
+            }
+        })
+
+        $("#loketOutput").change(function(){
+            if ($("#loketOutput").val()!="Pilih Output"){
+                console.log($("#loketOutput").val())
+                let s = [$("#loketProgram").val(), $("#loketKegiatan").val(), $("#loketOutput").val()]
+                socket.emit('mintaKomponen', s)
+            } else {
+                $("#loketKomponen").empty().append('<option selected>Pilih Komponen</option>')
+                $("#loketAkun").empty().append('<option selected>Pilih Akun</option>')
+            }
+        })
+
+        socket.on('terimaKomponen', function(komponen){
+            let sama = false
+            $("#loketKomponen").empty().append('<option selected>Pilih Komponen</option>')
+            for (let i=0; i<komponen.length;i++){
+                $('#loketKomponen option').each( function() {if (komponen[i].kdkmpnen == this.value) sama = true})
+                if (!sama) {
+                    let s = '<option value="'+komponen[i].kdkmpnen+'">'+komponen[i].kdkmpnen+' '+komponen[i].urkmpnen+'</option>'
+                    $("#loketKomponen").append(s)
+                }
+                sama = false
+            }
+        })
+
+        $("#loketKomponen").change(function(){
+            if ($("#loketKomponen").val()!="Pilih Komponen"){
+                console.log($("#loketKomponen").val())
+                let s = [$("#loketProgram").val(), $("#loketKegiatan").val(), $("#loketOutput").val(), $("#loketKomponen").val()]
+                socket.emit('mintaAkun', s)
+            } else {$("#loketAkun").empty().append('<option selected>Pilih Akun</option>')}
+        })
+
+        socket.on('terimaAkun', function(akun){
+            let sama = false
+            $("#loketAkun").empty().append('<option selected>Pilih Akun</option>')
+            for (let i=0; i<akun.length;i++){
+                $('#loketAkun option').each( function() {if (akun[i].kdakun == this.value) sama = true})
+                if (!sama) {
+                    let s = '<option value="'+akun[i].kdakun+'">'+akun[i].kdakun+' '+akun[i].uraian+'</option>'
+                    $("#loketAkun").append(s)
+                }
+                sama = false
+            }
+        })
+        
+        //alert permintaan diproses
+        $('#prosesFormBendahara').click(function () {
+            alert("Tiket telah diteruskan ke Operator Bank")
+        })
+        $('#kirimFormBendaharaArsiparis').click(function () {
+            alert("Tiket telah diteruskan ke Arsiparis")
+        })
+        $('#kirimFormBendaharaOperatorBmn').click(function () {
+            alert("Tiket telah diteruskan ke Operator BMN")
+        })    
+
     });
 
 </script>

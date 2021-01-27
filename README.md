@@ -46,3 +46,7 @@ Fungsi secara umum:
 
 Untuk Persyaratan Sistem, Instalasi, dan Panduan Penggunaan, klik <a href="https://git.stis.ac.id/Shamad/simamov/wikis/home">di sini</a>.
 SIMAMOV --v
+SIMAMOV v1.x
+-----------
+
+Hasil merge dengan mahasiswa yang lain

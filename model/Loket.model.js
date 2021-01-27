@@ -1,41 +1,54 @@
 const { date } = require('jszip/lib/defaults');
+const { string } = require('jszip/lib/support');
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
 var LoketSchema = new Schema({
-    'thang': {
-        type: Number,
-        default: new Date().getFullYear()
-    },
-    'tanggalpersetujuan':{
-        'validator': Date,
-        'reviewer': Date,
-        'bendahara': Date,
-        'ditolak': Array,
-    },
-    'jumlah': Number,
-    'keterangandana': String,
-    'dokumen': {
-        'A': Boolean,
-        'B': Boolean,
-        'C': Boolean,
-    },
-    'status': {
-        type: String,
-        default: 'validasi'
-    },
-    'timestamp': {
-        type: Number,
-        required: true
-    },
-    'pengentry': {
-        type: String,
-        ref: 'User'
-    },
+    'nomorTransaksi': String,
     'unit': String,
-    'namapetugas': String,
-    'keteranganpetugas': String,
+    'kodeUnit': String,
+    'operator': String,
+    'kdprogram': String,
+    'uraianProgram': String,
+    'kdkegiatan': String,
+    'uraianKegiatan': String,
+    'kdoutput': String,
+    'uraianOutput': String,
+    'kdkomponen': String,
+    'uraianKomponen': String,
+    'kdakun': String,
+    'uraianAkun': String,
+    'detail': String,
+    'nilaiPengajuan': Number,
+    'checklist': {
+        'spj': [{ type: Boolean }],
+        'daftarHadir': [{ type: Boolean }],
+        'dokumentasi': [{ type: Boolean }],
+        'notulensi': [{ type: Boolean }],
+        'cvNarasumber': [{ type: Boolean }],
+    },
+    'fileSpj': Buffer,
+    'spp': String, //sudah
+    'catatan': {
+        'ppk': String,
+        'ppspm': String,
+        'reviewer': String,
+    },
+    'metodeTransfer': String,
+    'nilaiPajak': Number,
+    'nilaiTransfer': Number,
+    'statusTransfer': String, //sudah
+    'tanggal': {
+        'pengajuan': String,
+        'pelaksanaan': String,
+        'transfer': String,
+        'selesai': String,
+    },
+    'posisi': String, //ppk, ppspm, reviewer, bendahara, operatorBank
+    'status': String, //belum selesai, selesai, ditolak, dibatalkan
+
+
 }, { collection: 'loket', strict: false });
 
 module.exports = mongoose.model('Loket', LoketSchema);
