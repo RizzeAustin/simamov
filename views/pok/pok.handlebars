@@ -1,6 +1,16 @@
 <div class="animated fadeIn">
     <div class="card" id="new">
-        <div class="card-header"><i class="icon-calculator"></i> Pengelolaan Petunjuk Operasional Kegiatan (POK)</div>
+        <div class="card-header"><i class="icon-calculator"></i> Pengelolaan Petunjuk Operasional Kegiatan (POK)
+            <div class="input-group mb-2">
+                <span class="input-group-addon"><i class="icon-clock"></i>
+                </span>
+                    <select data-toggle="tooltip" title="Tahun anggaran" id="tahun_anggaran" name="tahun_anggaran" class="form-control" size="1">
+                        {{#each thang}}
+                            <option value="{{thang}}" {{#if_eq thang ../this_year}}selected{{/if_eq}}>{{thang}}</option>
+                        {{/each}}  
+                    </select>
+            </div>
+        </div>
             <div class="card-block">
                 <div class="row">
                     <div class="col-md-12">
@@ -160,22 +170,6 @@
                                 <div class="form-group row">
                                     <div class="col-md-3" style="border-right: 1px solid #ccc;">
                                         <div class="form-group row">
-                                            <label for="jenis_item" class="col-md-3 form-control-label no-left-padding">Tambah:</label>
-                                            <div class="col-md-9">
-                                                <select class="col-md-9 form-control" id="jenis_item" name="jenis_item" size="1">
-                                                    {{#each thang}}
-                                                    <option value="none" selected="selected">--pilih--</option>
-                                                    <option value="program">Program</option>
-                                                    <option value="kegiatan">Kegiatan</option>
-                                                    <option value="output">Output</option>
-                                                    <option value="soutput">Sub Output</option>
-                                                    <option value="komponen">Komponen</option>
-                                                    <option value="skomponen">Sub Komponen</option>
-                                                    <option value="akun">Akun</option>
-                                                    <option value="detail">Detail Belanja</option>
-                                                    {{/each}}
-                                                </select>
-                                            </div>
                                             <label for="jenis_item" class="col-md-3 form-control-label no-left-padding">Tambah:</label>
                                             <div class="col-md-9">
                                                 <select class="col-md-9 form-control" id="jenis_item" name="jenis_item" size="1">

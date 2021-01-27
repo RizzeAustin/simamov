@@ -3861,7 +3861,7 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id) {
                 is_notvalid = true;
                 return;
             }
-            if (!item[4] || item[5] === '') {
+            if (item[5] === '') {
                 is_notvalid = true;
                 return;
             }
