@@ -7,7 +7,7 @@
                     <div class="tab-content">
                         {{!-- form pengajuan user --}}
                         <div class="row col">
-                            <h5><strong>- REVIEWER -</strong></h5>
+                            <h5><strong>- PPK -</strong></h5>
                         </div>
                         <form id="loketPpk" method="POST" class="modal-body">
                             <div class="row">
@@ -39,52 +39,42 @@
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketProgram" class="col ml-1 form-control-label">Program</label>
-                                        <div class="col-md-10 input-group">
+                                        <div class="col-md-10">
                                             <select name="loketProgram" id="loketProgram" class="form-select">
                                                 <option Selected>Pilih Program</option>
                                             </select>
-                                            <input name="loketProgramOk" id="loketProgramOk" class="form-check col-1"
-                                                type="checkbox" value="True">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketKegiatan" class="col ml-1 form-control-label">Kegiatan</label>
-                                        <div class="col-md-10 input-group">
+                                        <div class="col-md-10">
                                             <select name="loketKegiatan" id="loketKegiatan" class="form-select">
                                                 <option selected>Pilih Kegiatan</option>
                                             </select>
-                                            <input name="loketKegiatanOk" id="loketKegiatanOk" class="form-check col-1"
-                                                type="checkbox" value="True">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketOutput" class="col ml-1 form-control-label">Output</label>
-                                        <div class="col-md-10 input-group">
+                                        <div class="col-md-10">
                                             <select name="loketOutput" id="loketOutput" class="form-select">
                                                 <option Selected>Pilih Output</option>
                                             </select>
-                                            <input name="loketOutputOk" id="loketOutputOk" class="form-check col-1"
-                                                type="checkbox" value="True">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketKomponen" class="col ml-1 form-control-label">Komponen</label>
-                                        <div class="col-md-10 input-group">
+                                        <div class="col-md-10">
                                             <select name="loketKomponen" id="loketKomponen" class="form-select">
                                                 <option Selected>Pilih Komponen</option>
                                             </select>
-                                            <input name="loketKomponenOk" id="loketKomponenOk" class="form-check col-1"
-                                                type="checkbox" value="True">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketAkun" class="col ml-1 form-control-label">Akun</label>
-                                        <div class="col-md-10 input-group">
+                                        <div class="col-md-10">
                                             <select name="loketAkun" id="loketAkun" class="form-select">
                                                 <option Selected>Pilih Akun</option>
                                             </select>
-                                            <input name="loketAkunOk" id="loketAkunOk" class="form-check col-1"
-                                                type="checkbox" value="True">
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -115,7 +105,6 @@
                                         <div class="col-md-2"></div>
                                         <label for="" class="col-md-1" style="text-align:center">Unit</label>
                                         <label for="" class="col-md-1" style="text-align:center">PPK</label>
-                                        <label for="" class="col-md-1" style="text-align:center">PPSPM</label>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -124,11 +113,7 @@
                                             aria-label="checklistSpjUnit" name="checklistSpjUnit" id="checklistSpjUnit"
                                             disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistSpjPpk" name="checklistSpjPpk" id="checklistSpjPpk"
-                                            disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistSpjPpspm" name="checklistSpjPpspm"
-                                            id="checklistSpjPpspm" disabled>
+                                            aria-label="checklistSpjPpk" name="checklistSpjPpk" id="checklistSpjPpk">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -138,10 +123,7 @@
                                             id="checklistDaftarHadirUnit" disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
                                             aria-label="checklistDaftarHadirPpk" name="checklistDaftarHadirPpk"
-                                            id="checklistDaftarHadirPpk" disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistDaftarHadirPpspm" name="checklistDaftarHadirPpspm"
-                                            id="checklistDaftarHadirPpspm" disabled>
+                                            id="checklistDaftarHadirPpk">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -151,10 +133,7 @@
                                             id="checklistDokumentasiUnit" disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
                                             aria-label="checklistDokumentasiPpk" name="checklistDokumentasiPpk"
-                                            id="checklistDokumentasiPpk" disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistDokumentasiPpspm" name="checklistDokumentasiPpspm"
-                                            id="checklistDokumentasiPpspm" disabled>
+                                            id="checklistDokumentasiPpk">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -164,10 +143,7 @@
                                             id="checklistNotulensiUnit" disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
                                             aria-label="checklistNotulensiPpk" name="checklistNotulensiPpk"
-                                            id="checklistNotulensiPpk" disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistNotulensiPpspm" name="checklistNotulensiPpspm"
-                                            id="checklistNotulensiPpspm" disabled>
+                                            id="checklistNotulensiPpk">
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -176,11 +152,7 @@
                                             aria-label="checklistCvUnit" name="checklistCvUnit" id="checklistCvUnit"
                                             disabled>
                                         <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistCvPpk" name="checklistCvPpk" id="checklistCvPpk"
-                                            disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm"
-                                            disabled>
+                                            aria-label="checklistCvPpk" name="checklistCvPpk" id="checklistCvPpk">
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketAdkSpj" class="col-md-2 form-control-label">ADK SPJ</label>
@@ -191,38 +163,25 @@
                                     <div class="form-group row">
                                         <label for="loketSpp" class="col-md-2 form-control-label">SPP</label>
                                         <div class="col">
-                                            <p>{{data.spp}}</p>
+                                            <select name="loketSpp" id="loketSpp" class="form-select">
+                                                <option selected></option>
+                                                <option value="Sudah">Sudah</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketCatatanPpk" class="col-md-2 form-control-label">Catatan
                                             PPK</label>
                                         <div class="col">
-                                            <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control"
-                                                disabled>{{data.catatan.ppk}}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketCatatanPpspm" class="col-md-2 form-control-label">Catatan
-                                            PPSPM</label>
-                                        <div class="col">
-                                            <textarea name="loketCatatanPpspm" id="loketCatatanPpspm"
-                                                class="form-control" disabled>{{data.catatan.ppspm}}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketCatatanReviewer" class="col-md-2 form-control-label">Catatan
-                                            Reviewer</label>
-                                        <div class="col">
-                                            <textarea name="loketCatatanReviewer" id="loketCatatanReviewer"
-                                                class="form-control">{{data.catatan.reviewer}}</textarea>
+                                            <textarea name="loketCatatanPpk" id="loketCatatanPpk"
+                                                class="form-control"></textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="pendingFormReviewer" type="submit" class="btn btn-danger"
-                                            formaction="loket/reviewerPending">Pending</button>
-                                        <button id="prosesFormReviewer" type="submit" class="btn btn-success"
-                                            formaction="loket/reviewerProses">Proses</button>
+                                        <button id="tolakFormPpk" type="submit" formaction="loket/ppkTolak"
+                                            class="btn btn-danger">Tolak</button>
+                                        <button id="kirimFormPpk" type="submit" formaction="loket/ppkKirim"
+                                            class="btn btn-success">Kirim</button>
                                     </div>
                                 </div>
                             </div>
@@ -249,77 +208,26 @@
     {{data.tanggal.pelaksanaan}}
 </script>
 
-{{!-- iterasi select pok --}}
 <script id="program" type="text/x-handlebars-template">
-    {{#if data.kdprogram}}
-        <option value="{{data.kdprogram}}" selected>{{data.kdprogram}} {{data.uraianProgram}}</option>
-        {{#each program}}
-            <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
-        {{/each}}
-    {{else}}
-        {{#each program}}
-            <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
-        {{/each}}
-    {{/if}}
-</script>
-<script id="kegiatan" type="text/x-handlebars-template">
-    {{#if data.kdkegiatan}}
-        <option value="{{data.kdkegiatan}}" selected>{{data.kdkegiatan}} {{data.uraianKegiatan}}</option>
-        {{#each kegiatan}}
-            <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
-        {{/each}}
-    {{else}}
-        {{#each kegiatan}}
-            <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
-        {{/each}}
-    {{/if}}
-</script>
-<script id="output" type="text/x-handlebars-template">
-    {{#if data.kdoutput}}
-        <option value="{{data.kdoutput}}" selected>{{data.kdoutput}} {{data.uraianOutput}}</option>
-        {{#each output}}
-            <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
-        {{/each}}
-    {{else}}
-        {{#each output}}
-            <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
-        {{/each}}
-    {{/if}}
-</script>
-<script id="komponen" type="text/x-handlebars-template">
-    {{#if data.kdkomponen}}
-        <option value="{{data.kdkomponen}}" selected>{{data.kdkomponen}} {{data.uraianKomponen}}</option>
-        {{#each komponen}}
-            <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
-        {{/each}}
-    {{else}}
-        {{#each komponen}}
-            <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
-        {{/each}}
-    {{/if}}
-</script>
-<script id="akun" type="text/x-handlebars-template">
-    {{#if data.kdakun}}
-        <option value="{{data.kdakun}}" selected>{{data.kdakun}} {{data.uraianAkun}}</option>
-        {{#each akun}}
-            <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
-        {{/each}}
-    {{else}}
-        {{#each akun}}
-            <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
-        {{/each}}
-    {{/if}}
+    {{#each program}}
+        <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
+    {{/each}}
 </script>
 
 {{!-- main script --}}
 <script type="text/javascript">
     //socket = io.connect($(location).attr('host'));
-    var socket = io()
+    var socket = io();
 
     //untuk hak akses
     //var user_aktiv = '{{username}}';
 
+    //Handlebars.registerHelper("json", function(obj) {
+    //    return JSON.stringify(obj)
+    //});
+
     $(document).ready(function () {
+
         //autofill form
         var t1 = $("#tglPelaksanaan").html()
         var t2 = new Date(t1)
@@ -335,28 +243,9 @@
         if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
         if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
         if (cv[0]) $("#checklistCvUnit").attr("checked", true)
-        if (spj[1]) $("#checklistSpjPpk").attr("checked", true)
-        if (hadir[1]) $("#checklistDaftarHadirPpk").attr("checked", true)
-        if (dok[1]) $("#checklistDokumentasiPpk").attr("checked", true)
-        if (not[1]) $("#checklistNotulensiPpk").attr("checked", true)
-        if (cv[1]) $("#checklistCvPpk").attr("checked", true)
-        if (spj[2]) $("#checklistSpjPpspm").attr("checked", true)
-        if (hadir[2]) $("#checklistDaftarHadirPpspm").attr("checked", true)
-        if (dok[2]) $("#checklistDokumentasiPpspm").attr("checked", true)
-        if (not[2]) $("#checklistNotulensiPpspm").attr("checked", true)
-        if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
 
-        //iterasi select pok on autofill
         var pokProgram = $("#program").html()
         $("#loketProgram").append(pokProgram)
-        var pokKegiatan = $("#kegiatan").html()
-        $("#loketKegiatan").append(pokKegiatan)
-        var pokOutput = $("#output").html()
-        $("#loketOutput").append(pokOutput)
-        var pokKomponen = $("#komponen").html()
-        $("#loketKomponen").append(pokKomponen)
-        var pokAkun = $("#akun").html()
-        $("#loketAkun").append(pokAkun)
 
         //iterasi select pok
         $("#loketProgram").change(function(){
@@ -455,11 +344,12 @@
         })
 
         //alert permintaan diproses
-        $('#pendingFormReviewer').click(function () {
-            alert("Tiket telah Dipending")
+        $('#tolakFormPpk').click(function() {
+            alert("Tiket telah Ditolak")
         })
-        $('#prosesFormReviewer').click(function () {
-            alert("Tiket telah diteruskan ke Bendahara")
+        
+        $('#kirimFormPpk').click(function () {
+            alert("Tiket telah diteruskan ke PPSPM")
         })
     });
 

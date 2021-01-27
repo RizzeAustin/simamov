@@ -24,6 +24,9 @@
     <link href="/css/bootstrap-tokenfield.css" rel="stylesheet">
     <link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
+    {{!-- custom css --}}
+    <link rel="stylesheet" href="/css/auliacss.css">
+
     <style type="text/css">
         .table>tbody>tr>td {
             vertical-align: middle;
@@ -200,28 +203,32 @@
                         <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-basket"></i> E-LOKET</a>
                         <ul class="nav-dropdown-items">
                             <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
-                                    E-LOKET User</a>
+                                <a id="loket" class="nav-link" href="loket/dashboard"><i
+                                        class="icon-screen-desktop"></i> Dashboard</a>
                             </li>
                             <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/validator"><i class="icon-user"></i>
-                                    E-LOKET Validator</a>
+                                <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
+                                    Pengajuan Baru</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="loket" class="nav-link" href="loket/ppk"><i class="icon-user"></i>
+                                    PPK</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="loket" class="nav-link" href="loket/ppspm"><i class="icon-user"></i>
+                                    PPSPM</a>
                             </li>
                             <li class="nav-item">
                                 <a id="loket" class="nav-link" href="loket/reviewer"><i class="icon-user"></i>
-                                    E-LOKET Reviewer</a>
+                                    Reviewer</a>
                             </li>
                             <li class="nav-item">
                                 <a id="loket" class="nav-link" href="loket/bendahara"><i class="icon-user"></i>
-                                    E-LOKET Bendahara</a>
+                                    Bendahara</a>
                             </li>
                             <li class="nav-item">
                                 <a id="loket" class="nav-link" href="loket/bank"><i class="icon-user"></i>
-                                    E-LOKET Operator Bank</a>
-                            </li>
-                            <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/arsiparis"><i class="icon-user"></i>
-                                    E-LOKET Arsiparis</a>
+                                    Operator Bank</a>
                             </li>
                         </ul>
                     </li>
@@ -312,6 +319,8 @@
     <script src="/js/tether.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script data-pace-options='{ "ajax": false }' src="/js/pace.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.js"></script>
 
 
     <!-- Plugins and scripts required by all views -->
