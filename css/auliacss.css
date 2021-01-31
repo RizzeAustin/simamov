@@ -110,3 +110,7 @@ table tr td:first-child::before {
     background-color: #f8f9fa;
     border-color: #f8f9fa
 }
+
+.align-middle {
+    vertical-align: middle!important
+}

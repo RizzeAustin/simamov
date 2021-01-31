@@ -28,7 +28,7 @@ var LoketSchema = new Schema({
         'notulensi': [{ type: Boolean }],
         'cvNarasumber': [{ type: Boolean }],
     },
-    'fileSpj': Buffer,
+    'fileSpj': String,
     'spp': String, //sudah
     'catatan': {
         'ppk': String,

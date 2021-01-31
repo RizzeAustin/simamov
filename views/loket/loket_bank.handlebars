@@ -7,117 +7,100 @@
                     <div class="tab-content">
                         {{!-- form pengajuan user --}}
                         <div class="row col">
-                            <h5><strong>- OPERATOR BANK -</strong></h5>
+                            <h1><strong>- OPERATOR BANK -</strong></h1>
                         </div>
-                        <form id="loketPpk" method="POST" action="loket/bankKirim" class="modal-body">
+                        <form id="loketForm" method="POST" action="loket/bankKirim" class="modal-body" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-6">
                                     <input name="tiketId" type="hidden" value="{{data._id}}">
                                     <div class="form-group row">
-                                        <label for="loketNamaUnit" class="col-md-2 form-control-label">Unit</label>
+                                        <label for="loketNamaUnit" class="col-md-2 col-form-label">Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit"
-                                                class="form-control" value="{{data.unit}}" disabled>
+                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" value="{{data.unit}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketKodeUnit" class="col-md-2 form-control-label">Kode Unit</label>
+                                        <label for="loketKodeUnit" class="col-md-2 col-form-label">Kode Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit"
-                                                class="form-control" value="{{data.kodeUnit}}" disabled>
+                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" value="{{data.kodeUnit}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketOperator" class="col-md-2 form-control-label">Operator</label>
+                                        <label for="loketOperator" class="col-md-2 col-form-label">Operator</label>
                                         <div class="col">
-                                            <input type="text" name="loketOperator" id="loketOperator"
-                                                class="form-control" value="{{data.operator}}" disabled>
+                                            <input type="text" name="loketOperator" id="loketOperator" class="form-control" value="{{data.operator}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="" class="col-md-2 form-control-label">Detail Pengajuan</label>
+                                        <label for="" class="col-md-2 col-form-label">Detail Pengajuan</label>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketProgram" class="col ml-1 form-control-label">Program</label>
+                                        <label for="loketProgram" class="col ml-1 col-form-label">Program</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketProgram" id="loketProgram" class="form-select" disabled>
                                                 <option Selected>{{data.kdprogram}} {{data.uraianProgram}}</option>
                                             </select>
-                                            <input name="loketProgramOk" id="loketProgramOk" class="form-check col-1"
-                                                type="checkbox" value="True" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketKegiatan" class="col ml-1 form-control-label">Kegiatan</label>
+                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Kegiatan</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketKegiatan" id="loketKegiatan" class="form-select"
                                                 disabled>
                                                 <option selected>{{data.kdkegiatan}} {{data.uraianKegiatan}}</option>
                                             </select>
-                                            <input name="loketKegiatanOk" id="loketKegiatanOk" class="form-check col-1"
-                                                type="checkbox" value="True" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketOutput" class="col ml-1 form-control-label">Output</label>
+                                        <label for="loketOutput" class="col ml-1 col-form-label">Output</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketOutput" id="loketOutput" class="form-select" disabled>
                                                 <option Selected>{{data.kdoutput}} {{data.uraianOutput}}</option>
                                             </select>
-                                            <input name="loketOutputOk" id="loketOutputOk" class="form-check col-1"
-                                                type="checkbox" value="True" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketKomponen" class="col ml-1 form-control-label">Komponen</label>
+                                        <label for="loketKomponen" class="col ml-1 col-form-label">Komponen</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketKomponen" id="loketKomponen" class="form-select"
                                                 disabled>
                                                 <option Selected>{{data.kdkomponen}} {{data.uraianKomponen}}</option>
                                             </select>
-                                            <input name="loketKomponenOk" id="loketKomponenOk" class="form-check col-1"
-                                                type="checkbox" value="True" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketAkun" class="col ml-1 form-control-label">Akun</label>
+                                        <label for="loketAkun" class="col ml-1 col-form-label">Akun</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketAkun" id="loketAkun" class="form-select" disabled>
                                                 <option Selected>{{data.kdakun}} {{data.uraianAkun}}</option>
                                             </select>
-                                            <input name="loketAkunOk" id="loketAkunOk" class="form-check col-1"
-                                                type="checkbox" value="True" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketTglPelaksanaan" class="col ml-1 form-control-label">Tanggal
-                                            Pelaksanaan</label>
+                                        <label for="loketTglPelaksanaan" class="col ml-1 col-form-label">Tanggal Pelaksanaan</label>
                                         <div class="col-md-10">
-                                            <input type="date" name="loketTglPelaksanaan" id="loketTglPelaksanaan"
-                                                class="form-control" disabled>
+                                            <input type="text" name="loketTglPelaksanaan" id="loketTglPelaksanaan" class="form-control" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketDetail" class="col ml-1 form-control-label">Detail SPJ</label>
+                                        <label for="loketDetail" class="col ml-1 col-form-label">Detail SPJ</label>
                                         <div class="col-md-10">
-                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" value="{{data.detail}}"
-                                                disabled>
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" value="{{data.detail}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketNilai" class="col ml-1 form-control-label">Nilai</label>
-                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai</label>
+                                        <label class="ml-2 col-form-label" for="">Rp</label>
                                         <div class="col-md-9">
-                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}"
-                                                disabled>
+                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="" class="col-md-2 form-control-label">Checklist</label>
+                                        <label for="" class="col-md-2 col-form-label">Checklist</label>
                                         <div class="col-md-2"></div>
-                                        <label for="" class="col-md-1" style="text-align:center">Unit</label>
-                                        <label for="" class="col-md-1" style="text-align:center">PPK</label>
-                                        <label for="" class="col-md-1" style="text-align:center">PPSPM</label>
+                                        <label for="" class="col-md-1 col-form-label" style="text-align:center">Unit</label>
+                                        <label for="" class="col-md-1 col-form-label" style="text-align:center">PPK</label>
+                                        <label for="" class="col-md-1 col-form-label" style="text-align:center">PPSPM</label>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2"></div>
@@ -185,87 +168,81 @@
                                             disabled>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketAdkSpj" class="col-md-2 form-control-label">ADK SPJ</label>
+                                        <label for="loketAdkSpj" class="col-md-2 col-form-label">ADK SPJ</label>
                                         <div class="col">
                                             <p id="loketAdkSpj">{{data.filespj}}</p>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketSpp" class="col-md-2 form-control-label">SPP</label>
+                                        <label for="loketSpp" class="col-md-2 col-form-label">SPP</label>
                                         <div class="col">
-                                            <p>{{data.spp}}</p>
+                                            <input type="text" value="{{data.spp}}" class="form-control" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketCatatanPpk" class="col-md-2 form-control-label">Catatan
-                                            PPK</label>
+                                        <label for="loketCatatanPpk" class="col-md-2 col-form-label mt-1">Catatan PPK</label>
                                         <div class="col">
-                                            <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control"
-                                                disabled>{{data.catatan.ppk}}</textarea>
+                                            <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control" disabled>{{data.catatan.ppk}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketCatatanPpspm" class="col-md-2 form-control-label">Catatan
-                                            PPSPM</label>
+                                        <label for="loketCatatanPpspm" class="col-md-2 col-form-label mt-1">Catatan PPSPM</label>
                                         <div class="col">
-                                            <textarea name="loketCatatanPpspm" id="loketCatatanPpspm"
-                                                class="form-control" disabled>{{data.catatan.ppspm}}</textarea>
+                                            <textarea name="loketCatatanPpspm" id="loketCatatanPpspm" class="form-control" disabled>{{data.catatan.ppspm}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketCatatanReviewer" class="col-md-2 form-control-label">Catatan
-                                            Reviewer</label>
+                                        <label for="loketCatatanReviewer" class="col-md-2 col-form-label mt-1">Catatan Reviewer</label>
                                         <div class="col">
-                                            <textarea name="loketCatatanReviewer" id="loketCatatanReviewer"
-                                                class="form-control" disabled>{{data.catatan.reviewer}}</textarea>
+                                            <textarea name="loketCatatanReviewer" id="loketCatatanReviewer" class="form-control" disabled>{{data.catatan.reviewer}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketMetodeTransfer" class="col-md-2 form-control-label">Metode
-                                            Transfer</label>
+                                        <label for="loketMetodeTransfer" class="col-md-2 col-form-label">Metode Transfer</label>
                                         <div class="col">
-                                            <p>{{data.metodeTransfer}}</p>
+                                            <input type="text" name="loketMetodeTransfer" id="loketMetodeTransfer" class="form-control" value="{{data.metodeTransfer}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketNilaiPajak" class="col ml-1 form-control-label">Nilai
-                                            Pajak</label>
-                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <label for="loketNilaiPajak" class="col ml-1 col-form-label">Nilai Pajak</label>
+                                        <label class="ml-2 col-form-label" for="">Rp</label>
                                         <div class="col-md-9">
-                                            <input type="text" name="loketNilaiPajak" id="loketNilaiPajak"
-                                                class="form-control" value="{{data.nilaiPajak}}" disabled>
+                                            <input type="text" name="loketNilaiPajak" id="loketNilaiPajak" class="form-control" value="{{data.nilaiPajak}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketNilaiTransfer" class="col ml-1 form-control-label">Nilai
-                                            Transfer</label>
-                                        <label class="ml-2 form-control-label" for="">Rp</label>
+                                        <label for="loketNilaiTransfer" class="col ml-1 col-form-label">Nilai Transfer</label>
+                                        <label class="ml-2 col-form-label" for="">Rp</label>
                                         <div class="col-md-9">
-                                            <input type="text" name="loketNilaiTransfer" id="loketNilaiTransfer"
-                                                class="form-control" value="{{data.nilaiTransfer}}" disabled>
+                                            <input type="text" name="loketNilaiTransfer" id="loketNilaiTransfer" class="form-control" value="{{data.nilaiTransfer}}" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketStatusTransfer" class="col-md-2 form-control-label">Status
-                                            Transfer</label>
+                                        <div class="col-md-2">
+                                            <label for="fileSpjBank" class="col-form-label">Upload SPJ yang disahkan</label><br>
+                                            <p>(.xls .xlsx)</p>
+                                        </div>
+                                        <div class="col input-group">
+                                            <input type="file" class="form-control" name="fileSpjBank" id="fileSpjBank" aria-label="fileSpjBank" accept=".xlsx,.xls" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="loketStatusTransfer" class="col-md-2 col-form-label">Status Transfer</label>
                                         <div class="col">
                                             <select name="loketStatusTransfer" id="loketStatusTransfer" class="form-select">
-                                                <option selected></option>
+                                                <option></option>
                                                 <option value="ditransfer">Telah Ditransfer</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketTglTransfer" class="col-md-2 form-control-label">Tanggal
-                                            Transfer</label>
+                                        <label for="loketTglTransfer" class="col-md-2 col-form-label">Tanggal Transfer</label>
                                         <div class="col">
-                                            <input type="date" name="loketTglTransfer" id="loketTglTransfer"
-                                                class="form-control">
+                                            <input type="date" name="loketTglTransfer" id="loketTglTransfer" class="form-control">
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="kirimFormBank" type="submit" class="btn btn-primary">Kirim Email ke
-                                            Penerima</button>
+                                        <button id="kirimFormBank" type="submit" class="btn btn-primary">Kirim Email ke Penerima</button>
                                     </div>
                                 </div>
                             </div>
@@ -295,16 +272,18 @@
 {{!-- main script --}}
 <script type="text/javascript">
     //socket = io.connect($(location).attr('host'));
-    var socket = io()
+    var socket = io();
 
     //untuk hak akses
     //var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
+
         //autofill form
-        var t1 = $("#tglPelaksanaan").html()
-        var t2 = new Date(t1)
-        $("#loketTglPelaksanaan").val(t2.getFullYear()+'-'+t2.getMonth()+1+'-'+t2.getDate())
+        var t1 = new Date($("#tglPelaksanaan").html())
+        var t2 = formatTanggal(t1)
+        $("#loketTglPelaksanaan").val(t2)
+
         var spj = [{{data.checklist.spj}}]
         var hadir = [{{data.checklist.daftarHadir}}]
         var dok = [{{data.checklist.dokumentasi}}]
@@ -327,11 +306,32 @@
         if (not[2]) $("#checklistNotulensiPpspm").attr("checked", true)
         if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
 
-        $('#kirimFormBank').click(function () {
-            alert("Email pemberitahuan telah dikirimkan ke penerima")
-        })
-
-
+        //validasi isian form
+        $('#kirimFormBank').click(function (e) {
+            if (!$("#fileSpjBank").val()) {
+                e.preventDefault()
+                $('#fileSpjBank').focus()
+            } else if (!$('#loketStatusTransfer').val()){
+                e.preventDefault()
+                $('#loketStatusTransfer').focus()
+            } else if (!$('#loketTglTransfer').val()){
+                e.preventDefault()
+                $('#loketTglTransfer').focus()
+            } else {alert("Email pemberitahuan telah dikirimkan ke penerima")}
+        }) 
     });
+
+    function formatTanggal(date) {
+        let monthNames = [
+            "Januari", "Februari", "Maret",
+            "April", "Mei", "Juni", "Juli",
+            "Agustus", "September", "Oktober",
+            "November", "Desember"
+        ];
+        let day = date.getDate();
+        let monthIndex = date.getMonth();
+        let year = date.getFullYear();
+        return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    }
 
 </script>

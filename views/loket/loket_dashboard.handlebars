@@ -15,8 +15,8 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nomor Transaksi</th>
-                                    <th>Tgl Selesai Transaksi</th>
-                                    <th>Tgl Pembayaran</th>
+                                    <th>Tanggal Selesai</th>
+                                    <th>Tanggal Pembayaran</th>
                                     <th>Nilai Pengajuan</th>
                                     <th>Pajak</th>
                                     <th>Nilai Pembayaran</th>
@@ -39,7 +39,7 @@
                                     <th>No</th>
                                     <th>Kode Unit</th>
                                     <th>Nomor Transaksi</th>
-                                    <th>Tgl Pengajuan</th>
+                                    <th>Tanggal Pengajuan</th>
                                     <th>Nilai Pengajuan</th>
                                     <th>Deskripsi</th>
                                     <th>Posisi</th>
@@ -57,10 +57,6 @@
                             <h6 class="row col-12">a. Realisasi per unit</h6><br>
                             <h6 class="row col-12">b. Total realisasi</h6>
                         </div>
-                        <button type="button" class="btn btn-primary"
-                            data-toggle="modal" data-target="#modalDetail">TEST
-                            MODAL</button>
-
                     </div>
                 </div>
             </div>
@@ -115,14 +111,17 @@
             <td>{{this.nomorTransaksi}}</td>
             <td>{{this.tanggal.selesai}}</td>
             <td>{{this.tanggal.transfer}}</td>
-            <td>{{this.nilaiPengajuan}}</td>
-            <td>{{this.nilaiPajak}}</td>
-            <td>{{this.nilaiTransfer}}</td>
+            <td class="format-uang">{{this.nilaiPengajuan}}</td>
+            <td class="format-uang">{{this.nilaiPajak}}</td>
+            <td class="format-uang">{{this.nilaiTransfer}}</td>
             <td>{{this.metodeTransfer}}</td>
             <td>{{this.detail}}</td>
             <td>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailSelesai">Lihat Detail</button>
-                <button type="button" class="btn btn-primary" name="downloadSpjTiket" id="downloadSpjTiket" >Download SPJ</button>
+                <form action="/loket/downloadSpjTiketBank" method="post">
+                    <input type="hidden" name="tiketId" value="{{this._id}}">
+                    <button type="submit" class="btn btn-success" id="downloadSpjTiket">Download SPJ<br>yang disahkan</button>
+                </form>
             </td>
         </tr>
     {{/each}}
@@ -134,14 +133,43 @@
             <td>{{this.kodeUnit}}</td>
             <td>{{this.nomorTransaksi}}</td>
             <td>{{this.tanggal.pengajuan}}</td>
-            <td>{{this.nilaiPengajuan}}</td>
+            <td class="format-uang">{{this.nilaiPengajuan}}</td>
             <td>{{this.detail}}</td>
             <td>{{this.posisi}}</td>
             <td>{{this.status}}</td>
             <td>
-                ppk: {{#if this.catatan.ppk}}{{this.catatan.ppk}}{{else}}-{{/if}}<br>
-                ppspm: {{#if this.catatan.ppspm}}{{this.catatan.ppspm}}{{else}}-{{/if}}<br>
-                reviewer: {{#if this.catatan.reviewer}}{{this.catatan.reviewer}}{{else}}-{{/if}}
+                {{#if_eq this.status 'Belum selesai'}}
+                    {{#if_eq this.posisi 'PPK'}}
+                    {{else}}
+                        {{#if_eq this.posisi 'PPSPM'}}
+                            ppk: {{this.catatan.ppk}}    
+                        {{else}}
+                            {{#if_eq this.posisi 'Reviewer'}}
+                                ppk: {{this.catatan.ppk}}<br>
+                                ppspm: {{this.catatan.ppspm}}        
+                            {{else}}
+                                ppk: {{this.catatan.ppk}}<br>
+                                ppspm: {{this.catatan.ppspm}}<br>
+                                reviewer: {{this.catatan.reviewer}}
+                            {{/if_eq}}
+                        {{/if_eq}}
+                    {{/if_eq}}
+                {{else}}
+                    {{#if_eq this.posisi 'PPK'}}
+                        PPK: {{this.catatan.ppk}}    
+                    {{else}}
+                        {{#if_eq this.posisi 'PPSPM'}}
+                        PPK: {{this.catatan.ppk}}<br>
+                        PPSPM: {{this.catatan.ppspm}}
+                        {{else}}
+                            {{#if_eq this.posisi 'Reviewer'}}
+                                PPK: {{this.catatan.ppk}}<br>
+                                PPSPM: {{this.catatan.ppspm}}<br>
+                                Reviewer: {{this.catatan.reviewer}}
+                            {{/if_eq}}
+                        {{/if_eq}}
+                    {{/if_eq}}
+                {{/if_eq}}
             </td>
             <td>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailPengajuan">Lihat Detail</button>
@@ -226,6 +254,7 @@
                 }
             }
 
+            //isi modal-body
             var templatePengajuan =
                 '<div class="col-12">' +
                     '<input id="modalTiketId" type="hidden" value="'+detail._id+'">'+
@@ -268,7 +297,7 @@
                     '</div>' +
                     '<div class="row">' +
                         '<label class="col-2">Nilai</label>' +
-                        '<p class="col">' + detail.nilaiPengajuan + '</p>' +
+                        '<p class="col">Rp ' + formatUang(detail.nilaiPengajuan) + '</p>' +
                     '</div>' +
                     '<div class="row">' +
                         '<label class="col-2">Checklist</label>' +
@@ -276,7 +305,11 @@
                     '</div>' +
                     '<div class="row">' +
                         '<label class="col-2">SPJ</label>' +
-                        '<p class="col">' + detail.filespj + '</p>' +
+                        '<p class="col-3">' + detail.fileSpj + '</p>' +
+                        '<form action="/loket/downloadSpjTiket" method="post">' +
+                            '<input type="hidden" name="tiketId" value="' + detail._id + '">' +
+                            '<button type="submit" class="btn btn-primary" id="downloadSpjTiket">Download SPJ</button>' +
+                        '</form>' +
                     '</div>' +
                     '<div class="row">' +
                         '<label class="col-2">SPP</label>' +
@@ -300,11 +333,11 @@
                     '</div>' +
                     '<div class="row">' +
                         '<label class="col-2">Nilai Pajak</label>' +
-                        '<p class="col">' + detail.nilaiPajak + '</p>' +
+                        '<p class="col">Rp ' + formatUang(detail.nilaiPajak) + '</p>' +
                     '</div>' +
                     '<div class="row">' +
                         '<label class="col-2">Nilai Transfer</label>' +
-                        '<p class="col">' + detail.nilaiTransfer + '</p>' +
+                        '<p class="col">Rp ' + formatUang(detail.nilaiTransfer) + '</p>' +
                     '</div>' +
                     '<div class="row">' +
                         '<label class="col-2">Tanggal Transfer</label>' +
@@ -314,20 +347,53 @@
 
             $('#modalDetailTiket').html(templatePengajuan)
 
+            //tombol periksa pada modal
             if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai'){
-                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketPpk" onCLick="modalPeriksaPpk()">Periksa Tiket PPK</button>')
+                $(".modal-footer").append(
+                    '<form action="/loket/ppk" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketPpk">Periksa Tiket PPK</button>' +
+                    '</form>')
             } else if (!document.getElementById("periksaTiketPpspm") && detail.posisi == "PPSPM" && detail.status == 'Belum selesai'){
-                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketPpspm" onCLick="modalPeriksaPpspm()">Periksa Tiket PPSPM</button>')
+                $(".modal-footer").append(
+                    '<form action="/loket/ppspm" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketPpspm")">Periksa Tiket PPSPM</button>' +
+                    '</form>')
             } else if (!document.getElementById("periksaTiketReviewer") && detail.posisi == "Reviewer" && detail.status == 'Belum selesai'){
-                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketReviewer" onCLick="modalPeriksaReviewer()">Periksa Tiket Reviewer</button>')
+                $(".modal-footer").append(
+                    '<form action="/loket/reviewer" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketReviewer">Periksa Tiket Reviewer</button>' +
+                    '</form>')
             } else if (!document.getElementById("periksaTiketBendahara") && detail.posisi == "Bendahara" && detail.status == 'Belum selesai'){
-                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketBendahara" onCLick="modalPeriksaBendahara()">Periksa Tiket Bendahara</button>')
+                $(".modal-footer").append(
+                    '<form action="/loket/bendahara" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketBendahara">Periksa Tiket Bendahara</button>' +
+                    '</form>')
             } else if (!document.getElementById("periksaTiketBank") && detail.posisi == "Operator Bank" && detail.status == 'Belum selesai'){
-                $(".modal-footer").append('<button type="button" class="btn btn-primary" id="periksaTiketBank" onCLick="modalPeriksaBank()">Periksa Tiket Operator Bank</button>')
+                $(".modal-footer").append(
+                    '<form action="/loket/bank" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketBank">Periksa Tiket Operator Bank</button>' +
+                    '</form>')
             }
 
         })
 
+        //format uang
+        $('td.format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+        //format uang2 bisa pake ini
+        //$('td.format-uang').each(function() {
+        //    $(this).text(formatUang($(this).text()));
+        //});
+        //format uang dari net--------
+        //let cells = Array.prototype.slice.call(document.querySelectorAll(".format-uang"));
+        //console.log(cells)
+        //cells.forEach(function(cell){
+        //    cell.textContent = (+cell.textContent).toLocaleString('in-ID', { style: 'currency', currency: 'IDR' });
+        //});
     });
 
     //fungsi
@@ -340,56 +406,9 @@
         return `${hari}/${bulan}/${tahun}`
     }
 
-    // Fungsi tombol periksa di modal detail
-    function modalPeriksaPpk(){
-        var tiketId = document.getElementById("modalTiketId").value
-        console.log(tiketId)
-        var form = $('<form action="/loket/ppk" method="post">' +
-                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
-            '</form>');
-        $('.modal-body').append(form);
-        form.submit();
+    function formatUang(x) {
+        if (x) {return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        } else return ''
     }
-
-    function modalPeriksaPpspm(){
-        var tiketId = document.getElementById("modalTiketId").value
-        console.log(tiketId)
-        var form = $('<form action="/loket/ppspm" method="post">' +
-                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
-            '</form>');
-        $('.modal-body').append(form);
-        form.submit();
-    }
-
-    function modalPeriksaReviewer(){
-        var tiketId = document.getElementById("modalTiketId").value
-        console.log(tiketId)
-        var form = $('<form action="/loket/reviewer" method="post">' +
-                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
-            '</form>');
-        $('.modal-body').append(form);
-        form.submit();
-    }
-
-    function modalPeriksaBendahara(){
-        var tiketId = document.getElementById("modalTiketId").value
-        console.log(tiketId)
-        var form = $('<form action="/loket/bendahara" method="post">' +
-                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
-            '</form>');
-        $('.modal-body').append(form);
-        form.submit();
-    }
-
-    function modalPeriksaBank(){
-        var tiketId = document.getElementById("modalTiketId").value
-        console.log(tiketId)
-        var form = $('<form action="/loket/bank" method="post">' +
-                '<input type="hidden" name="tiketId" value="' + tiketId + '" />' +
-            '</form>');
-        $('.modal-body').append(form);
-        form.submit();
-    }
-
 
 </script>

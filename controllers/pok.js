@@ -22,7 +22,6 @@ const XlsxPopulate = require('xlsx-populate');
 
 //module parse xlsx
 var xlsx = require('node-xlsx').default;
-
 var XLSX = require('xlsx');
 //Xlsx to Pdf
 var msopdf = require('node-msoffice-pdf');
@@ -2805,8 +2804,8 @@ pok.post('/unggah_pok', function(req, res) {
             form.on('fileBegin', function(name, file) {
                 file.path = __dirname + '/../uploaded/pok/' + file.name;
                 file_path = file.path;
-                console.log(ext, file.path)
                 ext = file.path.match(/[^.]\w*$/i)[0];
+                console.log(ext, file.path)
             })
         }
     ], function(err, final) {
@@ -3814,7 +3813,7 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp) {
 function XlsxPOK(file_path, pok_name, username, thang, user_id) {
     var data = xlsx.parse(file_path);
     data = data[0].data.filter(o => !Object.keys(o).every(k => !o[k]));
-    console.log(util.inspect(data, { maxArrayLength: null }));
+    //console.log(util.inspect(data, { maxArrayLength: null }));
     //validasi
     var is_notvalid = false;
     _.each(data, function(item, index, list) {
@@ -4283,7 +4282,6 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id) {
     })
 }
 
-
 function POK(file_path, pok_name, username, user_id) {
     this.name;
 
@@ -4595,7 +4593,6 @@ function checkDirAndCreate(addr) {
         fs.mkdirSync(addr);
     }
 }
-
 
 function checkFS(addr) {
     if (fs.existsSync(addr)) {

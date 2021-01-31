@@ -1,13 +1,14 @@
 var express = require('express');
 var loket = express.Router();
+var formidable = require('formidable');
+var mv = require('mv');
+var fs = require('fs');
 
 //Flow control
 var async = require('async');
 
 //modul fs utk rw file
 var fs = require('fs');
-
-var Pegawai = require(__dirname + "/../model/Pegawai.model");
 
 var Program = require(__dirname + "/../model/Program.model");
 var Kegiatan = require(__dirname + "/../model/Kegiatan.model");
@@ -17,7 +18,6 @@ var Akun = require(__dirname + "/../model/Akun.model");
 var DetailBelanja = require(__dirname + "/../model/DetailBelanja.model");
 
 var CustomEntity = require(__dirname + "/../model/CustomEntity.model");
-var SettingSPPD = require(__dirname + "/../model/SettingSPPD.model");
 var Setting = require(__dirname + "/../model/Setting.model");
 
 var ObjectId = require('mongoose').Types.ObjectId;
@@ -31,14 +31,24 @@ var _ = require("underscore");
 const { json } = require('body-parser');
 const { db, count, translateAliases } = require('../model/Loket.model');
 
+//untuk mengirimkan email
+var nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.MAIL_NAME,
+        pass: process.env.MAIL_PASS,
+    }
+});
+
 //Socket.io
 loket.connections;
 loket.io;
 
 loket.socket = function(io, connections, client) {
 
-    loket.connections = connections;
     loket.io = io;
+    loket.connections = connections;
 
     io.on('connection', (socket) => {
         // var pom = noTransaksi('222')
@@ -49,7 +59,10 @@ loket.socket = function(io, connections, client) {
     //lihat detail tiket
     client.on('mintaDetailTiket', function(id) {
         Loket.findById(id).lean().exec((err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             client.emit('terimaDetailTiket', data)
                 // console.log(data)
         })
@@ -58,25 +71,37 @@ loket.socket = function(io, connections, client) {
     //ITERASI FORM POK
     client.on('mintaKegiatan', function(id) {
         Kegiatan.find({ kdprogram: id, thang: new Date().getFullYear() }).lean().sort('kdgiat').exec((err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             client.emit('terimaKegiatan', data)
         })
     })
     client.on('mintaOutput', function(id) {
         Output.find({ kdprogram: id[0], kdgiat: id[1], thang: new Date().getFullYear() }).lean().sort('kdoutput').exec((err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             client.emit('terimaOutput', data)
         })
     })
     client.on('mintaKomponen', function(id) {
         Komponen.find({ kdprogram: id[0], kdgiat: id[1], kdoutput: id[2], thang: new Date().getFullYear() }).lean().sort('kdkmpnen').exec((err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             client.emit('terimaKomponen', data)
         })
     })
     client.on('mintaAkun', function(id) {
         Akun.find({ kdprogram: id[0], kdgiat: id[1], kdoutput: id[2], kdkmpnen: id[3], thang: new Date().getFullYear() }).lean().sort('kdakun').exec((err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             client.emit('terimaAkun', data)
         })
     })
@@ -88,11 +113,17 @@ loket.socket = function(io, connections, client) {
 
 loket.get('/dashboard', function(req, res) {
     req.session.tiketId = ''
-    Loket.find({ status: { $in: ['Belum selesai', 'Ditolak'] } }).lean().exec((err, daftarPengajuan) => {
-        if (err) console.log(err)
+    Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] } }).lean().exec((err, daftarPengajuan) => {
+        if (err) {
+            console.log(err)
+            throw err
+        }
 
         Loket.find({ status: 'Selesai' }).lean().exec((err, daftarSelesai) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             res.render('loket/loket_dashboard', {
                 layout: false,
@@ -114,9 +145,15 @@ loket.get('/user', function(req, res) {
 loket.get('/ppk', function(req, res) {
     if (req.session.tiketId) {
         Loket.findById(req.session.tiketId).lean().exec((err, tiketData) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             Program.find({ thang: new Date().getFullYear() }).lean().exec((err, listProgram) => {
-                if (err) console.log(err)
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
                 res.render('loket/loket_ppk', {
                     layout: false,
                     admin: req.session.jenis,
@@ -141,7 +178,10 @@ loket.post('/ppk', function(req, res) {
 loket.get('/ppspm', function(req, res) {
     if (req.session.tiketId) {
         Loket.findById(req.session.tiketId).lean().exec(async(err, tiketData) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             try {
                 var listProgram = await Program.find({ thang: new Date().getFullYear() }).lean()
                 var listKegiatan = await Kegiatan.find({ kdprogram: tiketData.kdprogram, thang: new Date().getFullYear() }).lean().sort('kdgiat')
@@ -158,9 +198,9 @@ loket.get('/ppspm', function(req, res) {
                     komponen: listKomponen,
                     akun: listAkun,
                 });
-            } catch (error) {
-                console.log(error)
-                throw error
+            } catch (err) {
+                console.log(err)
+                throw err
             }
         })
     } else {
@@ -179,7 +219,10 @@ loket.post('/ppspm', function(req, res) {
 loket.get('/reviewer', function(req, res) {
     if (req.session.tiketId) {
         Loket.findById(req.session.tiketId).lean().exec(async(err, tiketData) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             try {
                 var listProgram = await Program.find({ thang: new Date().getFullYear() }).lean()
                 var listKegiatan = await Kegiatan.find({ kdprogram: tiketData.kdprogram, thang: new Date().getFullYear() }).lean().sort('kdgiat')
@@ -196,9 +239,9 @@ loket.get('/reviewer', function(req, res) {
                     komponen: listKomponen,
                     akun: listAkun,
                 });
-            } catch (error) {
-                console.log(error)
-                throw error
+            } catch (err) {
+                console.log(err)
+                throw err
             }
         })
     } else {
@@ -217,13 +260,17 @@ loket.post('/reviewer', function(req, res) {
 loket.get('/bendahara', function(req, res) {
     if (req.session.tiketId) {
         Loket.findById(req.session.tiketId).lean().exec(async(err, tiketData) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             try {
                 var listProgram = await Program.find({ thang: new Date().getFullYear() }).lean()
                 var listKegiatan = await Kegiatan.find({ kdprogram: tiketData.kdprogram, thang: new Date().getFullYear() }).lean().sort('kdgiat')
                 var listOutput = await Output.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, thang: new Date().getFullYear() }).lean().sort('kdoutput')
                 var listKomponen = await Komponen.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, thang: new Date().getFullYear() }).lean().sort('kdkmpnen')
                 var listAkun = await Akun.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, thang: new Date().getFullYear() }).lean().sort('kdakun')
+                console.log(listProgram)
                 await res.render('loket/loket_bendahara', {
                     layout: false,
                     admin: req.session.jenis,
@@ -234,9 +281,9 @@ loket.get('/bendahara', function(req, res) {
                     komponen: listKomponen,
                     akun: listAkun,
                 });
-            } catch (error) {
-                console.log(error)
-                throw error
+            } catch (err) {
+                console.log(err)
+                throw err
             }
         })
     } else {
@@ -255,7 +302,10 @@ loket.post('/bendahara', function(req, res) {
 loket.get('/bank', function(req, res) {
     if (req.session.tiketId) {
         Loket.findById(req.session.tiketId).lean().exec((err, tiketData) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
             res.render('loket/loket_bank', {
                 layout: false,
                 admin: req.session.jenis,
@@ -279,56 +329,110 @@ loket.post('/bank', function(req, res) {
 
 loket.post('/unitKirim', function(req, res) {
     try {
-        const tiket = new Loket({
-            nomorTransaksi: noTransaksi(req.body.loketKodeUnit),
-            unit: req.body.loketNamaUnit,
-            kodeUnit: req.body.loketKodeUnit,
-            operator: req.body.loketOperator,
-            kdprogram: '',
-            uraianProgram: '',
-            kdkegiatan: '',
-            uraianKegiatan: '',
-            kdoutput: '',
-            uraianOutput: '',
-            kdkomponen: '',
-            uraianKomponen: '',
-            kdakun: '',
-            uraianAkun: '',
-            tanggal: {
-                pengajuan: new Date(),
-                pelaksanaan: new Date(req.body.loketTglPelaksanaan),
-                transfer: '',
-                selesai: '',
-            },
-            detail: req.body.loketDetail,
-            nilaiPengajuan: req.body.loketNilai,
-            checklist: {
-                spj: req.body.checklistSpjUnit,
-                daftarHadir: req.body.checklistDaftarHadirUnit,
-                dokumentasi: req.body.checklistDokumentasiUnit,
-                notulensi: req.body.checklistNotulensiUnit,
-                cvNarasumber: req.body.checklistCvUnit,
-            },
-            fileSpj: req.body.filespj,
-            spp: '',
-            catatan: {
-                ppk: '',
-                ppspm: '',
-                reviewer: '',
-            },
-            metodeTransfer: '',
-            nilaiPajak: '',
-            nilaiTransfer: '',
-            statusTransfer: '',
-            posisi: 'PPK',
-            status: 'Belum selesai'
-        });
-        // console.log('nomor transaksi: ' + noTransaksi(req.body.loketKodeUnit))
-        tiket.save();
-        res.redirect('/#loket/dashboard')
-    } catch (error) {
-        console.log(error)
-        throw error
+        var form = new formidable.IncomingForm();
+        form.parse(req, function(err, fields, files) { //parse form + file
+            if (err) {
+                console.log(err)
+                throw err
+            }
+            async.waterfall([
+                function(callback) { //no urut tiket
+                    var noUrut = 1
+                    Loket.count({}, function(err, count) {
+                        if (err) {
+                            console.log(err)
+                            throw err
+                        }
+                        noUrut += count //count=2
+                        if (noUrut < 10) {
+                            noUrut = '00' + noUrut
+                        } else if (noUrut < 100) {
+                            noUrut = '0' + noUrut
+                        }
+                        callback(null, noUrut)
+                    })
+                },
+                function(noUrut, callback) { //tahun dan bulan
+                    var tahun = new Date().getFullYear()
+                    var bulan = new Date().getMonth()
+
+                    bulan++
+                    if (bulan < 10) {
+                        bulan = '0' + bulan
+                    }
+
+                    callback(null, tahun, bulan, noUrut)
+                }
+            ], function(err, tahun, bulan, noUrut) { //write to database
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
+
+                const tiket = new Loket({
+                    nomorTransaksi: `${tahun}${bulan}${fields.loketKodeUnit}${noUrut}`,
+                    unit: fields.loketNamaUnit,
+                    kodeUnit: fields.loketKodeUnit,
+                    operator: fields.loketOperator,
+                    kdprogram: '',
+                    uraianProgram: '',
+                    kdkegiatan: '',
+                    uraianKegiatan: '',
+                    kdoutput: '',
+                    uraianOutput: '',
+                    kdkomponen: '',
+                    uraianKomponen: '',
+                    kdakun: '',
+                    uraianAkun: '',
+                    tanggal: {
+                        pengajuan: new Date(),
+                        pelaksanaan: new Date(fields.loketTglPelaksanaan),
+                        transfer: '',
+                        selesai: '',
+                    },
+                    detail: fields.loketDetail,
+                    nilaiPengajuan: fields.loketNilai,
+                    checklist: {
+                        spj: fields.checklistSpjUnit,
+                        daftarHadir: fields.checklistDaftarHadirUnit,
+                        dokumentasi: fields.checklistDokumentasiUnit,
+                        notulensi: fields.checklistNotulensiUnit,
+                        cvNarasumber: fields.checklistCvUnit,
+                    },
+                    fileSpj: files.fileSpjUnit.name,
+                    spp: '',
+                    catatan: {
+                        ppk: '',
+                        ppspm: '',
+                        reviewer: '',
+                    },
+                    metodeTransfer: '',
+                    nilaiPajak: '',
+                    nilaiTransfer: '',
+                    statusTransfer: '',
+                    posisi: 'PPK',
+                    status: 'Belum selesai'
+                });
+
+                var oldpath = files.fileSpjUnit.path
+                var newpath = __dirname + "/../uploaded/spj/" + tiket._id + '-SpjUnit.' + files.fileSpjUnit.name.match(/[^.]\w*$/i)[0]
+
+                mv(oldpath, newpath, function(err) {
+                    if (err) { throw err }
+                    console.log('file uploaded successfully')
+                    return
+                });
+
+                //console.log('nomor transaksi: ' + noTransaksi(req.body.loketKodeUnit))
+                // console.log(tiket)
+                tiket.save();
+                res.redirect('/#loket/dashboard')
+            })
+
+        })
+    } catch (err) {
+        console.log(err)
+        throw err
     }
 
 })
@@ -336,18 +440,37 @@ loket.post('/unitKirim', function(req, res) {
 loket.post('/ppkTolak', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.catatan.ppk = req.body.loketCatatanPpk
-            data.status = 'Ditolak'
+            data.status = 'Dikembalikan ke unit'
 
             data.save()
             req.session.tiketId = ''
+                //kirim email
+            var mailOptions = {
+                from: process.env.MAIL_NAME,
+                to: '221709865@stis.ac.id',
+                subject: 'Pengembalian Tiket Pengajuan SIMAMOV',
+                html: 'Maaf pengajuan yang anda lakukan pada simamov tidak memenuhi syarat.<br>' +
+                    'Pengajuan telah dikembalikan ke unit oleh PPK dengan catatan "' + data.catatan.ppk + '"',
+                attachments: [{
+                    path: __dirname + '/../uploaded/spj/' + detail._id + '-SpjUnit.xlsx'
+                }]
+            }
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) throw err
+                console.log('Email sent: ' + info.response)
+            })
+
             res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
     //kirim email penolakan
 })
@@ -355,7 +478,10 @@ loket.post('/ppkTolak', function(req, res) {
 loket.post('/ppkKirim', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.kdprogram = req.body.loketProgram
             Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
@@ -390,27 +516,46 @@ loket.post('/ppkKirim', function(req, res) {
             req.session.tiketId = ''
             res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
 })
 
 loket.post('/ppspmTolak', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.catatan.ppspm = req.body.loketCatatanPpspm
-            data.status = 'Ditolak'
+            data.status = 'Dikembalikan ke unit'
 
             data.save()
             req.session.tiketId = ''
+
+            var mailOptions = {
+                from: process.env.MAIL_NAME,
+                to: '221709865@stis.ac.id',
+                subject: 'Pengembalian Tiket Pengajuan SIMAMOV',
+                html: 'Maaf pengajuan yang anda lakukan pada simamov tidak memenuhi syarat.<br>' +
+                    'Pengajuan telah dikembalikan ke unit oleh PPSPM dengan catatan "' + data.catatan.ppspm + '"',
+                attachments: [{
+                    path: __dirname + '/../uploaded/spj/' + detail._id + '-SpjUnit.xlsx'
+                }]
+            }
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) throw err
+                console.log('Email sent: ' + info.response)
+            })
+
             res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
     //kirim email penolakan
 })
@@ -418,7 +563,10 @@ loket.post('/ppspmTolak', function(req, res) {
 loket.post('/ppspmKirimReviewer', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.kdprogram = req.body.loketProgram
             Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
@@ -453,16 +601,19 @@ loket.post('/ppspmKirimReviewer', function(req, res) {
                 //res.status(204).send()
             res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
 })
 
 loket.post('/ppspmKirimBinagram', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.kdprogram = req.body.loketProgram
             Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
@@ -496,9 +647,9 @@ loket.post('/ppspmKirimBinagram', function(req, res) {
                 //res.status(204).send()
             res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
     //kirim email ke binagram meminta revisi pok
 })
@@ -506,7 +657,10 @@ loket.post('/ppspmKirimBinagram', function(req, res) {
 loket.post('/reviewerPending', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.kdprogram = req.body.loketProgram
             Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
@@ -534,9 +688,9 @@ loket.post('/reviewerPending', function(req, res) {
             req.session.tiketId = ''
             res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
     //kirim email ke penerima kesalahan/ketidaklengkapan
 })
@@ -544,7 +698,10 @@ loket.post('/reviewerPending', function(req, res) {
 loket.post('/reviewerProses', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.kdprogram = req.body.loketProgram
             Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
@@ -574,16 +731,19 @@ loket.post('/reviewerProses', function(req, res) {
                 //res.status(204).send()
             res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
 })
 
 loket.post('/bendaharaProses', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.kdprogram = req.body.loketProgram
             Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
@@ -615,16 +775,19 @@ loket.post('/bendaharaProses', function(req, res) {
             res.status(204).send()
                 //res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
 })
 
 loket.post('/bendaharaKirimArsiparis', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.kdprogram = req.body.loketProgram
             Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
@@ -654,9 +817,9 @@ loket.post('/bendaharaKirimArsiparis', function(req, res) {
             res.status(204).send()
                 //res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
     // res.redirect('/#loket/dashboard')
     //kirim email ke arsiparis detail tiket
@@ -665,7 +828,10 @@ loket.post('/bendaharaKirimArsiparis', function(req, res) {
 loket.post('/bendaharaKirimBmn', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+            if (err) {
+                console.log(err)
+                throw err
+            }
 
             data.kdprogram = req.body.loketProgram
             Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
@@ -695,9 +861,9 @@ loket.post('/bendaharaKirimBmn', function(req, res) {
             res.status(204).send()
                 //res.redirect('/#loket/dashboard')
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
     //res.redirect('/#loket/dashboard')
     //kirim email ke operator bmn
@@ -713,23 +879,93 @@ loket.post('/bendaharaInputPajak', function(req, res) {
 
 loket.post('/bankKirim', function(req, res) {
     try {
-        Loket.findById(req.body.tiketId, (err, data) => {
-            if (err) console.log(err)
+        var form = new formidable.IncomingForm();
+        form.parse(req, function(err, fields, files) {
+            Loket.findById(fields.tiketId, (err, data) => {
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
 
-            data.posisi = '-'
-            data.status = 'Selesai'
-            if (req.body.loketStatusTransfer == 'ditransfer') data.statusTransfer = 'Telah Ditransfer'
-            data.tanggal.transfer = new Date(req.body.loketTglTransfer)
-            data.tanggal.selesai = new Date()
+                data.posisi = '-'
+                data.status = 'Selesai'
+                if (fields.loketStatusTransfer == 'ditransfer') data.statusTransfer = 'Telah Ditransfer'
+                data.tanggal.transfer = new Date(fields.loketTglTransfer)
+                data.tanggal.selesai = new Date()
 
-            data.save()
-            req.session.tiketId = ''
-            res.redirect('/#loket/dashboard')
+                var oldpath = files.fileSpjBank.path
+                var newpath = __dirname + "/../uploaded/spj/" + fields.tiketId + '-SpjBank.' + files.fileSpjBank.name.match(/[^.]\w*$/i)[0]
+
+                mv(oldpath, newpath, function(err) {
+                    if (err) { throw err }
+                    console.log('file uploaded successfully')
+                    return
+                });
+
+                data.save()
+                req.session.tiketId = ''
+
+                var mailOptions = {
+                    from: process.env.MAIL_NAME,
+                    to: '221709865@stis.ac.id',
+                    subject: 'Penyelesaian Tiket Pengajuan SIMAMOV',
+                    html: 'Pengajuan yang anda lakukan pada simamov telah diselesaikan oleh petugas BAU.<br>' +
+                        'Silahkan cek rekening Anda',
+                    attachments: [{
+                        path: __dirname + '/../uploaded/spj/' + detail._id + '-SpjBank.xlsx'
+                    }]
+                }
+                transporter.sendMail(mailOptions, (err, info) => {
+                    if (err) throw err
+                    console.log('Email sent: ' + info.response)
+                })
+
+                res.redirect('/#loket/dashboard')
+            })
         })
-    } catch (error) {
-        console.log(error)
-        throw error
+    } catch (err) {
+        console.log(err)
+        throw err
     }
+    //kirim email ke penerima
+})
+
+loket.post('/downloadSpjTiket', function(req, res) {
+    var file = `${__dirname}/../uploaded/spj/${req.body.tiketId}-SpjUnit.xlsx`
+    fs.access(file, fs.F_OK, (err) => {
+        if (err) {
+            console.log(err)
+            var file = `${__dirname}/../uploaded/spj/${req.body.tiketId}-SpjUnit.xls`
+            fs.access(file, fs.F_OK, (err) => {
+                if (err) {
+                    console.log(err)
+                    res.render('404', { layout: false });
+                    return
+                }
+                res.download(file); // Set disposition and send it.
+            })
+        }
+        res.download(file); // Set disposition and send it.
+    })
+})
+
+loket.post('/downloadSpjTiketBank', function(req, res) {
+    var file = `${__dirname}/../uploaded/spj/${req.body.tiketId}-SpjBank.xlsx`
+    fs.access(file, fs.F_OK, (err) => {
+        if (err) {
+            console.log(err)
+            var file = `${__dirname}/../uploaded/spj/${req.body.tiketId}-SpjBank.xls`
+            fs.access(file, fs.F_OK, (err) => {
+                if (err) {
+                    console.log(err)
+                    res.render('404', { layout: false });
+                    return
+                }
+                res.download(file); // Set disposition and send it.
+            })
+        }
+        res.download(file); // Set disposition and send it.
+    })
 })
 
 // --------------------   FUNCTION   -----------------------
@@ -757,28 +993,29 @@ function arrayToJSONObject(arr) {
 }
 
 // fungsi membuat nomor transaksi //masih salah
-function noTransaksi(kodeUnit) {
-    var noUrut = 1
-    var tahun = new Date().getFullYear()
-    var bulan = new Date().getMonth()
+//function noTransaksi(kodeUnit) {
+// var noUrut = 1
+// var tahun = new Date().getFullYear()
+// var bulan = new Date().getMonth()
 
-    bulan++
-    if (bulan < 10) {
-        bulan = '0' + bulan
-    }
+// bulan++
+// if (bulan < 10) {
+//     bulan = '0' + bulan
+// }
 
-    Loket.count({}, function(err, count) {
-        if (err) console.log(err)
-        noUrut += count //count=2
-        if (noUrut < 10) {
-            noUrut = '00' + noUrut
-        } else if (noUrut < 100) {
-            noUrut = '0' + noUrut
-        }
-    })
+// Loket.count({}, function(err, count) {
+//     if (err) console.log(err)
+//     noUrut += count //count=2
+//     if (noUrut < 10) {
+//         noUrut = '00' + noUrut
+//     } else if (noUrut < 100) {
+//         noUrut = '0' + noUrut
+//     }
+// })
 
-    return `${tahun}${bulan}${kodeUnit}${noUrut}`
-}
+// return `${tahun}${bulan}${kodeUnit}${noUrut}`
+//}
+
 
 //membuat tanggal lebih mudah dibaca
 function formatTanggal(tgl) {
@@ -821,7 +1058,6 @@ function formatTanggal(tgl) {
 //     console.log('form penarikan disubmit');
 //     // loket.connections[req.session.user_id].emit('form_penarikan');
 // })
-
 
 
 
