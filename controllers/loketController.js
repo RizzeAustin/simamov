@@ -2,7 +2,6 @@ var express = require('express');
 var loket = express.Router();
 var formidable = require('formidable');
 var mv = require('mv');
-var fs = require('fs');
 
 //Flow control
 var async = require('async');
@@ -368,9 +367,10 @@ loket.post('/unitKirim', function(req, res) {
                     console.log(err)
                     throw err
                 }
+                let noTrans = `${tahun}${bulan}${fields.loketKodeUnit}${noUrut}`
 
                 const tiket = new Loket({
-                    nomorTransaksi: `${tahun}${bulan}${fields.loketKodeUnit}${noUrut}`,
+                    nomorTransaksi: noTrans,
                     unit: fields.loketNamaUnit,
                     kodeUnit: fields.loketKodeUnit,
                     operator: fields.loketOperator,
@@ -414,8 +414,9 @@ loket.post('/unitKirim', function(req, res) {
                     status: 'Belum selesai'
                 });
 
-                var oldpath = files.fileSpjUnit.path
-                var newpath = __dirname + "/../uploaded/spj/" + tiket._id + '-SpjUnit.' + files.fileSpjUnit.name.match(/[^.]\w*$/i)[0]
+                const oldpath = files.fileSpjUnit.path
+                const newpath = __dirname + "/../uploaded/spj/" + noTrans + '-SpjUnit.' + files.fileSpjUnit.name.match(/[^.]\w*$/i)[0]
+                console.log(__dirname)
 
                 mv(oldpath, newpath, function(err) {
                     if (err) { throw err }
@@ -458,7 +459,7 @@ loket.post('/ppkTolak', function(req, res) {
                 html: 'Maaf pengajuan yang anda lakukan pada simamov tidak memenuhi syarat.<br>' +
                     'Pengajuan telah dikembalikan ke unit oleh PPK dengan catatan "' + data.catatan.ppk + '"',
                 attachments: [{
-                    path: __dirname + '/../uploaded/spj/' + detail._id + '-SpjUnit.xlsx'
+                    path: __dirname + '/../uploaded/spj/' + data.nomorTransaksi + '-SpjUnit.' + data.fileSpj.match(/[^.]\w*$/i)[0]
                 }]
             }
             transporter.sendMail(mailOptions, (err, info) => {
@@ -543,7 +544,7 @@ loket.post('/ppspmTolak', function(req, res) {
                 html: 'Maaf pengajuan yang anda lakukan pada simamov tidak memenuhi syarat.<br>' +
                     'Pengajuan telah dikembalikan ke unit oleh PPSPM dengan catatan "' + data.catatan.ppspm + '"',
                 attachments: [{
-                    path: __dirname + '/../uploaded/spj/' + detail._id + '-SpjUnit.xlsx'
+                    path: __dirname + '/../uploaded/spj/' + data.nomorTransaksi + '-SpjUnit.' + data.fileSpj.match(/[^.]\w*$/i)[0]
                 }]
             }
             transporter.sendMail(mailOptions, (err, info) => {
@@ -894,7 +895,7 @@ loket.post('/bankKirim', function(req, res) {
                 data.tanggal.selesai = new Date()
 
                 var oldpath = files.fileSpjBank.path
-                var newpath = __dirname + "/../uploaded/spj/" + fields.tiketId + '-SpjBank.' + files.fileSpjBank.name.match(/[^.]\w*$/i)[0]
+                var newpath = __dirname + "/../uploaded/spj/" + data.nomorTransaksi + '-SpjBank.' + files.fileSpjBank.name.match(/[^.]\w*$/i)[0]
 
                 mv(oldpath, newpath, function(err) {
                     if (err) { throw err }
@@ -912,7 +913,7 @@ loket.post('/bankKirim', function(req, res) {
                     html: 'Pengajuan yang anda lakukan pada simamov telah diselesaikan oleh petugas BAU.<br>' +
                         'Silahkan cek rekening Anda',
                     attachments: [{
-                        path: __dirname + '/../uploaded/spj/' + detail._id + '-SpjBank.xlsx'
+                        path: __dirname + "/../uploaded/spj/" + data.nomorTransaksi + '-SpjBank.' + files.fileSpjBank.name.match(/[^.]\w*$/i)[0]
                     }]
                 }
                 transporter.sendMail(mailOptions, (err, info) => {
@@ -931,40 +932,50 @@ loket.post('/bankKirim', function(req, res) {
 })
 
 loket.post('/downloadSpjTiket', function(req, res) {
-    var file = `${__dirname}/../uploaded/spj/${req.body.tiketId}-SpjUnit.xlsx`
-    fs.access(file, fs.F_OK, (err) => {
-        if (err) {
-            console.log(err)
-            var file = `${__dirname}/../uploaded/spj/${req.body.tiketId}-SpjUnit.xls`
+    Loket.findById(req.body.tiketId).exec((err, data) => {
+        if (data.fileSpj.match(/[^.]\w*$/i)[0] == 'xls') {
+            const file = `${__dirname}/../uploaded/spj/${data.nomorTransaksi}-SpjUnit.xls`
             fs.access(file, fs.F_OK, (err) => {
                 if (err) {
                     console.log(err)
-                    res.render('404', { layout: false });
-                    return
+                    throw err
                 }
                 res.download(file); // Set disposition and send it.
             })
+        } else if (data.fileSpj.match(/[^.]\w*$/i)[0] == 'xlsx') {
+            const file = `${__dirname}/../uploaded/spj/${data.nomorTransaksi}-SpjUnit.xlsx`
+            fs.access(file, fs.F_OK, (err) => {
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
+                res.download(file); // Set disposition and send it.
+            })
+        } else {
+            res.render('404', { layout: false });
+            return
         }
-        res.download(file); // Set disposition and send it.
     })
 })
 
 loket.post('/downloadSpjTiketBank', function(req, res) {
-    var file = `${__dirname}/../uploaded/spj/${req.body.tiketId}-SpjBank.xlsx`
-    fs.access(file, fs.F_OK, (err) => {
-        if (err) {
-            console.log(err)
-            var file = `${__dirname}/../uploaded/spj/${req.body.tiketId}-SpjBank.xls`
-            fs.access(file, fs.F_OK, (err) => {
-                if (err) {
-                    console.log(err)
-                    res.render('404', { layout: false });
-                    return
-                }
-                res.download(file); // Set disposition and send it.
-            })
-        }
-        res.download(file); // Set disposition and send it.
+    Loket.findById(req.body.tiketId).exec((err, data) => {
+        const file = `${__dirname}/../uploaded/spj/${data.nomorTransaksi}-SpjBank.xlsx`
+        fs.access(file, fs.F_OK, (err) => {
+            if (err) {
+                console.log(err)
+                const file = `${__dirname}/../uploaded/spj/${data.nomorTransaksi}-SpjBank.xls`
+                fs.access(file, fs.F_OK, (err) => {
+                    if (err) {
+                        console.log(err)
+                        res.render('404', { layout: false });
+                        return
+                    }
+                    res.download(file); // Set disposition and send it.
+                })
+            }
+            res.download(file); // Set disposition and send it.
+        })
     })
 })
 

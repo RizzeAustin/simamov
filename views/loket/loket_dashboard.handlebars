@@ -28,6 +28,9 @@
                             <tbody>
                             </tbody>
                         </table>
+                                {{#unless daftarSelesai}}
+                                    <p class="text-center">Belum terdapat pengajuan</p>
+                                {{/unless}}
                         {{!-- table pengajuan --}}
                         <div class="row col">
                             <h5>II. PENGAJUAN</h5>
@@ -51,6 +54,9 @@
                             <tbody>
                             </tbody>
                         </table>
+                                {{#unless daftarPengajuan}}
+                                    <p class="text-center">Belum terdapat pengajuan</p>
+                                {{/unless}}
                         {{!-- realisasi --}}
                         <div class="row col">
                             <h5 class="row col-12">III. REALISASI</h5><br>
@@ -257,7 +263,6 @@
             //isi modal-body
             var templatePengajuan =
                 '<div class="col-12">' +
-                    '<input id="modalTiketId" type="hidden" value="'+detail._id+'">'+
                     '<div class="row">' +
                         '<label class="col-2">Unit</label>' +
                         '<p class="col">' + detail.unit + '</p>' +
