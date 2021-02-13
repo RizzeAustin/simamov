@@ -9,20 +9,21 @@
                         <div class="row col">
                             <h5>I. TRANSAKSI SELESAI</h5>
                         </div>
-                        <table id="tableSelesai" class="table table-bordered"
+                        <div id="navSelesai"><ul class="pagination"></ul></div>
+                        <table id="tableSelesai" class="table table-bordered table-striped"
                             width="100%">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Nomor Transaksi</th>
-                                    <th>Tanggal Selesai</th>
-                                    <th>Tanggal Pembayaran</th>
-                                    <th>Nilai Pengajuan</th>
-                                    <th>Pajak</th>
-                                    <th>Nilai Pembayaran</th>
-                                    <th>Metode Pembayaran</th>
-                                    <th>Deskripsi</th>
-                                    <th>Cek Detail</th>
+                                    <th width="1%">No</th>
+                                    <th width="10%">Nomor Transaksi</th>
+                                    <th width="15%">Tanggal Selesai</th>
+                                    <th width="15%">Tanggal Pembayaran</th>
+                                    <th width="6%">Nilai Pengajuan</th>
+                                    <th width="6%">Pajak</th>
+                                    <th width="6%">Nilai Pembayaran</th>
+                                    <th width="6%">Metode Pembayaran</th>
+                                    <th width="20%">Deskripsi</th>
+                                    <th width="10%">Cek Detail</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,20 +36,21 @@
                         <div class="row col">
                             <h5>II. PENGAJUAN</h5>
                         </div>
-                        <table id="tablePengajuan" class="table table-bordered"
+                        <div id="navPengajuan"><ul class="pagination"></ul></div>
+                        <table id="tablePengajuan" class="table table-bordered table-striped"
                             width="100%">
                             <thead>
                                 <tr>
-                                    <th>No</th>
-                                    <th>Kode Unit</th>
-                                    <th>Nomor Transaksi</th>
-                                    <th>Tanggal Pengajuan</th>
-                                    <th>Nilai Pengajuan</th>
-                                    <th>Deskripsi</th>
-                                    <th>Posisi</th>
-                                    <th>Status</th>
-                                    <th>Catatan</th>
-                                    <th>Cek Akun</th>
+                                    <th width="1%">No</th>
+                                    <th width="4%">Kode Unit</th>
+                                    <th width="10%">Nomor Transaksi</th>
+                                    <th width="15%">Tanggal Pengajuan</th>
+                                    <th width="6%">Nilai Pengajuan</th>
+                                    <th width="20%">Deskripsi</th>
+                                    <th width="7%">Posisi</th>
+                                    <th width="7%">Status</th>
+                                    <th width="20%">Catatan</th>
+                                    <th width="10%">Cek Akun</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -100,30 +102,21 @@
 
 
 {{!-- --------------------------- SCRIPT ------------------------------ --}}
-<script src="/js/handsontable.full.min.js"></script>
-<script src="/js/moment.min.js"></script>
-<script src="/js/locale/id.js"></script>
-<script src="/js/bootstrap-datetimepicker.js"></script>
-<script src="/js/highcharts.js"></script>
-<script src="/js/data.js"></script>
-<script src="/js/drilldown.js"></script>
-<script src="/js/exporting.js"></script>
-<script src="/js/offline-exporting.js"></script>
 
 <script id="daftarSelesai" type="text/x-handlebars-template">
     {{#each daftarSelesai}}
         <tr id="{{this._id}}">
-            <td></td>
-            <td>{{this.nomorTransaksi}}</td>
-            <td>{{this.tanggal.selesai}}</td>
-            <td>{{this.tanggal.transfer}}</td>
+            <td style="text-align:center"></td>
+            <td style="text-align:center">{{this.nomorTransaksi}}</td>
+            <td style="text-align:center">{{this.tanggal.selesai}}</td>
+            <td style="text-align:center">{{this.tanggal.transfer}}</td>
             <td class="format-uang">{{this.nilaiPengajuan}}</td>
             <td class="format-uang">{{this.nilaiPajak}}</td>
             <td class="format-uang">{{this.nilaiTransfer}}</td>
-            <td>{{this.metodeTransfer}}</td>
+            <td style="text-align:center">{{this.metodeTransfer}}</td>
             <td>{{this.detail}}</td>
-            <td>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailSelesai">Lihat Detail</button>
+            <td style="text-align:center">
+                <button type="button" class="btn btn-primary mb-1" data-toggle="modal" data-target="#modalDetail" id="btnDetailSelesai">Lihat Detail</button>
                 <form action="/loket/downloadSpjTiketBank" method="post">
                     <input type="hidden" name="tiketId" value="{{this._id}}">
                     <button type="submit" class="btn btn-success" id="downloadSpjTiket">Download SPJ<br>yang disahkan</button>
@@ -135,32 +128,35 @@
 <script id="daftarPengajuan" type="text/x-handlebars-template">
     {{#each daftarPengajuan}}  
         <tr id="{{this._id}}">
-            <td></td>
-            <td>{{this.kodeUnit}}</td>
-            <td>{{this.nomorTransaksi}}</td>
-            <td>{{this.tanggal.pengajuan}}</td>
+            <td style="text-align:center"></td>
+            <td style="text-align:center">{{this.kodeUnit}}</td>
+            <td style="text-align:center">{{this.nomorTransaksi}}</td>
+            <td style="text-align:center">{{this.tanggal.pengajuan}}</td>
             <td class="format-uang">{{this.nilaiPengajuan}}</td>
             <td>{{this.detail}}</td>
-            <td>{{this.posisi}}</td>
-            <td>{{this.status}}</td>
+            <td style="text-align:center">{{this.posisi}}</td>
+            <td style="text-align:center">{{this.status}}</td>
             <td>
                 {{#if_eq this.status 'Belum selesai'}}
-                    {{#if_eq this.posisi 'PPK'}}
+                    {{#if_eq this.posisi 'Verifikator'}}
                     {{else}}
-                        {{#if_eq this.posisi 'PPSPM'}}
-                            ppk: {{this.catatan.ppk}}    
+                        {{#if_eq this.posisi 'PPK'}}
                         {{else}}
-                            {{#if_eq this.posisi 'Reviewer'}}
-                                ppk: {{this.catatan.ppk}}<br>
-                                ppspm: {{this.catatan.ppspm}}        
+                            {{#if_eq this.posisi 'PPSPM'}}
+                                PPK : {{this.catatan.ppk}}    
                             {{else}}
-                                ppk: {{this.catatan.ppk}}<br>
-                                ppspm: {{this.catatan.ppspm}}<br>
-                                reviewer: {{this.catatan.reviewer}}
+                                {{#if_eq this.posisi 'Reviewer'}}
+                                    PPK : {{this.catatan.ppk}}<br>
+                                    PPSPM : {{this.catatan.ppspm}}        
+                                {{else}}
+                                    PPK : {{this.catatan.ppk}}<br>
+                                    PPSPM : {{this.catatan.ppspm}}<br>
+                                    Reviewer : {{this.catatan.reviewer}}
+                                {{/if_eq}}
                             {{/if_eq}}
                         {{/if_eq}}
                     {{/if_eq}}
-                {{else}}
+                {{else}}                    
                     {{#if_eq this.posisi 'PPK'}}
                         PPK: {{this.catatan.ppk}}    
                     {{else}}
@@ -177,7 +173,7 @@
                     {{/if_eq}}
                 {{/if_eq}}
             </td>
-            <td>
+            <td style="text-align:center">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailPengajuan">Lihat Detail</button>
             </td>
         </tr>
@@ -205,6 +201,83 @@
         $("#tablePengajuan tbody").html(dPengajuan)
         var dSelesai = $("#daftarSelesai").html()
         $("#tableSelesai tbody").html(dSelesai)
+
+        //iterasi nomor row
+        $("#tableSelesai tr").each(function(index){
+            $(this).find("td:eq(0)").each(function(){
+                $(this).text(index)
+                //console.log($(this).text())
+            })
+        })
+        $("#tablePengajuan tr").each(function(index){
+            $(this).find("td:eq(0)").each(function(){
+                $(this).text(index)
+                //console.log($(this).text())
+            })
+        })
+
+        //pagination
+        var rowsShown = 4;
+
+        //pagination selesai
+        var rownSelesai = $('#tableSelesai tbody tr').length;
+        var pageSelesai = Math.ceil(rownSelesai/rowsShown);
+        var last = pageSelesai-1
+        $("#navSelesai ul").append(
+            '<li class="page-item">'+
+                '<a class="page-link" href="#" rel="0">First</a>'+
+            '</li>'
+        )
+        for(i = 0;i < pageSelesai;i++) {
+            var pageNum = i + 1;
+            $("#navSelesai ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+i+'">'+pageNum+'</a></li>')
+        }
+        $("#navSelesai ul").append(
+            '<li class="page-item">'+
+                '<a class="page-link" href="#" rel="'+last+'">Last</a>'+
+            '</li>'
+        )
+        $('#tableSelesai tbody tr').hide();
+        $('#tableSelesai tbody tr').slice(0, rowsShown).show();
+        $('#navSelesai a:first').addClass('active');
+        $('#navSelesai a').bind('click', function(){
+            $('#navSelesai a').removeClass('active');
+            $(this).addClass('active');
+            var currPage = $(this).attr('rel');
+            var startItem = currPage * rowsShown;
+            var endItem = startItem + rowsShown;
+            $('#tableSelesai tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display','table-row').animate({opacity:1}, 300)
+        });
+
+        //pagination pengajuan
+        var rownPengajuan = $('#tablePengajuan tbody tr').length;
+        var pagePengajuan = Math.ceil(rownPengajuan/rowsShown);
+        var last = pagePengajuan-1
+        $("#navPengajuan ul").append(
+            '<li class="page-item">'+
+                '<a class="page-link" href="#" rel="0">First</a>'+
+            '</li>'
+        )
+        for(i = 0;i < pagePengajuan;i++) {
+            var pageNum = i + 1;
+            $("#navPengajuan ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+i+'">'+pageNum+'</a></li>')
+        }
+        $("#navPengajuan ul").append(
+            '<li class="page-item">'+
+                '<a class="page-link" href="#" rel="'+last+'">Last</a>'+
+            '</li>'
+        )
+        $('#tablePengajuan tbody tr').hide();
+        $('#tablePengajuan tbody tr').slice(0, rowsShown).show();
+        $('#navPengajuan a:first').addClass('active');
+        $('#navPengajuan a').bind('click', function(){
+            $('#navPengajuan a').removeClass('active');
+            $(this).addClass('active');
+            var currPage = $(this).attr('rel');
+            var startItem = currPage * rowsShown;
+            var endItem = startItem + rowsShown;
+            $('#tablePengajuan tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display','table-row').animate({opacity:1}, 300)
+        });
 
         //lihat detail row terpilih
         var tableBtnDetail = $("table :button")
@@ -283,6 +356,7 @@
                             '<p>Output</p>' +
                             '<p>Komponen</p>' +
                             '<p>Akun</p>' +
+                            '<p>Detail Belanja</p>' +
                         '</div>' +
                         '<div class="col">' +
                             '<p>: ' + detail.kdprogram +' '+ detail.uraianProgram + '</p>' +
@@ -290,6 +364,7 @@
                             '<p>: ' + detail.kdoutput +' '+ detail.uraianOutput + '</p>' +
                             '<p>: ' + detail.kdkomponen +' '+ detail.uraianKomponen + '</p>' +
                             '<p>: ' + detail.kdakun +' '+ detail.uraianAkun + '</p>' +
+                            '<p>: ' + detail.uraianDetail + '</p>' +
                         '</div>' +
                     '</div>' +
                     '<div class="row">' +
@@ -353,7 +428,13 @@
             $('#modalDetailTiket').html(templatePengajuan)
 
             //tombol periksa pada modal
-            if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai'){
+            if (!document.getElementById("periksaTiketVerifikator") && detail.posisi == "Verifikator" && detail.status == 'Belum selesai'){
+                $(".modal-footer").append(
+                    '<form action="/loket/verifikator" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketVerifikator">Periksa Tiket Verifikator</button>' +
+                    '</form>')
+            } else if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai'){
                 $(".modal-footer").append(
                     '<form action="/loket/ppk" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +

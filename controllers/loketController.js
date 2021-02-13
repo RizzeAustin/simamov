@@ -104,7 +104,24 @@ loket.socket = function(io, connections, client) {
             client.emit('terimaAkun', data)
         })
     })
-
+    client.on('mintaDetailPok', function(id) {
+        DetailBelanja.find({ kdprogram: id[0], kdgiat: id[1], kdoutput: id[2], kdkmpnen: id[3], kdakun: id[4], thang: new Date().getFullYear() }).lean().sort('noitem').exec((err, data) => {
+            if (err) {
+                console.log(err)
+                throw err
+            }
+            client.emit('terimaDetailPok', data)
+        })
+    })
+    client.on('cekPagudetail', function(id) {
+        DetailBelanja.findOne({ kdprogram: id[0], kdgiat: id[1], kdoutput: id[2], kdkmpnen: id[3], kdakun: id[4], nmitem: id[5], thang: new Date().getFullYear() }).lean().exec((err, data) => {
+            if (err) {
+                console.log(err)
+                throw err
+            }
+            client.emit('terimaPaguDetail', data.jumlah)
+        })
+    })
 }
 
 
@@ -139,6 +156,34 @@ loket.get('/user', function(req, res) {
         layout: false,
         admin: req.session.jenis,
     });
+})
+
+// -----------
+
+loket.get('/verifikator', function(req, res) {
+    if (req.session.tiketId) {
+        Loket.findById(req.session.tiketId).lean().exec((err, tiketData) => {
+            if (err) {
+                console.log(err)
+                throw err
+            }
+            res.render('loket/loket_verifikator', {
+                layout: false,
+                admin: req.session.jenis,
+                data: tiketData,
+            });
+        })
+    } else {
+        res.render('loket/loket_verifikator', {
+            layout: false,
+            admin: req.session.jenis,
+        });
+    }
+})
+
+loket.post('/verifikator', function(req, res) {
+    req.session.tiketId = req.body.tiketId
+    res.redirect('/#loket/verifikator')
 })
 
 loket.get('/ppk', function(req, res) {
@@ -187,6 +232,7 @@ loket.get('/ppspm', function(req, res) {
                 var listOutput = await Output.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, thang: new Date().getFullYear() }).lean().sort('kdoutput')
                 var listKomponen = await Komponen.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, thang: new Date().getFullYear() }).lean().sort('kdkmpnen')
                 var listAkun = await Akun.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, thang: new Date().getFullYear() }).lean().sort('kdakun')
+                var listDetail = await DetailBelanja.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, kdakun: tiketData.kdakun, thang: new Date().getFullYear() }).lean().sort('noitem')
                 await res.render('loket/loket_ppspm', {
                     layout: false,
                     admin: req.session.jenis,
@@ -196,6 +242,7 @@ loket.get('/ppspm', function(req, res) {
                     output: listOutput,
                     komponen: listKomponen,
                     akun: listAkun,
+                    detail: listDetail,
                 });
             } catch (err) {
                 console.log(err)
@@ -228,6 +275,7 @@ loket.get('/reviewer', function(req, res) {
                 var listOutput = await Output.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, thang: new Date().getFullYear() }).lean().sort('kdoutput')
                 var listKomponen = await Komponen.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, thang: new Date().getFullYear() }).lean().sort('kdkmpnen')
                 var listAkun = await Akun.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, thang: new Date().getFullYear() }).lean().sort('kdakun')
+                var listDetail = await DetailBelanja.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, kdakun: tiketData.kdakun, thang: new Date().getFullYear() }).lean().sort('noitem')
                 await res.render('loket/loket_reviewer', {
                     layout: false,
                     admin: req.session.jenis,
@@ -237,6 +285,7 @@ loket.get('/reviewer', function(req, res) {
                     output: listOutput,
                     komponen: listKomponen,
                     akun: listAkun,
+                    detail: listDetail,
                 });
             } catch (err) {
                 console.log(err)
@@ -269,6 +318,7 @@ loket.get('/bendahara', function(req, res) {
                 var listOutput = await Output.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, thang: new Date().getFullYear() }).lean().sort('kdoutput')
                 var listKomponen = await Komponen.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, thang: new Date().getFullYear() }).lean().sort('kdkmpnen')
                 var listAkun = await Akun.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, thang: new Date().getFullYear() }).lean().sort('kdakun')
+                var listDetail = await DetailBelanja.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, kdakun: tiketData.kdakun, thang: new Date().getFullYear() }).lean().sort('noitem')
                 console.log(listProgram)
                 await res.render('loket/loket_bendahara', {
                     layout: false,
@@ -279,6 +329,7 @@ loket.get('/bendahara', function(req, res) {
                     output: listOutput,
                     komponen: listKomponen,
                     akun: listAkun,
+                    detail: listDetail,
                 });
             } catch (err) {
                 console.log(err)
@@ -336,13 +387,13 @@ loket.post('/unitKirim', function(req, res) {
             }
             async.waterfall([
                 function(callback) { //no urut tiket
-                    var noUrut = 1
                     Loket.count({}, function(err, count) {
                         if (err) {
                             console.log(err)
                             throw err
                         }
-                        noUrut += count //count=2
+                        var noUrut = 1
+                        noUrut += count
                         if (noUrut < 10) {
                             noUrut = '00' + noUrut
                         } else if (noUrut < 100) {
@@ -384,6 +435,7 @@ loket.post('/unitKirim', function(req, res) {
                     uraianKomponen: '',
                     kdakun: '',
                     uraianAkun: '',
+                    uraianDetail: '',
                     tanggal: {
                         pengajuan: new Date(),
                         pelaksanaan: new Date(fields.loketTglPelaksanaan),
@@ -410,7 +462,7 @@ loket.post('/unitKirim', function(req, res) {
                     nilaiPajak: '',
                     nilaiTransfer: '',
                     statusTransfer: '',
-                    posisi: 'PPK',
+                    posisi: 'Verifikator',
                     status: 'Belum selesai'
                 });
 
@@ -438,6 +490,39 @@ loket.post('/unitKirim', function(req, res) {
 
 })
 
+loket.post('/verifikasi', function(req, res) {
+    try {
+        Loket.findById(req.body.tiketId, (err, data) => {
+            if (err) {
+                console.log(err)
+                throw err
+            }
+
+            data.unit = req.body.loketNamaUnit
+            data.kodeUnit = req.body.loketKodeUnit
+            data.operator = req.body.loketOperator
+            data.tanggal.pelaksanaan = new Date(req.body.loketTglPelaksanaan)
+            data.detail = req.body.loketDetail
+            data.nilaiPengajuan = req.body.loketNilai
+            data.checklist.spj = [req.body.checklistSpjUnit]
+            data.checklist.daftarHadir = [req.body.checklistDaftarHadirUnit]
+            data.checklist.dokumentasi = [req.body.checklistDokumentasiUnit]
+            data.checklist.notulensi = [req.body.checklistNotulensiUnit]
+            data.checklist.cvNarasumber = [req.body.checklistCvUnit]
+            data.posisi = 'PPK'
+
+            saveRedirect(req, res, data)
+                // data.save()
+                // req.session.tiketId = ''
+                // res.redirect('/#loket/dashboard')
+        })
+    } catch (err) {
+        console.log(err)
+        throw err
+    }
+})
+
+//-------
 loket.post('/ppkTolak', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
@@ -449,9 +534,7 @@ loket.post('/ppkTolak', function(req, res) {
             data.catatan.ppk = req.body.loketCatatanPpk
             data.status = 'Dikembalikan ke unit'
 
-            data.save()
-            req.session.tiketId = ''
-                //kirim email
+            //kirim email
             var mailOptions = {
                 from: process.env.MAIL_NAME,
                 to: '221709865@stis.ac.id',
@@ -467,7 +550,10 @@ loket.post('/ppkTolak', function(req, res) {
                 console.log('Email sent: ' + info.response)
             })
 
-            res.redirect('/#loket/dashboard')
+            saveRedirect(req, res, data)
+                // data.save()
+                // req.session.tiketId = ''
+                // res.redirect('/#loket/dashboard')
         })
     } catch (err) {
         console.log(err)
@@ -483,39 +569,68 @@ loket.post('/ppkKirim', function(req, res) {
                 console.log(err)
                 throw err
             }
+            async.series([
+                function(callback) {
+                    Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.urkmpnen)
+                    })
+                },
+                function(callback) {
+                    Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+            ], function(err, result) {
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
+                data.kdprogram = req.body.loketProgram
+                data.kdkegiatan = req.body.loketKegiatan
+                data.kdoutput = req.body.loketOutput
+                data.kdkomponen = req.body.loketKomponen
+                data.kdakun = req.body.loketAkun
 
-            data.kdprogram = req.body.loketProgram
-            Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianProgram = pro.uraian)
-            })
-            data.kdkegiatan = req.body.loketKegiatan
-            Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKegiatan = pro.uraian)
-            })
-            data.kdoutput = req.body.loketOutput
-            Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianOutput = pro.uraian)
-            })
-            data.kdkomponen = req.body.loketKomponen
-            Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKomponen = pro.urkmpnen)
-            })
-            data.kdakun = req.body.loketAkun
-            Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianAkun = pro.uraian)
-            })
-            data.checklist.spj = [data.checklist.spj[0], req.body.checklistSpjPpk]
-            data.checklist.daftarHadir = [data.checklist.daftarHadir[0], req.body.checklistDaftarHadirPpk]
-            data.checklist.dokumentasi = [data.checklist.dokumentasi[0], req.body.checklistDokumentasiPpk]
-            data.checklist.notulensi = [data.checklist.notulensi[0], req.body.checklistNotulensiPpk]
-            data.checklist.cvNarasumber = [data.checklist.cvNarasumber[0], req.body.checklistCvPpk]
-            data.spp = req.body.loketSpp
-            data.catatan.ppk = req.body.loketCatatanPpk
-            data.posisi = 'PPSPM'
+                data.uraianProgram = result[0]
+                data.uraianKegiatan = result[1]
+                data.uraianOutput = result[2]
+                data.uraianKomponen = result[3]
+                data.uraianAkun = result[4]
+                data.uraianDetail = req.body.loketDetailPok
 
-            data.save()
-            req.session.tiketId = ''
-            res.redirect('/#loket/dashboard')
+                data.checklist.spj = [data.checklist.spj[0], req.body.checklistSpjPpk]
+                data.checklist.daftarHadir = [data.checklist.daftarHadir[0], req.body.checklistDaftarHadirPpk]
+                data.checklist.dokumentasi = [data.checklist.dokumentasi[0], req.body.checklistDokumentasiPpk]
+                data.checklist.notulensi = [data.checklist.notulensi[0], req.body.checklistNotulensiPpk]
+                data.checklist.cvNarasumber = [data.checklist.cvNarasumber[0], req.body.checklistCvPpk]
+                data.catatan.ppk = req.body.loketCatatanPpk
+
+                if (req.body.loketSpp == 'Belum') {
+                    data.spp = req.body.loketSpp
+                    data.posisi = 'Bendahara'
+                    saveRedirect(req, res, data)
+                } else if (req.body.loketSpp == 'Sudah') {
+                    data.spp = req.body.loketSpp
+                    data.posisi = 'PPSPM'
+                    saveRedirect(req, res, data)
+                }
+
+            })
         })
     } catch (err) {
         console.log(err)
@@ -523,6 +638,7 @@ loket.post('/ppkKirim', function(req, res) {
     }
 })
 
+//-------
 loket.post('/ppspmTolak', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
@@ -533,9 +649,6 @@ loket.post('/ppspmTolak', function(req, res) {
 
             data.catatan.ppspm = req.body.loketCatatanPpspm
             data.status = 'Dikembalikan ke unit'
-
-            data.save()
-            req.session.tiketId = ''
 
             var mailOptions = {
                 from: process.env.MAIL_NAME,
@@ -552,7 +665,10 @@ loket.post('/ppspmTolak', function(req, res) {
                 console.log('Email sent: ' + info.response)
             })
 
-            res.redirect('/#loket/dashboard')
+            saveRedirect(req, res, data)
+                // data.save()
+                // req.session.tiketId = ''
+                // res.redirect('/#loket/dashboard')
         })
     } catch (err) {
         console.log(err)
@@ -569,38 +685,63 @@ loket.post('/ppspmKirimReviewer', function(req, res) {
                 throw err
             }
 
-            data.kdprogram = req.body.loketProgram
-            Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianProgram = pro.uraian)
-            })
-            data.kdkegiatan = req.body.loketKegiatan
-            Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKegiatan = pro.uraian)
-            })
-            data.kdoutput = req.body.loketOutput
-            Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianOutput = pro.uraian)
-            })
-            data.kdkomponen = req.body.loketKomponen
-            Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKomponen = pro.urkmpnen)
-            })
-            data.kdakun = req.body.loketAkun
-            Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianAkun = pro.uraian)
-            })
-            data.checklist.spj = [data.checklist.spj[0], data.checklist.spj[1], req.body.checklistSpjPpspm]
-            data.checklist.daftarHadir = [data.checklist.daftarHadir[0], data.checklist.daftarHadir[1], req.body.checklistDaftarHadirPpspm]
-            data.checklist.dokumentasi = [data.checklist.dokumentasi[0], data.checklist.dokumentasi[1], req.body.checklistDokumentasiPpspm]
-            data.checklist.notulensi = [data.checklist.notulensi[0], data.checklist.notulensi[1], req.body.checklistNotulensiPpspm]
-            data.checklist.cvNarasumber = [data.checklist.cvNarasumber[0], data.checklist.cvNarasumber[1], req.body.checklistCvPpspm]
-            data.catatan.ppspm = req.body.loketCatatanPpspm
-            data.posisi = 'Reviewer'
+            async.series([
+                function(callback) {
+                    Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.urkmpnen)
+                    })
+                },
+                function(callback) {
+                    Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+            ], function(err, result) {
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
+                data.kdprogram = req.body.loketProgram
+                data.kdkegiatan = req.body.loketKegiatan
+                data.kdoutput = req.body.loketOutput
+                data.kdkomponen = req.body.loketKomponen
+                data.kdakun = req.body.loketAkun
 
-            data.save()
-            req.session.tiketId = ''
-                //res.status(204).send()
-            res.redirect('/#loket/dashboard')
+                data.uraianProgram = result[0]
+                data.uraianKegiatan = result[1]
+                data.uraianOutput = result[2]
+                data.uraianKomponen = result[3]
+                data.uraianAkun = result[4]
+                data.uraianDetail = req.body.loketDetailPok
+
+                data.checklist.spj = [data.checklist.spj[0], data.checklist.spj[1], req.body.checklistSpjPpspm]
+                data.checklist.daftarHadir = [data.checklist.daftarHadir[0], data.checklist.daftarHadir[1], req.body.checklistDaftarHadirPpspm]
+                data.checklist.dokumentasi = [data.checklist.dokumentasi[0], data.checklist.dokumentasi[1], req.body.checklistDokumentasiPpspm]
+                data.checklist.notulensi = [data.checklist.notulensi[0], data.checklist.notulensi[1], req.body.checklistNotulensiPpspm]
+                data.checklist.cvNarasumber = [data.checklist.cvNarasumber[0], data.checklist.cvNarasumber[1], req.body.checklistCvPpspm]
+                data.catatan.ppspm = req.body.loketCatatanPpspm
+                data.posisi = 'Reviewer'
+
+                saveRedirect(req, res, data)
+                    // data.save()
+                    // req.session.tiketId = ''
+                    // res.redirect('/#loket/dashboard')
+            })
         })
     } catch (err) {
         console.log(err)
@@ -616,37 +757,63 @@ loket.post('/ppspmKirimBinagram', function(req, res) {
                 throw err
             }
 
-            data.kdprogram = req.body.loketProgram
-            Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianProgram = pro.uraian)
-            })
-            data.kdkegiatan = req.body.loketKegiatan
-            Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKegiatan = pro.uraian)
-            })
-            data.kdoutput = req.body.loketOutput
-            Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianOutput = pro.uraian)
-            })
-            data.kdkomponen = req.body.loketKomponen
-            Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKomponen = pro.urkmpnen)
-            })
-            data.kdakun = req.body.loketAkun
-            Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianAkun = pro.uraian)
-            })
-            data.checklist.spj = [data.checklist.spj[0], data.checklist.spj[1], req.body.checklistSpjPpspm]
-            data.checklist.daftarHadir = [data.checklist.daftarHadir[0], data.checklist.daftarHadir[1], req.body.checklistDaftarHadirPpspm]
-            data.checklist.dokumentasi = [data.checklist.dokumentasi[0], data.checklist.dokumentasi[1], req.body.checklistDokumentasiPpspm]
-            data.checklist.notulensi = [data.checklist.notulensi[0], data.checklist.notulensi[1], req.body.checklistNotulensiPpspm]
-            data.checklist.cvNarasumber = [data.checklist.cvNarasumber[0], data.checklist.cvNarasumber[1], req.body.checklistCvPpspm]
-            data.catatan.ppspm = req.body.loketCatatanPpspm
+            async.series([
+                function(callback) {
+                    Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.urkmpnen)
+                    })
+                },
+                function(callback) {
+                    Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+            ], function(err, result) {
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
+                data.kdprogram = req.body.loketProgram
+                data.kdkegiatan = req.body.loketKegiatan
+                data.kdoutput = req.body.loketOutput
+                data.kdkomponen = req.body.loketKomponen
+                data.kdakun = req.body.loketAkun
 
-            data.save()
-            req.session.tiketId = ''
-                //res.status(204).send()
-            res.redirect('/#loket/dashboard')
+                data.uraianProgram = result[0]
+                data.uraianKegiatan = result[1]
+                data.uraianOutput = result[2]
+                data.uraianKomponen = result[3]
+                data.uraianAkun = result[4]
+                data.uraianDetail = req.body.loketDetailPok
+
+                data.checklist.spj = [data.checklist.spj[0], data.checklist.spj[1], req.body.checklistSpjPpspm]
+                data.checklist.daftarHadir = [data.checklist.daftarHadir[0], data.checklist.daftarHadir[1], req.body.checklistDaftarHadirPpspm]
+                data.checklist.dokumentasi = [data.checklist.dokumentasi[0], data.checklist.dokumentasi[1], req.body.checklistDokumentasiPpspm]
+                data.checklist.notulensi = [data.checklist.notulensi[0], data.checklist.notulensi[1], req.body.checklistNotulensiPpspm]
+                data.checklist.cvNarasumber = [data.checklist.cvNarasumber[0], data.checklist.cvNarasumber[1], req.body.checklistCvPpspm]
+                data.catatan.ppspm = req.body.loketCatatanPpspm
+                data.posisi = 'Reviewer'
+
+                saveRedirect(req, res, data)
+                    // data.save()
+                    // req.session.tiketId = ''
+                    // res.redirect('/#loket/dashboard')
+            })
         })
     } catch (err) {
         console.log(err)
@@ -655,6 +822,7 @@ loket.post('/ppspmKirimBinagram', function(req, res) {
     //kirim email ke binagram meminta revisi pok
 })
 
+//-------
 loket.post('/reviewerPending', function(req, res) {
     try {
         Loket.findById(req.body.tiketId, (err, data) => {
@@ -663,31 +831,57 @@ loket.post('/reviewerPending', function(req, res) {
                 throw err
             }
 
-            data.kdprogram = req.body.loketProgram
-            Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianProgram = pro.uraian)
-            })
-            data.kdkegiatan = req.body.loketKegiatan
-            Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKegiatan = pro.uraian)
-            })
-            data.kdoutput = req.body.loketOutput
-            Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianOutput = pro.uraian)
-            })
-            data.kdkomponen = req.body.loketKomponen
-            Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKomponen = pro.urkmpnen)
-            })
-            data.kdakun = req.body.loketAkun
-            Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianAkun = pro.uraian)
-            })
-            data.catatan.reviewer = req.body.loketCatatanReviewer
+            async.series([
+                function(callback) {
+                    Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.urkmpnen)
+                    })
+                },
+                function(callback) {
+                    Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+            ], function(err, result) {
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
+                data.kdprogram = req.body.loketProgram
+                data.kdkegiatan = req.body.loketKegiatan
+                data.kdoutput = req.body.loketOutput
+                data.kdkomponen = req.body.loketKomponen
+                data.kdakun = req.body.loketAkun
 
-            data.save()
-            req.session.tiketId = ''
-            res.redirect('/#loket/dashboard')
+                data.uraianProgram = result[0]
+                data.uraianKegiatan = result[1]
+                data.uraianOutput = result[2]
+                data.uraianKomponen = result[3]
+                data.uraianAkun = result[4]
+                data.uraianDetail = req.body.loketDetailPok
+
+                data.catatan.reviewer = req.body.loketCatatanReviewer
+
+                saveRedirect(req, res, data)
+                    // data.save()
+                    // req.session.tiketId = ''
+                    // res.redirect('/#loket/dashboard')
+            })
         })
     } catch (err) {
         console.log(err)
@@ -704,33 +898,121 @@ loket.post('/reviewerProses', function(req, res) {
                 throw err
             }
 
-            data.kdprogram = req.body.loketProgram
-            Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianProgram = pro.uraian)
-            })
-            data.kdkegiatan = req.body.loketKegiatan
-            Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKegiatan = pro.uraian)
-            })
-            data.kdoutput = req.body.loketOutput
-            Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianOutput = pro.uraian)
-            })
-            data.kdkomponen = req.body.loketKomponen
-            Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKomponen = pro.urkmpnen)
-            })
-            data.kdakun = req.body.loketAkun
-            Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianAkun = pro.uraian)
-            })
-            data.catatan.reviewer = req.body.loketCatatanReviewer
-            data.posisi = 'Bendahara'
+            async.series([
+                function(callback) {
+                    Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.urkmpnen)
+                    })
+                },
+                function(callback) {
+                    Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+            ], function(err, result) {
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
+                data.kdprogram = req.body.loketProgram
+                data.kdkegiatan = req.body.loketKegiatan
+                data.kdoutput = req.body.loketOutput
+                data.kdkomponen = req.body.loketKomponen
+                data.kdakun = req.body.loketAkun
 
-            data.save()
-            req.session.tiketId = ''
-                //res.status(204).send()
-            res.redirect('/#loket/dashboard')
+                data.uraianProgram = result[0]
+                data.uraianKegiatan = result[1]
+                data.uraianOutput = result[2]
+                data.uraianKomponen = result[3]
+                data.uraianAkun = result[4]
+                data.uraianDetail = req.body.loketDetailPok
+
+                data.catatan.reviewer = req.body.loketCatatanReviewer
+                data.posisi = 'Bendahara'
+
+                saveRedirect(req, res, data)
+                    // data.save()
+                    // req.session.tiketId = ''
+                    // res.redirect('/#loket/dashboard')
+            })
+        })
+    } catch (err) {
+        console.log(err)
+        throw err
+    }
+})
+
+//-------
+loket.post('/bendaharaKirimSpp', function(req, res) {
+    try {
+        Loket.findById(req.body.tiketId, (err, data) => {
+            if (err) {
+                console.log(err)
+                throw err
+            }
+            async.series([
+                function(callback) {
+                    Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.urkmpnen)
+                    })
+                },
+                function(callback) {
+                    Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+            ], function(err, result) {
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
+                data.kdprogram = req.body.loketProgram
+                data.kdkegiatan = req.body.loketKegiatan
+                data.kdoutput = req.body.loketOutput
+                data.kdkomponen = req.body.loketKomponen
+                data.kdakun = req.body.loketAkun
+
+                data.uraianProgram = result[0]
+                data.uraianKegiatan = result[1]
+                data.uraianOutput = result[2]
+                data.uraianKomponen = result[3]
+                data.uraianAkun = result[4]
+                data.uraianDetail = req.body.loketDetailPok
+
+                data.spp = req.body.loketSpp
+                data.posisi = 'PPSPM'
+                saveRedirect(req, res, data)
+            })
         })
     } catch (err) {
         console.log(err)
@@ -745,36 +1027,60 @@ loket.post('/bendaharaProses', function(req, res) {
                 console.log(err)
                 throw err
             }
+            async.series([
+                function(callback) {
+                    Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+                function(callback) {
+                    Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.urkmpnen)
+                    })
+                },
+                function(callback) {
+                    Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
+                        callback(null, pro.uraian)
+                    })
+                },
+            ], function(err, result) {
+                if (err) {
+                    console.log(err)
+                    throw err
+                }
+                data.kdprogram = req.body.loketProgram
+                data.kdkegiatan = req.body.loketKegiatan
+                data.kdoutput = req.body.loketOutput
+                data.kdkomponen = req.body.loketKomponen
+                data.kdakun = req.body.loketAkun
 
-            data.kdprogram = req.body.loketProgram
-            Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianProgram = pro.uraian)
-            })
-            data.kdkegiatan = req.body.loketKegiatan
-            Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKegiatan = pro.uraian)
-            })
-            data.kdoutput = req.body.loketOutput
-            Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianOutput = pro.uraian)
-            })
-            data.kdkomponen = req.body.loketKomponen
-            Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKomponen = pro.urkmpnen)
-            })
-            data.kdakun = req.body.loketAkun
-            Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianAkun = pro.uraian)
-            })
-            data.metodeTransfer = req.body.loketMetodeTransfer
-            data.nilaiPajak = req.body.loketNilaiPajak
-            data.nilaiTransfer = req.body.loketNilaiTransfer
-            data.posisi = 'Operator Bank'
+                data.uraianProgram = result[0]
+                data.uraianKegiatan = result[1]
+                data.uraianOutput = result[2]
+                data.uraianKomponen = result[3]
+                data.uraianAkun = result[4]
+                data.uraianDetail = req.body.loketDetailPok
 
-            data.save()
-            req.session.tiketId = ''
-            res.status(204).send()
-                //res.redirect('/#loket/dashboard')
+                data.metodeTransfer = req.body.loketMetodeTransfer
+                data.nilaiPajak = req.body.loketNilaiPajak
+                data.nilaiTransfer = req.body.loketNilaiTransfer
+                data.posisi = 'Operator Bank'
+
+                saveStay(req, res, data)
+                    // data.save()
+                    // req.session.tiketId = ''
+                    // res.status(204).send()
+            })
         })
     } catch (err) {
         console.log(err)
@@ -790,39 +1096,13 @@ loket.post('/bendaharaKirimArsiparis', function(req, res) {
                 throw err
             }
 
-            data.kdprogram = req.body.loketProgram
-            Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianProgram = pro.uraian)
-            })
-            data.kdkegiatan = req.body.loketKegiatan
-            Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKegiatan = pro.uraian)
-            })
-            data.kdoutput = req.body.loketOutput
-            Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianOutput = pro.uraian)
-            })
-            data.kdkomponen = req.body.loketKomponen
-            Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKomponen = pro.urkmpnen)
-            })
-            data.kdakun = req.body.loketAkun
-            Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianAkun = pro.uraian)
-            })
-            data.metodeTransfer = req.body.loketMetodeTransfer
-            data.nilaiPajak = req.body.loketNilaiPajak
-            data.nilaiTransfer = req.body.loketNilaiTransfer
-
             req.session.tiketId = ''
             res.status(204).send()
-                //res.redirect('/#loket/dashboard')
         })
     } catch (err) {
         console.log(err)
         throw err
     }
-    // res.redirect('/#loket/dashboard')
     //kirim email ke arsiparis detail tiket
 })
 
@@ -834,39 +1114,13 @@ loket.post('/bendaharaKirimBmn', function(req, res) {
                 throw err
             }
 
-            data.kdprogram = req.body.loketProgram
-            Program.findOne({ kdprogram: req.body.loketProgram, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianProgram = pro.uraian)
-            })
-            data.kdkegiatan = req.body.loketKegiatan
-            Kegiatan.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKegiatan = pro.uraian)
-            })
-            data.kdoutput = req.body.loketOutput
-            Output.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianOutput = pro.uraian)
-            })
-            data.kdkomponen = req.body.loketKomponen
-            Komponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianKomponen = pro.urkmpnen)
-            })
-            data.kdakun = req.body.loketAkun
-            Akun.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdakun: req.body.loketAkun, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                data.save(data.uraianAkun = pro.uraian)
-            })
-            data.metodeTransfer = req.body.loketMetodeTransfer
-            data.nilaiPajak = req.body.loketNilaiPajak
-            data.nilaiTransfer = req.body.loketNilaiTransfer
-
             req.session.tiketId = ''
             res.status(204).send()
-                //res.redirect('/#loket/dashboard')
         })
     } catch (err) {
         console.log(err)
         throw err
     }
-    //res.redirect('/#loket/dashboard')
     //kirim email ke operator bmn
 })
 
@@ -878,10 +1132,15 @@ loket.post('/bendaharaInputPajak', function(req, res) {
     console.log('menuju input pajak')
 })
 
+//-------
 loket.post('/bankKirim', function(req, res) {
     try {
         var form = new formidable.IncomingForm();
         form.parse(req, function(err, fields, files) {
+            if (err) {
+                console.log(err)
+                throw err
+            }
             Loket.findById(fields.tiketId, (err, data) => {
                 if (err) {
                     console.log(err)
@@ -903,36 +1162,43 @@ loket.post('/bankKirim', function(req, res) {
                     return
                 });
 
-                data.save()
-                req.session.tiketId = ''
-
-                var mailOptions = {
-                    from: process.env.MAIL_NAME,
-                    to: '221709865@stis.ac.id',
-                    subject: 'Penyelesaian Tiket Pengajuan SIMAMOV',
-                    html: 'Pengajuan yang anda lakukan pada simamov telah diselesaikan oleh petugas BAU.<br>' +
-                        'Silahkan cek rekening Anda',
-                    attachments: [{
-                        path: __dirname + "/../uploaded/spj/" + data.nomorTransaksi + '-SpjBank.' + files.fileSpjBank.name.match(/[^.]\w*$/i)[0]
-                    }]
+                //kirim email ke penerima
+                if (data.metodeTransfer != 'CMS') {
+                    var mailOptions = {
+                        from: process.env.MAIL_NAME,
+                        to: '221709865@stis.ac.id',
+                        subject: 'Penyelesaian Tiket Pengajuan SIMAMOV',
+                        html: 'Pengajuan yang anda lakukan pada simamov telah diselesaikan oleh petugas BAU.<br>' +
+                            'Silahkan cek rekening Anda',
+                        attachments: [{
+                            path: __dirname + "/../uploaded/spj/" + data.nomorTransaksi + '-SpjBank.' + files.fileSpjBank.name.match(/[^.]\w*$/i)[0]
+                        }]
+                    }
+                    transporter.sendMail(mailOptions, (err, info) => {
+                        if (err) throw err
+                        console.log('Email sent: ' + info.response)
+                    })
                 }
-                transporter.sendMail(mailOptions, (err, info) => {
-                    if (err) throw err
-                    console.log('Email sent: ' + info.response)
-                })
 
-                res.redirect('/#loket/dashboard')
+                saveRedirect(req, res, data)
+                    // data.save()
+                    // req.session.tiketId = ''
+                    // res.redirect('/#loket/dashboard')
             })
         })
     } catch (err) {
         console.log(err)
         throw err
     }
-    //kirim email ke penerima
 })
 
+//-------
 loket.post('/downloadSpjTiket', function(req, res) {
     Loket.findById(req.body.tiketId).exec((err, data) => {
+        if (err) {
+            console.log(err)
+            throw err
+        }
         if (data.fileSpj.match(/[^.]\w*$/i)[0] == 'xls') {
             const file = `${__dirname}/../uploaded/spj/${data.nomorTransaksi}-SpjUnit.xls`
             fs.access(file, fs.F_OK, (err) => {
@@ -981,6 +1247,18 @@ loket.post('/downloadSpjTiketBank', function(req, res) {
 
 // --------------------   FUNCTION   -----------------------
 
+function saveRedirect(req, res, data) {
+    data.save()
+    req.session.tiketId = ''
+    res.redirect('/#loket/dashboard')
+}
+
+function saveStay(req, res, data) {
+    data.save()
+    req.session.tiketId = ''
+    res.status(204).send()
+}
+
 // javascript create JSON object from two dimensional Array //ga guna
 function arrayToJSONObject(arr) {
     //header
@@ -1003,31 +1281,6 @@ function arrayToJSONObject(arr) {
     return formatted;
 }
 
-// fungsi membuat nomor transaksi //masih salah
-//function noTransaksi(kodeUnit) {
-// var noUrut = 1
-// var tahun = new Date().getFullYear()
-// var bulan = new Date().getMonth()
-
-// bulan++
-// if (bulan < 10) {
-//     bulan = '0' + bulan
-// }
-
-// Loket.count({}, function(err, count) {
-//     if (err) console.log(err)
-//     noUrut += count //count=2
-//     if (noUrut < 10) {
-//         noUrut = '00' + noUrut
-//     } else if (noUrut < 100) {
-//         noUrut = '0' + noUrut
-//     }
-// })
-
-// return `${tahun}${bulan}${kodeUnit}${noUrut}`
-//}
-
-
 //membuat tanggal lebih mudah dibaca
 function formatTanggal(tgl) {
     let tahun = tgl.getFullYear();
@@ -1036,42 +1289,10 @@ function formatTanggal(tgl) {
     return `${hari}/${bulan}/${tahun}`
 }
 
-// function noTransaksi(tahun, bulan, kodeUnit) {
-//     const noUrut = 1
-
-//     Loket.count({}, function(err, count) {
-//         if (err) console.log(err)
-//         noUrut =+ count
-
-//     })
-//     return `${tahun}${bulan}${kodeUnit}${noUrut}`
-
-// }
-
-// function noTransaksi() {
-//     const hitung = () => new Promise((fulfill, reject) => {
-//         Loket.count({}, (err, count) => {
-//             if (err) return reject(err)
-//             return fulfill(count)
-//         })
-//     })
-
-//     let a = 1
-//     hitung()
-//         .then(() => {
-//             a = a + hasil
-//             console.log('hasil: ' + hasil)
-//             console.log('a: ' + a)
-//         })
-// }
-
 // loket.post('/submit', function(req, res){
 //     console.log('form penarikan disubmit');
 //     // loket.connections[req.session.user_id].emit('form_penarikan');
 // })
-
-
-
 
 
 

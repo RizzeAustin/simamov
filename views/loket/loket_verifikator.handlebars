@@ -7,27 +7,28 @@
                     <div class="tab-content">
                         {{!-- form pengajuan user --}}
                         <div class="row col">
-                            <h1><strong>- UNIT -</strong></h1>
+                            <h1><strong>- VERIFIKATOR -</strong></h1>
                         </div>
-                        <form id="loketForm" method="POST" action="loket/unitKirim" class="modal-body" enctype="multipart/form-data">
+                        <form id="loketForm" method="POST" action="loket/verifikasi" class="modal-body">
                             <div class="row">
                                 <div class="col-6">
+                                    <input name="tiketId" type="hidden" value="{{data._id}}">
                                     <div class="form-group row">
                                         <label for="loketNamaUnit" class="col-md-2 col-form-label">Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" required>
+                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" required value="{{data.unit}}">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketKodeUnit" class="col-md-2 col-form-label">Kode Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" required>
+                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" required value="{{data.kodeUnit}}">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketOperator" class="col-md-2 col-form-label">Operator</label>
                                         <div class="col">
-                                            <input type="text" name="loketOperator" id="loketOperator" placeholder="Nama Petugas" class="form-control" required>
+                                            <input type="text" name="loketOperator" id="loketOperator" placeholder="Nama Petugas" class="form-control" required value="{{data.operator}}">
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -90,14 +91,14 @@
                                     <div class="form-group row">
                                         <label for="loketDetail" class="col ml-1 col-form-label">Detail SPJ</label>
                                         <div class="col-md-10">
-                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" placeholder="Nama SPJ" required>
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" placeholder="Nama SPJ" required value="{{data.detail}}">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketNilai" class="col ml-1 col-form-label">Nilai</label>
                                         <label class="ml-2 col-form-label" for="">Rp</label>
                                         <div class="col-md-9">
-                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control" placeholder="Contoh: 1000000" required>
+                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control" placeholder="Contoh: 1000000" required value="{{data.nilaiPengajuan}}">
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -139,17 +140,13 @@
                                             aria-label="checklistCvUnit" name="checklistCvUnit" id="checklistCvUnit">
                                     </div>
                                     <div class="form-group row">
-                                        <div class="col-md-2">
-                                            <label for="fileSpjUnit" class="col-form-label">Upload SPJ</label><br>
-                                            <p>(.xls .xlsx)</p>
-                                        </div>
-                                        <div class="col input-group">
-                                            <input type="file" class="form-control" name="fileSpjUnit" id="fileSpjUnit" aria-label="fileSpjUnit" accept=".xlsx,.xls" required>
+                                        <label for="loketAdkSpj" class="col-md-2 col-form-label">ADK SPJ</label>
+                                        <div class="col">
+                                            <p id="loketAdkSpj">{{data.fileSpj}}</p>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="resetFormUnit" type="reset" class="btn btn-primary">Reset</button>
-                                        <button id="kirimFormUnit" type="submit" class="btn btn-success">Kirim</button>
+                                        <button id="kirimFormUnit" type="submit" class="btn btn-success">Verifikasi</button>
                                     </div>
                                 </div>
                             </div>
@@ -161,6 +158,11 @@
     </div>
 </div>
 
+{{!-- autofill form --}}
+<script id="tglPelaksanaan" type="text/x-handlebars-template">
+    {{data.tanggal.pelaksanaan}}
+</script>
+
 <script type="text/javascript">
     //socket = io.connect($(location).attr('host'));
     var socket = io()
@@ -169,6 +171,25 @@
     //var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
+
+        //autofill form
+        var t1 = new Date($("#tglPelaksanaan").html())
+        var t2 = vtgl(t1)
+        $("#loketTglPelaksanaan").val(t2)
+
+        //autofill checklist
+        var spj = [{{data.checklist.spj}}]
+        var hadir = [{{data.checklist.daftarHadir}}]
+        var dok = [{{data.checklist.dokumentasi}}]
+        var not = [{{data.checklist.notulensi}}]
+        var cv = [{{data.checklist.cvNarasumber}}]
+        
+        if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
+        if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
+        if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
+        if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
+        if (cv[0]) $("#checklistCvUnit").attr("checked", true)
+
         $("#loketNamaUnit").focus()
         //validasi isian yang tidak bolek kosong
         $('#kirimFormUnit').click(function (e) {
@@ -178,5 +199,14 @@
         })
 
     });
+
+    function vtgl(tgl){
+        let y = tgl.getFullYear()
+        let m = tgl.getMonth()
+        let d = tgl.getDate()
+        if (m<10) m = '0'+m
+        if (d<10) d = '0'+d
+        return `${y}-${m}-${d}`
+    }
 
 </script>

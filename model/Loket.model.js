@@ -19,6 +19,7 @@ var LoketSchema = new Schema({
     'uraianKomponen': String,
     'kdakun': String,
     'uraianAkun': String,
+    'uraianDetail': String,
     'detail': String,
     'nilaiPengajuan': Number,
     'checklist': {

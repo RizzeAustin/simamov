@@ -77,6 +77,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
+                                        <label for="loketDetailPok" class="col ml-1 col-form-label">Detail POK</label>
+                                        <div class="col-md-10">
+                                            <select name="loketDetailPok" id="loketDetailPok" class="form-select" disabled>
+                                                <option selected>{{data.uraianDetail}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
                                         <label for="loketTglPelaksanaan" class="col ml-1 col-form-label">Tanggal Pelaksanaan</label>
                                         <div class="col-md-10">
                                             <input type="text" name="loketTglPelaksanaan" id="loketTglPelaksanaan" class="form-control" disabled>
@@ -242,7 +250,11 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="kirimFormBank" type="submit" class="btn btn-primary">Kirim Email ke Penerima</button>
+                                        {{#if_eq data.metodeTransfer 'CMS'}}
+                                            <button id="kirimFormBank" type="submit" class="btn btn-primary">Selesaikan tiket</button>
+                                        {{else}}
+                                            <button id="kirimFormBank" type="submit" class="btn btn-primary">Kirim Email ke Penerima & selesaikan tiket</button>
+                                        {{/if_eq}}
                                     </div>
                                 </div>
                             </div>
@@ -253,16 +265,6 @@
         </div>
     </div>
 </div>
-
-<script src="/js/handsontable.full.min.js"></script>
-<script src="/js/moment.min.js"></script>
-<script src="/js/locale/id.js"></script>
-<script src="/js/bootstrap-datetimepicker.js"></script>
-<script src="/js/highcharts.js"></script>
-<script src="/js/data.js"></script>
-<script src="/js/drilldown.js"></script>
-<script src="/js/exporting.js"></script>
-<script src="/js/offline-exporting.js"></script>
 
 {{!-- autofill form --}}
 <script id="tglPelaksanaan" type="text/x-handlebars-template">
@@ -332,6 +334,6 @@
         let monthIndex = date.getMonth();
         let year = date.getFullYear();
         return day + ' ' + monthNames[monthIndex] + ' ' + year;
-    }
+    };
 
 </script>

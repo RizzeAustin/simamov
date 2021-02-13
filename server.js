@@ -92,13 +92,12 @@ var handlebars = require('express-handlebars').create({
         "fullYear": function() {
             return (new Date()).getFullYear();
         },
-        ifSama: function(a, b, opts) {
-            if (a == b) {
-                return true;
-            } else {
-                return false;
-            }
+        prev: function(value) {
+            return parseInt(value) - 1;
         },
+        next: function(value) {
+            return parseInt(value) + 1;
+        }
     }
 });
 app.engine('handlebars', handlebars.engine);

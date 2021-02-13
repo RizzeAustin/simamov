@@ -1,4 +1,4 @@
-table {
+/* table {
     counter-reset: rowNumber -1;
 }
 
@@ -8,7 +8,7 @@ table tr {
 
 table tr td:first-child::before {
     content: counter(rowNumber);
-}
+} */
 
 .form-select {
     display: block;
