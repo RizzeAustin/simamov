@@ -27,10 +27,10 @@
 
                                             <div class="form-group col-sm-2">
                                                 <label for="jenis_user">Jenis</label>
-                                                <select id="jenis_user" name="jenis" class="form-control" size="1" id='jenis_user'>
+                                                <select id="jenis_user" name="jenis" class="form-control" size="1" id='jenis_user' required>
                                                     <option></option>
                                                     <option value="1">Administrator</option>
-                                                    <option value="0">Editor</option>
+                                                    <option value="0">Pengguna</option>
                                                 </select>
                                             </div>
 
@@ -49,8 +49,13 @@
                                             </div>
 
                                             <div class="form-group col-sm-2">
+                                                <label for="emailUser">Email</label>
+                                                <input type="text" id="emailUser" name="email" class="form-control" required>
+                                            </div>
+
+                                            <div class="form-group col-sm-2">
                                                 <label for="cvv">&nbsp;</label>
-                                                <input type="submit" class="btn btn-primary form-control" value="Buat">
+                                                <input type="submit" class="btn btn-primary form-control" value="Tambah User">
                                             </div>
 
                                     </div> 
@@ -259,12 +264,12 @@
         if ($("#jenis_user").val()=='0'){
             $("#roleUser").attr('disabled', false).empty().append(
                 '<option></option>'+
-                '<option value="0">Unit</option>'+
-                '<option value="1">PPK</option>'+
-                '<option value="2">PPSPM</option>'+
-                '<option value="3">Reviewer</option>'+
-                '<option value="4">Bendahara</option>'+
-                '<option value="5">Operator Bank</option>'
+                '<option value="1">Unit</option>'+
+                '<option value="2">PPK</option>'+
+                '<option value="3">PPSPM</option>'+
+                '<option value="4">Reviewer</option>'+
+                '<option value="5">Bendahara</option>'+
+                '<option value="6">Operator Bank</option>'
             )
         } else {
             $("#roleUser").empty().attr('disabled', true)
@@ -273,13 +278,14 @@
     })
 
     $("#roleUser").change(function(){
-        if ($("#roleUser").val()=='0') {
+        if ($("#roleUser").val()=='1') {
             $("#jabatanUser").empty().append(
                 '<option value="1">Direktur</option>'+
-                '<option value="2">Pimpinan Unit</option>'+
-                '<option value="3">Operator Unit</option>'+
-                '<option value="4">Pimpinan BAAK</option>'+
-                '<option value="5">Pimpinan BAU</option>'
+                '<option value="2">Pimpinan BAAK</option>'+
+                '<option value="3">Operator BAAK</option>'+
+                '<option value="4">Pimpinan BAU</option>'+
+                '<option value="5">Pimpinan Unit</option>'+
+                '<option value="6">Operator Unit</option>'
             ).attr('disabled', false)
         } else if (!$("#roleUser").val()) {
             $("#jabatanUser").empty().attr('disabled', true)

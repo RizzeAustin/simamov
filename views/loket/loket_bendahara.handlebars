@@ -371,6 +371,10 @@
         if (not[2]) $("#checklistNotulensiPpspm").attr("checked", true)
         if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
 
+        if ($("#loketAkun").val()=="521811" || $("#loketAkun").val().slice(0,3)=="532") {
+                $("#kirimFormBendaharaOperatorBmn").prop("hidden", false)
+            } else {$("#kirimFormBendaharaOperatorBmn").prop("hidden", true)}
+
         $("#loketProgram").focus()
 
         if ($("#loketSpp").val()=='Belum'){
@@ -382,6 +386,13 @@
         if ($("#loketSpp").val()=='Sudah'){
             $("#loketSpp").attr("disabled", true)
         }
+
+        $("#loketAkun").change(function(){
+            if ($("#loketAkun").val()=="521811" || $("#loketAkun").val().slice(0,3)=="532") {
+                $("#kirimFormBendaharaOperatorBmn").prop("hidden", false)
+            } else {$("#kirimFormBendaharaOperatorBmn").prop("hidden", true)}
+            
+        })
         
         //validasi isian form
         $('#prosesFormBendahara').click(function (e) {

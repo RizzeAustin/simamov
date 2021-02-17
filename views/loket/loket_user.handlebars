@@ -15,13 +15,34 @@
                                     <div class="form-group row">
                                         <label for="loketNamaUnit" class="col-md-2 col-form-label">Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" required>
+                                            <select name="loketNamaUnit" id="loketNamaUnit" class="form-control" required>
+                                                <option>Pilih Unit</option>
+                                                <optgroup label="BAU">
+                                                    <option value="Kepegawaian">Kepegawaian</option>
+                                                    <option value="TU RT">TU RT</option>
+                                                    <option value="Keuangan">Keuangan</option>
+                                                </optgroup>
+                                                <optgroup label="BAAK">
+                                                    <option value="Akademik">Akademik</option>
+                                                    <option value="Kemahasiswaan">Kemahasiswaan</option>
+                                                </optgroup>
+                                                <optgroup label="PRODI">
+                                                    <option value="D4 Statistika">D4 Statistika</option>
+                                                    <option value="D4 Komputasi">D4 Komputasi</option>
+                                                    <option value="D3 Statistika">D3 Statistika</option>
+                                                </optgroup>
+                                                <option value="UPPPM">UPPPM</option>
+                                                <option value="SPM">SPM</option>
+                                                <option value="Perpustakaan">Perpustakaan</option>
+                                                <option value="IT">IT</option>
+                                                <option value="Lainnya">Lainnya</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketKodeUnit" class="col-md-2 col-form-label">Kode Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" required>
+                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" required disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -170,9 +191,60 @@
 
     $(document).ready(function () {
         $("#loketNamaUnit").focus()
+
+        $("#loketNamaUnit").change(function(){
+            switch ($("#loketNamaUnit").val()){
+                case "Kepegawaian":
+                    $("#loketKodeUnit").val("11")
+                    break
+                case "TU RT":
+                    $("#loketKodeUnit").val("12")
+                    break
+                case "Keuangan":
+                    $("#loketKodeUnit").val("13")
+                    break
+                case "Akademik":
+                    $("#loketKodeUnit").val("21")
+                    break
+                case "Kemahasiswaan":
+                    $("#loketKodeUnit").val("22")
+                    break
+                case "D4 Statistika":
+                    $("#loketKodeUnit").val("31")
+                    break
+                case "D4 Komputasi":
+                    $("#loketKodeUnit").val("32")
+                    break
+                case "D3 Statistika":
+                    $("#loketKodeUnit").val("33")
+                    break
+                case "UPPPM":
+                    $("#loketKodeUnit").val("4")
+                    break
+                case "SPM":
+                    $("#loketKodeUnit").val("5")
+                    break
+                case "Perpustakaan":
+                    $("#loketKodeUnit").val("6")
+                    break
+                case "IT":
+                    $("#loketKodeUnit").val("7")
+                    break
+                case "Lainnya":
+                    $("#loketKodeUnit").val("8")
+                    break
+                default:
+                    $("#loketKodeUnit").val("")
+            }
+        })
+        //$("#loketKodeUnit")
+
         //validasi isian yang tidak bolek kosong
         $('#kirimFormUnit').click(function (e) {
-            if (!$("#loketForm").valid()) {
+            if ($("#loketNamaUnit").val()=="Pilih Unit") {
+                e.preventDefault()
+                $("#loketNamaUnit").focus()
+            } else if (!$("#loketForm").valid()) {
                 e.preventDefault()
             } else {alert("Tiket telah diteruskan ke PPK")}
         })
