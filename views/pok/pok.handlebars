@@ -1,16 +1,27 @@
 <div class="animated fadeIn">
     <div class="card" id="new">
-        <div class="card-header"><i class="icon-calculator"></i> Pengelolaan Petunjuk Operasional Kegiatan (POK)
-            <div class="input-group mb-2">
-                <span class="input-group-addon"><i class="icon-clock"></i>
-                </span>
-                    <select data-toggle="tooltip" title="Tahun anggaran" id="tahun_anggaran" name="tahun_anggaran" class="form-control" size="1">
-                        {{#each thang}}
-                            <option value="{{thang}}" {{#if_eq thang ../this_year}}selected{{/if_eq}}>{{thang}}</option>
-                        {{/each}}  
-                    </select>
+        <form id='tahun' action="/#pok" method="GET"> 
+        <div class="card-header">
+            <div class="container w-100 p-0">
+                <div class="row">
+                    <div class="col-10">
+                        <i class="icon-calculator"></i> Pengelolaan Petunjuk Operasional Kegiatan (POK)
+                    </div>
+                    <div class="col-2">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-clock"></i>
+                            </span>
+                            <select onchange="this.form.submit()" data-toggle="tooltip" title="Tahun anggaran" id="tahun_anggaran" name="tahun_anggaran" class="form-control" size="1">
+                                {{#each tang}}
+                                <option value="{{tang}}" {{#if_eq tang ../tahun_anggaran}}selected{{/if_eq}}>{{tang}}</option>
+                                {{/each}}  
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        </form>
             <div class="card-block">
                 <div class="row">
                     <div class="col-md-12">

@@ -1,4 +1,5 @@
 var express = require('express');
+var app = express();
 const util = require('util');
 
 var pok = express.Router();
@@ -65,10 +66,21 @@ var mysql = require('mysql');
 //similarity between string
 var clj_fuzzy = require('clj-fuzzy');
 
+const url = require('url');
 //Socket.io
 pok.connections;
 
 pok.io;
+
+pok.get('/#pok', function(req, res) {
+    ref = '';
+    if (req.query.tahun_anggaran) {
+        ref = 'ref=' + req.query.tahun_anggaran;
+        console.log(ref);
+    }
+    res.send(ref);
+})
+
 
 pok.socket = function(io, connections, client) {
     pok.connections = connections;
@@ -2738,9 +2750,20 @@ function getRealisasiSum(client, lower_ts, upper_ts, bypass) {
 
 //root pok
 pok.get('/', function(req, res) {
+    var tang = [];
+    Program.findOne().sort({ 'thang': 1 }).exec(function(error, programs) {
+        if (!programs) {
+            tang = [{ tang: new Date().getFullYear() }];
+        } else {
+            for (var i = (programs.thang); i < new Date().getFullYear() + 1; i++) {
+                tang.unshift({ tang: i });
+            }
+        }
+    })
+
     Setting.findOne({ 'thang': req.session.tahun_anggaran || new Date().getFullYear(), type: 'pok' }, function(err, pok_setting) {
-        if (pok_setting) res.render('pok/pok', { layout: false, pok_name: pok_setting.toObject().name, admin: req.session.jenis, username: req.session.username, tahun_anggaran: req.session.tahun_anggaran });
-        else res.render('pok/pok', { layout: false, pok_name: 'POK', admin: req.session.jenis, username: req.session.username, tahun_anggaran: req.session.tahun_anggaran });
+        if (pok_setting) res.render('pok/pok', { layout: false, pok_name: pok_setting.toObject().name, admin: req.session.jenis, username: req.session.username, tahun_anggaran: req.session.tahun_anggaran, 'tang': tang });
+        else res.render('pok/pok', { layout: false, pok_name: 'POK', admin: req.session.jenis, username: req.session.username, tahun_anggaran: req.session.tahun_anggaran, 'tang': tang });
     })
 })
 
