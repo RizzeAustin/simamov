@@ -26,36 +26,18 @@
                                             </div>
 
                                             <div class="form-group col-sm-2">
+
                                                 <label for="jenis_user">Jenis</label>
-                                                <select id="jenis_user" name="jenis" class="form-control" size="1" id='jenis_user' required>
-                                                    <option></option>
+                                                <select id="jenis_user" name="jenis" class="form-control" size="1" id='jenis_user'>
                                                     <option value="1">Administrator</option>
-                                                    <option value="0">Pengguna</option>
+                                                    <option value="0">Editor</option>
                                                 </select>
-                                            </div>
 
-                                            <div class="form-group col-sm-2">
-                                                <label for="roleUser">Role</label>
-                                                <select id="roleUser" name="role" class="form-control" size="1" disabled>
-                                                    <option></option>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group col-sm-2">
-                                                <label for="jabatanUser">Jabatan</label>
-                                                <select id="jabatanUser" name="jabatan" class="form-control" size="1" disabled>
-                                                    <option></option>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group col-sm-2">
-                                                <label for="emailUser">Email</label>
-                                                <input type="text" id="emailUser" name="email" class="form-control" required>
                                             </div>
 
                                             <div class="form-group col-sm-2">
                                                 <label for="cvv">&nbsp;</label>
-                                                <input type="submit" class="btn btn-primary form-control" value="Tambah User">
+                                                <input type="submit" class="btn btn-primary form-control" value="Buat">
                                             </div>
 
                                     </div> 
@@ -86,7 +68,7 @@
                                     {{/each}}  
                                     </tbody>
                                 </table> 
-                                <h5>Pengguna</h5>
+                                <h5>Editor</h5>
                                 <table id="editor_table" class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -97,7 +79,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>                                            
-                                    {{#each user}}
+                                    {{#each editor_user}}
                                         <tr>
                                             <td class='username'>{{username}}</td>
                                             <td>{{ip_address}}</td>
@@ -121,7 +103,6 @@
     <!--/.row-->
 </div>
 
-{{!-- edit user --}}
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -258,43 +239,6 @@
 <script src="/js/bootstrap-datetimepicker.js"></script>
 
 <script type="text/javascript">
-
-    //iterasi role dan jabatan
-    $("#jenis_user").change(function(){
-        if ($("#jenis_user").val()=='0'){
-            $("#roleUser").attr('disabled', false).empty().append(
-                '<option></option>'+
-                '<option value="1">Unit</option>'+
-                '<option value="2">PPK</option>'+
-                '<option value="3">PPSPM</option>'+
-                '<option value="4">Reviewer</option>'+
-                '<option value="5">Bendahara</option>'+
-                '<option value="6">Operator Bank</option>'
-            )
-        } else {
-            $("#roleUser").empty().attr('disabled', true)
-            $("#jabatanUser").empty().attr('disabled', true)
-        }
-    })
-
-    $("#roleUser").change(function(){
-        if ($("#roleUser").val()=='1') {
-            $("#jabatanUser").empty().append(
-                '<option value="1">Direktur</option>'+
-                '<option value="2">Pimpinan BAAK</option>'+
-                '<option value="3">Operator BAAK</option>'+
-                '<option value="4">Pimpinan BAU</option>'+
-                '<option value="5">Pimpinan Unit</option>'+
-                '<option value="6">Operator Unit</option>'
-            ).attr('disabled', false)
-        } else if (!$("#roleUser").val()) {
-            $("#jabatanUser").empty().attr('disabled', true)
-        } else {$("#jabatanUser").empty().append('<option value="0">Operator BAU</option>').attr('disabled', false)}
-    })
-
-    
-                                                    
-
     //tambah user
     $('#tambah_user').on('submit', function(e) {
         e.preventDefault();
@@ -312,16 +256,7 @@
                 } else{
                     generalAlert('Pengguna berhasil dibuat.');
                     if($('#jenis_user').val() == '1'){
-                        $('#adm_table > tbody:last-child').append(
-                            '<tr>'+
-                                '<td class="username">'+$('#username').val()+'</td>'+
-                                '<td></td><td></td>'+
-                                '<td id="'+data+'" class="text-center">'+
-                                    '<button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button>'+
-                                    '<button type="button" class="del"><i class="icon-user-unfollow"></i></button>'+
-                                    '<button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td>'+
-                            '</tr>'
-                        );
+                        $('#adm_table > tbody:last-child').append('<tr><td class="username">'+$('#username').val()+'</td><td></td><td></td><td id="'+data+'" class="text-center"><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button> <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td></tr>');
                     } else{
                         $('#editor_table > tbody:last-child').append('<tr><td class="username">'+$('#username').val()+'</td><td></td><td></td><td id="'+data+'" class="text-center"><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button> <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td></tr>');
                     }
@@ -432,6 +367,7 @@
             $.toast().reset('all');
         })
     });
+
 
     //init bulan
     var current_month = new Date().getMonth()+1;

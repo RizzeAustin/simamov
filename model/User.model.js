@@ -6,6 +6,9 @@ var UserSchema = new Schema({
     username: String,
     password: String,
     jenis: Number,
+    role: Number,
+    jabatan: Number,
+    email: String,
     ip_address: String,
     last_login_time: String,
     act: [{
@@ -16,17 +19,17 @@ var UserSchema = new Schema({
         }
     }],
     active: {
-    	type: Boolean,
-    	default: true
+        type: Boolean,
+        default: true
     }
 }, { collection: 'user' });
 
 UserSchema.methods.isExist = function(cb) {
-  return this.model('User').findOne({ _id: this._id }, cb);
+    return this.model('User').findOne({ _id: this._id }, cb);
 };
 
 UserSchema.statics.getAll = function(cb) {
-  return this.model('User').find({}, null, {sort: {username:1}}, cb);
+    return this.model('User').find({}, null, { sort: { username: 1 } }, cb);
 };
 
 module.exports = mongoose.model('User', UserSchema);

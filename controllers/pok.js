@@ -23,7 +23,6 @@ const XlsxPopulate = require('xlsx-populate');
 
 //module parse xlsx
 var xlsx = require('node-xlsx').default;
-
 var XLSX = require('xlsx');
 //Xlsx to Pdf
 var msopdf = require('node-msoffice-pdf');
@@ -4306,7 +4305,6 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id) {
     })
 }
 
-
 function POK(file_path, pok_name, username, user_id) {
     this.name;
 
@@ -4618,7 +4616,6 @@ function checkDirAndCreate(addr) {
         fs.mkdirSync(addr);
     }
 }
-
 
 function checkFS(addr) {
     if (fs.existsSync(addr)) {
