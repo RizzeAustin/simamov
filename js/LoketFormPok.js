@@ -146,3 +146,14 @@ function formatTanggal(date) {
     let year = date.getFullYear();
     return day + ' ' + monthNames[monthIndex] + ' ' + year;
 };
+
+function generalAlert(message) {
+    $.toast({
+        text: message,
+        textAlign: 'left',
+        hideAfter: 5000,
+        loader: false,
+        position: 'bottom-right',
+        stack: 2
+    })
+}

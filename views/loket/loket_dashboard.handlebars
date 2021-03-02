@@ -30,7 +30,7 @@
                             </tbody>
                         </table>
                                 {{#unless daftarSelesai}}
-                                    <p class="text-center">Belum terdapat pengajuan</p>
+                                    <p class="text-center">Belum terdapat pengajuan yang selesai</p>
                                 {{/unless}}
                         {{!-- table pengajuan --}}
                         <div class="row col">
@@ -117,10 +117,10 @@
             <td>{{this.detail}}</td>
             <td style="text-align:center">
                 <button type="button" class="btn btn-primary mb-1" data-toggle="modal" data-target="#modalDetail" id="btnDetailSelesai">Lihat Detail</button>
-                <form action="/loket/downloadSpjTiketBank" method="post">
+                {{!-- <form action="/loket/downloadSpjTiketBank" method="post">
                     <input type="hidden" name="tiketId" value="{{this._id}}">
-                    <button type="submit" class="btn btn-success" id="downloadSpjTiket">Download SPJ<br>yang disahkan</button>
-                </form>
+                    <button type="submit" class="btn btn-success" id="downloadSpjTiket">Download <br>yang disahkan</button>
+                </form> --}}
             </td>
         </tr>
     {{/each}}
@@ -190,6 +190,12 @@
 
     $(document).ready(function () {
 
+        var falseUser = "{{falseUser}}"
+        if(falseUser){
+            generalAlert('Maaf Anda bukan '+falseUser+'. Silahkan ganti akun Anda.')
+            falseUser = ""
+        }
+
         //reset modal
         $(".modal").on("hidden.bs.modal", function() {
             $(".modal-body").html('')
@@ -217,8 +223,7 @@
         })
 
         //pagination
-        var rowsShown = 5;
-
+        var rowsShown = 10;
         //pagination selesai
         var rownSelesai = $('#tableSelesai tbody tr').length;
         var pageSelesai = Math.ceil(rownSelesai/rowsShown);
@@ -229,8 +234,10 @@
             '</li>'
         )
         for(i = 0;i < pageSelesai;i++) {
-            var pageNum = i + 1;
-            $("#navSelesai ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+i+'">'+pageNum+'</a></li>')
+            if (i < 3){
+                var pageNum = i + 1;
+                $("#navSelesai ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+i+'">'+pageNum+'</a></li>')
+            } else {break}
         }
         $("#navSelesai ul").append(
             '<li class="page-item">'+
@@ -243,25 +250,48 @@
         $('#navSelesai a').bind('click', function(){
             $('#navSelesai a').removeClass('active');
             $(this).addClass('active');
-            var currPage = $(this).attr('rel');
+            var currPage = parseInt($(this).attr('rel'));
+            var pages = [currPage-2, currPage-1, currPage, currPage+1, currPage+2, currPage+3]
             var startItem = currPage * rowsShown;
             var endItem = startItem + rowsShown;
             $('#tableSelesai tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display','table-row').animate({opacity:1}, 300)
+            if (pages[1]==-1 && pageSelesai>3){
+                $("#navSelesai ul li:eq(1) a").attr('rel', pages[2]).text(pages[3])
+                $("#navSelesai ul li:eq(2) a").attr('rel', pages[3]).text(pages[4])
+                $("#navSelesai ul li:eq(3) a").attr('rel', pages[4]).text(pages[5])
+            } else if (pages[3]==pageSelesai && pageSelesai>3) {
+                $("#navSelesai ul li:eq(1) a").attr('rel', pages[0]).text(pages[1])
+                $("#navSelesai ul li:eq(2) a").attr('rel', pages[1]).text(pages[2])
+                $("#navSelesai ul li:eq(3) a").attr('rel', pages[2]).text(pages[3])
+            } else if(pageSelesai>3) {
+                $("#navSelesai ul li:eq(1) a").attr('rel', pages[1]).text(pages[2])
+                $("#navSelesai ul li:eq(2) a").attr('rel', pages[2]).text(pages[3])
+                $("#navSelesai ul li:eq(3) a").attr('rel', pages[3]).text(pages[4])
+            }
         });
-
         //pagination pengajuan
         var rownPengajuan = $('#tablePengajuan tbody tr').length;
         var pagePengajuan = Math.ceil(rownPengajuan/rowsShown);
-        var last = pagePengajuan-1
+        var last = pagePengajuan-1 //rel
         $("#navPengajuan ul").append(
             '<li class="page-item">'+
                 '<a class="page-link" href="#" rel="0">First</a>'+
             '</li>'
         )
         for(i = 0;i < pagePengajuan;i++) {
-            var pageNum = i + 1;
-            $("#navPengajuan ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+i+'">'+pageNum+'</a></li>')
+            if (i < 3) {
+                var pageNum = i + 1;
+                $("#navPengajuan ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+i+'">'+pageNum+'</a></li>')
+            } else {break}
         }
+        {{!-- if (pages[1]!=0) {
+            $("#navPengajuan ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+pages[0]+'">'+pages[1]+'</a></li>')
+        }
+        $("#navPengajuan ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+pages[1]+'">'+pages[2]+'</a></li>')
+        if(pages[3]<=pagePengajuan){
+            $("#navPengajuan ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+pages[2]+'">'+pages[3]+'</a></li>')
+        } --}}
+
         $("#navPengajuan ul").append(
             '<li class="page-item">'+
                 '<a class="page-link" href="#" rel="'+last+'">Last</a>'+
@@ -273,10 +303,24 @@
         $('#navPengajuan a').bind('click', function(){
             $('#navPengajuan a').removeClass('active');
             $(this).addClass('active');
-            var currPage = $(this).attr('rel');
+            var currPage = parseInt($(this).attr('rel'));
+            var pages = [currPage-2, currPage-1, currPage, currPage+1, currPage+2, currPage+3]
             var startItem = currPage * rowsShown;
             var endItem = startItem + rowsShown;
             $('#tablePengajuan tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display','table-row').animate({opacity:1}, 300)
+            if (pages[1]==-1 && pagePengajuan>3){
+                $("#navPengajuan ul li:eq(1) a").attr('rel', pages[2]).text(pages[3])
+                $("#navPengajuan ul li:eq(2) a").attr('rel', pages[3]).text(pages[4])
+                $("#navPengajuan ul li:eq(3) a").attr('rel', pages[4]).text(pages[5])
+            } else if (pages[3]==pagePengajuan && pagePengajuan>3) {
+                $("#navPengajuan ul li:eq(1) a").attr('rel', pages[0]).text(pages[1])
+                $("#navPengajuan ul li:eq(2) a").attr('rel', pages[1]).text(pages[2])
+                $("#navPengajuan ul li:eq(3) a").attr('rel', pages[2]).text(pages[3])
+            } else if(pagePengajuan>3) {
+                $("#navPengajuan ul li:eq(1) a").attr('rel', pages[1]).text(pages[2])
+                $("#navPengajuan ul li:eq(2) a").attr('rel', pages[2]).text(pages[3])
+                $("#navPengajuan ul li:eq(3) a").attr('rel', pages[3]).text(pages[4])
+            }
         });
 
         //lihat detail row terpilih
@@ -482,6 +526,10 @@
         //});
     });
 
+    //socket.on('forbiddenuser', function(user){
+    //    generalAlert('Maaf Anda bukan '+ user +'. Silahkan ganti akun Anda')
+    //})
+
     //fungsi
     function formatTanggal(tgl) {
         let s = Date.parse(tgl)
@@ -495,6 +543,17 @@
     function formatUang(x) {
         if (x) {return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         } else return ''
+    }
+
+    function generalAlert(message){
+        $.toast({
+            text: message,
+            textAlign: 'left', 
+            hideAfter: 5000,
+            loader: false,
+            position: 'bottom-right',
+            stack: 2
+        })
     }
 
 </script>

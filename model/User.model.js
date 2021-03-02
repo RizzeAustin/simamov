@@ -8,6 +8,7 @@ var UserSchema = new Schema({
     jenis: Number,
     role: Number,
     jabatan: Number,
+    unit: String,
     email: String,
     ip_address: String,
     last_login_time: String,

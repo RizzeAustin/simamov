@@ -50,9 +50,15 @@ admin.get('/', function(req, res) {
         res.sendStatus(403);
         return;
     }
-    User.find({ jenis: 1, active: true }, null, { sort: { username: 1 } }, function(err, adm_user) {
-        User.find({ jenis: 0, active: true }, null, { sort: { username: 1 } }, function(err, user) {
-            res.render('admin', { layout: false, adm_user: adm_user, user: user });
+    User.find({ jenis: 1, active: true }, null, { sort: { username: 1 } }).lean().exec(function(err, adm_user) {
+        User.find({ jenis: 0, active: true }, null, { sort: { username: 1 } }).lean().exec(function(err, user) {
+            //console.log(JSON.stringify(JSON.parse(user)))
+            //console.log(adm_user)
+            res.render('admin', {
+                layout: false,
+                adm_user: adm_user,
+                user: user
+            });
         });
     });
 });
@@ -61,6 +67,7 @@ admin.post('/tambah_user', function(req, res) {
     req.body.password = crypto.createHmac('sha256', req.body.password)
         .digest('hex');
     var user = new User(req.body);
+    console.log(req.body);
     User.findOne({ username: user.username, active: true }, function(err, result) {
         if (result) {
             //jika sudah ada
@@ -68,8 +75,9 @@ admin.post('/tambah_user', function(req, res) {
         } else {
             user.save(function(err, result) {
                 res.send(result._id);
-                User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Tambah user ' + result._id } } },
-                    function(err, status) {})
+                User.update({ _id: req.session.user_id }, {
+                    $push: { "act": { label: 'Tambah user ' + result._id, timestamp: new Date().getTime() } }
+                }, function(err, status) {})
             })
         }
     })
@@ -83,7 +91,7 @@ admin.delete('/hapus_user/:id', function(req, res) {
             return;
         }
         res.send('Berhasil dihapus.');
-        User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Hapus user ' + req.params.id } } },
+        User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Hapus user ' + req.params.id, timestamp: new Date().getTime() } } },
             function(err, status) {})
     });
 });
@@ -102,7 +110,7 @@ admin.post('/edit/:_id', function(req, res) {
                 return;
             }
             res.send('Berhasil diubah.')
-            User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Edit user ' + req.params._id } } },
+            User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Edit user ' + req.params._id, timestamp: new Date().getTime() } } },
                 function(err, status) {})
         }
     );

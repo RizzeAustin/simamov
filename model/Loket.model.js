@@ -46,8 +46,8 @@ var LoketSchema = new Schema({
         'transfer': String,
         'selesai': String,
     },
-    'posisi': String, //ppk, ppspm, reviewer, bendahara, operatorBank
-    'status': String, //belum selesai, selesai, ditolak, dibatalkan
+    'posisi': String, //verifikator, ppk, ppspm, reviewer, bendahara, operatorBank
+    'status': String, //belum selesai, selesai, dikembalikan ke unit, dibatalkan
 
 
 }, { collection: 'loket', strict: false });

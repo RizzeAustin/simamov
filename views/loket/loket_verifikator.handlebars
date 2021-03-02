@@ -16,7 +16,9 @@
                                     <div class="form-group row">
                                         <label for="loketNamaUnit" class="col-md-2 col-form-label">Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" required value="{{data.unit}}">
+                                            <select name="loketNamaUnit" id="loketNamaUnit" class="form-control" required>
+                                                <option value="{{data.unit}}">{{data.unit}}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -43,7 +45,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Kegiatan</label>
+                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Aktivitas</label>
                                         <div class="col-md-10">
                                             <select name="loketKegiatan" id="loketKegiatan" class="form-select" disabled>
                                                 <option>Pilih Kegiatan</option>
@@ -51,7 +53,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketOutput" class="col ml-1 col-form-label">Output</label>
+                                        <label for="loketOutput" class="col ml-1 col-form-label">KRO</label>
                                         <div class="col-md-10">
                                             <select name="loketOutput" id="loketOutput" class="form-select" disabled>
                                                 <option>Pilih Output</option>
@@ -95,7 +97,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai</label>
+                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai Bruto</label>
                                         <label class="ml-2 col-form-label" for="">Rp</label>
                                         <div class="col-md-9">
                                             <input type="text" name="loketNilai" id="loketNilai" class="form-control" placeholder="Contoh: 1000000" required value="{{data.nilaiPengajuan}}">
@@ -173,7 +175,9 @@
     $(document).ready(function () {
 
         //autofill form
+        //var t1 = new Date($("{{data.tanggal.pelaksanaan}}").html())
         var t1 = new Date($("#tglPelaksanaan").html())
+        //console.log(t1)
         var t2 = vtgl(t1)
         $("#loketTglPelaksanaan").val(t2)
 
@@ -191,12 +195,16 @@
         if (cv[0]) $("#checklistCvUnit").attr("checked", true)
 
         $("#loketNamaUnit").focus()
-        //validasi isian yang tidak bolek kosong
-        $('#kirimFormUnit').click(function (e) {
-            if (!$("#loketForm").valid()) {
-                e.preventDefault()
-            } else {alert("Tiket telah diteruskan ke PPK")}
-        })
+        
+        $('form').submit( function(e) {
+            e.preventDefault()
+            var form = this
+            generalAlert("Tiket telah diteruskan ke PPK")
+            generalAlert("Redirect ke dashboard dalam 5 detik")
+            setTimeout( function () { 
+                form.submit()
+            }, 5000)
+        });
 
     });
 
@@ -207,6 +215,17 @@
         if (m<10) m = '0'+m
         if (d<10) d = '0'+d
         return `${y}-${m}-${d}`
+    }
+
+    function generalAlert(message){
+        $.toast({
+            text: message,
+            textAlign: 'left', 
+            hideAfter: 5000,
+            loader: false,
+            position: 'bottom-right',
+            stack: 2
+        })
     }
 
 </script>

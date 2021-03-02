@@ -14,7 +14,6 @@
                                 <h5><i class="icon-user-follow"></i> Tambah Pengguna:</h5>
                                 <form id="tambah_user" action="/admin/tambah_user" method="POST">
                                     <div class="row">
-
                                             <div class="form-group col-sm-2">
                                                 <label for="username">Nama Pengguna</label>
                                                 <input type="text" class="form-control" id="username" name='username' autocomplete="off" required>
@@ -22,7 +21,7 @@
 
                                             <div class="form-group col-sm-2">
                                                 <label for="password">Password</label>
-                                                <input type="password" class="form-control" id="password" autocomplete="off" name='password' required>
+                                                <input type="password" class="form-control" id="password" autocomplete="off" name='password' placeholder="Minimal 6 karakter" required>
                                             </div>
 
                                             <div class="form-group col-sm-2">
@@ -49,8 +48,15 @@
                                             </div>
 
                                             <div class="form-group col-sm-2">
+                                                <label for="unitUser">Unit</label>
+                                                <select id="unitUser" name="unit" class="form-control" size="1" disabled>
+                                                    <option></option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group col-sm-2">
                                                 <label for="emailUser">Email</label>
-                                                <input type="text" id="emailUser" name="email" class="form-control" required>
+                                                <input type="text" id="emailUser" name="email" class="form-control" placeholder="contoh@stis.ac.id" required>
                                             </div>
 
                                             <div class="form-group col-sm-2">
@@ -91,8 +97,10 @@
                                     <thead>
                                         <tr>
                                             <th width="10%">Nama Pengguna</th>
+                                            <th width="10%">Role</th>
+                                            <th width="10%">Jabatan</th>
                                             <th width="10%">Alamat IP terakhir</th>
-                                            <th width="20%">Waktu login terakhir</th>
+                                            <th width="10%">Waktu login terakhir</th>
                                             <th width="10%">Pilihan</th>
                                         </tr>
                                     </thead>
@@ -100,6 +108,8 @@
                                     {{#each user}}
                                         <tr>
                                             <td class='username'>{{username}}</td>
+                                            <td>{{role}}</td>
+                                            <td>{{jabatan}}</td>
                                             <td>{{ip_address}}</td>
                                             <td>{{last_login_time}}</td>
                                             <td id="{{_id}}" class="text-center">
@@ -167,6 +177,7 @@
 </div>
 <!-- /.modal -->
 
+{{!-- riwayat user --}}
 <div class="modal fade" id="riwayat-user" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
     <div class="modal-dialog modal-primary" role="document">
         <div class="modal-content">
@@ -258,49 +269,126 @@
 <script src="/js/bootstrap-datetimepicker.js"></script>
 
 <script type="text/javascript">
+    $(document).ready(function () {
+        //convert role dan jabatan pada tabel
+        $("#editor_table tr").each(function(){
+            $(this).find("td:eq(1)").each(function(){
+                switch ($(this).text()){
+                    case "1":
+                        $(this).text("Verifikator")
+                        break
+                    case "2":
+                        $(this).text("PPK")
+                        break
+                    case "3":
+                        $(this).text("PPSPM")
+                        break
+                    case "4":
+                        $(this).text("Reviewer")
+                        break
+                    case "5":
+                        $(this).text("Bendahara")
+                        break
+                    case "6":
+                        $(this).text("Operator Bank")
+                        break
+                    case "7":
+                        $(this).text("Unit")
+                        break
+                }
+            })
+            $(this).find("td:eq(2)").each(function(){
+                //console.log($(this).text())
+                switch ($(this).text()){
+                    case "0":
+                        $(this).text("Petugas BAU")
+                        break
+                    case "1":
+                        $(this).text("Direktur")
+                        break
+                    case "2":
+                        $(this).text("Wakil Direktur")
+                        break
+                    case "3":
+                        $(this).text("Pimpinan Unit")
+                        break
+                    case "4":
+                        $(this).text("Operator Unit")
+                        break
+                }
+            })
+        })
+    })
 
     //iterasi role dan jabatan
     $("#jenis_user").change(function(){
+        console.log($("#jenis_user").val())
         if ($("#jenis_user").val()=='0'){
             $("#roleUser").attr('disabled', false).empty().append(
                 '<option></option>'+
-                '<option value="1">Unit</option>'+
+                '<option value="1">Verifikator</option>'+
                 '<option value="2">PPK</option>'+
                 '<option value="3">PPSPM</option>'+
                 '<option value="4">Reviewer</option>'+
                 '<option value="5">Bendahara</option>'+
-                '<option value="6">Operator Bank</option>'
+                '<option value="6">Operator Bank</option>'+
+                '<option value="7">Unit</option>'
             )
         } else {
             $("#roleUser").empty().attr('disabled', true)
             $("#jabatanUser").empty().attr('disabled', true)
+            $("#unitUser").empty().attr('disabled', true)
         }
     })
 
     $("#roleUser").change(function(){
-        if ($("#roleUser").val()=='1') {
+        if ($("#roleUser").val()=='7') {
             $("#jabatanUser").empty().append(
-                '<option value="1">Direktur</option>'+
-                '<option value="2">Pimpinan BAAK</option>'+
-                '<option value="3">Operator BAAK</option>'+
-                '<option value="4">Pimpinan BAU</option>'+
-                '<option value="5">Pimpinan Unit</option>'+
-                '<option value="6">Operator Unit</option>'
+                '<option value="1" selected>Direktur</option>'+
+                '<option value="2">Wakil Direktur</option>'+
+                '<option value="3">Pimpinan Unit</option>'+
+                '<option value="4">Operator Unit</option>'
             ).attr('disabled', false)
+            $("#unitUser").empty().attr('disabled', true)
         } else if (!$("#roleUser").val()) {
             $("#jabatanUser").empty().attr('disabled', true)
-        } else {$("#jabatanUser").empty().append('<option value="0">Operator BAU</option>').attr('disabled', false)}
+            $("#unitUser").empty().attr('disabled', true)
+        } else {
+            $("#jabatanUser").empty().append('<option value="0" selected>Petugas BAU</option>').attr('disabled', false)
+            $("#unitUser").empty().append('<option value="BAU" selected>BAU</option>').attr('disabled', false)
+        }
+    })
+
+    $("#jabatanUser").change(function(){
+        if ($("#jabatanUser").val()=='3' || $("#jabatanUser").val()=='4'){
+            $("#unitUser").empty().append(
+                '<option value="BAU">BAU</option>'+
+                '<option value="BAAK">BAAK</option>'+
+                '<option value="PRODI">PRODI</option>'+
+                '<option value="UPPPM">UPPPM</option>'+
+                '<option value="SPM">SPM</option>'+
+                '<option value="Perpustakaan">Perpustakaan</option>'+
+                '<option value="IT">IT</option>'+
+                '<option value="Lainnya">Lainnya</option>'
+            ).attr('disabled', false)
+        } else {
+            $("#unitUser").empty().attr('disabled', true)
+        }
     })
 
     
-                                                    
-
     //tambah user
     $('#tambah_user').on('submit', function(e) {
         e.preventDefault();
         if($('#password').val().length < 6){
             generalAlert('Password minimal 6 karakter.');
             return false;
+        }
+        if ($("#jenis_user").val()=='0'){
+            if (!$("#roleUser").val()){
+                generalAlert('User harus memiliki role');
+                return false;
+            }
         }
         $.ajax({
             url : $(this).attr('action'),
@@ -323,9 +411,20 @@
                             '</tr>'
                         );
                     } else{
-                        $('#editor_table > tbody:last-child').append('<tr><td class="username">'+$('#username').val()+'</td><td></td><td></td><td id="'+data+'" class="text-center"><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button> <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td></tr>');
+                        $('#editor_table > tbody:last-child').append(
+                            '<tr>'+
+                                '<td class="username">'+$('#username').val()+'</td>'+
+                                '<td></td>'+
+                                '<td></td>'+
+                                '<td></td>'+
+                                '<td></td>'+
+                                '<td id="'+data+'" class="text-center"><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button> <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td>'+
+                                '</tr>');
                     }
                     $('#tambah_user')[0].reset();
+                    $("#roleUser").empty().attr('disabled', true);
+                    $("#jabatanUser").empty().attr('disabled', true);
+                    $("#unitUser").empty().attr('disabled', true);
                 }
             },
             error: function (jXHR, textStatus, errorThrown) {
@@ -497,7 +596,7 @@
         syarat.month = $('#bulan_st_modal').val();
         socket.emit('list_user_acts', syarat, function (data) {
             _.each(data, function(row, index, list){
-                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss DD MMMM YYYY"), row.label] );
+                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, DD MMMM YYYY"), row.label] );
             })
             $('#tbl_riwayat').DataTable().draw(false);
             spinner.stop();
@@ -514,7 +613,7 @@
         if(syarat.month == 'none') return;
         socket.emit('list_user_acts', syarat, function (data) {
             _.each(data, function(row, index, list){
-                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, D MMMM YYYY"), row.label] );
             })
             $('#tbl_riwayat').DataTable().draw(false);
             spinner.stop();
@@ -531,7 +630,7 @@
             syarat.upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()*1000 + 86399000;
             socket.emit('list_user_acts', syarat, function (data) {
                 _.each(data, function(row, index, list){
-                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, D MMMM YYYY"), row.label] );
                 })
                 $('#tbl_riwayat').DataTable().draw(false);
             });
@@ -548,7 +647,7 @@
             syarat.upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()*1000 + 86399000;
             socket.emit('list_user_acts', syarat, function (data) {
                 _.each(data, function(row, index, list){
-                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, D MMMM YYYY"), row.label] );
                 })
                 $('#tbl_riwayat').DataTable().draw(false);
             })
@@ -560,7 +659,7 @@
             if(syarat.month == 'none') return;
             socket.emit('list_user_acts', syarat, function (data) {
                 _.each(data, function(row, index, list){
-                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss D MMMM YYYY"), row.label] );
+                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, D MMMM YYYY"), row.label] );
                 })
                 $('#tbl_riwayat').DataTable().draw(false);
             });

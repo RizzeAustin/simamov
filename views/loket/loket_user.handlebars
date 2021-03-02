@@ -17,38 +17,19 @@
                                         <div class="col">
                                             <select name="loketNamaUnit" id="loketNamaUnit" class="form-control" required>
                                                 <option>Pilih Unit</option>
-                                                <optgroup label="BAU">
-                                                    <option value="Kepegawaian">Kepegawaian</option>
-                                                    <option value="TU RT">TU RT</option>
-                                                    <option value="Keuangan">Keuangan</option>
-                                                </optgroup>
-                                                <optgroup label="BAAK">
-                                                    <option value="Akademik">Akademik</option>
-                                                    <option value="Kemahasiswaan">Kemahasiswaan</option>
-                                                </optgroup>
-                                                <optgroup label="PRODI">
-                                                    <option value="D4 Statistika">D4 Statistika</option>
-                                                    <option value="D4 Komputasi">D4 Komputasi</option>
-                                                    <option value="D3 Statistika">D3 Statistika</option>
-                                                </optgroup>
-                                                <option value="UPPPM">UPPPM</option>
-                                                <option value="SPM">SPM</option>
-                                                <option value="Perpustakaan">Perpustakaan</option>
-                                                <option value="IT">IT</option>
-                                                <option value="Lainnya">Lainnya</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketKodeUnit" class="col-md-2 col-form-label">Kode Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" required disabled>
+                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" placeholder="Terisi otomatis" required>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="loketOperator" class="col-md-2 col-form-label">Operator</label>
                                         <div class="col">
-                                            <input type="text" name="loketOperator" id="loketOperator" placeholder="Nama Petugas" class="form-control" required>
+                                            <input type="text" name="loketOperator" id="loketOperator" placeholder="Nama Petugas" class="form-control" value="{{username}}" required>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -63,7 +44,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Kegiatan</label>
+                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Aktivitas</label>
                                         <div class="col-md-10">
                                             <select name="loketKegiatan" id="loketKegiatan" class="form-select" disabled>
                                                 <option>Pilih Kegiatan</option>
@@ -71,7 +52,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketOutput" class="col ml-1 col-form-label">Output</label>
+                                        <label for="loketOutput" class="col ml-1 col-form-label">KRO</label>
                                         <div class="col-md-10">
                                             <select name="loketOutput" id="loketOutput" class="form-select" disabled>
                                                 <option>Pilih Output</option>
@@ -111,11 +92,11 @@
                                     <div class="form-group row">
                                         <label for="loketDetail" class="col ml-1 col-form-label">Detail SPJ</label>
                                         <div class="col-md-10">
-                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" placeholder="Nama SPJ" required>
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" placeholder="Isikan sesuai dengan SPJ" required>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai</label>
+                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai Bruto</label>
                                         <label class="ml-2 col-form-label" for="">Rp</label>
                                         <div class="col-md-9">
                                             <input type="text" name="loketNilai" id="loketNilai" class="form-control" placeholder="Contoh: 1000000" required>
@@ -161,7 +142,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2">
-                                            <label for="fileSpjUnit" class="col-form-label">Upload SPJ</label><br>
+                                            <label for="fileSpjUnit" class="col-form-label">Unggah SPJ</label><br>
                                             <p>(.xls .xlsx)</p>
                                         </div>
                                         <div class="col input-group">
@@ -190,32 +171,81 @@
     //var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
-        $("#loketNamaUnit").focus()
+        switch ("{{unit}}"){
+            case "BAU":
+                $("#loketNamaUnit").append(
+                    '<option value="BAU">BAU</option>'+
+                    '<option value="BAU-Kepegawaian">- Kepegawaian</option>'+
+                    '<option value="BAU-TU RT">- TU RT</option>'+
+                    '<option value="BAU-Keuangan">- Keuangan</option>'
+                )
+                break
+            case "BAAK":
+                $("#loketNamaUnit").append(
+                    '<option value="BAAK">BAAK</option>'+
+                    '<option value="BAAK-Akademik">- Akademik</option>'+
+                    '<option value="BAAK-Kemahasiswaan">- Kemahasiswaan</option>'
+                )
+                break
+            case "PRODI":
+                $("#loketNamaUnit").append(
+                    '<option value="PRODI">PRODI</option>'+
+                    '<option value="PRODI-D4 Statistika">- D4 Statistika</option>'+
+                    '<option value="PRODI-D4 Komputasi">- D4 Komputasi</option>'+
+                    '<option value="PRODI-D3 Statistika">- D3 Statistika</option>'
+                )
+                break
+            case "UPPPM":
+                $("#loketNamaUnit").append('<option value="UPPPM">UPPPM</option>')
+                break
+            case "SPM":
+                $("#loketNamaUnit").append('<option value="SPM">SPM</option>')
+                break
+            case "Perpustakaan":
+                $("#loketNamaUnit").append('<option value="Perpustakaan">Perpustakaan</option>')
+                break
+            case "IT":
+                $("#loketNamaUnit").append('<option value="IT">IT</option>')
+                break
+            case "Lainnya":
+                $("#loketNamaUnit").append('<option value="Lainnya">Lainnya</option>')
+                break
+        }
 
+        $("#loketNamaUnit").focus()
         $("#loketNamaUnit").change(function(){
             switch ($("#loketNamaUnit").val()){
-                case "Kepegawaian":
+                case "BAU":
+                    $("#loketKodeUnit").val("1")
+                    break
+                case "BAU-Kepegawaian":
                     $("#loketKodeUnit").val("11")
                     break
-                case "TU RT":
+                case "BAU-TU RT":
                     $("#loketKodeUnit").val("12")
                     break
-                case "Keuangan":
+                case "BAU-Keuangan":
                     $("#loketKodeUnit").val("13")
                     break
-                case "Akademik":
+                case "BAAK":
+                    $("#loketKodeUnit").val("2")
+                    break
+                case "BAAK-Akademik":
                     $("#loketKodeUnit").val("21")
                     break
-                case "Kemahasiswaan":
+                case "BAAK-Kemahasiswaan":
                     $("#loketKodeUnit").val("22")
                     break
-                case "D4 Statistika":
+                case "PRODI":
+                    $("#loketKodeUnit").val("3")
+                    break
+                case "PRODI-D4 Statistika":
                     $("#loketKodeUnit").val("31")
                     break
-                case "D4 Komputasi":
+                case "PRODI-D4 Komputasi":
                     $("#loketKodeUnit").val("32")
                     break
-                case "D3 Statistika":
+                case "PRODI-D3 Statistika":
                     $("#loketKodeUnit").val("33")
                     break
                 case "UPPPM":
@@ -237,18 +267,41 @@
                     $("#loketKodeUnit").val("")
             }
         })
-        //$("#loketKodeUnit")
 
         //validasi isian yang tidak bolek kosong
         $('#kirimFormUnit').click(function (e) {
             if ($("#loketNamaUnit").val()=="Pilih Unit") {
                 e.preventDefault()
                 $("#loketNamaUnit").focus()
-            } else if (!$("#loketForm").valid()) {
-                e.preventDefault()
-            } else {alert("Tiket telah diteruskan ke PPK")}
+                generalAlert("Nama unit belum diisi")
+            } 
+            //else if ($("#loketNamaUnit").val().indexOf("{{unit}}") == -1) {
+            //    e.preventDefault()
+            //    $("#loketNamaUnit").focus()
+            //}
         })
 
+        $('form').submit( function(e) {
+            e.preventDefault()
+            var form = this
+            generalAlert("Tiket telah diteruskan ke Verifikator")
+            generalAlert("Redirect ke dashboard dalam 5 detik")
+            setTimeout( function () { 
+                form.submit()
+            }, 5000)
+        }); 
+
     });
+
+    function generalAlert(message){
+        $.toast({
+            text: message,
+            textAlign: 'left', 
+            hideAfter: 5000,
+            loader: false,
+            position: 'bottom-right',
+            stack: 2
+        })
+    }
 
 </script>
