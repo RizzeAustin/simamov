@@ -85,10 +85,12 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group row">
+                                    {{!-- <div class="form-group row">
                                         <div class="col-md-2"></div>
                                         <div class="col-md-10" id="pokWarning"></div>
-                                    </div>
+                                    </div> --}}
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="loketTglPelaksanaan" class="col ml-1 col-form-label">Tanggal Pelaksanaan</label>
                                         <div class="col-md-10">
@@ -185,8 +187,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="tolakFormPpk" type="submit" formaction="loket/ppkTolak" class="btn btn-danger">Tolak</button>
-                                        <button id="kirimFormPpk" type="submit" formaction="loket/ppkKirim" class="btn btn-success">Kirim</button>
+                                        <button id="tolakFormPpk" type="submit" class="btn btn-danger">Tolak</button>
+                                        <button id="kirimFormPpk" type="submit" class="btn btn-success">Kirim</button>
                                     </div>
                                 </div>
                             </div>
@@ -197,11 +199,6 @@
         </div>
     </div>
 </div>
-
-{{!-- autofill form --}}
-<script id="tglPelaksanaan" type="text/x-handlebars-template">
-    {{data.tanggal.pelaksanaan}}
-</script>
 
 {{!-- iterasi select pok --}}
 <script src="/js/LoketFormPok.js"></script>
@@ -220,9 +217,9 @@
     $(document).ready(function () {
 
         //autofill form
-        var t1 = new Date($("#tglPelaksanaan").html())
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
         var t2 = formatTanggal(t1)
-        $("#loketTglPelaksanaan").val(t2)
+        $('#loketTglPelaksanaan').val(t2)
 
         var spj = [{{data.checklist.spj}}]
         var hadir = [{{data.checklist.daftarHadir}}]
@@ -230,60 +227,70 @@
         var not = [{{data.checklist.notulensi}}]
         var cv = [{{data.checklist.cvNarasumber}}]
         
-        if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
-        if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
-        if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
-        if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
-        if (cv[0]) $("#checklistCvUnit").attr("checked", true)
+        if (spj[0]) $('#checklistSpjUnit').attr("checked", true)
+        if (hadir[0]) $('#checklistDaftarHadirUnit').attr("checked", true)
+        if (dok[0]) $('#checklistDokumentasiUnit').attr("checked", true)
+        if (not[0]) $('#checklistNotulensiUnit').attr("checked", true)
+        if (cv[0]) $('#checklistCvUnit').attr("checked", true)
 
-        $("#loketProgram").focus()
+        $('#loketProgram').focus()
 
         //validasi isian
         $('#tolakFormPpk').click(function(e) {
+            e.preventDefault()
+            $('form').attr('action', 'loket/ppkTolak') //loket/ppkKirim
             let va = confirm('Anda yakin?')
             if(va) {
-                if (!$("#loketCatatanPpk").val() || $("#loketCatatanPpspm").val() == '-') {
-                    e.preventDefault()
+                if (!$('#loketCatatanPpk').val() || $('#loketCatatanPpk').val() == '-') {
                     generalAlert('Catatan harus diisi ketika tiket ditolak')
-                    $("#loketCatatanPpk").focus()
+                    $('#loketCatatanPpk').focus()
                 } else {
-                    alert("Tiket telah Ditolak, halaman akan diarahkan ke dashboard")
+                    generalAlert('Tiket telah dikembalikan ke unit')
+                    generalAlert('Redirect ke dashboard dalam 5 detik')
+                    setTimeout( function () { 
+                        $('form').submit()
+                    }, 5000)
                 }
-            } else e.preventDefault()
+            }
         })
         
         $('#kirimFormPpk').click(function (e) {
+            e.preventDefault()
+            $('form').attr('action', 'loket/ppkKirim')
             if ($('#loketProgram').val()=="Pilih Program"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
             } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih kegiatan")
                 $('#loketKegiatan').focus()
             } else if ($('#loketOutput').val()=="Pilih Output"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih output")
                 $('#loketOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
             } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih detail")
                 $('#loketDetailPok').focus()
-            } else if (!$("#loketSpp").val()) {
-                e.preventDefault()
+            } else if (!$('#loketSpp').val()) {
                 generalAlert("Silahkan pilih belum/sudahnya SPP")
-                $("#loketSpp").focus()
-            } else if ($("#loketSpp").val()=='Belum') {
-                alert("Tiket telah diteruskan ke Bendahara")
-            } else {alert("Tiket telah diteruskan ke PPSPM")}
+                $('#loketSpp').focus()
+            } else if ($('#loketSpp').val()=='Belum') {
+                generalAlert("Tiket telah diteruskan ke Bendahara")
+                generalAlert("Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $('form').submit()
+                }, 5000)
+            } else {
+                generalAlert("Tiket telah diteruskan ke PPSPM")
+                generalAlert("Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $('form').submit()
+                }, 5000)
+            }
         })
     });
 

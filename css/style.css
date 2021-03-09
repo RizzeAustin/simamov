@@ -2723,6 +2723,7 @@ select.form-control-lg:not([size]):not([multiple]),
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     transition: all 0.2s ease-in-out;
+    border-radius: 5px;
 }
 
 .btn:focus,
@@ -5478,6 +5479,7 @@ button.close {
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, 0.2);
     outline: 0;
+    border-radius: 20px;
 }
 
 .modal-backdrop {
@@ -5504,6 +5506,8 @@ button.close {
     justify-content: space-between;
     padding: 5px;
     border-bottom: 1px solid #cfd8dc;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
 }
 
 .modal-title {

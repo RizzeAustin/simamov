@@ -165,6 +165,8 @@
                                             <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}" disabled>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="" class="col-md-2 col-form-label">Checklist</label>
                                         <div class="col-md-2"></div>
@@ -265,9 +267,9 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="tolakFormPpspm" type="submit" class="btn btn-danger" formaction="loket/ppspmTolak">Tolak</button>
-                                        <button id="kirimFormPpspmReviewer" type="submit" class="btn btn-success" formaction="loket/ppspmKirimReviewer">Kirim<br><small>(Reviewer)</small></button>
-                                        <button id="kirimFormPpspmBinagram" type="submit" class="btn btn-success" formaction="loket/ppspmKirimBinagram">Kirim<br><small>(Binagram)</small></button>
+                                        <button id="tolakFormPpspm" type="submit" class="btn btn-danger">Tolak</button>
+                                        <button id="kirimFormPpspmReviewer" type="submit" class="btn btn-success">Kirim<br><small>(Reviewer)</small></button>
+                                        <button id="kirimFormPpspmBinagram" type="submit" class="btn btn-success">Kirim<br><small>(Binagram)</small></button>
                                     </div>
                                 </div>
                             </div>
@@ -278,11 +280,6 @@
         </div>
     </div>
 </div>
-
-{{!-- autofill form --}}
-<script id="tglPelaksanaan" type="text/x-handlebars-template">
-    {{data.tanggal.pelaksanaan}}
-</script>
 
 {{!-- iterasi select pok --}}
 <script src="/js/LoketFormPok.js"></script>
@@ -298,9 +295,9 @@
     $(document).ready(function () {
 
         //autofill form
-        var t1 = new Date($("#tglPelaksanaan").html())
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
         var t2 = formatTanggal(t1)
-        $("#loketTglPelaksanaan").val(t2)
+        $('#loketTglPelaksanaan').val(t2)
 
         var spj = [{{data.checklist.spj}}]
         var hadir = [{{data.checklist.daftarHadir}}]
@@ -308,94 +305,104 @@
         var not = [{{data.checklist.notulensi}}]
         var cv = [{{data.checklist.cvNarasumber}}]
         
-        if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
-        if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
-        if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
-        if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
-        if (cv[0]) $("#checklistCvUnit").attr("checked", true)
-        if (spj[1]) $("#checklistSpjPpk").attr("checked", true)
-        if (hadir[1]) $("#checklistDaftarHadirPpk").attr("checked", true)
-        if (dok[1]) $("#checklistDokumentasiPpk").attr("checked", true)
-        if (not[1]) $("#checklistNotulensiPpk").attr("checked", true)
-        if (cv[1]) $("#checklistCvPpk").attr("checked", true)
-        if (spj[2]) $("#checklistSpjPpspm").attr("checked", true)
-        if (hadir[2]) $("#checklistDaftarHadirPpspm").attr("checked", true)
-        if (dok[2]) $("#checklistDokumentasiPpspm").attr("checked", true)
-        if (not[2]) $("#checklistNotulensiPpspm").attr("checked", true)
-        if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
+        if (spj[0]) $('#checklistSpjUnit').attr("checked", true)
+        if (hadir[0]) $('#checklistDaftarHadirUnit').attr("checked", true)
+        if (dok[0]) $('#checklistDokumentasiUnit').attr("checked", true)
+        if (not[0]) $('#checklistNotulensiUnit').attr("checked", true)
+        if (cv[0]) $('#checklistCvUnit').attr("checked", true)
+        if (spj[1]) $('#checklistSpjPpk').attr("checked", true)
+        if (hadir[1]) $('#checklistDaftarHadirPpk').attr("checked", true)
+        if (dok[1]) $('#checklistDokumentasiPpk').attr("checked", true)
+        if (not[1]) $('#checklistNotulensiPpk').attr("checked", true)
+        if (cv[1]) $('#checklistCvPpk').attr("checked", true)
+        if (spj[2]) $('#checklistSpjPpspm').attr("checked", true)
+        if (hadir[2]) $('#checklistDaftarHadirPpspm').attr("checked", true)
+        if (dok[2]) $('#checklistDokumentasiPpspm').attr("checked", true)
+        if (not[2]) $('#checklistNotulensiPpspm').attr("checked", true)
+        if (cv[2]) $('#checklistCvPpspm').attr("checked", true)
 
-        $("#loketProgram").focus()
+        $('#loketProgram').focus()
 
         //validasi isian
         $('#tolakFormPpspm').click(function (e) {
+            e.preventDefault()
+            $('form').attr('action', 'loket/ppspmTolak')
             let va = confirm('Anda yakin?')
             if(va) {
-                if (!$("#loketCatatanPpspm").val() || $("#loketCatatanPpspm").val() == '-') {
-                    e.preventDefault()
+                if (!$('#loketCatatanPpspm').val() || $('#loketCatatanPpspm').val() == '-') {
                     generalAlert('Catatan harus diisi ketika tiket ditolak')
-                    $("#loketCatatanPpspm").focus()
-                } else {alert("Tiket telah Ditolak")}
-            } else e.preventDefault()
+                    $('#loketCatatanPpspm').focus()
+                } else {
+                    generalAlert('Tiket telah Ditolak')
+                    generalAlert('Redirect ke dashboard dalam 5 detik')
+                    setTimeout( function () { 
+                        $('form').submit()
+                    }, 5000)
+                }
+            }
         })
 
         $('#kirimFormPpspmReviewer').click(function (e) {
+            e.preventDefault()
+            $('form').attr('action', 'loket/ppspmKirimReviewer')
             if ($('#loketProgram').val()=="Pilih Program"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
             } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih kegiatan")
                 $('#loketKegiatan').focus()
             } else if ($('#loketOutput').val()=="Pilih Output"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih output")
                 $('#loketOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
             } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih detail")
                 $('#loketDetailPok').focus()
-            } else {alert("Tiket telah diteruskan ke Reviewer")}
+            } else {
+                generalAlert("Tiket telah diteruskan ke Reviewer")
+                generalAlert("Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $('form').submit()
+                }, 5000)
+            }
         })
 
         $('#kirimFormPpspmBinagram').click(function (e) {
+            e.preventDefault()
+            $('form').attr('action', 'loket/ppspmKirimBinagram')
             if ($('#loketProgram').val()=="Pilih Program"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
             } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih kegiatan")
                 $('#loketKegiatan').focus()
             } else if ($('#loketOutput').val()=="Pilih Output"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih output")
                 $('#loketOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
             } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih detail")
                 $('#loketDetailPok').focus()
-            } else if (!$("#loketCatatanPpspm").val()) {
-                e.preventDefault()
+            } else if (!$('#loketCatatanPpspm').val()) {
                 generalAlert("Mohon tulis catatan terlebih dahulu")
                 $('#loketCatatanPpspm').focus()
-            } else {alert("Tiket telah diteruskan ke Binagram")}
+            } else {
+                generalAlert("Tiket telah diteruskan ke Binagram")
+                generalAlert("Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $('form').submit()
+                }, 5000)
+            }
         })
     });
 

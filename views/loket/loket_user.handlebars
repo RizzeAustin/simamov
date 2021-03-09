@@ -83,6 +83,8 @@
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="loketTglPelaksanaan" class="col ml-1 col-form-label">Tanggal Pelaksanaan</label>
                                         <div class="col-md-10">
@@ -173,7 +175,7 @@
     $(document).ready(function () {
         switch ("{{unit}}"){
             case "BAU":
-                $("#loketNamaUnit").append(
+                $('#loketNamaUnit').append(
                     '<option value="BAU">BAU</option>'+
                     '<option value="BAU-Kepegawaian">- Kepegawaian</option>'+
                     '<option value="BAU-TU RT">- TU RT</option>'+
@@ -181,14 +183,14 @@
                 )
                 break
             case "BAAK":
-                $("#loketNamaUnit").append(
+                $('#loketNamaUnit').append(
                     '<option value="BAAK">BAAK</option>'+
                     '<option value="BAAK-Akademik">- Akademik</option>'+
                     '<option value="BAAK-Kemahasiswaan">- Kemahasiswaan</option>'
                 )
                 break
             case "PRODI":
-                $("#loketNamaUnit").append(
+                $('#loketNamaUnit').append(
                     '<option value="PRODI">PRODI</option>'+
                     '<option value="PRODI-D4 Statistika">- D4 Statistika</option>'+
                     '<option value="PRODI-D4 Komputasi">- D4 Komputasi</option>'+
@@ -196,100 +198,110 @@
                 )
                 break
             case "UPPPM":
-                $("#loketNamaUnit").append('<option value="UPPPM">UPPPM</option>')
+                $('#loketNamaUnit').append('<option value="UPPPM">UPPPM</option>')
                 break
             case "SPM":
-                $("#loketNamaUnit").append('<option value="SPM">SPM</option>')
+                $('#loketNamaUnit').append('<option value="SPM">SPM</option>')
                 break
             case "Perpustakaan":
-                $("#loketNamaUnit").append('<option value="Perpustakaan">Perpustakaan</option>')
+                $('#loketNamaUnit').append('<option value="Perpustakaan">Perpustakaan</option>')
                 break
             case "IT":
-                $("#loketNamaUnit").append('<option value="IT">IT</option>')
+                $('#loketNamaUnit').append('<option value="IT">IT</option>')
                 break
             case "Lainnya":
-                $("#loketNamaUnit").append('<option value="Lainnya">Lainnya</option>')
+                $('#loketNamaUnit').append('<option value="Lainnya">Lainnya</option>')
                 break
         }
 
-        $("#loketNamaUnit").focus()
-        $("#loketNamaUnit").change(function(){
-            switch ($("#loketNamaUnit").val()){
+        $('#loketNamaUnit').focus()
+        $('#loketNamaUnit').change(function(){
+            switch ($('#loketNamaUnit').val()){
                 case "BAU":
-                    $("#loketKodeUnit").val("1")
+                    $('#loketKodeUnit').val("1")
                     break
                 case "BAU-Kepegawaian":
-                    $("#loketKodeUnit").val("11")
+                    $('#loketKodeUnit').val("11")
                     break
                 case "BAU-TU RT":
-                    $("#loketKodeUnit").val("12")
+                    $('#loketKodeUnit').val("12")
                     break
                 case "BAU-Keuangan":
-                    $("#loketKodeUnit").val("13")
+                    $('#loketKodeUnit').val("13")
                     break
                 case "BAAK":
-                    $("#loketKodeUnit").val("2")
+                    $('#loketKodeUnit').val("2")
                     break
                 case "BAAK-Akademik":
-                    $("#loketKodeUnit").val("21")
+                    $('#loketKodeUnit').val("21")
                     break
                 case "BAAK-Kemahasiswaan":
-                    $("#loketKodeUnit").val("22")
+                    $('#loketKodeUnit').val("22")
                     break
                 case "PRODI":
-                    $("#loketKodeUnit").val("3")
+                    $('#loketKodeUnit').val("3")
                     break
                 case "PRODI-D4 Statistika":
-                    $("#loketKodeUnit").val("31")
+                    $('#loketKodeUnit').val("31")
                     break
                 case "PRODI-D4 Komputasi":
-                    $("#loketKodeUnit").val("32")
+                    $('#loketKodeUnit').val("32")
                     break
                 case "PRODI-D3 Statistika":
-                    $("#loketKodeUnit").val("33")
+                    $('#loketKodeUnit').val("33")
                     break
                 case "UPPPM":
-                    $("#loketKodeUnit").val("4")
+                    $('#loketKodeUnit').val("4")
                     break
                 case "SPM":
-                    $("#loketKodeUnit").val("5")
+                    $('#loketKodeUnit').val("5")
                     break
                 case "Perpustakaan":
-                    $("#loketKodeUnit").val("6")
+                    $('#loketKodeUnit').val("6")
                     break
                 case "IT":
-                    $("#loketKodeUnit").val("7")
+                    $('#loketKodeUnit').val("7")
                     break
                 case "Lainnya":
-                    $("#loketKodeUnit").val("8")
+                    $('#loketKodeUnit').val("8")
                     break
                 default:
-                    $("#loketKodeUnit").val("")
+                    $('#loketKodeUnit').val("")
             }
         })
 
         //validasi isian yang tidak bolek kosong
         $('#kirimFormUnit').click(function (e) {
-            if ($("#loketNamaUnit").val()=="Pilih Unit") {
-                e.preventDefault()
-                $("#loketNamaUnit").focus()
-                generalAlert("Nama unit belum diisi")
-            } 
-            //else if ($("#loketNamaUnit").val().indexOf("{{unit}}") == -1) {
-            //    e.preventDefault()
-            //    $("#loketNamaUnit").focus()
-            //}
-        })
-
-        $('form').submit( function(e) {
             e.preventDefault()
-            var form = this
-            generalAlert("Tiket telah diteruskan ke Verifikator")
-            generalAlert("Redirect ke dashboard dalam 5 detik")
-            setTimeout( function () { 
-                form.submit()
-            }, 5000)
-        }); 
+            if ($('#loketNamaUnit').val()=="Pilih Unit") {
+                generalAlert("Silahkan pilih unit")
+                $('#loketNamaUnit').focus()
+            } else if (!$('#loketKodeUnit').val()){
+                generalAlert("Silahkan ulangi memilih unit dari 'Pilih Unit' ")
+                $('#loketKodeUnit').focus()
+            } else if (!$('#loketOperator').val()){
+                generalAlert("Silahkan isi nama petugas yang mengajukan")
+                $('#loketOperator').focus()
+            } else if (!$('#loketTglPelaksanaan').val()){
+                generalAlert("Silahkan pilih tanggal pelaksanaan")
+                $('#loketTglPelaksanaan').focus()
+            } else if (!$('#loketDetail').val()){
+                generalAlert("Silahkan isi detail spj yang akan diajukan")
+                $('#loketDetail').focus()
+            } else if (!$('#loketNilai').val()){
+                generalAlert("Silahkan isi nilai bruto pengajuan")
+                $('#loketNilai').focus()
+            } else if (!$('#fileSpjUnit').val()){
+                generalAlert("Silahkan unggah SPJ yang sesuai")
+                $('#fileSpjUnit').focus()
+            } else {
+                generalAlert("Tiket telah diteruskan ke Verifikator")
+                generalAlert("Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $('form').submit()
+                }, 5000)
+            }
+        })
 
     });
 

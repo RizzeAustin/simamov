@@ -84,6 +84,8 @@
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="loketTglPelaksanaan" class="col ml-1 col-form-label">Tanggal Pelaksanaan</label>
                                         <div class="col-md-10">
@@ -160,11 +162,6 @@
     </div>
 </div>
 
-{{!-- autofill form --}}
-<script id="tglPelaksanaan" type="text/x-handlebars-template">
-    {{data.tanggal.pelaksanaan}}
-</script>
-
 <script type="text/javascript">
     //socket = io.connect($(location).attr('host'));
     var socket = io()
@@ -176,10 +173,10 @@
 
         //autofill form
         //var t1 = new Date($("{{data.tanggal.pelaksanaan}}").html())
-        var t1 = new Date($("#tglPelaksanaan").html())
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
         //console.log(t1)
         var t2 = vtgl(t1)
-        $("#loketTglPelaksanaan").val(t2)
+        $('#loketTglPelaksanaan').val(t2)
 
         //autofill checklist
         var spj = [{{data.checklist.spj}}]
@@ -188,19 +185,19 @@
         var not = [{{data.checklist.notulensi}}]
         var cv = [{{data.checklist.cvNarasumber}}]
         
-        if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
-        if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
-        if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
-        if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
-        if (cv[0]) $("#checklistCvUnit").attr("checked", true)
+        if (spj[0]) $('#checklistSpjUnit').attr("checked", true)
+        if (hadir[0]) $('#checklistDaftarHadirUnit').attr("checked", true)
+        if (dok[0]) $('#checklistDokumentasiUnit').attr("checked", true)
+        if (not[0]) $('#checklistNotulensiUnit').attr("checked", true)
+        if (cv[0]) $('#checklistCvUnit').attr("checked", true)
 
-        $("#loketNamaUnit").focus()
+        $('#loketNamaUnit').focus()
         
         $('form').submit( function(e) {
             e.preventDefault()
             var form = this
-            generalAlert("Tiket telah diteruskan ke PPK")
-            generalAlert("Redirect ke dashboard dalam 5 detik")
+            generalAlert('Tiket telah diteruskan ke PPK')
+            generalAlert('Redirect ke dashboard dalam 5 detik')
             setTimeout( function () { 
                 form.submit()
             }, 5000)
@@ -210,7 +207,7 @@
 
     function vtgl(tgl){
         let y = tgl.getFullYear()
-        let m = tgl.getMonth()
+        let m = tgl.getMonth() + 1
         let d = tgl.getDate()
         if (m<10) m = '0'+m
         if (d<10) d = '0'+d

@@ -23,7 +23,7 @@ const XlsxPopulate = require('xlsx-populate');
 
 //module parse xlsx
 var xlsx = require('node-xlsx').default;
-var XLSX = require('xlsx');
+
 //Xlsx to Pdf
 var msopdf = require('node-msoffice-pdf');
 

@@ -237,6 +237,8 @@
                                             aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm"
                                             disabled>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="loketAdkSpj" class="col-md-2 col-form-label">ADK SPJ</label>
                                         <div class="col">
@@ -305,9 +307,9 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer" id="mainfooter">
-                                        <button id="prosesFormBendahara" type="submit" class="btn btn-success" formaction="loket/bendaharaProses">Proses</button>
-                                        <button id="kirimFormBendaharaArsiparis" type="submit" class="btn btn-primary" formaction="loket/bendaharaKirimArsiparis">Kirim<br><small>(Arsiparis)</small></button>
-                                        <button id="kirimFormBendaharaOperatorBmn" type="submit" class="btn btn-primary" formaction="loket/bendaharaKirimBmn">Kirim<br><small>(Operator BMN)</small></button>
+                                        <button id="prosesFormBendahara" type="submit" class="btn btn-success">Proses</button>
+                                        <button id="kirimFormBendaharaArsiparis" type="submit" class="btn btn-primary">Kirim<br><small>(Arsiparis)</small></button>
+                                        <button id="kirimFormBendaharaOperatorBmn" type="submit" class="btn btn-primary">Kirim<br><small>(Operator BMN)</small></button>
                                     </div>
                                     <div class="modal-footer">
                                         <button id="loketInputRealisasi" class="btn btn-primary" type="submit" formaction="loket/bendaharaInputRealisasi">Input Realisasi</button>
@@ -326,18 +328,12 @@
     </div>
 </div>
 
-{{!-- autofill form --}}
-<script id="tglPelaksanaan" type="text/x-handlebars-template">
-    {{data.tanggal.pelaksanaan}}
-</script>
-
 {{!-- iterasi select pok --}}
 <script src="/js/LoketFormPok.js"></script>
 
 {{!-- main script --}}
 <script type="text/javascript">
     //socket = io.connect($(location).attr('host'));
-    var socket = io();
 
     //untuk hak akses
     //var user_aktiv = '{{username}}';
@@ -345,7 +341,7 @@
     $(document).ready(function () {
 
         //autofill form
-        var t1 = new Date($("#tglPelaksanaan").html())
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
         var t2 = formatTanggal(t1)
         $("#loketTglPelaksanaan").val(t2)
 
@@ -371,21 +367,19 @@
         if (not[2]) $("#checklistNotulensiPpspm").attr("checked", true)
         if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
 
-        if ($("#loketAkun").val()=="521811" || $("#loketAkun").val().slice(0,3)=="532") {
-            $("#kirimFormBendaharaOperatorBmn").prop("hidden", false)
-        } else {$("#kirimFormBendaharaOperatorBmn").prop("hidden", true)}
-
         $("#loketProgram").focus()
 
         if ($("#loketSpp").val()=='Belum'){
-            $("#prosesFormBendahara").attr("formaction", "loket/bendaharaKirimSpp")
             $("#loketMetodeTransfer").attr("disabled", true)
             $("#loketNilaiPajak").attr("disabled", true)
             $("#loketNilaiTransfer").attr("disabled", true)
-        }
-        if ($("#loketSpp").val()=='Sudah'){
+        } else if ($("#loketSpp").val()=='Sudah'){
             $("#loketSpp").attr("disabled", true)
         }
+
+        if ($("#loketAkun").val()=="521811" || $("#loketAkun").val().slice(0,3)=="532") {
+            $("#kirimFormBendaharaOperatorBmn").prop("hidden", false)
+        } else {$("#kirimFormBendaharaOperatorBmn").prop("hidden", true)}
 
         $("#loketAkun").change(function(){
             if ($("#loketAkun").val()=="521811" || $("#loketAkun").val().slice(0,3)=="532") {
@@ -396,127 +390,125 @@
         
         //validasi isian form
         $('#prosesFormBendahara').click(function (e) {
+            e.preventDefault()
             if ($('#loketProgram').val()=="Pilih Program"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
             } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih kegiatan")
                 $('#loketKegiatan').focus()
             } else if ($('#loketOutput').val()=="Pilih Output"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih output")
                 $('#loketOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
             } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih detail")
                 $('#loketDetailPok').focus()
             } else if($("#loketSpp").prop("disabled")==false && $("#loketSpp").val()=='Belum'){
-                e.preventDefault()
                 generalAlert("Mohon ubah pilihan SPP menjadi 'Sudah'")
                 $("#loketSpp").focus()
             } else if($("#loketSpp").prop("disabled")==false && $("#loketSpp").val()=='Sudah'){
-                alert("Tiket telah diteruskan ke PPSPM")
+                $("form").attr('action', 'loket/reviewerPending')
+                generalAlert("Tiket telah diteruskan ke PPSPM")
+                generalAlert("Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $("form").submit()
+                }, 5000)
             } else if (!$("#loketMetodeTransfer").val()){
-                e.preventDefault()
                 generalAlert("Silahkan pilih metode transfer")
                 $("#loketMetodeTransfer").focus()
             } else if (!$("#loketNilaiPajak").val()) {
-                e.preventDefault()
                 generalAlert("Nilai pajak tidak boleh kosong")
                 $("#loketNilaiPajak").focus()
             } else if (!$("#loketNilaiTransfer").val()) {
-                e.preventDefault()
                 generalAlert("Nilai transfer tidak boleh kosong")
                 $("#loketNilaiTransfer").focus()
-            } else {generalAlert("Tiket telah diteruskan ke Operator Bank")}
+            } else {
+                $("form").attr('action', 'loket/bendaharaProses')
+                generalAlert("Tiket telah diteruskan ke Operator Bank")
+                setTimeout( function () { 
+                    $("form").submit()
+                }, 5000)
+            }
         })
 
         $('#kirimFormBendaharaArsiparis').click(function (e) {
+            e.preventDefault()
+            $("form").attr('action', 'loket/bendaharaKirimArsiparis')
             if ($('#loketProgram').val()=="Pilih Program"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
             } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih kegiatan")
                 $('#loketKegiatan').focus()
             } else if ($('#loketOutput').val()=="Pilih Output"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih output")
                 $('#loketOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
             } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih detail")
             } else if (!$("#loketMetodeTransfer").val()){
-                e.preventDefault()
                 generalAlert("Silahkan pilih metode transfer")
                 $("#loketMetodeTransfer").focus()
             } else if (!$("#loketNilaiPajak").val()) {
-                e.preventDefault()
                 generalAlert("Nilai pajak tidak boleh kosong")
                 $("#loketNilaiPajak").focus()
             } else if (!$("#loketNilaiTransfer").val()) {
-                e.preventDefault()
                 generalAlert("Nilai transfer tidak boleh kosong")
                 $("#loketNilaiTransfer").focus()
-            } else {generalAlert("Tiket telah diteruskan ke Arsiparis")}
+            } else {
+                generalAlert("Tiket telah diteruskan ke Arsiparis")
+                setTimeout( function () { 
+                    $("form").submit()
+                }, 5000)
+            }
         })
 
         $('#kirimFormBendaharaOperatorBmn').click(function (e) {
+            e.preventDefault()
+            $("form").attr('action', 'loket/bendaharaKirimBmn')
             if ($('#loketProgram').val()=="Pilih Program"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
             } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih kegiatan")
                 $('#loketKegiatan').focus()
             } else if ($('#loketOutput').val()=="Pilih Output"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih output")
                 $('#loketOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
             } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih detail")
             } else if (!$("#loketMetodeTransfer").val()){
-                e.preventDefault()
                 generalAlert("Silahkan pilih metode transfer")
                 $("#loketMetodeTransfer").focus()
             } else if (!$("#loketNilaiPajak").val()) {
-                e.preventDefault()
                 generalAlert("Nilai pajak tidak boleh kosong")
                 $("#loketNilaiPajak").focus()
             } else if (!$("#loketNilaiTransfer").val()) {
-                e.preventDefault()
                 generalAlert("Nilai transfer tidak boleh kosong")
                 $("#loketNilaiTransfer").focus()
-            } else {generalAlert("Tiket telah diteruskan ke Operator BMN")}
+            } else {
+                generalAlert("Tiket telah diteruskan ke Operator BMN")
+                setTimeout( function () { 
+                    $("form").submit()
+                }, 5000)
+            }
         })
 
         //$("#toDashboard").hide()

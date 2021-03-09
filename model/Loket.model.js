@@ -5,6 +5,14 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var LoketSchema = new Schema({
+    'thang': {
+        type: Number,
+        default: new Date().getFullYear()
+    },
+    'active': {
+        type: Boolean,
+        default: true
+    },
     'nomorTransaksi': String,
     'unit': String,
     'kodeUnit': String,
@@ -41,10 +49,10 @@ var LoketSchema = new Schema({
     'nilaiTransfer': Number,
     'statusTransfer': String, //sudah
     'tanggal': {
-        'pengajuan': String,
-        'pelaksanaan': String,
-        'transfer': String,
-        'selesai': String,
+        'pengajuan': Date,
+        'pelaksanaan': Date,
+        'transfer': Date,
+        'selesai': Date,
     },
     'posisi': String, //verifikator, ppk, ppspm, reviewer, bendahara, operatorBank
     'status': String, //belum selesai, selesai, dikembalikan ke unit, dibatalkan

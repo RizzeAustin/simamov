@@ -26,7 +26,7 @@ var User = require(__dirname + "/../model/User.model");
 var Loket = require(__dirname + "/../model/Loket.model");
 
 //Short syntax tool
-var _ = require("underscore");
+var _ = require('underscore');
 const { json } = require('body-parser');
 const { db, count, translateAliases } = require('../model/Loket.model');
 
@@ -135,13 +135,13 @@ loket.get('/dashboard', function(req, res) {
     // console.log(req.session.userEmail)
     req.session.tiketId = ''
     if (req.session.userJabatan == 3 && req.session.userUnit == 'BAU') {
-        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] } }).lean().exec((err, daftarPengajuan) => {
+        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: new Date().getFullYear() }).lean().exec((err, daftarPengajuan) => {
             if (err) {
                 console.log(err)
                 throw new Error(err)
             }
 
-            Loket.find({ status: 'Selesai' }).lean().exec((err, daftarSelesai) => {
+            Loket.find({ status: 'Selesai', thang: new Date().getFullYear() }).lean().exec((err, daftarSelesai) => {
                 if (err) {
                     console.log(err)
                     throw new Error(err)
@@ -157,13 +157,13 @@ loket.get('/dashboard', function(req, res) {
             });
         });
     } else if (req.session.userRole == 7 && (req.session.userJabatan == 3 || req.session.userJabatan == 4)) {
-        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, unit: { $regex: req.session.userUnit, $options: "i" } }).lean().sort('tanggal.pengajuan').exec((err, daftarPengajuan) => {
+        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, unit: { $regex: req.session.userUnit, $options: 'i' }, thang: new Date().getFullYear() }).lean().sort('tanggal.pengajuan').exec((err, daftarPengajuan) => {
             if (err) {
                 console.log(err)
                 throw new Error(err)
             }
 
-            Loket.find({ status: 'Selesai', unit: { $regex: req.session.userUnit, $options: "i" } }).lean().sort('tanggal.selesai').exec((err, daftarSelesai) => {
+            Loket.find({ status: 'Selesai', unit: { $regex: req.session.userUnit, $options: 'i' }, thang: new Date().getFullYear() }).lean().sort('tanggal.selesai').exec((err, daftarSelesai) => {
                 if (err) {
                     console.log(err)
                     throw new Error(err)
@@ -179,13 +179,13 @@ loket.get('/dashboard', function(req, res) {
             });
         });
     } else {
-        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] } }).lean().exec((err, daftarPengajuan) => {
+        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: new Date().getFullYear() }).lean().exec((err, daftarPengajuan) => {
             if (err) {
                 console.log(err)
                 throw new Error(err)
             }
 
-            Loket.find({ status: 'Selesai' }).lean().exec((err, daftarSelesai) => {
+            Loket.find({ status: 'Selesai', thang: new Date().getFullYear() }).lean().exec((err, daftarSelesai) => {
                 if (err) {
                     console.log(err)
                     throw new Error(err)
@@ -194,6 +194,7 @@ loket.get('/dashboard', function(req, res) {
                 res.render('loket/loket_dashboard', {
                     layout: false,
                     admin: req.session.jenis,
+                    role: req.session.userRole,
                     daftarPengajuan: daftarPengajuan,
                     daftarSelesai: daftarSelesai,
                     falseUser: req.session.falseUser,
@@ -567,7 +568,7 @@ loket.post('/unitKirim', function(req, res) {
                 });
 
                 const oldpath = files.fileSpjUnit.path
-                const newpath = __dirname + "/../uploaded/spj/" + noTrans + '-SpjUnit.' + files.fileSpjUnit.name.match(/[^.]\w*$/i)[0]
+                const newpath = __dirname + '/../uploaded/spj/' + noTrans + '-SpjUnit.' + files.fileSpjUnit.name.match(/[^.]\w*$/i)[0]
                 console.log(__dirname)
 
                 mv(oldpath, newpath, function(err) {
@@ -1273,7 +1274,7 @@ loket.post('/bankKirim', function(req, res) {
                 data.tanggal.selesai = new Date()
 
                 var oldpath = files.dokumenBank.path
-                var newpath = __dirname + "/../uploaded/spj/" + data.nomorTransaksi + '-dokumenBank.' + files.dokumenBank.name.match(/[^.]\w*$/i)[0]
+                var newpath = __dirname + '/../uploaded/spj/' + data.nomorTransaksi + '-dokumenBank.' + files.dokumenBank.name.match(/[^.]\w*$/i)[0]
 
                 mv(oldpath, newpath, function(err) {
                     if (err) { throw new Error(err) }
@@ -1290,7 +1291,7 @@ loket.post('/bankKirim', function(req, res) {
                         html: 'Pengajuan yang anda lakukan pada simamov dengan nomor transaksi ' + data.nomorTransaksi + ' telah diselesaikan oleh petugas BAU.<br>' +
                             'Silahkan cek rekening/ambil uang Anda',
                         attachments: [{
-                            path: __dirname + "/../uploaded/spj/" + data.nomorTransaksi + '-dokumenBank.' + files.dokumenBank.name.match(/[^.]\w*$/i)[0]
+                            path: __dirname + '/../uploaded/spj/' + data.nomorTransaksi + '-dokumenBank.' + files.dokumenBank.name.match(/[^.]\w*$/i)[0]
                         }]
                     }
                     transporter.sendMail(mailOptions, (err, info) => {
@@ -1338,7 +1339,7 @@ loket.post('/downloadSpjTiket', function(req, res) {
                 res.download(file); // Set disposition and send it.
             })
         } else {
-            res.render('404', { layout: false });
+            res.status(404);
             return
         }
     })
@@ -1380,7 +1381,7 @@ function saveStay(req, res, data) {
 }
 
 function userAct(req, act) {
-    User.update({ _id: req.session.user_id }, { $push: { "act": { label: act, timestamp: new Date().getTime() } } },
+    User.update({ _id: req.session.user_id }, { $push: { 'act': { label: act, timestamp: new Date().getTime() } } },
         function(err, status) {}
     )
 }

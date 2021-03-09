@@ -64,6 +64,7 @@
                             <h5 class="row col-12">III. REALISASI</h5><br>
                             <h6 class="row col-12">a. Realisasi per unit</h6><br>
                             <h6 class="row col-12">b. Total realisasi</h6>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="">Test Modal</button>
                         </div>
                     </div>
                 </div>
@@ -80,8 +81,8 @@
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="">Detail tiket</h5>
+            <div class="modal-header" style="background-color: #1ecbe1;">
+                <h5 class="modal-title row ml-2" id="">Detail tiket</h5>
                 <button type="button" class="close" data-dismiss="modal"
                     aria-label="Close"><span
                         aria-hidden="true">&times;</span>
@@ -91,8 +92,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary"
-                    data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
@@ -116,9 +116,9 @@
             <td style="text-align:center">{{this.metodeTransfer}}</td>
             <td>{{this.detail}}</td>
             <td style="text-align:center">
-                <button type="button" class="btn btn-primary mb-1" data-toggle="modal" data-target="#modalDetail" id="btnDetailSelesai">Lihat Detail</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailSelesai">Lihat Detail</button>
                 {{!-- <form action="/loket/downloadSpjTiketBank" method="post">
-                    <input type="hidden" name="tiketId" value="{{this._id}}">
+                    <input type="hidden" name="tiketId" value="">
                     <button type="submit" class="btn btn-success" id="downloadSpjTiket">Download <br>yang disahkan</button>
                 </form> --}}
             </td>
@@ -189,6 +189,7 @@
     // var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
+        console.log("{{role}}")
 
         var falseUser = "{{falseUser}}"
         if(falseUser){
@@ -208,17 +209,26 @@
         var dSelesai = $("#daftarSelesai").html()
         $("#tableSelesai tbody").html(dSelesai)
 
-        //iterasi nomor row
+        //iterasi nomor row dan tanggal
         $("#tableSelesai tr").each(function(index){
             $(this).find("td:eq(0)").each(function(){
                 $(this).text(index)
                 //console.log($(this).text())
+            })
+            $(this).find("td:eq(2)").each(function(){
+                $(this).text(formatTanggal(new Date($(this).text())))
+            })
+            $(this).find("td:eq(3)").each(function(){
+                $(this).text(formatTanggal(new Date($(this).text())))
             })
         })
         $("#tablePengajuan tr").each(function(index){
             $(this).find("td:eq(0)").each(function(){
                 $(this).text(index)
                 //console.log($(this).text())
+            })
+            $(this).find("td:eq(3)").each(function(){
+                $(this).text(formatTanggal(new Date($(this).text())))
             })
         })
 
@@ -379,95 +389,104 @@
 
             //isi modal-body
             var templatePengajuan =
-                '<div class="col-12">' +
-                    '<div class="row">' +
-                        '<label class="col-2">Unit</label>' +
-                        '<p class="col">' + detail.unit + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Kode Unit</label>' +
-                        '<p class="col">' + detail.kodeUnit + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Operator</label>' +
-                        '<p class="col">' + detail.operator + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Detail POK</label>' +
-                        '<div class="col-1">' +
-                            '<p>Program</p>' +
-                            '<p>Kegiatan</p>' +
-                            '<p>Output</p>' +
-                            '<p>Komponen</p>' +
-                            '<p>Akun</p>' +
-                            '<p>Detail Belanja</p>' +
-                        '</div>' +
-                        '<div class="col">' +
-                            '<p>: ' + detail.kdprogram +' '+ detail.uraianProgram + '</p>' +
-                            '<p>: ' + detail.kdkegiatan +' '+ detail.uraianKegiatan + '</p>' +
-                            '<p>: ' + detail.kdoutput +' '+ detail.uraianOutput + '</p>' +
-                            '<p>: ' + detail.kdkomponen +' '+ detail.uraianKomponen + '</p>' +
-                            '<p>: ' + detail.kdakun +' '+ detail.uraianAkun + '</p>' +
-                            '<p>: ' + detail.uraianDetail + '</p>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Tanggal Pelaksanaan</label>' +
-                        '<p class="col">' + detail.tanggal.pelaksanaan + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Detail</label>' +
-                        '<p class="col">' + detail.detail + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Nilai</label>' +
-                        '<p class="col">Rp ' + formatUang(detail.nilaiPengajuan) + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Checklist</label>' +
-                        '<p class="col">' + check + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">SPJ</label>' +
-                        '<p class="col-3">' + detail.fileSpj + '</p>' +
-                        '<form action="/loket/downloadSpjTiket" method="post">' +
+                '<table class="col-11 tableTiket table-borderless table-striped">'+
+                    '<tr>'+
+                        '<th class="col-2">Unit</th>'+
+                        '<td colspan="2">'+detail.unit+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Kode Unit</th>'+
+                        '<td colspan="2">'+detail.kodeUnit+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Operator</th>'+
+                        '<td colspan="2">'+detail.operator+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">POK</th>'+
+                        '<td colspan="2"></td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2" style="padding-left:5%">Program</th>'+
+                        '<td colspan="2">'+detail.kdprogram+' '+detail.uraianProgram+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2" style="padding-left:5%">Aktivitas</th>'+
+                        '<td colspan="2">'+detail.kdkegiatan+' '+detail.uraianKegiatan+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2" style="padding-left:5%">KRO</th>'+
+                        '<td colspan="2">'+detail.kdoutput+' '+detail.uraianOutput+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2" style="padding-left:5%">Komponen</th>'+
+                        '<td colspan="2">'+detail.kdkomponen+' '+detail.uraianKomponen+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2" style="padding-left:5%">Akun</th>'+
+                        '<td colspan="2">'+detail.kdakun+' '+detail.uraianAkun+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2" style="padding-left:5%">Detail POK</th>'+
+                        '<td colspan="2">'+detail.uraianDetail+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Tanggal Pelaksanaan</th>'+
+                        '<td colspan="2">'+formatTanggal(detail.tanggal.pelaksanaan)+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Detail SPJ</th>'+
+                        '<td colspan="2">'+detail.detail+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Nilai Bruto</th>'+
+                        '<td colspan="2">Rp '+formatUang(detail.nilaiPengajuan)+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Checklist</th>'+
+                        '<td colspan="2">'+check+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">File SPJ</th>'+
+                        '<td>'+detail.fileSpj+'</td>'+
+                        '<td width="20%"><form action="/loket/downloadSpjTiket" method="post">' +
                             '<input type="hidden" name="tiketId" value="' + detail._id + '">' +
                             '<button type="submit" class="btn btn-primary" id="downloadSpjTiket">Download SPJ</button>' +
-                        '</form>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">SPP</label>' +
-                        '<p class="col">' + detail.spp + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Catatan PPK</label>' +
-                        '<p class="col">' + catat[0] + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Catatan PPSPM</label>' +
-                        '<p class="col">' + catat[1] + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Catatan Reviewer</label>' +
-                        '<p class="col">' + catat[2] + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Metode Transfer</label>' +
-                        '<p class="col">' + detail.metodeTransfer + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Nilai Pajak</label>' +
-                        '<p class="col">Rp ' + formatUang(detail.nilaiPajak) + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Nilai Transfer</label>' +
-                        '<p class="col">Rp ' + formatUang(detail.nilaiTransfer) + '</p>' +
-                    '</div>' +
-                    '<div class="row">' +
-                        '<label class="col-2">Tanggal Transfer</label>' +
-                        '<p class="col">' + detail.tanggal.transfer + '</p>' +
-                    '</div>' +
-                '</div >'
+                        '</form></td>' +
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">SPP</th>'+
+                        '<td colspan="2">'+detail.spp+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Catatan</th>'+
+                        '<td colspan="2"></td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2" style="padding-left:5%">PPK</th>'+
+                        '<td colspan="2">'+catat[0]+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2" style="padding-left:5%">PPSPM</th>'+
+                        '<td colspan="2">'+catat[1]+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2" style="padding-left:5%">Reviewer</th>'+
+                        '<td colspan="2">'+catat[2]+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Metode Transfer</th>'+
+                        '<td colspan="2">'+detail.metodeTransfer+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Nilai Pajak</th>'+
+                        '<td colspan="2">Rp '+formatUang(detail.nilaiPajak)+'</td>'+
+                    '</tr>'+
+                    '<tr>'+
+                        '<th class="col-2">Nilai Transfer</th>'+
+                        '<td colspan="2">Rp '+formatUang(detail.nilaiTransfer)+'</td>'+
+                    '</tr>'+
+                '</table>'
 
             $('#modalDetailTiket').html(templatePengajuan)
 
@@ -510,6 +529,32 @@
                     '</form>')
             }
 
+            //tombol bendahara
+            if (!document.getElementById("kirimArsiparis") && !document.getElementById("inputRealisasi") && !document.getElementById("inputPajak") && detail.posisi == "Operator Bank" && ("{{role}}" == "5" || "{{admin}}" == "1")){
+                $(".modal-footer").append(
+                    '<form action="/loket/bendaharaKirimArsiparis" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="button" class="btn btn-primary" id="kirimArsiparis">Kirim Arsiparis</button>' +
+                    '</form>' +
+                    '<form action="/loket/bendaharaKirimBmn" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="button" class="btn btn-primary" id="kirimBmn" hidden>Kirim Opr BMN</button>' +
+                    '</form>' +
+                    '<form action="/loket/bendaharaInputRealisasi" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="button" class="btn btn-warning" id="inputRealisasi">Input Realisasi</button>' +
+                    '</form>' +
+                    '<form action="/loket/bendaharaInputPajak" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="button" class="btn btn-warning" id="inputPajak">Input Pajak</button>' +
+                    '</form>'
+                )
+            }
+
+            if (detail.kdakun=="521811" || detail.kdakun.slice(0,3)=="532") {
+                $("#kirimBmn").prop("hidden", false)
+            } else {$("#kirimBmn").prop("hidden", true)}
+
         })
 
         //format uang
@@ -531,14 +576,19 @@
     //})
 
     //fungsi
-    function formatTanggal(tgl) {
-        let s = Date.parse(tgl)
-        let d = new Date(s)
-        let tahun = d.getFullYear()
-        let bulan = d.getMonth() + 1
-        let hari = d.getDate()
-        return `${hari}/${bulan}/${tahun}`
-    }
+    function formatTanggal(date) {
+        let dat = new Date(date)
+        let monthNames = [
+            "Januari", "Februari", "Maret",
+            "April", "Mei", "Juni", "Juli",
+            "Agustus", "September", "Oktober",
+            "November", "Desember"
+        ];
+        let day = dat.getDate();
+        let monthIndex = dat.getMonth();
+        let year = dat.getFullYear();
+        return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    };
 
     function formatUang(x) {
         if (x) {return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")

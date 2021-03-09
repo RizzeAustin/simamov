@@ -175,6 +175,8 @@
                                             aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm"
                                             disabled>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="loketAdkSpj" class="col-md-2 col-form-label">ADK SPJ</label>
                                         <div class="col">
@@ -266,11 +268,6 @@
     </div>
 </div>
 
-{{!-- autofill form --}}
-<script id="tglPelaksanaan" type="text/x-handlebars-template">
-    {{data.tanggal.pelaksanaan}}
-</script>
-
 {{!-- main script --}}
 <script type="text/javascript">
     //socket = io.connect($(location).attr('host'));
@@ -282,7 +279,7 @@
     $(document).ready(function () {
 
         //autofill form
-        var t1 = new Date($("#tglPelaksanaan").html())
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
         var t2 = formatTanggal(t1)
         $("#loketTglPelaksanaan").val(t2)
 
@@ -310,18 +307,29 @@
 
         //validasi isian form
         $("#kirimFormBank").click(function (e) {
+            e.preventDefault()
             if (!$("#dokumenBank").val()) {
-                e.preventDefault()
+                generalAlert("Dokumen bank belum di unggah")
                 $("#dokumenBank").focus()
             } else if (!$("#loketStatusTransfer").val()){
-                e.preventDefault()
+                generalAlert("Silahkan pilih status transfer")
                 $("#loketStatusTransfer").focus()
             } else if (!$("#loketTglTransfer").val()){
-                e.preventDefault()
+                generalAlert("Silahkan pilih tanggal transfer")
                 $("#loketTglTransfer").focus()
             } else if ($("#loketMetodeTransfer").val()=="CMS") {
-                alert("Tiket telah diselesaikan")
-            } else {alert("Email pemberitahuan telah dikirimkan ke penerima")}
+                generalAlert("Tiket telah diselesaikan")
+                generalAlert("Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $("form").submit()
+                }, 5000)
+            } else {
+                generalAlert("Tiket telah diselesaikan, email pemberitahuan akan dikirimkan ke penerima")
+                generalAlert("Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $("form").submit()
+                }, 5000)
+            }
         }) 
     });
 

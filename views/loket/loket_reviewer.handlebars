@@ -165,6 +165,8 @@
                                             <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}" disabled>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="" class="col-md-2 col-form-label">Checklist</label>
                                         <div class="col-md-2"></div>
@@ -268,8 +270,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="pendingFormReviewer" type="submit" class="btn btn-danger" formaction="loket/reviewerPending">Pending</button>
-                                        <button id="prosesFormReviewer" type="submit" class="btn btn-success" formaction="loket/reviewerProses">Proses</button>
+                                        <button id="pendingFormReviewer" type="submit" class="btn btn-danger">Pending</button>
+                                        <button id="prosesFormReviewer" type="submit" class="btn btn-success">Proses</button>
                                     </div>
                                 </div>
                             </div>
@@ -280,11 +282,6 @@
         </div>
     </div>
 </div>
-
-{{!-- autofill form --}}
-<script id="tglPelaksanaan" type="text/x-handlebars-template">
-    {{data.tanggal.pelaksanaan}}
-</script>
 
 {{!-- iterasi select pok --}}
 <script src="/js/LoketFormPok.js"></script>
@@ -300,9 +297,9 @@
     $(document).ready(function () {
         
         //autofill form
-        var t1 = new Date($("#tglPelaksanaan").html())
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
         var t2 = formatTanggal(t1)
-        $("#loketTglPelaksanaan").val(t2)
+        $('#loketTglPelaksanaan').val(t2)
 
         var spj = [{{data.checklist.spj}}]
         var hadir = [{{data.checklist.daftarHadir}}]
@@ -330,41 +327,50 @@
 
         //validasi isian
         $('#pendingFormReviewer').click(function (e) {
+            e.preventDefault()
+            $("form").attr('action', 'loket/reviewerPending')
             let va = confirm('Anda yakin?')
             if(va) {
                 if (!$("#loketCatatanReviewer").val() || $("#loketCatatanReviewer").val() == '-') {
-                    e.preventDefault()
                     generalAlert('Catatan harus diisi ketika tiket dipending')
                     $("#loketCatatanReviewer").focus()
-                } else {alert("Tiket telah Dipending")}
-            } else e.preventDefault()
+                } else {
+                    generalAlert("Tiket telah Dipending")
+                    generalAlert("Redirect ke dashboard dalam 5 detik")
+                    setTimeout( function () { 
+                        $("form").submit()
+                    }, 5000)
+                }
+            }
         })
         $('#prosesFormReviewer').click(function (e) {
+            e.preventDefault()
+            $("form").attr('action', 'loket/reviewerProses')
             if ($('#loketProgram').val()=="Pilih Program"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
             } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih kegiatan")
                 $('#loketKegiatan').focus()
             } else if ($('#loketOutput').val()=="Pilih Output"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih output")
                 $('#loketOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
             } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                e.preventDefault()
                 generalAlert("Silahkan pilih detail")
                 $('#loketDetailPok').focus()
-            } else {alert("Tiket telah diteruskan ke Bendahara")}
+            } else {
+                generalAlert("Tiket telah diteruskan ke Bendahara")
+                generalAlert("Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $("form").submit()
+                }, 5000)
+            }
         })
     });
 
