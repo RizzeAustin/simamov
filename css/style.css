@@ -4856,7 +4856,8 @@ header.navbar .dropdown-item {
 .pagination-datatables li.active a,
 .page-item.active .pagination li a,
 .pagination li .page-item.active a,
-.pagination li.active a {
+.pagination li.active a,
+.pagination li a.active {
     z-index: 2;
     color: #fff;
     background-color: #20a8d8;

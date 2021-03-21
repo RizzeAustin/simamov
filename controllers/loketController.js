@@ -9,6 +9,8 @@ var async = require('async');
 //modul fs utk rw file
 var fs = require('fs');
 
+var xl = require('excel4node');
+
 var Program = require(__dirname + "/../model/Program.model");
 var Kegiatan = require(__dirname + "/../model/Kegiatan.model");
 var Output = require(__dirname + "/../model/Output.model");
@@ -32,6 +34,7 @@ const { db, count, translateAliases } = require('../model/Loket.model');
 
 //untuk mengirimkan email
 var nodemailer = require('nodemailer');
+const { socket } = require('./pok');
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -48,12 +51,6 @@ loket.socket = function(io, connections, client) {
 
     loket.io = io;
     loket.connections = connections;
-
-    io.on('connection', (socket) => {
-        // var pom = noTransaksi('222')
-        // console.log(pom)
-        // noTransaksi('222')
-    })
 
     //lihat detail tiket
     client.on('mintaDetailTiket', function(id) {
@@ -113,13 +110,25 @@ loket.socket = function(io, connections, client) {
             client.emit('terimaDetailPok', data)
         })
     })
-    client.on('cekPagudetail', function(id) {
+
+    client.on('cekDetailDana', function(id) {
         DetailBelanja.findOne({ kdprogram: id[0], kdgiat: id[1], kdoutput: id[2], kdkmpnen: id[3], kdakun: id[4], nmitem: id[5], thang: new Date().getFullYear() }).lean().exec((err, data) => {
             if (err) {
                 console.log(err)
                 throw new Error(err)
             }
-            client.emit('terimaPaguDetail', data.jumlah)
+            client.emit('terimaDetailDana', data.jumlah)
+        })
+    })
+
+    client.on('hapusTiket', function(id) {
+        Loket.update({ _id: id }, { active: false }, (err) => {
+            if (err) {
+                console.log(err)
+                throw new Error(err)
+            }
+            User.update({ _id: client.handshake.session.user_id }, { $push: { "act": { label: 'Menghapus tiket ' + id, timestamp: new Date().getTime() } } },
+                function(err, status) {})
         })
     })
 }
@@ -133,59 +142,16 @@ loket.get('/dashboard', function(req, res) {
     // console.log(req.session.userJabatan)
     // console.log(req.session.userUnit)
     // console.log(req.session.userEmail)
+
     req.session.tiketId = ''
     if (req.session.userJabatan == 3 && req.session.userUnit == 'BAU') {
-        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: new Date().getFullYear() }).lean().exec((err, daftarPengajuan) => {
+        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: new Date().getFullYear(), active: true }).lean().exec((err, daftarPengajuan) => {
             if (err) {
                 console.log(err)
                 throw new Error(err)
             }
 
-            Loket.find({ status: 'Selesai', thang: new Date().getFullYear() }).lean().exec((err, daftarSelesai) => {
-                if (err) {
-                    console.log(err)
-                    throw new Error(err)
-                }
-
-                res.render('loket/loket_dashboard', {
-                    layout: false,
-                    admin: req.session.jenis,
-                    daftarPengajuan: daftarPengajuan,
-                    daftarSelesai: daftarSelesai,
-                    falseUser: req.session.falseUser,
-                })
-            });
-        });
-    } else if (req.session.userRole == 7 && (req.session.userJabatan == 3 || req.session.userJabatan == 4)) {
-        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, unit: { $regex: req.session.userUnit, $options: 'i' }, thang: new Date().getFullYear() }).lean().sort('tanggal.pengajuan').exec((err, daftarPengajuan) => {
-            if (err) {
-                console.log(err)
-                throw new Error(err)
-            }
-
-            Loket.find({ status: 'Selesai', unit: { $regex: req.session.userUnit, $options: 'i' }, thang: new Date().getFullYear() }).lean().sort('tanggal.selesai').exec((err, daftarSelesai) => {
-                if (err) {
-                    console.log(err)
-                    throw new Error(err)
-                }
-
-                res.render('loket/loket_dashboard', {
-                    layout: false,
-                    admin: req.session.jenis,
-                    daftarPengajuan: daftarPengajuan,
-                    daftarSelesai: daftarSelesai,
-                    falseUser: req.session.falseUser,
-                })
-            });
-        });
-    } else {
-        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: new Date().getFullYear() }).lean().exec((err, daftarPengajuan) => {
-            if (err) {
-                console.log(err)
-                throw new Error(err)
-            }
-
-            Loket.find({ status: 'Selesai', thang: new Date().getFullYear() }).lean().exec((err, daftarSelesai) => {
+            Loket.find({ status: 'Selesai', thang: new Date().getFullYear(), active: true }).lean().exec((err, daftarSelesai) => {
                 if (err) {
                     console.log(err)
                     throw new Error(err)
@@ -197,21 +163,90 @@ loket.get('/dashboard', function(req, res) {
                     role: req.session.userRole,
                     daftarPengajuan: daftarPengajuan,
                     daftarSelesai: daftarSelesai,
-                    falseUser: req.session.falseUser,
+                })
+            });
+        });
+    } else if (req.session.userRole == 7 && (req.session.userJabatan == 3 || req.session.userJabatan == 4)) {
+        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, unit: { $regex: req.session.userUnit, $options: 'i' }, thang: new Date().getFullYear(), active: true }).lean().sort('tanggal.pengajuan').exec((err, daftarPengajuan) => {
+            if (err) {
+                console.log(err)
+                throw new Error(err)
+            }
+
+            Loket.find({ status: 'Selesai', unit: { $regex: req.session.userUnit, $options: 'i' }, thang: new Date().getFullYear(), active: true }).lean().sort('tanggal.selesai').exec((err, daftarSelesai) => {
+                if (err) {
+                    console.log(err)
+                    throw new Error(err)
+                }
+                res.render('loket/loket_dashboard', {
+                    layout: false,
+                    admin: req.session.jenis,
+                    role: req.session.userRole,
+                    daftarPengajuan: daftarPengajuan,
+                    daftarSelesai: daftarSelesai,
+                })
+            });
+        });
+    } else {
+        Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: new Date().getFullYear(), active: true }).lean().exec((err, daftarPengajuan) => {
+            if (err) {
+                console.log(err)
+                throw new Error(err)
+            }
+
+            Loket.find({ status: 'Selesai', thang: new Date().getFullYear(), active: true }).lean().exec((err, daftarSelesai) => {
+                if (err) {
+                    console.log(err)
+                    throw new Error(err)
+                }
+
+                res.render('loket/loket_dashboard', {
+                    layout: false,
+                    admin: req.session.jenis,
+                    role: req.session.userRole,
+                    daftarPengajuan: daftarPengajuan,
+                    daftarSelesai: daftarSelesai,
                 })
             });
         });
     }
 })
 
-loket.get('/user', function(req, res) {
-    req.session.falseUser = ''
-    res.render('loket/loket_user', {
+loket.get('/permintaan', function(req, res) {
+    res.render('loket/loket_permintaan', {
         layout: false,
         admin: req.session.jenis,
-        username: req.session.username,
         unit: req.session.userUnit,
     });
+})
+
+loket.get('/user', function(req, res) {
+    if (req.session.tiketId) {
+        Loket.findById(req.session.tiketId).lean().exec((err, tiketData) => {
+            if (err) {
+                console.log(err)
+                throw new Error(err)
+            }
+            res.render('loket/loket_user', {
+                layout: false,
+                admin: req.session.jenis,
+                unit: req.session.userUnit,
+                data: tiketData,
+            });
+        })
+    } else {
+        res.render('loket/loket_user', {
+            layout: false,
+            admin: req.session.jenis,
+            unit: req.session.userUnit,
+        });
+    }
+
+})
+
+loket.post('/unitEdit', function(req, res) {
+    req.session.tiketId = req.body.tiketId
+    res.redirect('/#loket/user')
 })
 
 // -----------
@@ -230,7 +265,6 @@ loket.get('/verifikator', function(req, res) {
             });
         })
     } else {
-        req.session.falseUser = ''
         res.render('loket/loket_verifikator', {
             layout: false,
             admin: req.session.jenis,
@@ -240,13 +274,9 @@ loket.get('/verifikator', function(req, res) {
 
 loket.post('/verifikator', function(req, res) {
     if (req.session.userRole == 1 || req.session.jenis == 1) {
-        req.session.falseUser = ''
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/verifikator')
     } else if (req.session.userRole != 1) {
-        //res.status(204).send()
-        //loket.connections[req.session.user_id].emit('forbiddenuser', 'verifikator')
-        req.session.falseUser = 'Verifikator'
         res.redirect('/#loket/dashboard')
     }
 })
@@ -272,7 +302,6 @@ loket.get('/ppk', function(req, res) {
             })
         })
     } else {
-        req.session.falseUser = ''
         res.render('loket/loket_ppk', {
             layout: false,
             admin: req.session.jenis,
@@ -282,11 +311,9 @@ loket.get('/ppk', function(req, res) {
 
 loket.post('/ppk', function(req, res) {
     if (req.session.userRole == 2 || req.session.jenis == 1) {
-        req.session.falseUser = ''
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/ppk')
     } else if (req.session.userRole != 2) {
-        req.session.falseUser = 'PPK'
         res.redirect('/#loket/dashboard')
     }
 })
@@ -322,7 +349,6 @@ loket.get('/ppspm', function(req, res) {
             }
         })
     } else {
-        req.session.falseUser = ''
         res.render('loket/loket_ppspm', {
             layout: false,
             admin: req.session.jenis,
@@ -332,11 +358,9 @@ loket.get('/ppspm', function(req, res) {
 
 loket.post('/ppspm', function(req, res) {
     if (req.session.userRole == 3 || req.session.jenis == 1) {
-        req.session.falseUser = ''
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/ppspm')
     } else if (req.session.userRole != 3) {
-        req.session.falseUser = 'PPSPM'
         res.redirect('/#loket/dashboard')
     }
 })
@@ -372,7 +396,6 @@ loket.get('/reviewer', function(req, res) {
             }
         })
     } else {
-        req.session.falseUser = ''
         res.render('loket/loket_reviewer', {
             layout: false,
             admin: req.session.jenis,
@@ -382,11 +405,9 @@ loket.get('/reviewer', function(req, res) {
 
 loket.post('/reviewer', function(req, res) {
     if (req.session.userRole == 4 || req.session.jenis == 1) {
-        req.session.falseUser = ''
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/reviewer')
     } else if (req.session.userRole != 4) {
-        req.session.falseUser = 'Reviewer'
         res.redirect('/#loket/dashboard')
     }
 })
@@ -423,7 +444,6 @@ loket.get('/bendahara', function(req, res) {
             }
         })
     } else {
-        req.session.falseUser = ''
         res.render('loket/loket_bendahara', {
             layout: false,
             admin: req.session.jenis,
@@ -433,11 +453,9 @@ loket.get('/bendahara', function(req, res) {
 
 loket.post('/bendahara', function(req, res) {
     if (req.session.userRole == 5 || req.session.jenis == 1) {
-        req.session.falseUser = ''
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/bendahara')
     } else if (req.session.userRole != 5) {
-        req.session.falseUser = 'Bendahara'
         res.redirect('/#loket/dashboard')
     }
 })
@@ -456,7 +474,6 @@ loket.get('/bank', function(req, res) {
             });
         })
     } else {
-        req.session.falseUser = ''
         res.render('loket/loket_bank', {
             layout: false,
             admin: req.session.jenis,
@@ -466,11 +483,9 @@ loket.get('/bank', function(req, res) {
 
 loket.post('/bank', function(req, res) {
     if (req.session.userRole == 6 || req.session.jenis == 1) {
-        req.session.falseUser = ''
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/bank')
     } else if (req.session.userRole != 6) {
-        req.session.falseUser = 'Operator Bank'
         res.redirect('/#loket/dashboard')
     }
 })
@@ -485,114 +500,145 @@ loket.post('/unitKirim', function(req, res) {
                 console.log(err)
                 throw new Error(err)
             }
-            console.log(fields.loketKodeUnit)
-            async.waterfall([
-                function(callback) { //no urut tiket
-                    Loket.count({}, function(err, count) {
-                        if (err) {
-                            console.log(err)
-                            throw new Error(err)
-                        }
-                        var noUrut = 1
-                        noUrut += count
-                        if (noUrut < 10) {
-                            noUrut = '00' + noUrut
-                        } else if (noUrut < 100) {
-                            noUrut = '0' + noUrut
-                        }
-                        callback(null, noUrut)
-                    })
-                },
-                function(noUrut, callback) { //tahun dan bulan
-                    var tahun = new Date().getFullYear()
-                    var bulan = new Date().getMonth()
-
-                    bulan++
-                    if (bulan < 10) {
-                        bulan = '0' + bulan
+            if (fields.tiketId) { //edit tiket
+                Loket.findById(fields.tiketId, (err, data) => {
+                    if (err) {
+                        console.log(err)
+                        throw new Error(err)
                     }
 
-                    callback(null, tahun, bulan, noUrut)
-                }
-            ], function(err, tahun, bulan, noUrut) { //write to database
-                if (err) {
-                    console.log(err)
-                    throw new Error(err)
-                }
-                let noTrans = `${tahun}${bulan}${fields.loketKodeUnit}${noUrut}`
+                    data.unit = fields.loketNamaUnit
+                    data.kodeUnit = fields.loketKodeUnit
+                    data.operator = fields.loketOperator
+                    data.tanggal.pelaksanaan = new Date(fields.loketTglPelaksanaan)
+                    data.detail = fields.loketDetail
+                    data.nilaiPengajuan = fields.loketNilai
+                    data.checklist.spj = [fields.checklistSpjUnit]
+                    data.checklist.daftarHadir = [fields.checklistDaftarHadirUnit]
+                    data.checklist.dokumentasi = [fields.checklistDokumentasiUnit]
+                    data.checklist.notulensi = [fields.checklistNotulensiUnit]
+                    data.checklist.cvNarasumber = [fields.checklistCvUnit]
+                    data.fileSpj = files.fileSpjUnit.name
 
-                const tiket = new Loket({
-                    nomorTransaksi: noTrans,
-                    unit: fields.loketNamaUnit,
-                    kodeUnit: fields.loketKodeUnit,
-                    operator: fields.loketOperator,
-                    kdprogram: '',
-                    uraianProgram: '',
-                    kdkegiatan: '',
-                    uraianKegiatan: '',
-                    kdoutput: '',
-                    uraianOutput: '',
-                    kdkomponen: '',
-                    uraianKomponen: '',
-                    kdakun: '',
-                    uraianAkun: '',
-                    uraianDetail: '',
-                    tanggal: {
-                        pengajuan: new Date(),
-                        pelaksanaan: new Date(fields.loketTglPelaksanaan),
-                        transfer: '',
-                        selesai: '',
+                    const oldpath = files.fileSpjUnit.path
+                    const newpath = __dirname + '/../uploaded/spj/' + data.nomorTransaksi + '-SpjUnit.' + files.fileSpjUnit.name.match(/[^.]\w*$/i)[0]
+
+                    mv(oldpath, newpath, function(err) {
+                        if (err) { throw new Error(err) }
+                        console.log('file uploaded successfully')
+                        return
+                    });
+
+                    saveRedirect(req, res, data)
+                    userAct(req, 'Edit tiket ' + data.nomorTransaksi)
+                })
+            } else { //tiket baru
+                async.waterfall([
+                    function(callback) { //no urut tiket
+                        Loket.count({ thang: new Date().getFullYear() }, function(err, count) {
+                            if (err) {
+                                console.log(err)
+                                throw new Error(err)
+                            }
+                            var noUrut = 1
+                            noUrut += count
+                            if (noUrut < 10) {
+                                noUrut = '00' + noUrut
+                            } else if (noUrut < 100) {
+                                noUrut = '0' + noUrut
+                            }
+                            callback(null, noUrut)
+                        })
                     },
-                    detail: fields.loketDetail,
-                    nilaiPengajuan: fields.loketNilai,
-                    checklist: {
-                        spj: fields.checklistSpjUnit,
-                        daftarHadir: fields.checklistDaftarHadirUnit,
-                        dokumentasi: fields.checklistDokumentasiUnit,
-                        notulensi: fields.checklistNotulensiUnit,
-                        cvNarasumber: fields.checklistCvUnit,
-                    },
-                    fileSpj: files.fileSpjUnit.name,
-                    spp: '',
-                    catatan: {
-                        ppk: '',
-                        ppspm: '',
-                        reviewer: '',
-                    },
-                    metodeTransfer: '',
-                    nilaiPajak: '',
-                    nilaiTransfer: '',
-                    statusTransfer: '',
-                    posisi: 'Verifikator',
-                    status: 'Belum selesai'
-                });
+                    function(noUrut, callback) { //tahun dan bulan
+                        var tahun = new Date().getFullYear()
+                        var bulan = new Date().getMonth()
 
-                const oldpath = files.fileSpjUnit.path
-                const newpath = __dirname + '/../uploaded/spj/' + noTrans + '-SpjUnit.' + files.fileSpjUnit.name.match(/[^.]\w*$/i)[0]
-                console.log(__dirname)
+                        bulan++
+                        if (bulan < 10) {
+                            bulan = '0' + bulan
+                        }
 
-                mv(oldpath, newpath, function(err) {
-                    if (err) { throw new Error(err) }
-                    console.log('file uploaded successfully')
-                    return
-                });
+                        callback(null, tahun, bulan, noUrut)
+                    }
+                ], function(err, tahun, bulan, noUrut) { //write to database
+                    if (err) {
+                        console.log(err)
+                        throw new Error(err)
+                    }
+                    let noTrans = `${tahun}${bulan}${fields.loketKodeUnit}${noUrut}`
 
-                //console.log('nomor transaksi: ' + noTransaksi(req.body.loketKodeUnit))
-                // console.log(tiket)
-                tiket.save();
-                res.redirect('/#loket/dashboard')
-                userAct(req, 'Mengajukan tiket ' + noTrans)
-                    // User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Mengajukan tiket ' + noTrans, timestamp: new Date().getTime() } } },
-                    //     function(err, status) {}
-                    // )
-            })
+                    const tiket = new Loket({
+                        nomorTransaksi: noTrans,
+                        unit: fields.loketNamaUnit,
+                        kodeUnit: fields.loketKodeUnit,
+                        operator: fields.loketOperator,
+                        kdprogram: '',
+                        uraianProgram: '',
+                        kdkegiatan: '',
+                        uraianKegiatan: '',
+                        kdoutput: '',
+                        uraianOutput: '',
+                        kdkomponen: '',
+                        uraianKomponen: '',
+                        kdakun: '',
+                        uraianAkun: '',
+                        uraianDetail: '',
+                        tanggal: {
+                            pengajuan: new Date(),
+                            pelaksanaan: new Date(fields.loketTglPelaksanaan),
+                            transfer: '',
+                            selesai: '',
+                        },
+                        detail: fields.loketDetail,
+                        nilaiPengajuan: fields.loketNilai,
+                        checklist: {
+                            spj: fields.checklistSpjUnit,
+                            daftarHadir: fields.checklistDaftarHadirUnit,
+                            dokumentasi: fields.checklistDokumentasiUnit,
+                            notulensi: fields.checklistNotulensiUnit,
+                            cvNarasumber: fields.checklistCvUnit,
+                        },
+                        fileSpj: files.fileSpjUnit.name,
+                        spp: '',
+                        catatan: {
+                            ppk: '',
+                            ppspm: '',
+                            reviewer: '',
+                        },
+                        metodeTransfer: '',
+                        nilaiPajak: '',
+                        nilaiTransfer: '',
+                        statusTransfer: '',
+                        posisi: 'Verifikator',
+                        status: 'Belum selesai'
+                    });
+
+                    const oldpath = files.fileSpjUnit.path
+                    const newpath = __dirname + '/../uploaded/spj/' + noTrans + '-SpjUnit.' + files.fileSpjUnit.name.match(/[^.]\w*$/i)[0]
+
+                    mv(oldpath, newpath, function(err) {
+                        if (err) { throw new Error(err) }
+                        console.log('file uploaded successfully')
+                        return
+                    });
+
+                    //console.log('nomor transaksi: ' + noTransaksi(req.body.loketKodeUnit))
+                    // console.log(tiket)
+                    tiket.save();
+                    res.redirect('/#loket/dashboard')
+                    userAct(req, 'Mengajukan tiket ' + noTrans)
+                        // User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Mengajukan tiket ' + noTrans, timestamp: new Date().getTime() } } },
+                        //     function(err, status) {}
+                        // )
+                })
+            }
 
         })
     } catch (err) {
         console.log(err)
         throw new Error(err)
     }
-
 })
 
 loket.post('/verifikasi', function(req, res) {
@@ -1313,7 +1359,8 @@ loket.post('/bankKirim', function(req, res) {
     }
 })
 
-//-------
+//----------------- DOWNLOAD ROUTER----------------------------------------------------------------
+
 loket.post('/downloadSpjTiket', function(req, res) {
     Loket.findById(req.body.tiketId).exec((err, data) => {
         if (err) {
@@ -1343,6 +1390,50 @@ loket.post('/downloadSpjTiket', function(req, res) {
             return
         }
     })
+})
+
+loket.get('/downloadTiketSelesai', function(req, res) {
+    var wb = new xl.Workbook({
+        defaultFont: {
+            size: 11
+        }
+    })
+
+    var ws = wb.addWorksheet('Rekap Pengajuan', {
+        'pageSetup': {
+            'orientation': 'landscape',
+            'paperHeight': '15in', // Value must a positive Float immediately followed by unit of measure from list mm, cm, in, pt, pc, pi. i.e. '10.5cm'
+            'paperSize': 'LEGAL_PAPER', // see lib/types/paperSize.js for all types and descriptions of types. setting paperSize overrides paperHeight and paperWidth settings
+            'paperWidth': '8.5in'
+        },
+        'margins': {
+            'bottom': 0.1,
+            'footer': 0.1,
+            'header': 0.1,
+            'left': 0.1,
+            'right': 0.1,
+            'top': 0.1
+        }
+    })
+
+    //header
+    ws.cell(4, 1).string('No Transaksi').style()
+    ws.cell(4, 2).string('Tgl Pengajuan').style()
+    ws.cell(4, 3).string('Tgl Pelaksanaan').style()
+    ws.cell(4, 4).string('Tgl Pembayaran').style()
+    ws.cell(4, 5).string('Kode Unit').style()
+    ws.cell(4, 6).string('Operator').style()
+    ws.cell(4, 7).string('Kode Akun').style()
+    ws.cell(4, 8).string('Detail POK').style()
+    ws.cell(4, 9).string('Detail SPJ').style()
+    ws.cell(4, 10).string('Nilai Pengajuan (Bruto)').style()
+    ws.cell(4, 11).string('Metode Pembayaran').style()
+    ws.cell(4, 12).string('Nilai Pajak').style()
+
+
+    var row_pos = 6
+
+    wb.write('Excel.xlsx');
 })
 
 // loket.post('/downloadSpjTiketBank', function(req, res) {

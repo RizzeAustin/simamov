@@ -49,7 +49,7 @@
                                         <label for="loketKegiatan" class="col ml-1 col-form-label">Aktivitas</label>
                                         <div class="col-md-10">
                                             <select name="loketKegiatan" id="loketKegiatan" class="form-select">
-                                                <option>Pilih Kegiatan</option>
+                                                <option>Pilih Aktivitas</option>
                                             </select>
                                         </div>
                                     </div>
@@ -57,7 +57,7 @@
                                         <label for="loketOutput" class="col ml-1 col-form-label">KRO</label>
                                         <div class="col-md-10">
                                             <select name="loketOutput" id="loketOutput" class="form-select">
-                                                <option>Pilih Output</option>
+                                                <option>Pilih KRO</option>
                                             </select>
                                         </div>
                                     </div>
@@ -245,8 +245,7 @@
                     generalAlert('Catatan harus diisi ketika tiket ditolak')
                     $('#loketCatatanPpk').focus()
                 } else {
-                    generalAlert('Tiket telah dikembalikan ke unit')
-                    generalAlert('Redirect ke dashboard dalam 5 detik')
+                    generalAlert('Tiket akan dikembalikan ke Unit dan Redirect ke dashboard dalam 5 detik')
                     setTimeout( function () { 
                         $('form').submit()
                     }, 5000)
@@ -279,14 +278,12 @@
                 generalAlert("Silahkan pilih belum/sudahnya SPP")
                 $('#loketSpp').focus()
             } else if ($('#loketSpp').val()=='Belum') {
-                generalAlert("Tiket telah diteruskan ke Bendahara")
-                generalAlert("Redirect ke dashboard dalam 5 detik")
+                generalAlert("Tiket akan diteruskan ke Bendahara dan Redirect ke dashboard dalam 5 detik")
                 setTimeout( function () { 
                     $('form').submit()
                 }, 5000)
             } else {
-                generalAlert("Tiket telah diteruskan ke PPSPM")
-                generalAlert("Redirect ke dashboard dalam 5 detik")
+                generalAlert("Tiket akan diteruskan ke PPSPM dan Redirect ke dashboard dalam 5 detik")
                 setTimeout( function () { 
                     $('form').submit()
                 }, 5000)

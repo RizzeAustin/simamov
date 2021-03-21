@@ -116,7 +116,9 @@ table tr td:first-child::before {
 }
 
 .table-borderless>:not(caption)>*>* {
-    border-bottom-width: 0
+    border-bottom-width: 0;
+    border: none;
+    border-color: red;
 }
 
 .tableTiket {
@@ -156,4 +158,28 @@ table tr td:first-child::before {
 
 .tableTiket>:not(:last-child)>:last-child>* {
     border-bottom-color: currentColor
+}
+
+.borderless {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+}
+
+.borderless th,
+.borderless td {
+    padding: 7px;
+    vertical-align: middle;
+}
+
+.borderless thead th {
+    vertical-align: middle;
+}
+
+.borderless tbody+tbody {
+    border-top: 2px solid #cfd8dc;
+}
+
+.borderless .borderless {
+    background-color: #e4e5e6;
 }

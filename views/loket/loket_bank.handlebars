@@ -270,8 +270,8 @@
 
 {{!-- main script --}}
 <script type="text/javascript">
-    //socket = io.connect($(location).attr('host'));
-    var socket = io();
+    var socket = io.connect($(location).attr('host'));
+    //var socket = io();
 
     //untuk hak akses
     //var user_aktiv = '{{username}}';
@@ -318,14 +318,12 @@
                 generalAlert("Silahkan pilih tanggal transfer")
                 $("#loketTglTransfer").focus()
             } else if ($("#loketMetodeTransfer").val()=="CMS") {
-                generalAlert("Tiket telah diselesaikan")
-                generalAlert("Redirect ke dashboard dalam 5 detik")
+                generalAlert("Tiket akan diselesaikan dan Redirect ke dashboard dalam 5 detik")
                 setTimeout( function () { 
                     $("form").submit()
                 }, 5000)
             } else {
-                generalAlert("Tiket telah diselesaikan, email pemberitahuan akan dikirimkan ke penerima")
-                generalAlert("Redirect ke dashboard dalam 5 detik")
+                generalAlert("Tiket akan diselesaikan, email pemberitahuan akan dikirimkan ke penerima dan Redirect ke dashboard dalam 5 detik")
                 setTimeout( function () { 
                     $("form").submit()
                 }, 5000)
