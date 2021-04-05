@@ -310,7 +310,7 @@
                                         <button id="kirimFormBendaharaOperatorBmn" type="submit" class="btn btn-primary" formaction="loket/bendaharaKirimBmn">Kirim<br><small>(Operator BMN)</small></button>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="loketInputRealisasi" class="btn btn-primary" type="submit" formaction="loket/bendaharaInputRealisasi">Input Realisasi</button>
+                                        <button id="loketInputRealisasi" class="btn btn-primary" type="button">Input Realisasi</button>
                                         <button id="loektInputPajak" class="btn btn-primary" type="submit" formaction="loket/bendaharaInputPajak">Input Pajak</button>
                                     </div>
                                 </div>
@@ -326,10 +326,129 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="entry_modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="modal-remove-lg" style="max-width: 500px;" class="modal-dialog modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Entri Pengeluaran <span class="detail_blnj_entry"></span></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="entri_form" method="post" action="/pok/entry_pengeluaran">
+                <div class="modal-body" style="padding: 0 15px;">
+                    <div style="padding: 15px; padding-bottom: 0">
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label class="radio-inline" for="satu_penerima_radio">
+                                    <input id="satu_penerima_radio" type="radio" name="entri_banyak_penerima" value="0" checked="checked">Satu penerima
+                                </label>
+                                <label class="radio-inline" for="banyak_penerima_radio" style="margin-left: 10px">
+                                    <input type="radio" id="banyak_penerima_radio" name="entri_banyak_penerima" value="1">Banyak penerima
+                                </label>
+                                <label class="radio-inline" for="import_radio" style="margin-left: 10px">
+                                    <input type="radio" id="import_radio" name="entri_banyak_penerima" value="2">Import Data
+                                </label>
+                            </div>
+                        </div>
+                        <div id="fields_form_entry">
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">Jumlah<span> *</span></label>
+                                <div class="col-md-4">
+                                    <input id="entry_jumlah_field" type="text" class="form-control format-uang" autocomplete="off" required>
+                                </div>
+                            </div> 
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">Penerima<span> *</span></label>
+                                <div class="col-md-9">
+                                    <input id="entry_penerima_name_field" type="text" class="form-control penerima-autocomplete" autocomplete="off" required>
+                                    <input id="entry_penerima_id_field" style="display: none;" type="text">
+                                </div>
+                            </div> 
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">Tanggal<span> *</span></label>
+                                <div class="col-md-5">
+                                    <input id="entry_tgl_field" type="text" class="form-control" autocomplete="off" required>
+                                    <input id="entry_tgl_ts_field" style="display: none;" type="text" class="form-control">
+                                </div>
+                            </div> 
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">PPh 21</label>
+                                <div class="col-md-4">
+                                    <input id="pph21" type="text" class="form-control format-uang" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">PPh 22</label>
+                                <div class="col-md-4">
+                                    <input id="pph22" type="text" class="form-control format-uang" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">PPh 23</label>
+                                <div class="col-md-4">
+                                    <input id="pph23" type="text" class="form-control format-uang" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">PPn</label>
+                                <div class="col-md-4">
+                                    <input id="ppn" type="text" class="form-control format-uang" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">No. SPM</label>
+                                <div class="col-md-4">
+                                    <input id="entry_spmno_field" type="text" class="form-control" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">No. Bukti</label>
+                                <div class="col-md-4">
+                                    <input id="entry_buktino_field" type="text" class="form-control" autocomplete="off">
+                                </div>
+                            </div> 
+                            <div class="form-group row">
+                                <label class="col-md-3 form-control-label">Keterangan</label>
+                                <div class="col-md-9">
+                                    <textarea id="entry_ket_field" rows="3" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+                    <button id="entri_submit" type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+
+
 {{!-- autofill form --}}
 <script id="tglPelaksanaan" type="text/x-handlebars-template">
     {{data.tanggal.pelaksanaan}}
 </script>
+
+<script src="/js/handsontable.full.min.js"></script>
+
+<script src="/js/moment.min.js"></script>
+<script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+
+<script src="/js/highcharts.js"></script>
+<script src="/js/data.js"></script>
+<script src="/js/drilldown.js"></script>
+<script src="/js/exporting.js"></script>
+<script src="/js/offline-exporting.js"></script>
 
 {{!-- iterasi select pok --}}
 <script src="/js/LoketFormPok.js"></script>
@@ -339,6 +458,10 @@
     //socket = io.connect($(location).attr('host'));
     var socket = io();
 
+//    var n = '{{data.uraianDetail}}';
+    $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/handsontable.full.min.css"));
+    var sdtid = '{{dt.[0]._id}}';
+    var sdtpagu = '{{dt.[0].jumlah}}';
     //untuk hak akses
     //var user_aktiv = '{{username}}';
 
@@ -354,6 +477,16 @@
         var dok = [{{data.checklist.dokumentasi}}]
         var not = [{{data.checklist.notulensi}}]
         var cv = [{{data.checklist.cvNarasumber}}]
+        var entry_modal = $('#entry_modal');
+        var form_entri_pok = $('#entri_form');
+        var n = $( "#loketDetailPok" ).val();
+        $('#loketDetailPok').on('change', function() {
+            n = this.value
+        });
+        
+//        console.log(dt);
+
+        $('td.format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
         
         if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
         if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
@@ -491,13 +624,882 @@
                 e.preventDefault()
                 $("#loketNilaiTransfer").focus()
             } else {alert("Tiket telah diteruskan ke Operator BMN")}
-        })
+        });
 
         //$("#toDashboard").hide()
         //$("button").click(function(){
         //    $("#toDashboard").show()
         //})
 
+        var detail_id_target;
+//        var sdt = $( "#loketDetailPok" ).val();
+//        var rdt = detail.find( ({ nmitem }) => nmitem === sdt );
+
+        $("#loketForm").on('click', '#loketInputRealisasi', function () {
+            detail_id_target = sdtid;
+            $('.detail_blnj_entry').html(n)
+            $('#pagu_entry_form').html(sdtpagu)
+            entry_modal.modal('show');
+        });
+
+        $(".penerima-autocomplete").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
+             $('#entry_penerima_id_field').val(datum._id);
+        });
+
+        $('#entry_tgl_field').datetimepicker({
+            locale: 'id',
+            format: 'D MMMM YYYY',
+            useCurrent: false,
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'bottom'
+            }
+        });
+
+        $('#entry_tgl_field').on('dp.change', function(e){
+            var y = new Date().getFullYear();
+             if(e.date) $('#entry_tgl_ts_field').val(e.date.unix())
+        });
+
+        function registerTypeaheadEntryElement(){
+            $('.penerima-autocomplete').typeahead({
+                    hint: true,
+                    highlight: true,
+                    minLength: 1
+                }, {
+                    source: function(q, p){
+                            {
+                                socket.emit('penerima_list', q, function (data) {
+                                    return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                                });
+                            }
+                    }
+                }
+            );
+        
+            $(".penerima-autocomplete").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
+                 $('#entry_penerima_id_field').val(datum._id);
+            });
+
+            $('#entry_tgl_field').datetimepicker({
+                locale: 'id',
+                format: 'D MMMM YYYY',
+                useCurrent: false,
+                widgetPositioning: {
+                    horizontal: 'left',
+                    vertical: 'bottom'
+                }
+            });
+
+            $('#entry_tgl_field').on('dp.change', function(e){
+                 if(e.date) $('#entry_tgl_ts_field').val(e.date.unix())
+            });
+
+        }
+
+        $('.penerima-autocomplete').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('penerima_list', q, function (data) {
+                                return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        var import_data_entry;
+        $("input[name='entri_banyak_penerima']").change(function(e){
+            import_data_entry = null;
+            var s = $(this).val();
+            if(s == '1') {
+                $('#modal-remove-lg').css('max-width', '')
+                $('#modal-remove-lg').addClass('modal-lg');
+                var show = '<div style="height: 480px;position:relative;">'
+                            +    '<div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">Alokasi dana</label>'
+                            +            '<div class="col-md-9">'
+                            +                '<label class="radio-inline" for="alokasi_sama_radio">'
+                            +                    '<input id="alokasi_sama_radio" type="radio" name="entri_alokasi" value="0" checked="checked">Beda'
+                            +                '</label>'
+                            +                '<label class="radio-inline" for="alokasi_beda_radio">'
+                            +                    '<input id="alokasi_beda_radio" type="radio" name="entri_alokasi" value="1" style="margin-left: 10px">Sama'
+                            +                '</label>'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">Jumlah<span> *</span></label>'
+                            +            '<div class="col-md-2">'
+                            +                '<input id="entry_jumlah_field" type="text" class="form-control format-uang" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">Penerima<span> *</span></label>'
+                            +            '<div class="col-md-4">'
+                            +                    '<input id="entry_penerima_name_field" type="text" class="form-control penerima-autocomplete" autocomplete="off">'
+                            +                    '<span id="plus-button-alokasi-sama-bagi" class="input-group-btn">'
+                            +                        '<button id="btn-plus-sama-bagi" type="button" class="btn btn-primary">+</button>'
+                            +                    '</span>'
+                            +                    '<input id="entry_penerima_id_field" style="display: none;" type="text">'
+                            +           '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">Tanggal<span> *</span></label>'
+                            +            '<div class="col-md-3">'
+                            +                '<input id="entry_tgl_field" type="text" class="form-control" autocomplete="off">'
+                            +                '<input id="entry_tgl_ts_field" style="display: none;" type="text" class="form-control">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">PPh 21</label>'
+                            +            '<div class="col-md-2">'
+                            +                '<input id="pph21" type="text" class="form-control format-uang" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">PPh 22</label>'
+                            +            '<div class="col-md-2">'
+                            +                '<input id="pph22" type="text" class="form-control format-uang" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">PPh 23</label>'
+                            +            '<div class="col-md-2">'
+                            +                '<input id="pph23" type="text" class="form-control format-uang" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">PPn</label>'
+                            +            '<div class="col-md-2">'
+                            +                '<input id="ppn" type="text" class="form-control format-uang" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">No. SPM</label>'
+                            +            '<div class="col-md-2">'
+                            +                '<input id="entry_spmno_field" type="text" class="form-control" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">No. Bukti</label>'
+                            +            '<div class="col-md-2">'
+                            +               '<input id="entry_buktino_field" type="text" class="form-control" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +           '<label class="col-md-2 form-control-label">Keterangan</label>'
+                            +            '<div class="col-md-5">'
+                            +                '<textarea id="entry_ket_field" rows="3" class="form-control"></textarea>'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div id="tambah-button-alokasi-beda" class="form-group row">'
+                            +            '<div class="col-md-12">'
+                            +                '<button id="btn-alokasi-beda" type="button">Tambah</button>'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="row">'
+                            +            '<div class="col-md-12">'
+                            +                '<table id="tbl_tambah_penerima" class="table" cellspacing="0" width="100%">'
+                            +                    '<thead>'
+                            +                       ' <tr>'
+                            +                            '<th>Tgl_ts</th>'
+                            +                            '<th>Penerima_id</th>'
+                            +                            '<th class="default-sort-column">No.</th>'
+                            +                            '<th>Tanggal</th>'
+                            +                            '<th>Penerima</th>'
+                            +                            '<th>Jumlah</th>'
+                            +                            '<th>PPh 21</th>'
+                            +                            '<th>PPh 22</th>'
+                            +                            '<th>PPh 23</th>'
+                            +                            '<th>PPn</th>'
+                            +                            '<th>Nmr SPM</th>'
+                            +                            '<th>Nmr Bukti</th>'
+                            +                            '<th>Ket</th>'
+                            +                            '<th>Pilihan</th>'
+                            +                        '</tr>'
+                            +                    '</thead>'
+                            +                    '<tbody>'                     
+                            +                    '</tbody>'
+                            +                '</table>'
+                            +            '</div>'
+                            +        '</div>'
+                            +    '</div>'
+                            +'</div>'
+                $('#fields_form_entry').html(
+                    show
+                )
+
+                var jenis_alokasi = $("input[name='entri_alokasi']").val();
+                if( jenis_alokasi == '0') {
+                    $('#plus-button-alokasi-sama-bagi').hide();
+                    $('#tambah-button-alokasi-beda').show();
+                } else { 
+                    $('#plus-button-alokasi-sama-bagi').show();
+                    $('#tambah-button-alokasi-beda').hide();
+                }
+
+                //register datatable & editable table daftar penerima
+                var tbl_tambah_penerima = $("#tbl_tambah_penerima");
+                tbl_tambah_penerima.DataTable({
+                    // scrollY:        false,
+                    // scrollX:        true,
+                    // scrollCollapse: true,
+                    // fixedColumns:   {
+                    //     leftColumns: 3,
+                    //     rightColumns: 1
+                    // },
+                    columnDefs: [
+                        {
+                            "targets": [ 0,1 ],
+                            "visible": false,
+                            "searchable": false
+                        }
+                    ],
+                    aaSorting: [],
+                    rowReorder: {
+                        enable: false
+                    },
+                    paging: false,
+                    createdRow: function( row, data, dataIndex ) {
+                        if(!data[6]){
+                            $( row ).find('td:eq(4)').text('-');
+                        }
+                        if(!data[7]){
+                            $( row ).find('td:eq(5)').text('-');
+                        }
+                        if(!data[8]){
+                            $( row ).find('td:eq(6)').text('-');
+                        }
+                        if(!data[9]){
+                            $( row ).find('td:eq(7)').text('-');
+                        }
+                        if(!data[10]){
+                            $( row ).find('td:eq(8)').text('-');
+                        }
+                        if(!data[11]){
+                            $( row ).find('td:eq(9)').text('-');
+                        }
+                        if(!data[12]){
+                            $( row ).find('td:eq(10)').text('-');
+                        }
+                        if(!data[13]){
+                            $( row ).find('td:eq(11)').text('-');
+                        }
+                        $( row ).find('td:eq(0)').attr('class', 'text-center').text(dataIndex+1);
+                        $( row ).find('td:eq(1)').attr('class', 'text-center');
+                        $( row ).find('td:eq(3)').attr('class', 'format-uang');
+                        $( row ).find('td:eq(4)').attr('class', 'format-uang');
+                        $( row ).find('td:eq(5)').attr('class', 'format-uang');
+                        $( row ).find('td:eq(6)').attr('class', 'format-uang');
+                        $( row ).find('td:eq(7)').attr('class', 'format-uang');
+                        $( row ).find('td:eq(8)').attr('class', 'text-center');
+                        $( row ).find('td:eq(9)').attr('class', 'text-center');
+                        $( row ).find('td:eq(11)').attr('class', 'text-center');
+                    }
+                });
+                $('#entry_jumlah_field').focus();
+                registerTypeaheadEntryElement();
+            } else if(s == '0'){
+                $('#modal-remove-lg').css('max-width', '500px')
+                $('#modal-remove-lg').removeClass('modal-lg');
+                    var satu_penerima_fields = '<div class="form-group row">'
+                            +    '<label class="col-md-3 form-control-label">Jumlah<span> *</span></label>'
+                            +    '<div class="col-md-4">'
+                            +        '<input id="entry_jumlah_field" type="text" class="form-control format-uang" autocomplete="off" required>'
+                            +    '</div>'
+                            +'</div>' 
+                            +'<div class="form-group row">'
+                            +    '<label class="col-md-3 form-control-label">Penerima<span> *</span></label>'
+                            +    '<div class="col-md-9">'
+                            +        '<input id="entry_penerima_name_field" type="text" class="form-control penerima-autocomplete" autocomplete="off" required>'
+                            +        '<input id="entry_penerima_id_field" style="display: none;" type="text">'
+                            +    '</div>'
+                            +'</div>' 
+                            +'<div class="form-group row">'
+                            +    '<label class="col-md-3 form-control-label">Tanggal<span> *</span></label>'
+                            +    '<div class="col-md-5">'
+                            +        '<input id="entry_tgl_field" type="text" class="form-control" autocomplete="off" required>'
+                            +        '<input id="entry_tgl_ts_field" style="display: none;" type="text" class="form-control">'
+                            +    '</div>'
+                            +'</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-3 form-control-label">PPh 21</label>'
+                            +            '<div class="col-md-4">'
+                            +                '<input id="pph21" type="text" class="form-control format-uang" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-3 form-control-label">PPh 22</label>'
+                            +            '<div class="col-md-4">'
+                            +                '<input id="pph22" type="text" class="form-control format-uang" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-3 form-control-label">PPh 23</label>'
+                            +            '<div class="col-md-4">'
+                            +                '<input id="pph23" type="text" class="form-control format-uang" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-3 form-control-label">PPn</label>'
+                            +            '<div class="col-md-4">'
+                            +                '<input id="ppn" type="text" class="form-control format-uang" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +'<div class="form-group row">'
+                            +    '<label class="col-md-3 form-control-label">No. SPM</label>'
+                            +    '<div class="col-md-4">'
+                            +        '<input id="entry_spmno_field" type="text" class="form-control" autocomplete="off">'
+                            +    '</div>'
+                            +'</div>'
+                            +'<div class="form-group row">'
+                            +    '<label class="col-md-3 form-control-label">No. Bukti</label>'
+                            +    '<div class="col-md-4">'
+                            +        '<input id="entry_buktino_field" type="text" class="form-control" autocomplete="off">'
+                            +    '</div>'
+                            +'</div>' 
+                            +'<div class="form-group row">'
+                            +    '<label class="col-md-3 form-control-label">Keterangan</label>'
+                            +    '<div class="col-md-9">'
+                            +        '<textarea id="entry_ket_field" rows="3" class="form-control"></textarea>'
+                            +    '</div>'
+                            +'</div>'
+                $('#fields_form_entry').html(
+                    satu_penerima_fields
+                )
+                $('#entry_jumlah_field').focus();
+                registerTypeaheadEntryElement();
+            } else {
+                $('#modal-remove-lg').css('max-width', '')
+                $('#modal-remove-lg').addClass('modal-lg');
+                var show = '<div style="height: 480px;position:relative;">'
+                            +    '<div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">Tanggal<span> *</span></label>'
+                            +            '<div class="col-md-3">'
+                            +                '<input id="entry_tgl_field" type="text" class="form-control" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">No. SPM</label>'
+                            +            '<div class="col-md-2">'
+                            +                '<input id="entry_spmno_field" type="text" class="form-control" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<label class="col-md-2 form-control-label">No. Bukti</label>'
+                            +            '<div class="col-md-2">'
+                            +               '<input id="entry_buktino_field" type="text" class="form-control" autocomplete="off">'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +           '<label class="col-md-2 form-control-label">Keterangan</label>'
+                            +            '<div class="col-md-5">'
+                            +                '<textarea id="entry_ket_field" rows="3" class="form-control"></textarea>'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<div class="col-md-12">'
+                            +                '<button id="btn-set-import-data" type="button">Set</button>'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="form-group row">'
+                            +            '<div class="col-md-12">'
+                            +                '<p>Jumlah: <span id="jumlah-spreadsheed"></span></p>'
+                            +            '</div>'
+                            +        '</div>'
+                            +        '<div class="row">'
+                            +            '<div class="col-md-12">'
+                            +                '<div id="spreadsheet_entry" style="height: 640px; width: 1200px; overflow: auto;">'
+                            +                '</div>'
+                            +            '</div>'
+                            +        '</div>'
+                            +    '</div>'
+                            +'</div>'
+                $('#fields_form_entry').html(
+                    show
+                )              
+
+                $('#entry_tgl_field').datetimepicker({
+                    locale: 'id',
+                    format: 'D MMMM YYYY',
+                    useCurrent: false,
+                    widgetPositioning: {
+                        horizontal: 'left',
+                        vertical: 'bottom'
+                    }
+                });
+
+                var new_entry = {};
+                new_entry._id = detail_id_target;
+                new_entry.timestamp = Math.round(new Date().getTime()/1000);
+                new_entry.month = $('#bulan_realisasi').val();
+
+                var container = document.getElementById('spreadsheet_entry');
+
+                import_data_entry = new Handsontable(container, {
+                  data: [],
+                  dataSchema: {tgl_timestamp: null, penerima_id: null, tgl: null, penerima_nama: null,
+                    jumlah: null, pph21 : null, pph22 : null, pph23 : null, ppn : null, spm_no : null, bukti_no : null, ket : null},
+                  rowHeaders: true,
+                  colHeaders: true,
+                  startCols: 10,
+                  minCols: 10,
+                  maxCols: 10,
+                  colWidths: [125, 200, 93, 93, 93, 93, 93, 93, 93, 95],
+                  manualColumnResize: true,
+                  minSpareRows: 1,
+                  colHeaders: ["Tanggal", "Penerima", "Jumlah", "PPh 21", "PPh 22", "PPh 23", "PPn", "Nmr SPM", "Nmr Bukti", "Ket"],
+                  columns: [
+                    {data: 'tgl', readOnly: true},
+                    {
+                        type: 'autocomplete',
+                        source: function (query, process) {
+                            socket.emit('penerima_list', {'query': query, 'type': 'all'}, function (data) {
+                                // return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                                process(_.map(data, function(peg){ return peg.nama}));
+                            });
+                        },
+                        data: 'penerima_nama',
+                        strict: false
+                    },
+                    {data: 'jumlah', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
+                    {data: 'pph21', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
+                    {data: 'pph22', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
+                    {data: 'pph23', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
+                    {data: 'ppn', format: '_(* #,##0_);_(* (#,##0);_(* "-"_);_(@_)', type: 'numeric'},
+                    {data: 'spm_no'},
+                    {data: 'bukti_no'},
+                    {data: 'ket'},
+                    {data: 'tgl_timestamp'},
+                    {data: 'penerima_id'}
+                  ],
+                  hiddenColumns: {
+                      columns: [0, 1]
+                    },
+                  contextMenu: true
+                });
+
+                Handsontable.hooks.add('afterChange', function(changes, source){
+                    var jumlah = 0;
+                    if(!import_data_entry) return;
+                    var data = import_data_entry.getSourceData();
+                    _.each(changes, function(change, index, list){
+                        if(_.contains(['jumlah', 'pph21', 'pph22', 'pph23', 'ppn'], change[1])){
+                            if (typeof change[3] === 'string' || change[3] instanceof String)
+                                data[change[0]][change[1]] = change[3].replace(/\D/g, '')
+
+                            if(data[change[0]][change[1]] < 0) data[change[0]][change[1]] *= -1;
+                        }
+                    })
+                    import_data_entry.render();
+                    if(import_data_entry.getSourceData()[0].tgl_timestamp){
+                        _.each(changes, function(change, index, list){
+                            if((change[3] == '' && (change[1] == 'penerima_nama' || change[1] == 'jumlah'))
+                                    || !import_data_entry.getSourceData()[change[0]].penerima_nama ||
+                                    !import_data_entry.getSourceData()[change[0]].jumlah){
+                                data[change[0]].tgl_timestamp = ''
+                                data[change[0]].tgl = ''
+                                return;
+                            }
+                            data[change[0]].tgl_timestamp = data[0].tgl_timestamp
+                            data[change[0]].tgl = data[0].tgl
+                        });
+                        import_data_entry.render();                        
+                    }
+                    _.each(import_data_entry.getSourceData(), function(row, index, list){
+                        jumlah += getNumber(row.jumlah || 0);
+                    });
+                    $('#jumlah-spreadsheed').text(formatUang(jumlah));
+                });
+
+                $('#btn-set-import-data').click(function(e){
+                    if(import_data_entry){
+                        var data = import_data_entry.getSourceData();
+                        _.each(data, function(new_entry, index, list){
+                            if(index == data.length - 1) return;
+                            if(!new_entry.penerima_nama) return;
+                            if($('#entry_tgl_field').data('DateTimePicker').date()) new_entry.tgl_timestamp = $('#entry_tgl_field').data('DateTimePicker').date().unix();
+                            new_entry.spm_no = $('#entry_spmno_field').val();
+                            // new_entry.pph21 = $('#pph21').val();
+                            // new_entry.pph22 = $('#pph22').val();
+                            // new_entry.pph23 = $('#pph23').val();
+                            new_entry.ppn = $('#ppn').val();
+                            new_entry.tgl = $('#entry_tgl_field').val();
+                            new_entry.bukti_no = $('#entry_buktino_field').val();
+                            new_entry.ket = $('#entry_ket_field').val();
+                        });
+                        import_data_entry.render();
+                    }
+                });
+
+            }
+        });
+
+        //Inline editor tambah penerima banyak
+        var state_active_editor_tbh_penerima = false;
+        var editor_tbh_penerima;
+        var active_tbh_penerima;
+        $('#fields_form_entry').on('dblclick', 'table#tbl_tambah_penerima tr td', function () {
+            active_tbh_penerima = $(this);
+            if(state_active_editor_tbh_penerima || active_tbh_penerima.is(':nth-child(1)') || active_tbh_penerima.is(':nth-child(12)')){
+                $.toast({
+                    text: 'Anda tidak dapat mengedit sel tersebut.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                })
+                return;
+            }
+            state_active_editor_tbh_penerima = true;
+            var cloneProperties = ['padding', 'padding-top', 'padding-bottom', 'padding-left', 'padding-right',
+                          'text-align', 'font', 'font-size', 'font-family', 'font-weight',
+                          'border', 'border-top', 'border-bottom', 'border-left', 'border-right'];
+            if(active_tbh_penerima.hasClass('format-uang')){
+                editor_tbh_penerima = $('<input type="text" class="format-uang">').val(getNumber(active_tbh_penerima.text())).hide().appendTo(active_tbh_penerima.parent());
+            } else if(active_tbh_penerima.is(':nth-child(2)')) {
+                editor_tbh_penerima = $('<input type="text" class="date">').val(active_tbh_penerima.text()).hide().appendTo(active_tbh_penerima.parent());
+                editor_tbh_penerima.datetimepicker({
+                    locale: 'id',
+                    format: 'D MMMM YYYY',
+                    useCurrent: false,
+                    widgetPositioning: {
+                        horizontal: 'left',
+                        vertical: 'top'
+                    }
+                });
+            }  else if(active_tbh_penerima.is(':nth-child(3)')) {
+                editor_tbh_penerima = $('<input type="text" class="penerima-autocomplete">').val(active_tbh_penerima.text()).hide().appendTo(active_tbh_penerima.parent());
+                editor_tbh_penerima.typeahead({
+                        hint: true,
+                        highlight: true,
+                        minLength: 1
+                    }, {
+                        source: function(q, p){
+                                {
+                                    socket.emit('penerima_list', q, function (data) {
+                                        return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                                    });
+                                }
+                        }
+                    }
+                );
+                active_tbh_penerima.css('visibility','hidden');
+            } else {
+                editor_tbh_penerima = $('<textarea></textarea>').val(active_tbh_penerima.text()).hide().appendTo(active_tbh_penerima.parent());
+            }
+
+            editor_tbh_penerima.css('position', 'absolute');
+            editor_tbh_penerima
+                .show()
+                .offset(active_tbh_penerima.offset())
+                .css(active_tbh_penerima.css(cloneProperties))
+                .width(active_tbh_penerima.width())
+                .height(active_tbh_penerima.height())
+                .focus();
+            editor_tbh_penerima.select();
+        });
+
+        var date_field_timestamp_temp_tbh_penerima; //temp nilai timestamp tgl utk edit penerima
+        $('#fields_form_entry').on('dp.change', '.date', function(e){
+            date_field_timestamp_temp_tbh_penerima = e.date.unix();
+        });
+
+        var penerima_id_temp_tbh_penerima;
+        $('#fields_form_entry').on("typeahead:selected typeahead:autocompleted", ".penerima-autocomplete", function(e,datum) {
+             penerima_id_temp_tbh_penerima = datum._id;
+        });
+
+        $('#fields_form_entry').on('blur keydown', 'table#tbl_tambah_penerima input, table#tbl_tambah_penerima textarea', function (e) {
+            //jika enter anggap blur (krn klo tidak, di fired 2 kali)
+            if (e.which === 13){
+                $(this).blur();
+            } else if (e.which === 0){//jika blur ==> keycode nya 0
+                if(!active_tbh_penerima) return;
+                if(editor_tbh_penerima.val() !== active_tbh_penerima.text()){
+                    if(editor_tbh_penerima.val() == ''){
+                        editor_tbh_penerima.val('-');
+                    }
+                    
+                    if(active_tbh_penerima.is(':nth-child(2)')) {
+                        var row = $('#tbl_tambah_penerima').DataTable().row(active_tbh_penerima.closest('tr'));
+                        var data_temp = row.data();
+                        data_temp[0] = date_field_timestamp_temp_tbh_penerima;
+                        data_temp[2] = active_tbh_penerima.prev().text();
+                        data_temp[3] = editor_tbh_penerima.val();
+                        row.data(data_temp).draw(false);
+                    } else if(active_tbh_penerima.is(':nth-child(3)')) {
+                        active_tbh_penerima.css('visibility','visible');
+                        var row = $('#tbl_tambah_penerima').DataTable().row(active_tbh_penerima.closest('tr'));
+                        var data_temp = row.data();
+                        data_temp[1] = penerima_id_temp_tbh_penerima;
+                        data_temp[2] = active_tbh_penerima.prev().prev().text();
+                        data_temp[4] = editor_tbh_penerima.val();
+                        row.data(data_temp).draw(false);
+                    } else {
+                        $('#tbl_tambah_penerima').DataTable()
+                            .cell(active_tbh_penerima)
+                            .data(editor_tbh_penerima.val())
+                            .draw(false);  
+                    }                                    
+                }
+                active_tbh_penerima = null;
+                state_active_editor_tbh_penerima = false;
+                editor_tbh_penerima.hide();
+            } else if(e.which === 27){
+                active_tbh_penerima = null;
+                state_active_editor_tbh_penerima = false;
+                editor_tbh_penerima.hide();
+            }
+        });
+
+        //form entri - banyak penerima: jenis alokasi
+        $('#plus-button-alokasi-sama-bagi').hide();
+        entry_modal.on('change', "input[name='entri_alokasi']", function () {
+            var jenis_alokasi = $(this).val();
+            if( jenis_alokasi == '0') {
+                $('#plus-button-alokasi-sama-bagi').hide();
+                $('#tambah-button-alokasi-beda').show();
+            } else { 
+                $('#plus-button-alokasi-sama-bagi').show();
+                $('#tambah-button-alokasi-beda').hide();
+            }
+        });
+
+        function checkField(){
+            if($("#entry_tgl_field").val() == ''||$("#entry_penerima_name_field").val() == ''|| $("#entry_jumlah_field").val()== ''){
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        //form entri - banyak penerima: plus btn
+        entry_modal.on('click', "#btn-plus-sama-bagi", function () {
+            if(!checkField()){
+                $.toast({
+                    text: 'Mohon cek isian wajib.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                })
+                return;
+            }
+            var tbl_tambah_penerima = $("#tbl_tambah_penerima");
+            tbl_tambah_penerima.DataTable().row.add( [
+                $("#entry_tgl_ts_field").val(),
+                $("#entry_penerima_id_field").val(),
+                '',
+                $("#entry_tgl_field").val(),
+                $("#entry_penerima_name_field").val(),
+                $("#entry_jumlah_field").val(),
+                $("#pph21").val(),
+                $("#pph22").val(),
+                $("#pph23").val(),
+                $("#ppn").val(),
+                $("#entry_spmno_field").val(),
+                $("#entry_buktino_field").val(),
+                $("#entry_ket_field").val(),
+                '<button type="button" class="del-penerima-tbl"><i class="icon-close"></i></button>'
+            ] ).draw( false );
+            $("#entry_penerima_name_field").val('');
+            $("#entry_penerima_id_field").val('');
+            $("#entry_penerima_name_field").focus();
+        });
+        //form entri - banyak penerima: tambah btn
+        entry_modal.on('click', "#btn-alokasi-beda", function () {
+            if(!checkField()){
+                $.toast({
+                    text: 'Mohon cek isian wajib.',
+                    textAlign: 'left', 
+                    hideAfter: 1000,
+                    loader: false,
+                    position: 'bottom-right',
+                    allowToastClose: false
+                })
+                return;
+            }
+            var tbl_tambah_penerima = $("#tbl_tambah_penerima");
+            tbl_tambah_penerima.DataTable().row.add( [
+                $("#entry_tgl_ts_field").val(),
+                $("#entry_penerima_id_field").val(),
+                '',
+                $("#entry_tgl_field").val(),
+                $("#entry_penerima_name_field").val(),
+                $("#entry_jumlah_field").val(),
+                $("#pph21").val(),
+                $("#pph22").val(),
+                $("#pph23").val(),
+                $("#ppn").val(),
+                $("#entry_spmno_field").val(),
+                $("#entry_buktino_field").val(),
+                $("#entry_ket_field").val(),
+                '<button type="button" class="del-penerima-tbl"><i class="icon-close"></i></button>'
+            ] ).draw( false );
+            $("#entry_jumlah_field").val('');
+            $("#entry_penerima_name_field").val('');
+            $("#entry_tgl_field").val('');
+            $('#entry_jumlah_field').focus();
+        });
+        //form entri - banyak penerima: hapus pggna btn
+        entry_modal.on('click', ".del-penerima-tbl", function () {
+            // var item = $(this).closest('tr');
+            // item.remove();
+            $("#tbl_tambah_penerima").DataTable().row( $(this).parents('tr') )
+            .remove()
+            .draw(false);
+        });
+
+        //submit entry
+        form_entri_pok.on('submit', function(e) {
+            e.preventDefault();
+            $("#entri_submit").prop("disabled",true);
+            $("#entri_submit").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i> '+$("#entri_submit").text());
+            var s = $("input[name='entri_banyak_penerima']:checked").val();
+
+            if(s == '0'){
+                var new_entry = {};
+                new_entry._id = detail_id_target;
+                var spm = $("#entry_spmno_field").val();
+                var tgl_ = $("#entry_tgl_field").val()
+                //init autonumeric spy bisa get unformatted[workaround]
+                $('#pph21, #pph22, #pph23, #ppn').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                new_entry.data = {
+                    timestamp: Math.round(new Date().getTime()/1000),
+                    jumlah : $("#entry_jumlah_field").autoNumeric('getNumber'),
+                    penerima_id : $("#entry_penerima_id_field").val(),
+                    tgl_timestamp : $('#entry_tgl_field').data('DateTimePicker').date().unix(),
+                    tgl : $("#entry_tgl_field").val(),
+                    penerima_nama : $("#entry_penerima_name_field").val(),
+                    pph21 : $("#pph21").autoNumeric('getNumber'),
+                    pph22 : $("#pph22").autoNumeric('getNumber'),
+                    pph23 : $("#pph23").autoNumeric('getNumber'),
+                    ppn : $("#ppn").autoNumeric('getNumber'),
+                    spm_no : spm,
+                    bukti_no : $("#entry_buktino_field").val(),
+                    ket : $("#entry_ket_field").val()
+                }
+                new_entry.month = $('#bulan_realisasi').val();
+                socket.emit('entry_submit', new_entry, function(status){
+                    $("#entri_submit").html('Simpan');
+                    form_entri_pok[0].reset();
+                    $("#entry_spmno_field").val(spm)
+                    $("#entry_tgl_field").val(tgl_)
+                    $('#entry_penerima_id_field').val('');
+                    $('#entry_jumlah_field').focus();
+                    $("#entri_submit").prop("disabled",false);
+                    if(status == 'sukses'){
+                        //generalAlert('Berhasil disimpan.');
+                    } else {
+                        generalAlert(status);
+                    }
+                })
+            } else if(s == '1'){
+                var rows = $("#tbl_tambah_penerima").DataTable().rows();
+                if(rows.nodes().to$().length == 0){
+                    generalAlert('Belum ada data yang diiput.')
+                    $("#entri_submit").html('Simpan');
+                    $("#entri_submit").prop("disabled",false);
+                    return;
+                }
+                var current_timestamp = Math.round(new Date().getTime()/1000);
+                _.each(rows.nodes().to$(), function(row, index, list){
+                    var data = $("#tbl_tambah_penerima").DataTable().row(row).data();
+                    var new_entry = {};
+                    new_entry._id = detail_id_target;
+                    new_entry.data = {
+                        timestamp: current_timestamp,
+                        jumlah : getNumber(data[5]),
+                        pph21 : getNumber(data[6]),
+                        pph22 : getNumber(data[7]),
+                        pph23 : getNumber(data[8]),
+                        ppn : getNumber(data[9]),
+                        penerima_id : data[1],
+                        tgl_timestamp : data[0],
+                        tgl : data[3],
+                        penerima_nama : data[4],
+                        spm_no : data[10],
+                        bukti_no : data[11],
+                        ket : data[12]
+                    }
+                    new_entry.month = $('#bulan_realisasi').val();
+                    socket.emit('entry_submit', new_entry, function(status){
+                        $("#entri_submit").html('Simpan');
+                        $("#entri_submit").prop("disabled",false);
+                        if(status == 'sukses'){
+                            //generalAlert('Berhasil disimpan.');
+                        } else {
+                            generalAlert(status);
+                        }
+                    })
+                });
+                $("#tbl_tambah_penerima").DataTable().clear().draw(false);
+            } else {
+                var data = import_data_entry.getSourceData();
+                if(data.length < 2){
+                    generalAlert('Belum ada data yang diiput.')
+                    $("#entri_submit").html('Simpan');
+                    $("#entri_submit").prop("disabled",false);
+                    return;
+                }
+                for (var i = data.length-2; i > -1; i--) {
+                    if(isNotSaveable(data[i].tgl) && isNotSaveable(data[i].penerima_nama) && isNotSaveable(data[i].jumlah)){
+                        import_data_entry.alter('remove_row', i);
+                        continue;
+                    }
+                    if(isNotSaveable(data[i].tgl)){
+                        generalAlert('Baris '+(i+1)+': Tanggal blm terisi.')
+                        $("#entri_submit").html('Simpan');
+                        $("#entri_submit").prop("disabled",false);
+                        return;
+                    }
+                    if(isNotSaveable(data[i].penerima_nama)){
+                        generalAlert('Baris '+(i+1)+': Penerima blm terisi')
+                        $("#entri_submit").html('Simpan');
+                        $("#entri_submit").prop("disabled",false);
+                        return;
+                    }
+                    if(isNotSaveable(data[i].jumlah)){
+                        generalAlert('Baris '+(i+1)+': Jumlah kosong/nol')
+                        $("#entri_submit").html('Simpan');
+                        $("#entri_submit").prop("disabled",false);
+                        return;
+                    }
+                }
+
+                var new_entry = {};
+                new_entry.data = data;
+                new_entry.timestamp = Math.round(new Date().getTime()/1000);
+                new_entry._id = detail_id_target;
+                new_entry.month = $('#bulan_realisasi').val();
+                new_entry.import = true;
+
+                socket.emit('entry_submit', new_entry, function(status){
+                    $("#entri_submit").html('Simpan');
+                    $("#entri_submit").prop("disabled",false);
+
+                    if(status == 'sukses'){
+                        import_data_entry.updateSettings({
+                            data : []
+                        });
+                        //generalAlert('Berhasil disimpan.');
+                    } else {
+                        generalAlert(status);
+                    }
+                })
+            }
+        });
+
     });
+
 
 </script>

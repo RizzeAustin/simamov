@@ -35,7 +35,7 @@
         "jszip": "2.6.1",
         "moment": "^2.29.1",
         "mongodb": "2.2.24",
-        "mongoose": "4.10.2",
+        "mongoose": "^4.10.2",
         "mongoose-auto-increment": "^5.0.1",
         "mongoose-type-email": "^1.1.2",
         "morgan": "^1.10.0",

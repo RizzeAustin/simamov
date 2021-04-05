@@ -222,6 +222,7 @@
                                                     <th class="tipe">Tipe</th>
                                                     <th class="default-sort-column">Kode</th>
                                                     <th class="uraian">Uraian</th>
+                                                    <th class="unit">Unit</th>
                                                     <th>Volume</th>
                                                     <th>Satuan</th>
                                                     <th>Harga Satuan</th>
@@ -398,6 +399,82 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+
+
+<div class="modal fade" id="refisi_modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="modal-remove-lg" style="max-width: 500px;" class="modal-dialog modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Riwayat Perubahan <span class="detail_blnj_entry"></span></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <table id="pok_table_refisi" class="table table-bordered" width="100%">
+                <thead>
+                    <tr>
+                        <th>Revisi</th>
+                        <th>Uraian</th>
+                        <th>Volume</th>
+                        <th>Satuan</th>
+                        <th>Haraga Satuan</th>
+                        <th>Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody>             
+                </tbody>
+            </table>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<div class="modal fade" id="unit_modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="modal-remove-lg" style="max-width: 500px;" class="modal-dialog modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Unit <span class="detail_unit"></span></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="unit_form" method="post" action="/pok/upunit">
+                <div class="modal-body" style="padding: 0 15px;">
+                    <div style="padding: 15px; padding-bottom: 0">
+                        <div id="fields_form_unit">
+                            <input type="checkbox" class="unitCheckbox" id="unit1" name="unit1" value="BAU">
+                            <label for="unit1"> BAU</label><br>
+                            <input type="checkbox" class="unitCheckbox" id="unit2" name="unit2" value="BAAK">
+                            <label for="unit2"> BAAK</label><br>
+                            <input type="checkbox" class="unitCheckbox" id="unit3" name="unit3" value="PRODI">
+                            <label for="unit3"> PRODI</label><br>
+                            <input type="checkbox" class="unitCheckbox" id="unit4" name="unit4" value="UPPPM">
+                            <label for="unit4"> UPPPM</label><br>
+                            <input type="checkbox" class="unitCheckbox" id="unit5" name="unit5" value="SPM">
+                            <label for="unit5"> SPM</label><br>
+                            <input type="checkbox" class="unitCheckbox" id="unit6" name="unit6" value="Perpustakaan">
+                            <label for="unit6"> Perpustakaan</label><br>
+                            <input type="checkbox" class="unitCheckbox" id="unit7" name="unit7" value="IT">
+                            <label for="unit7"> IT</label><br>
+                            <input type="checkbox" class="unitCheckbox" id="unit8" name="unit8" value="Lainnya">
+                            <label for="unit8"> Lainnya</label><br>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+                    <button id="unit_submit" type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
 
 <div class="modal fade" id="riwayat_modal" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
     <div class="modal-dialog modal-primary modal-lg" role="document">
@@ -869,6 +946,7 @@
 </div>
 <!-- /.modal -->
 
+
 <script src="/js/handsontable.full.min.js"></script>
 
 <script src="/js/moment.min.js"></script>
@@ -881,6 +959,8 @@
 <script src="/js/exporting.js"></script>
 <script src="/js/offline-exporting.js"></script>
 
+<script src="js/select2.js"></script>  
+
 <script type="text/javascript">
     socket = io.connect($(location).attr('host'));
 
@@ -891,6 +971,8 @@
 
 
     $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/handsontable.full.min.css"));
+    $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css"));
+    $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/select2.css"));
     /////////// UMUM ////////////
     //plug in
     //reset sorting table
@@ -912,6 +994,7 @@
             oSettings.oApi._fnReDraw( oSettings );
         };
 
+
         //format uang
         $('td.format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
 
@@ -925,9 +1008,13 @@
         var form_tbh_pok = $('#tambah_item_pok');
         var form_entri_pok = $('#entri_form');
         var form_pok_unggah = $('#form_pok_unggah');
+        var form_edit_unit = $('#unit_form');
         //modal
         var entry_modal = $('#entry_modal');
         var riwayat_modal = $('#riwayat_modal');
+        var refisi_modal = $('#refisi_modal');
+        var unit_modal = $('#unit_modal');
+
 
         ////////// ENTRY
         //search & sort
@@ -981,6 +1068,7 @@
                 $( row ).find('td:eq(11)').attr('class', 'format-uang');
             }
         });
+        
 
         tabel_riwayat.DataTable({
             columnDefs: [
@@ -1341,8 +1429,73 @@
             }
         })
 
-        //Tombol entry
+        //Tombol refisi
         var detail_id_target;
+        tabel_pok_entry.on('click', '.refisi', function () {
+            var all_row_target_td = tabel_pok_entry.DataTable().row($(this).closest('tr')).data();
+            detail_id_target = all_row_target_td[0];
+            $('.detail_blnj_entry').html(all_row_target_td[4])
+            $('#pagu_entry_form').html(all_row_target_td[8])
+            refisi_modal.modal('show');
+        });
+
+
+        tabel_pok_edit.on('click', '.munit', function () {
+            var all_row_target_td = tabel_pok_edit.DataTable().row($(this).closest('tr')).data();
+            $('.detail_unit').html(all_row_target_td[4])
+            detail_id_target = all_row_target_td[0];
+            form_edit_unit[0].reset();
+            unit_modal.modal('show');
+        });
+
+        
+        form_edit_unit.on('submit', function(e) {
+            e.preventDefault();
+            var new_unit = {};
+            unt =[];
+            new_unit.id = detail_id_target;
+            var unit1 = document.getElementById('unit1');
+            var unit2 = document.getElementById('unit2');
+            var unit3 = document.getElementById('unit3');
+            var unit4 = document.getElementById('unit4');
+            var unit5 = document.getElementById('unit5');
+            var unit6 = document.getElementById('unit6');
+            var unit7 = document.getElementById('unit7');
+            var unit8 = document.getElementById('unit8');
+            if (unit1.checked) {
+                unt.push(unit1.value);
+            };
+            if (unit2.checked) {
+                unt.push(unit2.value);
+            };
+            if (unit3.checked) {
+                unt.push(unit3.value);
+            };
+            if (unit4.checked) {
+                unt.push(unit4.value);
+            };
+            if (unit5.checked) {
+                unt.push(unit5.value);
+            };
+            if (unit6.checked) {
+                unt.push(unit6.value);
+            };
+            if (unit7.checked) {
+                unt.push(unit7.value);
+            };
+            if (unit8.checked) {
+                unt.push(unit8.value);
+            };
+            new_unit.unit = unt;
+            socket.emit('put_unit', new_unit);
+            form_edit_unit[0].reset();
+            unit_modal.modal('hide');
+            //new_unit.unit = document.querySelector('.unitCheckbox:checked').value;
+        })
+        
+
+        //Tombol entry
+
         tabel_pok_entry.on('click', '.entry', function () {
             var all_row_target_td = tabel_pok_entry.DataTable().row($(this).closest('tr')).data();
             detail_id_target = all_row_target_td[0];
@@ -1574,7 +1727,7 @@
                             "targets": [ 0,1 ],
                             "visible": false,
                             "searchable": false
-                        }
+                        },
                     ],
                     aaSorting: [],
                     rowReorder: {
@@ -3042,6 +3195,14 @@
         //////////EDIT
         //search & sort
         //tabel pok edit
+        var usrnm = '{{username}}';
+        var colm = [];
+        if (usrnm === "rifki") {
+            colm = [0,1]
+        } else {
+            colm = [0,1,5]
+        };
+
         $('#pok_table_edit').DataTable({
             //scrollY:        "500px",
             //scrollX:        true,
@@ -3049,7 +3210,7 @@
             //fixedColumns: true,
             columnDefs: [
                 {
-                    "targets": [ 0, 1 ],
+                    "targets": colm,
                     "visible": false,
                     "searchable": false
                 }
@@ -3077,11 +3238,12 @@
                 } else {
                     $( row ).find('td:eq(1)').attr('class', 'level6');
                 }
-                $( row ).find('td:eq(3)').attr('class','format-uang');
-                $( row ).find('td:eq(4)').attr('class', 'satuan-unit');
-                $( row ).find('td:eq(5)').attr('class', 'format-uang');
+                $( row ).find('td:eq(3)').attr('class', 'unit');
+                $( row ).find('td:eq(4)').attr('class','format-uang');
+                $( row ).find('td:eq(5)').attr('class', 'satuan-unit');
                 $( row ).find('td:eq(6)').attr('class', 'format-uang');
-                $( row ).find('td:eq(7)').attr('class', 'text-center');
+                $( row ).find('td:eq(7)').attr('class', 'format-uang');
+                $( row ).find('td:eq(8)').attr('class', 'text-center');
             }
         });
 

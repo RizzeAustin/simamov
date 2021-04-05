@@ -25,6 +25,8 @@ var User = require(__dirname + "/../model/User.model");
 
 var Loket = require(__dirname + "/../model/Loket.model");
 
+var iddetail = '';
+
 //Short syntax tool
 var _ = require("underscore");
 const { json } = require('body-parser');
@@ -113,12 +115,14 @@ loket.socket = function(io, connections, client) {
             client.emit('terimaDetailPok', data)
         })
     })
+
     client.on('cekPagudetail', function(id) {
         DetailBelanja.findOne({ kdprogram: id[0], kdgiat: id[1], kdoutput: id[2], kdkmpnen: id[3], kdakun: id[4], nmitem: id[5], thang: new Date().getFullYear() }).lean().exec((err, data) => {
             if (err) {
                 console.log(err)
                 throw err
             }
+            iddetail = data._id;
             client.emit('terimaPaguDetail', data.jumlah)
         })
     })
@@ -319,7 +323,8 @@ loket.get('/bendahara', function(req, res) {
                 var listKomponen = await Komponen.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, thang: new Date().getFullYear() }).lean().sort('kdkmpnen')
                 var listAkun = await Akun.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, thang: new Date().getFullYear() }).lean().sort('kdakun')
                 var listDetail = await DetailBelanja.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, kdakun: tiketData.kdakun, thang: new Date().getFullYear() }).lean().sort('noitem')
-                console.log(listProgram)
+                var sDetail = await DetailBelanja.find({ kdprogram: tiketData.kdprogram, kdgiat: tiketData.kdkegiatan, kdoutput: tiketData.kdoutput, kdkmpnen: tiketData.kdkomponen, kdakun: tiketData.kdakun, thang: new Date().getFullYear(), nmitem: tiketData.uraianDetail }).lean()
+                console.log(tiketData);
                 await res.render('loket/loket_bendahara', {
                     layout: false,
                     admin: req.session.jenis,
@@ -330,6 +335,7 @@ loket.get('/bendahara', function(req, res) {
                     komponen: listKomponen,
                     akun: listAkun,
                     detail: listDetail,
+                    dt: sDetail,
                 });
             } catch (err) {
                 console.log(err)

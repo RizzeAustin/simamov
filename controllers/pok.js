@@ -66,20 +66,23 @@ var mysql = require('mysql');
 var clj_fuzzy = require('clj-fuzzy');
 
 const url = require('url');
+const { Promise } = require('mongoose');
+const { resolve } = require('path');
+const { reject } = require('underscore');
+const { uint8array } = require('jszip/lib/support');
 //Socket.io
 pok.connections;
 
 pok.io;
 
-pok.get('/#pok', function(req, res) {
-    ref = '';
-    if (req.query.tahun_anggaran) {
-        ref = 'ref=' + req.query.tahun_anggaran;
-        console.log(ref);
-    }
-    res.send(ref);
-})
-
+// app.get('/', function(req, res) {
+//     ref = '';
+//     if (req.query.tahun_anggaran) {
+//         ref = 'ref=' + req.query.tahun_anggaran;
+//         console.log(ref);
+//     }
+//     res.send(ref);
+// });
 
 pok.socket = function(io, connections, client) {
     pok.connections = connections;
@@ -120,6 +123,33 @@ pok.socket = function(io, connections, client) {
                     }
                     sendNotification(client, 'Nama POK telah diubah.');
                 })
+            }
+        })
+    });
+
+    client.on('put_unit', function(unt) {
+        //Ubah nama
+        sendNotification(client, unt);
+        console.log(unt);
+        DetailBelanja.findOne({ _id: unt.id, 'thang': thang }, 'nmitem unit', function(err, unitdetail) {
+            if (err) {
+                errorHandler(client, 'Database error.');
+                return;
+            };
+
+            if (unitdetail) {
+                DetailBelanja.update({ _id: unt.id, 'thang': thang }, { $set: { unit: unt.unit } }, { upsert: true }, function(err, status) {
+                    if (err) {
+                        errorHandler(client, 'Database error.');
+                        return;
+                    }
+                    sendNotification(client, 'Unit telah ditambahkan');
+                    console.log('berhasil');
+                    // client.broadcast.to(thang).emit('title_change', pok_name);
+                })
+            } else {
+                sendNotification(client, 'Maaf terjadi kesalahan');
+                console.log('gagal');
             }
         })
     });
@@ -237,6 +267,7 @@ pok.socket = function(io, connections, client) {
                                 '-',
                                 '-',
                                 '-',
+                                '-',
                                 program.jumlah,
                                 '<button type="button" class="tambah"><i class="icon-plus"></i></button> <button type="button" class="hapus-item"><i class="icon-close"></i></button>'
                             ]
@@ -283,9 +314,10 @@ pok.socket = function(io, connections, client) {
                                                     kegiatan_row = [
                                                         kegiatan._id,
                                                         program._id,
-                                                        '<span class="badge badge-default" title="Prog: ' + program.kdprogram + '">kegiatan</span>',
+                                                        '<span class="badge badge-default" title="Prog: ' + program.kdprogram + '">aktivitas</span>',
                                                         kegiatan.kdgiat,
                                                         kegiatan.uraian,
+                                                        '-',
                                                         '-',
                                                         '-',
                                                         '-',
@@ -296,7 +328,7 @@ pok.socket = function(io, connections, client) {
                                                     kegiatan_row = [
                                                         kegiatan._id,
                                                         program._id,
-                                                        '<span class="badge badge-default" title="Prog: ' + program.kdprogram + '">kegiatan</span>',
+                                                        '<span class="badge badge-default" title="Prog: ' + program.kdprogram + '">aktivitas</span>',
                                                         kegiatan.kdgiat,
                                                         kegiatan.uraian,
                                                         '-',
@@ -336,9 +368,10 @@ pok.socket = function(io, connections, client) {
                                                                             output_row = [
                                                                                 output._id,
                                                                                 kegiatan._id,
-                                                                                '<span class="badge badge-danger" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + '">output</span>',
+                                                                                '<span class="badge badge-danger" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + '">kro</span>',
                                                                                 kegiatan.kdgiat + '.' + output.kdoutput,
                                                                                 output.uraian,
+                                                                                '-',
                                                                                 output.vol,
                                                                                 output.satkeg || '-',
                                                                                 '-',
@@ -349,7 +382,7 @@ pok.socket = function(io, connections, client) {
                                                                             output_row = [
                                                                                 output._id,
                                                                                 kegiatan._id,
-                                                                                '<span class="badge badge-danger" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + '">output</span>',
+                                                                                '<span class="badge badge-danger" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + '">kro</span>',
                                                                                 kegiatan.kdgiat + '.' + output.kdoutput,
                                                                                 output.uraian,
                                                                                 output.vol,
@@ -388,9 +421,10 @@ pok.socket = function(io, connections, client) {
                                                                                                     soutput_row = [
                                                                                                         soutput._id,
                                                                                                         output._id,
-                                                                                                        '<span class="badge badge-danger" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + '">soutput</span>',
+                                                                                                        '<span class="badge badge-danger" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + '">ro</span>',
                                                                                                         output.kdoutput + '.' + soutput.kdsoutput,
                                                                                                         soutput.ursoutput,
+                                                                                                        '-',
                                                                                                         '-',
                                                                                                         '-',
                                                                                                         '-',
@@ -401,7 +435,7 @@ pok.socket = function(io, connections, client) {
                                                                                                     soutput_row = [
                                                                                                         soutput._id,
                                                                                                         output._id,
-                                                                                                        '<span class="badge badge-danger" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + '">soutput</span>',
+                                                                                                        '<span class="badge badge-danger" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + '">ro</span>',
                                                                                                         output.kdoutput + '.' + soutput.kdsoutput,
                                                                                                         soutput.ursoutput,
                                                                                                         '-',
@@ -465,6 +499,7 @@ pok.socket = function(io, connections, client) {
                                                                                                                                 '-',
                                                                                                                                 '-',
                                                                                                                                 '-',
+                                                                                                                                '-',
                                                                                                                                 komponen.jumlah,
                                                                                                                                 '<span class="dropdown"><button class="dropdown-toggle" type="button" data-toggle="dropdown"><i class="icon-plus"></i><span class="caret"></span></button><ul class="dropdown-menu"><li><a subitem="sub_komponen" class="tambah" href="#">Sub Komponen</a></li><li><a subitem="akun" class="tambah" href="#">Akun</a></li></ul></span> <button type="button" class="hapus-item"><i class="icon-close"></i></button>'
                                                                                                                             ]
@@ -523,6 +558,7 @@ pok.socket = function(io, connections, client) {
                                                                                                                                                         '<span class="badge badge-primary title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + ', SOutp: ' + soutput.kdsoutput + ', Komp: ' + komponen.kdkmpnen + '">skomponen</span>',
                                                                                                                                                         skomponen.kdskmpnen,
                                                                                                                                                         skomponen.urskmpnen,
+                                                                                                                                                        '-',
                                                                                                                                                         '-',
                                                                                                                                                         '-',
                                                                                                                                                         '-',
@@ -597,6 +633,7 @@ pok.socket = function(io, connections, client) {
                                                                                                                                                                                 '-',
                                                                                                                                                                                 '-',
                                                                                                                                                                                 '-',
+                                                                                                                                                                                '-',
                                                                                                                                                                                 akun.jumlah,
                                                                                                                                                                                 '<button type="button" class="tambah"><i class="icon-plus"></i></button> <button type="button" class="hapus-item"><i class="icon-close"></i></button>'
                                                                                                                                                                             ]
@@ -650,37 +687,77 @@ pok.socket = function(io, connections, client) {
                                                                                                                                                                                                 akun.jumlah += detail.jumlah;
                                                                                                                                                                                                 var detail_row;
                                                                                                                                                                                                 if (tabel == 'edit') {
-                                                                                                                                                                                                    detail_row = [
-                                                                                                                                                                                                        detail._id,
-                                                                                                                                                                                                        akun._id,
-                                                                                                                                                                                                        '<span class="badge badge-success" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + ', SOutp: ' + soutput.kdsoutput + ', Komp: ' + komponen.kdkmpnen + ', SKomp: ' + skomponen.kdskmpnen + ', Akun: ' + akun.kdakun + '">detail</span>',
-                                                                                                                                                                                                        '',
-                                                                                                                                                                                                        detail.nmitem,
-                                                                                                                                                                                                        detail.volkeg,
-                                                                                                                                                                                                        detail.satkeg,
-                                                                                                                                                                                                        detail.hargasat,
-                                                                                                                                                                                                        detail.jumlah,
-                                                                                                                                                                                                        '<button type="button" class="hapus-item"><i class="icon-close"></i></button>'
-                                                                                                                                                                                                    ]
+                                                                                                                                                                                                    if (detail.unit.length === 0) {
+                                                                                                                                                                                                        detail_row = [
+                                                                                                                                                                                                            detail._id,
+                                                                                                                                                                                                            akun._id,
+                                                                                                                                                                                                            '<span class="badge badge-success" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + ', SOutp: ' + soutput.kdsoutput + ', Komp: ' + komponen.kdkmpnen + ', SKomp: ' + skomponen.kdskmpnen + ', Akun: ' + akun.kdakun + '">detail</span>',
+                                                                                                                                                                                                            '',
+                                                                                                                                                                                                            detail.nmitem,
+                                                                                                                                                                                                            '<button type="button" class="munit">Set</button>',
+                                                                                                                                                                                                            detail.volkeg,
+                                                                                                                                                                                                            detail.satkeg,
+                                                                                                                                                                                                            detail.hargasat,
+                                                                                                                                                                                                            detail.jumlah,
+                                                                                                                                                                                                            '<button type="button" class="hapus-item"><i class="icon-close"></i></button>'
+                                                                                                                                                                                                        ]
+                                                                                                                                                                                                    } else {
+                                                                                                                                                                                                        var unitd = detail.unit;
+                                                                                                                                                                                                        detail_row = [
+                                                                                                                                                                                                            detail._id,
+                                                                                                                                                                                                            akun._id,
+                                                                                                                                                                                                            '<span class="badge badge-success" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + ', SOutp: ' + soutput.kdsoutput + ', Komp: ' + komponen.kdkmpnen + ', SKomp: ' + skomponen.kdskmpnen + ', Akun: ' + akun.kdakun + '">detail</span>',
+                                                                                                                                                                                                            '',
+                                                                                                                                                                                                            detail.nmitem,
+                                                                                                                                                                                                            '<a class="munit">' + unitd.toString() + '</a>',
+                                                                                                                                                                                                            detail.volkeg,
+                                                                                                                                                                                                            detail.satkeg,
+                                                                                                                                                                                                            detail.hargasat,
+                                                                                                                                                                                                            detail.jumlah,
+                                                                                                                                                                                                            '<button type="button" class="hapus-item"><i class="icon-close"></i></button>'
+                                                                                                                                                                                                        ]
+                                                                                                                                                                                                    }
                                                                                                                                                                                                 } else {
-                                                                                                                                                                                                    detail_row = [
-                                                                                                                                                                                                        detail._id,
-                                                                                                                                                                                                        akun._id,
-                                                                                                                                                                                                        '<span class="badge badge-success" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + ', SOutp: ' + soutput.kdsoutput + ', Komp: ' + komponen.kdkmpnen + ', SKomp: ' + skomponen.kdskmpnen + ', Akun: ' + akun.kdakun + '">detail</span>',
-                                                                                                                                                                                                        '',
-                                                                                                                                                                                                        detail.nmitem,
-                                                                                                                                                                                                        detail.volkeg,
-                                                                                                                                                                                                        detail.satkeg,
-                                                                                                                                                                                                        detail.hargasat,
-                                                                                                                                                                                                        detail.jumlah,
-                                                                                                                                                                                                        '-',
-                                                                                                                                                                                                        '-',
-                                                                                                                                                                                                        '-',
-                                                                                                                                                                                                        '-',
-                                                                                                                                                                                                        '-',
-                                                                                                                                                                                                        '<button type="button" class="entry"><i class="icon-plus"></i></button>' +
-                                                                                                                                                                                                        ' <button type="button" class="riwayat"><i class="icon-list"></i></button>'
-                                                                                                                                                                                                    ]
+                                                                                                                                                                                                    if (!detail.old) {
+                                                                                                                                                                                                        detail_row = [
+                                                                                                                                                                                                            detail._id,
+                                                                                                                                                                                                            akun._id,
+                                                                                                                                                                                                            '<span class="badge badge-success" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + ', SOutp: ' + soutput.kdsoutput + ', Komp: ' + komponen.kdkmpnen + ', SKomp: ' + skomponen.kdskmpnen + ', Akun: ' + akun.kdakun + '">detail</span>',
+                                                                                                                                                                                                            '',
+                                                                                                                                                                                                            detail.nmitem,
+                                                                                                                                                                                                            detail.volkeg,
+                                                                                                                                                                                                            detail.satkeg,
+                                                                                                                                                                                                            detail.hargasat,
+                                                                                                                                                                                                            detail.jumlah,
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '<button type="button" class="entry"><i class="icon-plus"></i></button>' +
+                                                                                                                                                                                                            ' <button type="button" class="riwayat"><i class="icon-list"></i></button>'
+                                                                                                                                                                                                        ]
+                                                                                                                                                                                                    } else {
+                                                                                                                                                                                                        detail_row = [
+                                                                                                                                                                                                            detail._id,
+                                                                                                                                                                                                            akun._id,
+                                                                                                                                                                                                            '<span class="badge badge-success" title="Prog: ' + program.kdprogram + ', Keg: ' + kegiatan.kdgiat + ', Outp: ' + output.kdoutput + ', SOutp: ' + soutput.kdsoutput + ', Komp: ' + komponen.kdkmpnen + ', SKomp: ' + skomponen.kdskmpnen + ', Akun: ' + akun.kdakun + '">detail</span>',
+                                                                                                                                                                                                            '',
+                                                                                                                                                                                                            detail.nmitem,
+                                                                                                                                                                                                            detail.volkeg,
+                                                                                                                                                                                                            detail.satkeg,
+                                                                                                                                                                                                            detail.hargasat,
+                                                                                                                                                                                                            detail.jumlah,
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '-',
+                                                                                                                                                                                                            '<button type="button" class="entry"><i class="icon-plus"></i></button>' +
+                                                                                                                                                                                                            ' <button type="button" class="riwayat"><i class="icon-list"></i></button>' +
+                                                                                                                                                                                                            ' <button type="button" class="refisi"><i class="icon-clock"></i></button>'
+                                                                                                                                                                                                        ]
+                                                                                                                                                                                                    }
                                                                                                                                                                                                 }
 
                                                                                                                                                                                                 data.row = detail_row
@@ -2805,6 +2882,7 @@ pok.get('/satuan_pok', function(req, res) {
         res.send(satuans);
     })
 })
+
 
 //unggah pok file
 pok.post('/unggah_pok', function(req, res) {
