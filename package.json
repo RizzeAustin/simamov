@@ -16,8 +16,9 @@
         "compression": "^1.7.4",
         "cookie-parser": "1.4.3",
         "csvtojson": "1.1.7",
-        "docxtemplater": "3.0.6",
+        "docxtemplater": "^3.21.1",
         "dotenv": "4.0.0",
+        "edge-js": "^15.5.2",
         "excel4node": "^1.7.2",
         "express": "^4.17.1",
         "express-brute": "1.0.1",
@@ -30,24 +31,26 @@
         "helmet": "^3.6.1",
         "jszip": "2.6.1",
         "moment": "^2.29.1",
-        "mongodb": "2.2.24",
-        "mongoose": "^4.10.2",
+        "mongodb": "^3.6.5",
+        "mongoose": "^5.12.3",
         "mongoose-auto-increment": "^5.0.1",
         "morgan": "^1.10.0",
         "mv": "^2.1.1",
         "mysql": "2.14.0",
+        "node-js": "^1.0.0",
         "node-msoffice-pdf": "0.0.7",
         "node-xlsx": "0.10.0",
         "nodemailer": "^6.4.17",
         "nodemon": "^1.19.4",
         "pdf-merge": "0.1.0",
-        "socket.io": "2.0.3",
+        "socket.io": "^4.0.1",
         "underscore": "1.8.3",
         "unrar": "0.1.7",
+        "ws": "^7.4.4",
         "xlsx-populate": "1.8.1",
         "xml2js": "0.4.17"
     },
     "devDependencies": {
-        "snyk": "^1.40.1"
+        "snyk": "^1.522.0"
     }
 }
