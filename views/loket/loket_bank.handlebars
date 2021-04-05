@@ -43,7 +43,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Kegiatan</label>
+                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Aktivitas</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketKegiatan" id="loketKegiatan" class="form-select"
                                                 disabled>
@@ -52,7 +52,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketOutput" class="col ml-1 col-form-label">Output</label>
+                                        <label for="loketOutput" class="col ml-1 col-form-label">KRO</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketOutput" id="loketOutput" class="form-select" disabled>
                                                 <option Selected>{{data.kdoutput}} {{data.uraianOutput}}</option>
@@ -97,7 +97,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai</label>
+                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai Bruto</label>
                                         <label class="ml-2 col-form-label" for="">Rp</label>
                                         <div class="col-md-9">
                                             <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}" disabled>
@@ -175,6 +175,8 @@
                                             aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm"
                                             disabled>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="loketAdkSpj" class="col-md-2 col-form-label">ADK SPJ</label>
                                         <div class="col">
@@ -227,11 +229,11 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-2">
-                                            <label for="fileSpjBank" class="col-form-label">Upload SPJ yang disahkan</label><br>
-                                            <p>(.xls .xlsx)</p>
+                                            <label for="dokumenBank" class="col-form-label">Unggah dokumen</label><br>
+                                            <p>(format dokumen)</p>
                                         </div>
                                         <div class="col input-group">
-                                            <input type="file" class="form-control" name="fileSpjBank" id="fileSpjBank" aria-label="fileSpjBank" accept=".xlsx,.xls" required>
+                                            <input type="file" class="form-control" name="dokumenBank" id="dokumenBank" aria-label="dokumenBank" required>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -266,15 +268,10 @@
     </div>
 </div>
 
-{{!-- autofill form --}}
-<script id="tglPelaksanaan" type="text/x-handlebars-template">
-    {{data.tanggal.pelaksanaan}}
-</script>
-
 {{!-- main script --}}
 <script type="text/javascript">
-    //socket = io.connect($(location).attr('host'));
-    var socket = io();
+    var socket = io.connect($(location).attr('host'));
+    //var socket = io();
 
     //untuk hak akses
     //var user_aktiv = '{{username}}';
@@ -282,7 +279,7 @@
     $(document).ready(function () {
 
         //autofill form
-        var t1 = new Date($("#tglPelaksanaan").html())
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
         var t2 = formatTanggal(t1)
         $("#loketTglPelaksanaan").val(t2)
 
@@ -309,17 +306,28 @@
         if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
 
         //validasi isian form
-        $('#kirimFormBank').click(function (e) {
-            if (!$("#fileSpjBank").val()) {
-                e.preventDefault()
-                $('#fileSpjBank').focus()
-            } else if (!$('#loketStatusTransfer').val()){
-                e.preventDefault()
-                $('#loketStatusTransfer').focus()
-            } else if (!$('#loketTglTransfer').val()){
-                e.preventDefault()
-                $('#loketTglTransfer').focus()
-            } else {alert("Email pemberitahuan telah dikirimkan ke penerima")}
+        $("#kirimFormBank").click(function (e) {
+            e.preventDefault()
+            if (!$("#dokumenBank").val()) {
+                generalAlert("Dokumen bank belum di unggah")
+                $("#dokumenBank").focus()
+            } else if (!$("#loketStatusTransfer").val()){
+                generalAlert("Silahkan pilih status transfer")
+                $("#loketStatusTransfer").focus()
+            } else if (!$("#loketTglTransfer").val()){
+                generalAlert("Silahkan pilih tanggal transfer")
+                $("#loketTglTransfer").focus()
+            } else if ($("#loketMetodeTransfer").val()=="CMS") {
+                generalAlert("Tiket akan diselesaikan dan Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $("form").submit()
+                }, 5000)
+            } else {
+                generalAlert("Tiket akan diselesaikan, email pemberitahuan akan dikirimkan ke penerima dan Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $("form").submit()
+                }, 5000)
+            }
         }) 
     });
 
@@ -335,5 +343,16 @@
         let year = date.getFullYear();
         return day + ' ' + monthNames[monthIndex] + ' ' + year;
     };
+
+    function generalAlert(message){
+        $.toast({
+            text: message,
+            textAlign: 'left', 
+            hideAfter: 5000,
+            loader: false,
+            position: 'bottom-right',
+            stack: 2
+        })
+    }
 
 </script>

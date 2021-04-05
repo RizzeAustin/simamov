@@ -2723,6 +2723,7 @@ select.form-control-lg:not([size]):not([multiple]),
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     transition: all 0.2s ease-in-out;
+    border-radius: 5px;
 }
 
 .btn:focus,
@@ -4855,7 +4856,8 @@ header.navbar .dropdown-item {
 .pagination-datatables li.active a,
 .page-item.active .pagination li a,
 .pagination li .page-item.active a,
-.pagination li.active a {
+.pagination li.active a,
+.pagination li a.active {
     z-index: 2;
     color: #fff;
     background-color: #20a8d8;
@@ -5478,6 +5480,7 @@ button.close {
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, 0.2);
     outline: 0;
+    border-radius: 20px;
 }
 
 .modal-backdrop {
@@ -5504,6 +5507,8 @@ button.close {
     justify-content: space-between;
     padding: 5px;
     border-bottom: 1px solid #cfd8dc;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
 }
 
 .modal-title {

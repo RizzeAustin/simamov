@@ -206,34 +206,87 @@
                                 <a id="loket" class="nav-link" href="loket/dashboard"><i
                                         class="icon-screen-desktop"></i> Dashboard</a>
                             </li>
-                            <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
-                                    Pengajuan Baru</a>
-                            </li>
-                            <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/verifikator"><i class="icon-user"></i>
-                                    Verifikator</a>
-                            </li>
-                            <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/ppk"><i class="icon-user"></i>
-                                    PPK</a>
-                            </li>
-                            <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/ppspm"><i class="icon-user"></i>
-                                    PPSPM</a>
-                            </li>
-                            <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/reviewer"><i class="icon-user"></i>
-                                    Reviewer</a>
-                            </li>
-                            <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/bendahara"><i class="icon-user"></i>
-                                    Bendahara</a>
-                            </li>
-                            <li class="nav-item">
-                                <a id="loket" class="nav-link" href="loket/bank"><i class="icon-user"></i>
-                                    Operator Bank</a>
-                            </li>
+                            {{#if admin}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/permintaan"><i class="icon-user"></i>
+                                        Permintaan</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
+                                        Permintaan Dana Baru</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/verifikator"><i class="icon-user"></i>
+                                        Verifikator</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/ppk"><i class="icon-user"></i>
+                                        PPK</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/ppspm"><i class="icon-user"></i>
+                                        PPSPM</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/reviewer"><i class="icon-user"></i>
+                                        Reviewer</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/bendahara"><i class="icon-user"></i>
+                                        Bendahara</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/bank"><i class="icon-user"></i>
+                                        Operator Bank</a>
+                                </li>
+                            {{else}}
+                                {{#if_eq jabatan '3'}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/permintaan"><i class="icon-user"></i>
+                                        Permintaan</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
+                                        Permintaan Dana Baru</a>
+                                </li>
+                                {{/if_eq}}
+                                {{#if_eq role '11'}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/verifikator"><i class="icon-user"></i>
+                                        Verifikator</a>
+                                </li>
+                                {{/if_eq}}
+                                {{#if_eq role '12'}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/ppk"><i class="icon-user"></i>
+                                        PPK</a>
+                                </li>
+                                {{/if_eq}}
+                                {{#if_eq role '13'}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/ppspm"><i class="icon-user"></i>
+                                        PPSPM</a>
+                                </li>
+                                {{/if_eq}}
+                                {{#if_eq role '14'}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/reviewer"><i class="icon-user"></i>
+                                        Reviewer</a>
+                                </li>
+                                {{/if_eq}}
+                                {{#if_eq role '15'}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/bendahara"><i class="icon-user"></i>
+                                        Bendahara</a>
+                                </li>
+                                {{/if_eq}}
+                                {{#if_eq role '16'}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/bank"><i class="icon-user"></i>
+                                        Operator Bank</a>
+                                </li>
+                                {{/if_eq}}
+                            {{/if}}
                         </ul>
                     </li>
                     <li class="nav-title">
@@ -353,6 +406,7 @@
         if (!socket) location.reload();
 
         $(document).ready(function () {
+            
             $('#ui-view').on('focus', 'input.format-uang', function () {
                 $(this).autoNumeric('init', { digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0' });
             })
