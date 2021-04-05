@@ -10,20 +10,19 @@
                             <h5>I. TRANSAKSI SELESAI</h5>
                         </div>
                         <div class="row">
-                            <div class="col-9">
+                            <div class="col-8">
                                 <div id="navSelesai"><ul class="pagination"></ul></div>
                             </div>
                             <div class="col">
                                 <table class="borderless">
                                     <tbody>
                                         <td>Cari: </td>
-                                        <td><input type="text" class="form-control" onkeyup="cariTiket1()" id="cariPengajuan1" placeholder="metode transfer, deskripsi"></td>
+                                        <td><input type="text" class="form-control" onkeyup="cariTiket1()" id="cariPengajuan1" placeholder="no transaksi, metode pembayaran, deskripsi"></td>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <table id="tableSelesai" class="table table-bordered table-striped"
-                            width="100%">
+                        <table id="tableSelesai" class="table table-bordered table-striped" width="100%">
                             <thead>
                                 <tr>
                                     <th width="1%">No</th>
@@ -49,14 +48,14 @@
                             <h5>II. PENGAJUAN</h5>
                         </div>
                         <div class="row">
-                            <div class="col-9">
+                            <div class="col-8">
                                 <div id="navPengajuan"><ul class="pagination"></ul></div>
                             </div>
                             <div class="col">
                                 <table class="borderless">
                                     <tbody>
                                         <td>Cari: </td>
-                                        <td><input type="text" class="form-control" onkeyup="cariTiket2()" id="cariPengajuan2" placeholder="kode unit, deskripsi, posisi"></td>
+                                        <td><input type="text" class="form-control" onkeyup="cariTiket2()" id="cariPengajuan2" placeholder="kode unit, no transaksi, deskripsi, posisi"></td>
                                     </tbody>
                                 </table>
                             </div>
@@ -199,7 +198,7 @@
             </td>
             <td style="text-align:center">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailTiket">Lihat Detail</button>
-                {{#if_eq this.posisi 'Verifikator'}}
+                {{!-- {{#if_eq this.posisi 'Verifikator'}}
                     {{#if_eq ../jabatan '3'}}
                         <form action="/loket/unitEdit" method="POST">
                             <input type="text" name="tiketId" value="{{this._id}}" hidden>
@@ -215,7 +214,7 @@
                             </form>
                         {{/if_eq}}
                     {{/if_eq}}
-                {{/if_eq}}
+                {{/if_eq}} --}}
             </td>
         </tr>
     {{/each}}
@@ -267,7 +266,7 @@
         })
 
         //pagination
-        var rowsShown = 10;
+        var rowsShown = 1;
         //pagination selesai
         var rownSelesai = $('#tableSelesai tbody tr').length;
         var pageSelesai = Math.ceil(rownSelesai/rowsShown);
@@ -308,9 +307,9 @@
                 $("#navSelesai ul li:eq(2) a").attr('rel', pages[1]).text(pages[2])
                 $("#navSelesai ul li:eq(3) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
             } else if(pageSelesai>3) {
-                $("#navSelesai ul li:eq(1) a").attr('rel', pages[1]).text(pages[2])
+                $("#navSelesai ul li:eq(1) a").attr('rel', pages[1]).text(pages[2]).removeClass('active')
                 $("#navSelesai ul li:eq(2) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
-                $("#navSelesai ul li:eq(3) a").attr('rel', pages[3]).text(pages[4])
+                $("#navSelesai ul li:eq(3) a").attr('rel', pages[3]).text(pages[4]).removeClass('active')
             }
         });
         //pagination pengajuan
@@ -353,9 +352,9 @@
                 $("#navPengajuan ul li:eq(2) a").attr('rel', pages[1]).text(pages[2])
                 $("#navPengajuan ul li:eq(3) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
             } else if(pagePengajuan>3) {
-                $("#navPengajuan ul li:eq(1) a").attr('rel', pages[1]).text(pages[2])
+                $("#navPengajuan ul li:eq(1) a").attr('rel', pages[1]).text(pages[2]).removeClass('active')
                 $("#navPengajuan ul li:eq(2) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
-                $("#navPengajuan ul li:eq(3) a").attr('rel', pages[3]).text(pages[4])
+                $("#navPengajuan ul li:eq(3) a").attr('rel', pages[3]).text(pages[4]).removeClass('active')
             }
         });
 
@@ -517,7 +516,7 @@
             $('#modalDetailTiket').html(templatePengajuan)
 
             //tombol periksa pada modal
-            if (!document.getElementById("periksaTiketVerifikator") && detail.posisi == "Verifikator" && detail.status == 'Belum selesai'){
+            if (!document.getElementById("periksaTiketVerifikator") && detail.posisi == "Verifikator" && detail.status == 'Belum selesai' && ("{{role}}" == '11' || "{{admin}}" == "1")){
                 $(".modal-footer").append(
                     '<form action="/loket/verifikator" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
@@ -526,7 +525,7 @@
                 $('#periksaTiketVerifikator').click(function (e) {
                     cekUser(e, "11", "Verifikator", $('#periksaTiketVerifikator'))
                 })
-            } else if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai'){
+            } else if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai' && ("{{role}}" == '12' || "{{admin}}" == "1")){
                 $(".modal-footer").append(
                     '<form action="/loket/ppk" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
@@ -535,7 +534,7 @@
                 $('#periksaTiketPpk').click(function (e) {
                     cekUser(e, "12", "PPK", $('#periksaTiketPpk'))
                 })
-            } else if (!document.getElementById("periksaTiketPpspm") && detail.posisi == "PPSPM" && detail.status == 'Belum selesai'){
+            } else if (!document.getElementById("periksaTiketPpspm") && detail.posisi == "PPSPM" && detail.status == 'Belum selesai' && ("{{role}}" == '13' || "{{admin}}" == "1")){
                 $(".modal-footer").append(
                     '<form action="/loket/ppspm" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
@@ -544,7 +543,7 @@
                 $('#periksaTiketPpspm').click(function (e) {
                     cekUser(e, "13", "PPSPM", $('#periksaTiketPpspm'))
                 })
-            } else if (!document.getElementById("periksaTiketReviewer") && detail.posisi == "Reviewer" && detail.status == 'Belum selesai'){
+            } else if (!document.getElementById("periksaTiketReviewer") && detail.posisi == "Reviewer" && detail.status == 'Belum selesai' && ("{{role}}" == '14' || "{{admin}}" == "1")){
                 $(".modal-footer").append(
                     '<form action="/loket/reviewer" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
@@ -553,7 +552,7 @@
                 $('#periksaTiketReviewer').click(function (e) {
                     cekUser(e, "14", "Reviewer", $('#periksaTiketReviewer'))
                 })
-            } else if (!document.getElementById("periksaTiketBendahara") && detail.posisi == "Bendahara" && detail.status == 'Belum selesai'){
+            } else if (!document.getElementById("periksaTiketBendahara") && detail.posisi == "Bendahara" && detail.status == 'Belum selesai' && ("{{role}}" == '15' || "{{admin}}" == "1")){
                 $(".modal-footer").append(
                     '<form action="/loket/bendahara" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
@@ -562,7 +561,7 @@
                 $('#periksaTiketBendahara').click(function (e) {
                     cekUser(e, "15", "Bendahara", $('#periksaTiketBendahara'))
                 })
-            } else if (!document.getElementById("periksaTiketBank") && detail.posisi == "Operator Bank" && detail.status == 'Belum selesai'){
+            } else if (!document.getElementById("periksaTiketBank") && detail.posisi == "Operator Bank" && detail.status == 'Belum selesai' && ("{{role}}" == '16' || "{{admin}}" == "1")){
                 $(".modal-footer").append(
                     '<form action="/loket/bank" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
@@ -630,6 +629,7 @@
         //    var id = $(this).closest('tr').attr('id')
         //})
 
+        //hapus tiket
         $('table #hapusTiketButton').click(function(){
             var id = $(this).closest('tr').attr('id')
             var notr = $(this).closest('tr').find('td:eq(2)').text()
@@ -714,12 +714,16 @@
         for (i = 0; i < tr.length; i++) {
             td1 = tr[i].getElementsByTagName("td")[7];
             td2 = tr[i].getElementsByTagName("td")[8];
-            if (td1 || td2) {
+            td3 = tr[i].getElementsByTagName("td")[1];
+            if (td1 || td2 || td3) {
                 txtValue1 = td1.textContent || td1.innerText;
                 txtValue2 = td2.textContent || td2.innerText;
+                txtValue3 = td3.textContent || td3.innerText;
                 if (txtValue1.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else if (txtValue2.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else if (txtValue3.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else {
                     tr[i].style.display = "none";
@@ -740,15 +744,19 @@
             td1 = tr[i].getElementsByTagName("td")[1];
             td2 = tr[i].getElementsByTagName("td")[5];
             td3 = tr[i].getElementsByTagName("td")[6];
-            if (td1 || td2 || td3) {
+            td4 = tr[i].getElementsByTagName("td")[2];
+            if (td1 || td2 || td3 || td4) {
                 txtValue1 = td1.textContent || td1.innerText;
                 txtValue2 = td2.textContent || td2.innerText;
                 txtValue3 = td3.textContent || td3.innerText;
+                txtValue4 = td4.textContent || td4.innerText;
                 if (txtValue1.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else if (txtValue2.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else if (txtValue3.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else if (txtValue4.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else {
                     tr[i].style.display = "none";

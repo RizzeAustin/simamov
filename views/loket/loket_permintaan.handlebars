@@ -112,10 +112,32 @@
                                             <input type="text" name="volume" id="volume" class="form-control" disabled>
                                         </div>
                                     </div>
+                                    <div class="form-group row">
+                                        <label for="volume" class="col-md-2 col-form-label">Materi</label>
+                                        <div class="col">
+                                            <input type="text" name="materi" id="materi" class="form-control" disabled>
+                                        </div>
+                                    </div>
                                     <div class="modal-footer">
                                         <button id="resetFormUnit" type="reset" class="btn btn-warning">Reset</button>
                                         <button id="kirimFormUnit" type="submit" class="btn btn-success">Kirim</button>
                                     </div>
+                                </div>
+                                <div class="col-6">
+                                    <h5>Penggunaan Anggaran</h5>
+                                    <table id="" class="table table-bordered table-striped" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th width="1%">No</th>
+                                                <th width="15%">Item Kegiatan</th>
+                                                <th width="10%">Pagu POK</th>
+                                                <th width="10%">Realisasi Anggaran</th>
+                                                <th width="10%">Sisa Anggaran yang dapat digunakan</th>
+                                                <th width="10%">Anggaran yang akan digunakan</th>
+                                                <th width="10%">Sisa Anggaran</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
                                 </div>
                             </div>
                         </form>
@@ -144,6 +166,12 @@
                 $('#penyelenggara').prop('disabled', false)
             } else {
                 $('#penyelenggara').prop('disabled', true)
+            }
+
+            if (jp == 'Fullboard Dalam Kota' || jp == 'Fullboard Luar Kota' || jp == 'Rapat di Luar Jam Kerja'){
+                $('#materi').prop('disabled', false)
+            } else {
+                $('#materi').prop('disabled', true)
             }
         })
 

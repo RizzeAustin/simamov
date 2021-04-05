@@ -146,6 +146,39 @@ loket.get('/dashboard', function(req, res) {
 
     req.session.tiketId = ''
     if (req.session.userJabatan == '3' && req.session.userRole == '31' && req.session.userUnit == 'BAU') {
+        // async.series([
+        //     function(callback) {
+        //         Loket.find({ status: 'Selesai', thang: new Date().getFullYear(), active: true }).lean().exec((err, daftarSelesai) => {
+        //             if (err) {
+        //                 console.log(err)
+        //                 throw new Error(err)
+        //             }
+        //             callback(null, daftarSelesai)
+        //         })
+        //     },
+        //     function(callback) {
+        //         Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: new Date().getFullYear(), active: true }).lean().exec((err, daftarPengajuan) => {
+        //             if (err) {
+        //                 console.log(err)
+        //                 throw new Error(err)
+        //             }
+        //             callback(null, daftarPengajuan)
+        //         })
+        //     }
+        // ], function(err, result) {
+        //     if (err) {
+        //         console.log(err)
+        //         throw new Error(err)
+        //     }
+        //     res.render('loket/loket_dashboard', {
+        //         layout: false,
+        //         admin: req.session.jenis,
+        //         role: req.session.userRole,
+        //         daftarSelesai: result[0],
+        //         daftarPengajuan: result[1],
+        //     })
+        // })
+
         Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: new Date().getFullYear(), active: true }).lean().exec((err, daftarPengajuan) => {
             if (err) {
                 console.log(err)
@@ -214,10 +247,18 @@ loket.get('/dashboard', function(req, res) {
 })
 
 loket.get('/permintaan', function(req, res) {
+    // DetailBelanja.find({ unit: { $regex: req.session.userUnit, $options: 'i' }, thang: new Date().getFullYear(), active: true }).lean().exec((err, Data) => {
+    //     if (err) {
+    //         console.log(err)
+    //         throw new Error(err)
+    //     }
+    //     console.log(Data)
+    // })
     res.render('loket/loket_permintaan', {
         layout: false,
         admin: req.session.jenis,
         unit: req.session.userUnit,
+        penggunaan: Data,
     });
 })
 
