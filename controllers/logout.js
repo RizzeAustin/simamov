@@ -5,15 +5,15 @@ var express = require('express');
 var logout = express.Router();
 
 //load model User
-var User = require(__dirname+"/../model/User.model");
+var User = require(__dirname + "/../model/User.model");
 
 //route GET /logout
-logout.get('/', function(req, res){
-	User.update({_id: req.session.user_id}, {$push: {"act": {label: 'Logout'}}}, function(err, status){
+logout.get('/', function(req, res) {
+    User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Logout', timestamp: new Date().getTime() } } }, function(err, status) {
 
-	});
-	req.session.destroy();
-	res.redirect('login');
+    });
+    req.session.destroy();
+    res.redirect('login');
 });
 
 module.exports = logout;

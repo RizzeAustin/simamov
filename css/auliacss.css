@@ -114,3 +114,72 @@ table tr td:first-child::before {
 .align-middle {
     vertical-align: middle!important
 }
+
+.table-borderless>:not(caption)>*>* {
+    border-bottom-width: 0;
+    border: none;
+    border-color: red;
+}
+
+.tableTiket {
+    --bs-table-bg: transparent;
+    --bs-table-striped-color: #212529;
+    --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
+    --bs-table-active-color: #212529;
+    --bs-table-active-bg: rgba(0, 0, 0, 0.1);
+    --bs-table-hover-color: #212529;
+    --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
+    width: 100%;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+    color: #212529;
+    vertical-align: top;
+    border-color: #dee2e6
+}
+
+.tableTiket>:not(caption)>*>* {
+    padding: .5rem .5rem;
+    background-color: var(--bs-table-bg);
+    background-image: linear-gradient(var(--bs-table-accent-bg), var(--bs-table-accent-bg));
+    border-bottom-width: 1px
+}
+
+.tableTiket>tbody {
+    vertical-align: inherit
+}
+
+.tableTiket>thead {
+    vertical-align: middle
+}
+
+.tableTiket>tr {
+    text-align: center
+}
+
+.tableTiket>:not(:last-child)>:last-child>* {
+    border-bottom-color: currentColor
+}
+
+.borderless {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+}
+
+.borderless th,
+.borderless td {
+    padding: 7px;
+    vertical-align: middle;
+}
+
+.borderless thead th {
+    vertical-align: middle;
+}
+
+.borderless tbody+tbody {
+    border-top: 2px solid #cfd8dc;
+}
+
+.borderless .borderless {
+    background-color: #e4e5e6;
+}

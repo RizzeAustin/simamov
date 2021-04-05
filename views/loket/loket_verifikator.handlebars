@@ -16,7 +16,9 @@
                                     <div class="form-group row">
                                         <label for="loketNamaUnit" class="col-md-2 col-form-label">Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" required value="{{data.unit}}">
+                                            <select name="loketNamaUnit" id="loketNamaUnit" class="form-control" required>
+                                                <option value="{{data.unit}}">{{data.unit}}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -43,18 +45,18 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Kegiatan</label>
+                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Aktivitas</label>
                                         <div class="col-md-10">
                                             <select name="loketKegiatan" id="loketKegiatan" class="form-select" disabled>
-                                                <option>Pilih Kegiatan</option>
+                                                <option>Pilih Aktivitas</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketOutput" class="col ml-1 col-form-label">Output</label>
+                                        <label for="loketOutput" class="col ml-1 col-form-label">KRO</label>
                                         <div class="col-md-10">
                                             <select name="loketOutput" id="loketOutput" class="form-select" disabled>
-                                                <option>Pilih Output</option>
+                                                <option>Pilih KRO</option>
                                             </select>
                                         </div>
                                     </div>
@@ -82,6 +84,8 @@
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="loketTglPelaksanaan" class="col ml-1 col-form-label">Tanggal Pelaksanaan</label>
                                         <div class="col-md-10">
@@ -95,7 +99,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai</label>
+                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai Bruto</label>
                                         <label class="ml-2 col-form-label" for="">Rp</label>
                                         <div class="col-md-9">
                                             <input type="text" name="loketNilai" id="loketNilai" class="form-control" placeholder="Contoh: 1000000" required value="{{data.nilaiPengajuan}}">
@@ -158,14 +162,9 @@
     </div>
 </div>
 
-{{!-- autofill form --}}
-<script id="tglPelaksanaan" type="text/x-handlebars-template">
-    {{data.tanggal.pelaksanaan}}
-</script>
-
 <script type="text/javascript">
-    //socket = io.connect($(location).attr('host'));
-    var socket = io()
+    var socket = io.connect($(location).attr('host'));
+    //var socket = io()
 
     //untuk hak akses
     //var user_aktiv = '{{username}}';
@@ -173,9 +172,11 @@
     $(document).ready(function () {
 
         //autofill form
-        var t1 = new Date($("#tglPelaksanaan").html())
+        //var t1 = new Date($("{{data.tanggal.pelaksanaan}}").html())
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
+        //console.log(t1)
         var t2 = vtgl(t1)
-        $("#loketTglPelaksanaan").val(t2)
+        $('#loketTglPelaksanaan').val(t2)
 
         //autofill checklist
         var spj = [{{data.checklist.spj}}]
@@ -184,29 +185,43 @@
         var not = [{{data.checklist.notulensi}}]
         var cv = [{{data.checklist.cvNarasumber}}]
         
-        if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
-        if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
-        if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
-        if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
-        if (cv[0]) $("#checklistCvUnit").attr("checked", true)
+        if (spj[0]) $('#checklistSpjUnit').attr("checked", true)
+        if (hadir[0]) $('#checklistDaftarHadirUnit').attr("checked", true)
+        if (dok[0]) $('#checklistDokumentasiUnit').attr("checked", true)
+        if (not[0]) $('#checklistNotulensiUnit').attr("checked", true)
+        if (cv[0]) $('#checklistCvUnit').attr("checked", true)
 
-        $("#loketNamaUnit").focus()
-        //validasi isian yang tidak bolek kosong
-        $('#kirimFormUnit').click(function (e) {
-            if (!$("#loketForm").valid()) {
-                e.preventDefault()
-            } else {alert("Tiket telah diteruskan ke PPK")}
-        })
+        $('#loketNamaUnit').focus()
+        
+        $('form').submit( function(e) {
+            e.preventDefault()
+            var form = this
+            generalAlert('Tiket akan diteruskan ke PPK dan Redirect ke dashboard dalam 5 detik')
+            setTimeout( function () { 
+                form.submit()
+            }, 5000)
+        });
 
     });
 
     function vtgl(tgl){
         let y = tgl.getFullYear()
-        let m = tgl.getMonth()
+        let m = tgl.getMonth() + 1
         let d = tgl.getDate()
         if (m<10) m = '0'+m
         if (d<10) d = '0'+d
         return `${y}-${m}-${d}`
+    }
+
+    function generalAlert(message){
+        $.toast({
+            text: message,
+            textAlign: 'left', 
+            hideAfter: 5000,
+            loader: false,
+            position: 'bottom-right',
+            stack: 2
+        })
     }
 
 </script>

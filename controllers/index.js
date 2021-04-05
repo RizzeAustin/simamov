@@ -12,10 +12,14 @@ index.get('/', function(req, res) {
         ref = 'ref=' + req.query.tahun_anggaran;
         console.log(ref);
         req.session.tahun_anggaran = req.query.tahun_anggaran;
-        res.render('blank', { display_name: req.session.username, admin: req.session.jenis, tahun_anggaran: req.session.tahun_anggaran });
-    } else {
-        res.render('blank', { display_name: req.session.username, admin: req.session.jenis, tahun_anggaran: req.session.tahun_anggaran });
     }
+    res.render('blank', {
+        display_name: req.session.username,
+        tahun_anggaran: req.session.tahun_anggaran,
+        admin: req.session.jenis,
+        jabatan: req.session.userJabatan,
+        role: req.session.userRole,
+    });
 });
 
 index.get('/home', function(req, res) {

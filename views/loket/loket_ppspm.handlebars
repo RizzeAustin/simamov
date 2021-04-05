@@ -38,53 +38,44 @@
                                         <label for="loketProgram" class="col ml-1 col-form-label">Program</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketProgram" id="loketProgram" class="form-select">
-                                                <option>Pilih Program</option>
                                                 {{#if data.kdprogram}}
                                                     <option value="{{data.kdprogram}}" selected>{{data.kdprogram}} {{data.uraianProgram}}</option>
-                                                    {{#each program}}
-                                                        <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
-                                                    {{/each}}
                                                 {{else}}
-                                                    {{#each program}}
-                                                        <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
-                                                    {{/each}}
+                                                    <option>Pilih Program</option>
                                                 {{/if}}
+                                                {{#each program}}
+                                                    <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
+                                                {{/each}}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Kegiatan</label>
+                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Aktivitas</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketKegiatan" id="loketKegiatan" class="form-select">
-                                                <option>Pilih Kegiatan</option>
                                                 {{#if data.kdkegiatan}}
                                                     <option value="{{data.kdkegiatan}}" selected>{{data.kdkegiatan}} {{data.uraianKegiatan}}</option>
-                                                    {{#each kegiatan}}
-                                                        <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
-                                                    {{/each}}
                                                 {{else}}
-                                                    {{#each kegiatan}}
-                                                        <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
-                                                    {{/each}}
+                                                    <option>Pilih Aktivitas</option>
                                                 {{/if}}
+                                                {{#each kegiatan}}
+                                                    <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
+                                                {{/each}}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketOutput" class="col ml-1 col-form-label">Output</label>
+                                        <label for="loketOutput" class="col ml-1 col-form-label">KRO</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketOutput" id="loketOutput" class="form-select">
-                                                <option>Pilih Output</option>
                                                 {{#if data.kdoutput}}
                                                     <option value="{{data.kdoutput}}" selected>{{data.kdoutput}} {{data.uraianOutput}}</option>
-                                                    {{#each output}}
-                                                        <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
-                                                    {{/each}}
                                                 {{else}}
-                                                    {{#each output}}
-                                                        <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
-                                                    {{/each}}
+                                                    <option>Pilih KRO</option>
                                                 {{/if}}
+                                                {{#each output}}
+                                                    <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
+                                                {{/each}}
                                             </select>
                                         </div>
                                     </div>
@@ -92,17 +83,14 @@
                                         <label for="loketKomponen" class="col ml-1 col-form-label">Komponen</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketKomponen" id="loketKomponen" class="form-select">
-                                                <option>Pilih Komponen</option>
                                                 {{#if data.kdkomponen}}
                                                     <option value="{{data.kdkomponen}}" selected>{{data.kdkomponen}} {{data.uraianKomponen}}</option>
-                                                    {{#each komponen}}
-                                                        <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
-                                                    {{/each}}
                                                 {{else}}
-                                                    {{#each komponen}}
-                                                        <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
-                                                    {{/each}}
+                                                    <option>Pilih Komponen</option>
                                                 {{/if}}
+                                                {{#each komponen}}
+                                                    <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
+                                                {{/each}}
                                             </select>
                                         </div>
                                     </div>
@@ -110,17 +98,14 @@
                                         <label for="loketAkun" class="col ml-1 col-form-label">Akun</label>
                                         <div class="col-md-10 input-group">
                                             <select name="loketAkun" id="loketAkun" class="form-select">
-                                                <option>Pilih Akun</option>
                                                 {{#if data.kdakun}}
                                                     <option value="{{data.kdakun}}" selected>{{data.kdakun}} {{data.uraianAkun}}</option>
-                                                    {{#each akun}}
-                                                        <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
-                                                    {{/each}}
                                                 {{else}}
-                                                    {{#each akun}}
-                                                        <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
-                                                    {{/each}}
+                                                    <option>Pilih Akun</option>
                                                 {{/if}}
+                                                {{#each akun}}
+                                                    <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
+                                                {{/each}}
                                             </select>
                                         </div>
                                     </div>
@@ -128,17 +113,14 @@
                                         <label for="loketDetailPok" class="col ml-1 col-form-label">Detail POK</label>
                                         <div class="col-md-10">
                                             <select name="loketDetailPok" id="loketDetailPok" class="form-select">
-                                                <option>Pilih Detail</option>
                                                 {{#if data.uraianDetail}}
                                                     <option value="{{data.uraianDetail}}" selected>{{data.uraianDetail}}</option>
-                                                    {{#each detail}}
-                                                        <option value="{{this.nmitem}}">{{this.nmitem}}</option>
-                                                    {{/each}}
                                                 {{else}}
-                                                    {{#each detail}}
-                                                        <option value="{{this.nmitem}}">{{this.nmitem}}</option>
-                                                    {{/each}}
+                                                    <option>Pilih Detail</option>
                                                 {{/if}}
+                                                {{#each detail}}
+                                                    <option value="{{this.nmitem}}">{{this.nmitem}}</option>
+                                                {{/each}}
                                             </select>
                                         </div>
                                     </div>
@@ -159,12 +141,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai</label>
+                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai Bruto</label>
                                         <label class="ml-2 col-form-label" for="">Rp</label>
                                         <div class="col-md-9">
                                             <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}" disabled>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                     <div class="form-group row">
                                         <label for="" class="col-md-2 col-form-label">Checklist</label>
                                         <div class="col-md-2"></div>
@@ -265,9 +249,9 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button id="tolakFormPpspm" type="submit" class="btn btn-danger" formaction="loket/ppspmTolak">Tolak</button>
-                                        <button id="kirimFormPpspmReviewer" type="submit" class="btn btn-success" formaction="loket/ppspmKirimReviewer">Kirim<br><small>(Reviewer)</small></button>
-                                        <button id="kirimFormPpspmBinagram" type="submit" class="btn btn-success" formaction="loket/ppspmKirimBinagram">Kirim<br><small>(Binagram)</small></button>
+                                        <button id="tolakFormPpspm" type="submit" class="btn btn-danger">Tolak</button>
+                                        <button id="kirimFormPpspmReviewer" type="submit" class="btn btn-success">Kirim<br><small>(Reviewer)</small></button>
+                                        <button id="kirimFormPpspmBinagram" type="submit" class="btn btn-success">Kirim<br><small>(Binagram)</small></button>
                                     </div>
                                 </div>
                             </div>
@@ -279,18 +263,13 @@
     </div>
 </div>
 
-{{!-- autofill form --}}
-<script id="tglPelaksanaan" type="text/x-handlebars-template">
-    {{data.tanggal.pelaksanaan}}
-</script>
-
 {{!-- iterasi select pok --}}
 <script src="/js/LoketFormPok.js"></script>
 
 {{!-- main script --}}
 <script type="text/javascript">
     //socket = io.connect($(location).attr('host'));
-    var socket = io();
+    //var socket = io();
 
     //untuk hak akses
     //var user_aktiv = '{{username}}';
@@ -298,9 +277,9 @@
     $(document).ready(function () {
 
         //autofill form
-        var t1 = new Date($("#tglPelaksanaan").html())
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
         var t2 = formatTanggal(t1)
-        $("#loketTglPelaksanaan").val(t2)
+        $('#loketTglPelaksanaan').val(t2)
 
         var spj = [{{data.checklist.spj}}]
         var hadir = [{{data.checklist.daftarHadir}}]
@@ -308,81 +287,101 @@
         var not = [{{data.checklist.notulensi}}]
         var cv = [{{data.checklist.cvNarasumber}}]
         
-        if (spj[0]) $("#checklistSpjUnit").attr("checked", true)
-        if (hadir[0]) $("#checklistDaftarHadirUnit").attr("checked", true)
-        if (dok[0]) $("#checklistDokumentasiUnit").attr("checked", true)
-        if (not[0]) $("#checklistNotulensiUnit").attr("checked", true)
-        if (cv[0]) $("#checklistCvUnit").attr("checked", true)
-        if (spj[1]) $("#checklistSpjPpk").attr("checked", true)
-        if (hadir[1]) $("#checklistDaftarHadirPpk").attr("checked", true)
-        if (dok[1]) $("#checklistDokumentasiPpk").attr("checked", true)
-        if (not[1]) $("#checklistNotulensiPpk").attr("checked", true)
-        if (cv[1]) $("#checklistCvPpk").attr("checked", true)
-        if (spj[2]) $("#checklistSpjPpspm").attr("checked", true)
-        if (hadir[2]) $("#checklistDaftarHadirPpspm").attr("checked", true)
-        if (dok[2]) $("#checklistDokumentasiPpspm").attr("checked", true)
-        if (not[2]) $("#checklistNotulensiPpspm").attr("checked", true)
-        if (cv[2]) $("#checklistCvPpspm").attr("checked", true)
+        if (spj[0]) $('#checklistSpjUnit').attr("checked", true)
+        if (hadir[0]) $('#checklistDaftarHadirUnit').attr("checked", true)
+        if (dok[0]) $('#checklistDokumentasiUnit').attr("checked", true)
+        if (not[0]) $('#checklistNotulensiUnit').attr("checked", true)
+        if (cv[0]) $('#checklistCvUnit').attr("checked", true)
+        if (spj[1]) $('#checklistSpjPpk').attr("checked", true)
+        if (hadir[1]) $('#checklistDaftarHadirPpk').attr("checked", true)
+        if (dok[1]) $('#checklistDokumentasiPpk').attr("checked", true)
+        if (not[1]) $('#checklistNotulensiPpk').attr("checked", true)
+        if (cv[1]) $('#checklistCvPpk').attr("checked", true)
+        if (spj[2]) $('#checklistSpjPpspm').attr("checked", true)
+        if (hadir[2]) $('#checklistDaftarHadirPpspm').attr("checked", true)
+        if (dok[2]) $('#checklistDokumentasiPpspm').attr("checked", true)
+        if (not[2]) $('#checklistNotulensiPpspm').attr("checked", true)
+        if (cv[2]) $('#checklistCvPpspm').attr("checked", true)
 
-        $("#loketProgram").focus()
+        $('#loketProgram').focus()
 
         //validasi isian
         $('#tolakFormPpspm').click(function (e) {
+            e.preventDefault()
+            $('form').attr('action', 'loket/ppspmTolak')
             let va = confirm('Anda yakin?')
             if(va) {
-                if (!$("#loketCatatanPpspm").val() || $("#loketCatatanPpspm").val() == '-') {
-                    alert('Catatan harus diisi ketika tiket ditolak')
-                    e.preventDefault()
-                    $("#loketCatatanPpspm").focus()
-                } else {alert("Tiket telah Ditolak")}
-            } else e.preventDefault()
+                if (!$('#loketCatatanPpspm').val() || $('#loketCatatanPpspm').val() == '-') {
+                    generalAlert('Catatan harus diisi ketika tiket ditolak')
+                    $('#loketCatatanPpspm').focus()
+                } else {
+                    generalAlert('Tiket akan Dikembalikan ke Unit dan Redirect ke dashboard dalam 5 detik')
+                    setTimeout( function () { 
+                        $('form').submit()
+                    }, 5000)
+                }
+            }
         })
 
         $('#kirimFormPpspmReviewer').click(function (e) {
+            e.preventDefault()
+            $('form').attr('action', 'loket/ppspmKirimReviewer')
             if ($('#loketProgram').val()=="Pilih Program"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
             } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih kegiatan")
                 $('#loketKegiatan').focus()
             } else if ($('#loketOutput').val()=="Pilih Output"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih output")
                 $('#loketOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
             } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih detail")
                 $('#loketDetailPok').focus()
-            } else {alert("Tiket telah diteruskan ke Reviewer")}
+            } else {
+                generalAlert("Tiket akan diteruskan ke Reviewer dan Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $('form').submit()
+                }, 5000)
+            }
         })
 
         $('#kirimFormPpspmBinagram').click(function (e) {
+            e.preventDefault()
+            $('form').attr('action', 'loket/ppspmKirimBinagram')
             if ($('#loketProgram').val()=="Pilih Program"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
             } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih kegiatan")
                 $('#loketKegiatan').focus()
             } else if ($('#loketOutput').val()=="Pilih Output"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih output")
                 $('#loketOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
             } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                e.preventDefault()
+                generalAlert("Silahkan pilih detail")
                 $('#loketDetailPok').focus()
-            } else if (!$("#loketCatatanPpspm").val()) {
-                e.preventDefault()
+            } else if (!$('#loketCatatanPpspm').val()) {
+                generalAlert("Mohon tulis catatan terlebih dahulu")
                 $('#loketCatatanPpspm').focus()
-            } else {alert("Tiket telah diteruskan ke Binagram")}
+            } else {
+                generalAlert("Tiket akan diteruskan ke Binagram dan Redirect ke dashboard dalam 5 detik")
+                setTimeout( function () { 
+                    $('form').submit()
+                }, 5000)
+            }
         })
     });
 
