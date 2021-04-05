@@ -200,7 +200,7 @@
             <td style="text-align:center">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailTiket">Lihat Detail</button>
                 {{#if_eq this.posisi 'Verifikator'}}
-                    {{#if_eq ../role '7'}}
+                    {{#if_eq ../jabatan '3'}}
                         <form action="/loket/unitEdit" method="POST">
                             <input type="text" name="tiketId" value="{{this._id}}" hidden>
                             <button type="sumbit" class="btn btn-warning icon-pencil" id="editTiketButton"></button>
@@ -524,7 +524,7 @@
                         '<button type="submit" class="btn btn-primary" id="periksaTiketVerifikator">Periksa Tiket Verifikator</button>'+
                     '</form>')
                 $('#periksaTiketVerifikator').click(function (e) {
-                    cekUser(e, "1", "Verifikator", $('#periksaTiketVerifikator'))
+                    cekUser(e, "11", "Verifikator", $('#periksaTiketVerifikator'))
                 })
             } else if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai'){
                 $(".modal-footer").append(
@@ -533,7 +533,7 @@
                         '<button type="submit" class="btn btn-primary" id="periksaTiketPpk">Periksa Tiket PPK</button>' +
                     '</form>')
                 $('#periksaTiketPpk').click(function (e) {
-                    cekUser(e, "2", "PPK", $('#periksaTiketPpk'))
+                    cekUser(e, "12", "PPK", $('#periksaTiketPpk'))
                 })
             } else if (!document.getElementById("periksaTiketPpspm") && detail.posisi == "PPSPM" && detail.status == 'Belum selesai'){
                 $(".modal-footer").append(
@@ -542,7 +542,7 @@
                         '<button type="submit" class="btn btn-primary" id="periksaTiketPpspm")">Periksa Tiket PPSPM</button>' +
                     '</form>')
                 $('#periksaTiketPpspm').click(function (e) {
-                    cekUser(e, "3", "PPSPM", $('#periksaTiketPpspm'))
+                    cekUser(e, "13", "PPSPM", $('#periksaTiketPpspm'))
                 })
             } else if (!document.getElementById("periksaTiketReviewer") && detail.posisi == "Reviewer" && detail.status == 'Belum selesai'){
                 $(".modal-footer").append(
@@ -551,7 +551,7 @@
                         '<button type="submit" class="btn btn-primary" id="periksaTiketReviewer">Periksa Tiket Reviewer</button>' +
                     '</form>')
                 $('#periksaTiketReviewer').click(function (e) {
-                    cekUser(e, "4", "Reviewer", $('#periksaTiketReviewer'))
+                    cekUser(e, "14", "Reviewer", $('#periksaTiketReviewer'))
                 })
             } else if (!document.getElementById("periksaTiketBendahara") && detail.posisi == "Bendahara" && detail.status == 'Belum selesai'){
                 $(".modal-footer").append(
@@ -560,7 +560,7 @@
                         '<button type="submit" class="btn btn-primary" id="periksaTiketBendahara">Periksa Tiket Bendahara</button>' +
                     '</form>')
                 $('#periksaTiketBendahara').click(function (e) {
-                    cekUser(e, "5", "Bendahara", $('#periksaTiketBendahara'))
+                    cekUser(e, "15", "Bendahara", $('#periksaTiketBendahara'))
                 })
             } else if (!document.getElementById("periksaTiketBank") && detail.posisi == "Operator Bank" && detail.status == 'Belum selesai'){
                 $(".modal-footer").append(
@@ -569,7 +569,7 @@
                         '<button type="submit" class="btn btn-primary" id="periksaTiketBank">Periksa Tiket Operator Bank</button>' +
                     '</form>')
                 $('#periksaTiketBank').click(function (e) {
-                    cekUser(e, "6", "Operator Bank", $('#periksaTiketBank'))
+                    cekUser(e, "16", "Operator Bank", $('#periksaTiketBank'))
                 })
             }
 

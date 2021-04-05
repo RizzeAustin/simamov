@@ -34,15 +34,15 @@
                                             </div>
 
                                             <div class="form-group col-sm-2">
-                                                <label for="roleUser">Role</label>
-                                                <select id="roleUser" name="role" class="form-control" size="1" disabled>
+                                                <label for="jabatanUser">Jabatan</label>
+                                                <select id="jabatanUser" name="jabatan" class="form-control" size="1" disabled>
                                                     <option></option>
                                                 </select>
                                             </div>
 
                                             <div class="form-group col-sm-2">
-                                                <label for="jabatanUser">Jabatan</label>
-                                                <select id="jabatanUser" name="jabatan" class="form-control" size="1" disabled>
+                                                <label for="roleUser">Role</label>
+                                                <select id="roleUser" name="role" class="form-control" size="1" disabled>
                                                     <option></option>
                                                 </select>
                                             </div>
@@ -56,7 +56,7 @@
 
                                             <div class="form-group col-sm-2">
                                                 <label for="emailUser">Email</label>
-                                                <input type="text" id="emailUser" name="email" class="form-control" placeholder="contoh@stis.ac.id" required>
+                                                <input type="text" id="emailUser" name="email" class="form-control" placeholder="contoh@stis.ac.id">
                                             </div>
 
                                             <div class="form-group col-sm-2">
@@ -97,8 +97,8 @@
                                     <thead>
                                         <tr>
                                             <th width="10%">Nama Pengguna</th>
-                                            <th width="10%">Role</th>
                                             <th width="10%">Jabatan</th>
+                                            <th width="10%">Role</th>
                                             <th width="10%">Alamat IP terakhir</th>
                                             <th width="10%">Waktu login terakhir</th>
                                             <th width="10%">Pilihan</th>
@@ -108,8 +108,8 @@
                                     {{#each user}}
                                         <tr>
                                             <td class='username'>{{username}}</td>
-                                            <td>{{role}}</td>
                                             <td>{{jabatan}}</td>
+                                            <td>{{role}}</td>
                                             <td>{{ip_address}}</td>
                                             <td>{{last_login_time}}</td>
                                             <td id="{{_id}}" class="text-center">
@@ -273,95 +273,116 @@
         //convert role dan jabatan pada tabel
         $("#editor_table tr").each(function(){
             $(this).find("td:eq(1)").each(function(){
+                //console.log($(this).text())
                 switch ($(this).text()){
                     case "1":
-                        $(this).text("Verifikator")
+                        $(this).text("Petugas BAU")
                         break
                     case "2":
-                        $(this).text("PPK")
+                        $(this).text("Pimpinan")
                         break
                     case "3":
-                        $(this).text("PPSPM")
-                        break
-                    case "4":
-                        $(this).text("Reviewer")
-                        break
-                    case "5":
-                        $(this).text("Bendahara")
-                        break
-                    case "6":
-                        $(this).text("Operator Bank")
-                        break
-                    case "7":
                         $(this).text("Unit")
                         break
                 }
             })
             $(this).find("td:eq(2)").each(function(){
-                //console.log($(this).text())
                 switch ($(this).text()){
-                    case "0":
-                        $(this).text("Petugas BAU")
+                    case "11":
+                        $(this).text("Verifikator")
                         break
-                    case "1":
+                    case "12":
+                        $(this).text("PPK")
+                        break
+                    case "13":
+                        $(this).text("PPSPM")
+                        break
+                    case "14":
+                        $(this).text("Reviewer")
+                        break
+                    case "15":
+                        $(this).text("Bendahara")
+                        break
+                    case "16":
+                        $(this).text("Operator Bank")
+                        break
+                    case "21":
                         $(this).text("Direktur")
                         break
-                    case "2":
+                    case "22":
                         $(this).text("Wakil Direktur")
                         break
-                    case "3":
+                    case "31":
                         $(this).text("Pimpinan Unit")
                         break
-                    case "4":
+                    case "31":
                         $(this).text("Operator Unit")
                         break
                 }
             })
+            
         })
     })
 
     //iterasi role dan jabatan
     $("#jenis_user").change(function(){
-        console.log($("#jenis_user").val())
+        //console.log($("#jenis_user").val())
         if ($("#jenis_user").val()=='0'){
-            $("#roleUser").attr('disabled', false).empty().append(
+            $("#jabatanUser").attr('disabled', false).empty().append(
                 '<option></option>'+
-                '<option value="1">Verifikator</option>'+
-                '<option value="2">PPK</option>'+
-                '<option value="3">PPSPM</option>'+
-                '<option value="4">Reviewer</option>'+
-                '<option value="5">Bendahara</option>'+
-                '<option value="6">Operator Bank</option>'+
-                '<option value="7">Unit</option>'
+                '<option value="1">Petugas BAU</option>'+
+                '<option value="2">Pimpinan</option>'+
+                '<option value="3">Unit</option>'
             )
         } else {
-            $("#roleUser").empty().attr('disabled', true)
             $("#jabatanUser").empty().attr('disabled', true)
+            $("#roleUser").empty().attr('disabled', true)
+            $("#unitUser").empty().attr('disabled', true)
+        }
+    })
+
+    $("#jabatanUser").change(function(){
+        if ($("#jabatanUser").val()=='1'){
+            $("#roleUser").empty().attr('disabled', false).append(
+                '<option></option>'+
+                '<option value="11">Verifikator</option>'+
+                '<option value="12">PPK</option>'+
+                '<option value="13">PPSPM</option>'+
+                '<option value="14">Reviewer</option>'+
+                '<option value="15">Bendahara</option>'+
+                '<option value="16">Operator Bank</option>'
+            )
+            $("#unitUser").empty().attr('disabled', true)
+        } else if ($("#jabatanUser").val()=='2'){
+            $("#roleUser").empty().attr('disabled', false).append(
+                '<option value="21" selected>Direktur</option>'+
+                '<option value="22">Wakil Direktur</option>'
+            )
+            $("#unitUser").empty().attr('disabled', true)
+        } else if ($("#jabatanUser").val()=='3'){
+            $("#roleUser").empty().attr('disabled', false).append(
+                '<option></option>'+
+                '<option value="31">Pimpinan Unit</option>'+
+                '<option value="32">Operator Unit</option>'
+            )
+            $("#unitUser").empty().attr('disabled', true)
+        } else {
+            $("#roleUser").empty().attr('disabled', true)
             $("#unitUser").empty().attr('disabled', true)
         }
     })
 
     $("#roleUser").change(function(){
-        if ($("#roleUser").val()=='7') {
-            $("#jabatanUser").empty().append(
-                '<option value="1" selected>Direktur</option>'+
-                '<option value="2">Wakil Direktur</option>'+
-                '<option value="3">Pimpinan Unit</option>'+
-                '<option value="4">Operator Unit</option>'
-            ).attr('disabled', false)
+        let r = $("#roleUser").val()
+        if (r=='11'||r=='12'||r=='13'||r=='14'||r=='15'||r=='16') {
+            $("#unitUser").empty().attr('disabled', false).append(
+                '<option value="BAU" selected>BAU</option>'
+            )
+        } else if (r=='21'||r=='22') {
             $("#unitUser").empty().attr('disabled', true)
-        } else if (!$("#roleUser").val()) {
-            $("#jabatanUser").empty().attr('disabled', true)
-            $("#unitUser").empty().attr('disabled', true)
-        } else {
-            $("#jabatanUser").empty().append('<option value="0" selected>Petugas BAU</option>').attr('disabled', false)
-            $("#unitUser").empty().append('<option value="BAU" selected>BAU</option>').attr('disabled', false)
-        }
-    })
-
-    $("#jabatanUser").change(function(){
-        if ($("#jabatanUser").val()=='3' || $("#jabatanUser").val()=='4'){
-            $("#unitUser").empty().append(
+        } else if (r=='31'||r=='32') {
+            $("#unitUser").empty().attr('disabled', false).append(
+                '<option></option>'+
                 '<option value="BAU">BAU</option>'+
                 '<option value="BAAK">BAAK</option>'+
                 '<option value="PRODI">PRODI</option>'+
@@ -370,13 +391,12 @@
                 '<option value="Perpustakaan">Perpustakaan</option>'+
                 '<option value="IT">IT</option>'+
                 '<option value="Lainnya">Lainnya</option>'
-            ).attr('disabled', false)
+            )
         } else {
             $("#unitUser").empty().attr('disabled', true)
         }
     })
 
-    
     //tambah user
     $('#tambah_user').on('submit', function(e) {
         e.preventDefault();
@@ -385,11 +405,26 @@
             return false;
         }
         if ($("#jenis_user").val()=='0'){
+            if (!$("#jabatanUser").val()){
+                generalAlert('User harus memiliki jabatan');
+                return false;
+            }
             if (!$("#roleUser").val()){
                 generalAlert('User harus memiliki role');
                 return false;
             }
+            if ($("#jabatanUser").val()!='2'){
+                if (!$("#unitUser").val()){
+                    generalAlert('User harus memiliki unit');
+                    return false;
+                }                
+            }
+            if(!$("#emailUser").val()){
+                generalAlert('Email harus diisi');
+                return false;
+            }
         }
+        
         $.ajax({
             url : $(this).attr('action'),
             type: "POST",

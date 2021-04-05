@@ -10,8 +10,9 @@ var Setting = require(__dirname + "/../model/Setting.model");
 index.get('/', function(req, res) {
     res.render('blank', {
         display_name: req.session.username,
-        admin: req.session.jenis,
         tahun_anggaran: req.session.tahun_anggaran,
+        admin: req.session.jenis,
+        jabatan: req.session.userJabatan,
         role: req.session.userRole,
     });
 });
