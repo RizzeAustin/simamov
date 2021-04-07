@@ -11,7 +11,15 @@ var express = require('express');
 var app = express();
 
 var server = require('http').createServer(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')(server, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        transports: ['websocket', 'polling'],
+        credentials: true
+    },
+    allowEIO3: true
+});
 //clients connection
 var connections = {};
 
