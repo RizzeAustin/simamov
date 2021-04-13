@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- <link rel="shortcut icon" href="assets/ico/favicon.png"> -->
+
+    <title>Login - SIMAMOV</title>
+
+    <!-- Icons -->
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/simple-line-icons.css" rel="stylesheet">
+
+    <!-- Main styles for this application -->
+    <link href="/css/style.css" rel="stylesheet">
+
+</head>
+
+<body class="app flex-row align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card-group mb-0">
+                    <div class="card p-2">
+                        <div class="card-block">
+                            <h1>Login</h1>
+                            {{#if message}}
+                            <div class="alert alert-warning">
+                              {{message}}
+                            </div>
+                            {{/if}}
+                            <p class="text-muted">Masuk ke SIMAMOV</p>
+                            <form id="login" action="/login{{href}}" method="POST">
+                                <div class="input-group mb-1">
+                                    <span class="input-group-addon"><i class="icon-user"></i>
+                                    </span>
+                                    <input id="username" type="text" class="form-control" name="username" placeholder="Username" autocomplete="off" required>
+                                </div>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-addon"><i class="icon-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" name="password" placeholder="Password" autocomplete="off" required>
+                                </div>
+                                {{!-- <div class="input-group mb-2">
+                                    <span class="input-group-addon"><i class="icon-clock"></i>
+                                    </span>
+                                    <select data-toggle="tooltip" title="Tahun anggaran" id="tahun_anggaran" name="tahun_anggaran" class="form-control" size="1">
+                                        {{#each thang}}
+                                            <option value="{{thang}}" {{#if_eq thang ../this_year}}selected{{/if_eq}}>{{thang}}</option>
+                                        {{/each}}  
+                                    </select>
+                                </div> --}}
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button id="submit" type="submit" class="btn btn-primary px-2">Login</button>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <button data-toggle="tooltip" title="Silahkan hubungi admin" id="forgot_pass" type="button" class="btn btn-link px-0">Lupa password?</button>
+                                    </div>
+                                </div>
+                            </form>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/tether.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        //tooltip tahun anggaran & forgot pass
+        $('#tahun_anggaran,#forgot_pass').tooltip({
+            placement: "right"
+        });
+        $('#username').focus();
+    </script>
+
+</body>
+
+</html>
