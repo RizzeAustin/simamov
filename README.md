@@ -45,12 +45,8 @@ Fungsi secara umum:
 
 
 Untuk Persyaratan Sistem, Instalasi, dan Panduan Penggunaan, klik <a href="https://git.stis.ac.id/Shamad/simamov/wikis/home">di sini</a>.
-SIMAMOV --v
-SIMAMOV v1.x
------------
 
-Hasil merge dengan mahasiswa yang lain
-SIMAMOV v1.x
------------
+------------------------------------------------------------------------------------------------------------------
+SIMAMOV v2.0
 
-Hasil merge dengan mahasiswa yang lain
+Developer: Moh. Rifki Arif, M. Rizqi Aulia
