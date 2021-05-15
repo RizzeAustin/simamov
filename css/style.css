@@ -2388,7 +2388,7 @@ pre code {
     background-image: none;
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 0;
+    border-radius: 0.25rem;
     transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 
@@ -5480,7 +5480,7 @@ button.close {
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, 0.2);
     outline: 0;
-    border-radius: 20px;
+    border-radius: 10px;
 }
 
 .modal-backdrop {
@@ -5507,8 +5507,8 @@ button.close {
     justify-content: space-between;
     padding: 5px;
     border-bottom: 1px solid #cfd8dc;
-    border-top-right-radius: 20px;
-    border-top-left-radius: 20px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
 }
 
 .modal-title {

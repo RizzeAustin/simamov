@@ -1,35 +1,55 @@
-const { date } = require('jszip/lib/defaults');
-const { string } = require('jszip/lib/support');
+const { ObjectID } = require('bson');
 var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
 var LoketSchema = new Schema({
-    'thang': {
-        type: Number,
-        default: new Date().getFullYear()
-    },
+    'thang': Number,
     'active': {
         type: Boolean,
         default: true
     },
     'nomorTransaksi': String,
-    'unit': String,
-    'kodeUnit': String,
+    'unit': {
+        'nama': String,
+        'kode': String,
+    },
     'operator': String,
-    'kdprogram': String,
-    'uraianProgram': String,
-    'kdkegiatan': String,
-    'uraianKegiatan': String,
-    'kdoutput': String,
-    'uraianOutput': String,
-    'kdkomponen': String,
-    'uraianKomponen': String,
-    'kdakun': String,
-    'uraianAkun': String,
-    'uraianDetail': String,
+    'email': String,
+    'pok': {
+        'kdprogram': String,
+        'uraianProgram': String,
+        'kdaktivitas': String,
+        'uraianAktivitas': String,
+        'kdkro': String,
+        'uraianKro': String,
+        'kdro': String,
+        'uraianRo': String,
+        'kdkomponen': String,
+        'uraianKomponen': String,
+        'kdsubkomponen': String,
+        'uraianSubKomponen': String,
+        'kdakun': String,
+        'uraianAkun': String,
+        'detil': {
+            'u1': String,
+            'n1': Number,
+            'u2': String,
+            'n2': Number,
+            'u3': String,
+            'n3': Number,
+            'u4': String,
+            'n4': Number,
+            'u5': String,
+            'n5': Number,
+        },
+    },
     'detail': String,
-    'nilaiPengajuan': Number,
+    'nilai': {
+        'bruto': Number,
+        'pajak': Number,
+        'transfer': Number,
+    },
     'checklist': {
         'spj': [{ type: Boolean }],
         'daftarHadir': [{ type: Boolean }],
@@ -46,8 +66,6 @@ var LoketSchema = new Schema({
         'reviewer': String,
     },
     'metodeTransfer': String,
-    'nilaiPajak': Number,
-    'nilaiTransfer': Number,
     'statusTransfer': String, //sudah
     'tanggal': {
         'pengajuan': Date,
@@ -57,6 +75,7 @@ var LoketSchema = new Schema({
     },
     'posisi': String, //verifikator, ppk, ppspm, reviewer, bendahara, operatorBank
     'status': String, //belum selesai, selesai, dikembalikan ke unit
+    'idUsulan': String,
 
 
 }, { collection: 'loket', strict: false });

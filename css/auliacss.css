@@ -130,8 +130,8 @@ table tr td:first-child::before {
     --bs-table-hover-color: #212529;
     --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
     width: 100%;
-    margin-bottom: 1rem;
-    margin-left: 1rem;
+    /* margin-bottom: 1rem;
+    margin-left: 1rem; */
     color: #212529;
     vertical-align: top;
     border-color: #dee2e6

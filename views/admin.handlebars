@@ -8,6 +8,9 @@
                             <li class="nav-item">
                                 <a id="User" class="nav-link active" data-toggle="tab" href="#Userchild" role="tab" aria-control="Userchild"><i class="icon-user"></i> Pengguna</a>
                             </li>
+                            <li class="nav-item">
+                                <a id="Unit" class="nav-link" data-toggle="tab" href="#Unitchild" role="tab" aria-control="Unitchild"><i class="icon-people"></i> Unit</a>
+                            </li>
                         </ul> 
                         <div class="tab-content">
                             <div class="tab-pane active" id="Userchild" role="tabpanel">
@@ -56,7 +59,7 @@
 
                                             <div class="form-group col-sm-2">
                                                 <label for="emailUser">Email</label>
-                                                <input type="text" id="emailUser" name="email" class="form-control" placeholder="contoh@stis.ac.id">
+                                                <input type="text" id="emailUser" name="email" class="form-control" placeholder="contoh@stis.ac.id" autocomplete="off">
                                             </div>
 
                                             <div class="form-group col-sm-2">
@@ -122,6 +125,38 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="tab-pane" id="Unitchild" role="tabpanel">
+                                <form id="formTambahUnit" action="/admin/tambahUnit" method="POST">
+                                    <div class="row">
+                                        <div class="form-group col-sm-1">
+                                            <button type="submit" class="btn btn-success" id="tambahUnit"><i class="icon-plus"></i></button>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <input type="text" class="form-control" name="kodeUnit" id="kodeUnit" placeholder="Kode unit" required>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <input type="text" class="form-control" name="namaUnit" id="namaUnit" placeholder="Nama Unit" required>
+                                        </div>
+                                    </div> 
+                                </form>
+                                <table class="borderless row col" style="text-align: center;" id="tabelDaftarUnit">
+                                    <tbody>
+                                        {{#each unit}}
+                                            <tr id="{{this._id}}">
+                                                <td>
+                                                    <button type="button" class="btn btn-danger" id="hapusUnit"><i class="icon-minus"></i></button>
+                                                </td>
+                                                <td>
+                                                    {{this.kodeUnit}}
+                                                </td>
+                                                <td>
+                                                    {{this.namaUnit}}
+                                                </td>
+                                            </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div> 
                     </div>
                 </div>
@@ -153,20 +188,24 @@
                             <label for="password">Password</label>
                             <input data-animation="false" data-toggle="tooltip" title="Kosongkan jika tidak ingin diubah" type="password" class="form-control" id="password_edit" name='password'>
                         </div>
+                        <div class="form-group row">
+                            <label for="email">Email</label>
+                            <input data-animation="false" data-toggle="tooltip" title="Biarkan jika tidak ingin diubah" type="email" class="form-control" id="email_edit" name='email' autocomplete="off">
+                        </div>
 
                         <div class="form-group row">
 
                             <label for="jenis_user">Jenis</label>
                             <select id="jenis_user_edit" name="jenis" class="form-control" size="1" id='jenis_user'>
                                 <option value="1">Administrator</option>
-                                <option value="0">Editor</option>
+                                <option value="0">User</option>
                             </select>
 
                         </div> 
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Keluar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
@@ -315,7 +354,7 @@
                     case "31":
                         $(this).text("Pimpinan Unit")
                         break
-                    case "31":
+                    case "32":
                         $(this).text("Operator Unit")
                         break
                 }
@@ -381,17 +420,12 @@
         } else if (r=='21'||r=='22') {
             $("#unitUser").empty().attr('disabled', true)
         } else if (r=='31'||r=='32') {
-            $("#unitUser").empty().attr('disabled', false).append(
-                '<option></option>'+
-                '<option value="BAU">BAU</option>'+
-                '<option value="BAAK">BAAK</option>'+
-                '<option value="PRODI">PRODI</option>'+
-                '<option value="UPPPM">UPPPM</option>'+
-                '<option value="SPM">SPM</option>'+
-                '<option value="Perpustakaan">Perpustakaan</option>'+
-                '<option value="IT">IT</option>'+
-                '<option value="Lainnya">Lainnya</option>'
-            )
+            socket.emit('mintaUnit', function(result){
+                $("#unitUser").empty()
+                for (let i=0;i<result.length;i++){
+                    $("#unitUser").attr('disabled', false).append(`<option value="${result[i].namaUnit}">${result[i].namaUnit}</option>`)
+                }
+            })
         } else {
             $("#unitUser").empty().attr('disabled', true)
         }
@@ -472,6 +506,9 @@
     var row_editing;
     var row_editing_jenis_now;
     $('table').on('click', '.edit', function () {
+        socket.emit('mintaUser', $(this).closest('td').attr('id'), function(response){
+            $('#email_edit').val(response[0])
+        })
         row_editing = $(this).closest('tr');
         if($(this).closest('table').attr('id') == 'adm_table'){
             row_editing_jenis_now = 1;
@@ -484,6 +521,7 @@
         $('#edit_user').attr('action', '/admin/edit/'+$(this).closest('td').attr('id'))
         $('#username_edit').val(target.children('td.username').text());
         $('#password_edit').val('');
+        $('#email_edit').val('');
     })
     $('#edit_user').on('submit', function(e) {
         e.preventDefault();
@@ -705,7 +743,95 @@
     $('#password_edit').tooltip({
         placement: "right"
     });
+    $('#email_edit').tooltip({
+        placement: "right"
+    });
 
+    //UNIT
+    $('#tambahUnit').click(function (e) {
+        e.preventDefault()
+        let cekKode = false
+        let form = $(this).closest('form').serialize()
+
+        //cek kesamaan kode unit
+        //$("#tabelDaftarUnit tbody tr").each(function(index){
+        //    $(this).find("td:eq(1)").each(function(){
+        //        if ($.trim($(this).text())==$('#kodeUnit').val()){
+        //            cekKode = true
+        //        }
+        //    })
+        //})
+
+        //validasi
+        if (!$.isNumeric($('#kodeUnit').val())){
+            generalAlert("Kode harus angka")
+        } else if (!$('#namaUnit').val()){
+            generalAlert('Nama unit tidak boleh kosong')
+        } else {
+            $.ajax({
+                url: '/admin/tambahUnit', 
+                type: 'POST',
+                data: $(this).closest("form").serialize(),
+                error: function(){
+                    generalAlert("Gagal menambahkan, jaringan bermasalah")
+                },
+                success: function(){
+                    generalAlert("Berhasil menambahkan")
+                    $("#tabelDaftarUnit tbody").append(
+                        '<tr>'
+                        +   '<td>'
+                        +       '<button type="submit" class="btn btn-danger"><i class="icon-minus"></i></button>'
+                        +   '</td>'
+                        +   '<td>'
+                        +       $('#kodeUnit').val()
+                        +   '</td>'
+                        +   '<td>'
+                        +       $('#namaUnit').val()
+                        +   '</td>'
+                        +'</tr>'
+                    )
+                }
+            });
+        }
+    })
+
+    $('table #hapusUnit').click(function (){
+        var idun = $(this).closest('tr').attr('id')
+        var namaun = $(this).closest('tr').find('td:eq(2)').text()
+        var target_delete = $(this).closest('tr')
+        target_delete.hide()
+        state_undo = false
+        $.toast({
+            text: 'Unit '+namaun+' akan dihapus dalam 5 detik | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm"></i> Batal</a>',
+            hideAfter: 5000,
+            loader: false,
+            stack: false,
+            position: 'bottom-right',
+            allowToastClose: false,
+            afterHidden: function () {
+                if(!state_undo){
+                    $.ajax({
+                        url: '/admin/hapusUnit/'+idun,
+                        type: 'DELETE',
+                        success: function(data) {
+                            generalAlert(data);
+                            target_delete.remove()
+                            target_delete = null;
+                        },
+                        error: function (jXHR, textStatus, errorThrown) {
+                            generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+                        }
+                    });
+                }
+            }
+        })
+        $('#undo_delete').click(function(){
+            state_undo = true;
+            target_delete.show();
+            target_delete = null;
+            $.toast().reset('all')
+        })
+    })
     function generalAlert(message){
         $.toast({
             text: message,

@@ -26,6 +26,7 @@
 
     {{!-- custom css --}}
     <link rel="stylesheet" href="/css/auliacss.css">
+    <link rel="stylesheet" href="/css/jquery-confirm.min.css">
 
     <style type="text/css">
         .table>tbody>tr>td {
@@ -208,12 +209,12 @@
                             </li>
                             {{#if admin}}
                                 <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/permintaan"><i class="icon-user"></i>
-                                        Permintaan</a>
+                                    <a id="loket" class="nav-link" href="loket/pengusulan"><i class="icon-user"></i>
+                                        Pengusulan Kegiatan</a>
                                 </li>
                                 <li class="nav-item">
                                     <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
-                                        Permintaan Dana Baru</a>
+                                        Permintaan Dana</a>
                                 </li>
                                 <li class="nav-item">
                                     <a id="loket" class="nav-link" href="loket/verifikator"><i class="icon-user"></i>
@@ -242,49 +243,13 @@
                             {{else}}
                                 {{#if_eq jabatan '3'}}
                                 <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/permintaan"><i class="icon-user"></i>
-                                        Permintaan</a>
+                                    <a id="loket" class="nav-link" href="loket/pengusulan"><i class="icon-user"></i>
+                                        Pengusulan Kegiatan</a>
                                 </li>
-                                <li class="nav-item">
+                                {{!-- <li class="nav-item">
                                     <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
-                                        Permintaan Dana Baru</a>
-                                </li>
-                                {{/if_eq}}
-                                {{#if_eq role '11'}}
-                                <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/verifikator"><i class="icon-user"></i>
-                                        Verifikator</a>
-                                </li>
-                                {{/if_eq}}
-                                {{#if_eq role '12'}}
-                                <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/ppk"><i class="icon-user"></i>
-                                        PPK</a>
-                                </li>
-                                {{/if_eq}}
-                                {{#if_eq role '13'}}
-                                <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/ppspm"><i class="icon-user"></i>
-                                        PPSPM</a>
-                                </li>
-                                {{/if_eq}}
-                                {{#if_eq role '14'}}
-                                <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/reviewer"><i class="icon-user"></i>
-                                        Reviewer</a>
-                                </li>
-                                {{/if_eq}}
-                                {{#if_eq role '15'}}
-                                <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/bendahara"><i class="icon-user"></i>
-                                        Bendahara</a>
-                                </li>
-                                {{/if_eq}}
-                                {{#if_eq role '16'}}
-                                <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/bank"><i class="icon-user"></i>
-                                        Operator Bank</a>
-                                </li>
+                                        Permintaan Dana</a>
+                                </li> --}}
                                 {{/if_eq}}
                             {{/if}}
                         </ul>
@@ -312,6 +277,13 @@
                                 <a id="pengaturanSPPD" class="nav-link" href="sppd/pengaturan"><i
                                         class="icon-wrench"></i> Pengaturan</a>
                             </li>
+                            {{else}}
+                                {{#if_eq jabatan '3'}}
+                                <li class="nav-item">
+                                    <a id="pengaturanSPPD" class="nav-link" href="sppd/pengaturan"><i
+                                            class="icon-wrench"></i> Pengaturan</a>
+                                </li>
+                                {{/if_eq}}
                             {{/if}}
                         </ul>
                     </li>
@@ -332,6 +304,12 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="spj/pengaturan"><i class="icon-wrench"></i> Pengaturan</a>
                             </li>
+                            {{else}}
+                                {{#if_eq jabatan '3'}}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="spj/pengaturan"><i class="icon-wrench"></i> Pengaturan</a>
+                                </li>
+                                {{/if_eq}}
                             {{/if}}
                         </ul>
                     </li>
@@ -399,6 +377,8 @@
     <script src="/js/typeahead.bundle.min.js"></script>
 
     <script src="/js/spin.min.js"></script>
+
+    <script src="/js/jquery-confirm.min.js"></script>
 
     <script type="text/javascript">
         var socket = io.connect($(location).attr('host'));

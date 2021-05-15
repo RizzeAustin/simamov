@@ -14,244 +14,337 @@
                                 <div class="col-6">
                                     <input name="tiketId" type="hidden" value="{{data._id}}">
                                     <div class="form-group row">
-                                        <label for="loketNamaUnit" class="col-md-2 col-form-label">Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" value="{{data.unit}}" disabled>
+                                            <label for="loketNamaUnit" class="form-label">Unit</label>
+                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" value="{{data.unit.nama}}" readonly>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketKodeUnit" class="col-md-2 col-form-label">Kode Unit</label>
                                         <div class="col">
-                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" value="{{data.kodeUnit}}" disabled>
+                                            <label for="loketKodeUnit" class="form-label">Kode Unit</label>
+                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" value="{{data.unit.kode}}" readonly>
                                         </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketOperator" class="col-md-2 col-form-label">Operator</label>
                                         <div class="col">
-                                            <input type="text" name="loketOperator" id="loketOperator" class="form-control" value="{{data.operator}}" disabled>
+                                            <label for="loketOperator" class="form-label">Operator</label>
+                                            <input type="text" name="loketOperator" id="loketOperator" class="form-control" value="{{data.operator}}" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="" class="col-md-2 col-form-label">Detail Pengajuan</label>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketProgram" class="col ml-1 col-form-label">Program</label>
-                                        <div class="col-md-10 input-group">
-                                            <select name="loketProgram" id="loketProgram" class="form-select">
-                                                {{#if data.kdprogram}}
-                                                    <option value="{{data.kdprogram}}" selected>{{data.kdprogram}} {{data.uraianProgram}}</option>
-                                                {{else}}
-                                                    <option>Pilih Program</option>
-                                                {{/if}}
-                                                {{#each program}}
-                                                    <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
-                                                {{/each}}
-                                            </select>
+                                        <div class="col-1"></div>
+                                        <div class="col-11">
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketProgram" class="form-label">Program</label>
+                                                    <select name="loketProgram" id="loketProgram" class="form-select">
+                                                        <option>Pilih Program</option>
+                                                        {{#if data.pok.kdprogram}}
+                                                            <option value="{{data.pok.kdprogram}}" selected>{{data.pok.kdprogram}} {{data.pok.uraianProgram}}</option>
+                                                        {{/if}}
+                                                        {{#each program}}
+                                                            <option value="{{this.kdprogram}}">{{this.kdprogram}} {{this.uraian}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketKegiatan" class="form-label">Aktivitas</label>
+                                                    <select name="loketKegiatan" id="loketKegiatan" class="form-select">
+                                                        <option>Pilih Aktivitas</option>
+                                                        {{#if data.pok.kdaktivitas}}
+                                                            <option value="{{data.pok.kdaktivitas}}" selected>{{data.pok.kdaktivitas}} {{data.pok.uraianAktivitas}}</option>
+                                                        {{/if}}
+                                                        {{#each kegiatan}}
+                                                            <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketOutput" class="form-label">KRO</label>
+                                                    <select name="loketOutput" id="loketOutput" class="form-select">
+                                                        <option>Pilih KRO</option>
+                                                        {{#if data.pok.kdkro}}
+                                                            <option value="{{data.pok.kdkro}}" selected>{{data.pok.kdkro}} {{data.pok.uraianKro}}</option>
+                                                        {{/if}}
+                                                        {{#each output}}
+                                                            <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketOutput" class="form-label">RO</label>
+                                                    <select name="loketsOutput" id="loketsOutput" class="form-select">
+                                                        <option>Pilih RO</option>
+                                                        {{#if data.pok.kdkro}}
+                                                            <option value="{{data.pok.kdro}}" selected>{{data.pok.kdro}} {{data.pok.uraianRo}}</option>
+                                                        {{/if}}
+                                                        {{#each suboutput}}
+                                                            <option value="{{this.kdsoutput}}">{{this.kdsoutput}} {{this.ursoutput}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketKomponen" class="form-label">Komponen</label>
+                                                    <select name="loketKomponen" id="loketKomponen" class="form-select">
+                                                        <option>Pilih Komponen</option>
+                                                        {{#if data.pok.kdkomponen}}
+                                                            <option value="{{data.pok.kdkomponen}}" selected>{{data.pok.kdkomponen}} {{data.pok.uraianKomponen}}</option>
+                                                        {{/if}}
+                                                        {{#each komponen}}
+                                                            <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketsKomponen" class="form-label">Sub Komponen</label>
+                                                    <select name="loketsKomponen" id="loketsKomponen" class="form-select">
+                                                        <option>Pilih Sub Komponen</option>
+                                                        {{#if data.pok.kdsubkomponen}}
+                                                            <option value="{{data.pok.kdsubkomponen}}" selected>{{data.pok.kdsubkomponen}} {{data.pok.uraianSubKomponen}}</option>
+                                                        {{/if}}
+                                                        {{#each subkomponen}}
+                                                            <option value="{{this.kdskmpnen}}">{{this.kdskmpnen}} {{this.urskmpnen}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketAkun" class="form-label">Akun</label>
+                                                    <select name="loketAkun" id="loketAkun" class="form-select">
+                                                        <option>Pilih Akun</option>
+                                                        {{#if data.pok.kdakun}}
+                                                            <option value="{{data.pok.kdakun}}" selected>{{data.pok.kdakun}} {{data.pok.uraianAkun}}</option>
+                                                        {{/if}}
+                                                        {{#each akun}}
+                                                            <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketKegiatan" class="col ml-1 col-form-label">Aktivitas</label>
-                                        <div class="col-md-10 input-group">
-                                            <select name="loketKegiatan" id="loketKegiatan" class="form-select">
-                                                {{#if data.kdkegiatan}}
-                                                    <option value="{{data.kdkegiatan}}" selected>{{data.kdkegiatan}} {{data.uraianKegiatan}}</option>
-                                                {{else}}
-                                                    <option>Pilih Aktivitas</option>
-                                                {{/if}}
-                                                {{#each kegiatan}}
-                                                    <option value="{{this.kdgiat}}">{{this.kdgiat}} {{this.uraian}}</option>
-                                                {{/each}}
-                                            </select>
+                                        <div class="col-1"></div>
+                                        <div class="col-11">
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 1</label>
+                                                    <select name="loketDetailPok1" id="loketDetailPok1" class="form-select">
+                                                        <option>Pilih Detail</option>
+                                                        {{#if data.pok.detil}}
+                                                            <option value="{{data.pok.detil.u1}}" selected>{{data.pok.detil.u1}}</option>
+                                                        {{/if}}
+                                                        {{#each detail}}
+                                                            <option value="{{this.nmitem}}">{{this.nmitem}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil1" id="nilaiDetil1" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" value="{{data.pok.detil.n1}}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 2</label>
+                                                    <select name="loketDetailPok2" id="loketDetailPok2" class="form-select">
+                                                        <option>Pilih Detail</option>
+                                                        {{#if data.pok.detil}}
+                                                            <option value="{{data.pok.detil.u2}}" selected>{{data.pok.detil.u2}}</option>
+                                                        {{/if}}
+                                                        {{#each detail}}
+                                                            <option value="{{this.nmitem}}">{{this.nmitem}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil2" id="nilaiDetil2" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n2}}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 3</label>
+                                                    <select name="loketDetailPok3" id="loketDetailPok3" class="form-select">
+                                                        <option>Pilih Detail</option>
+                                                        {{#if data.pok.detil}}
+                                                            <option value="{{data.pok.detil.u3}}" selected>{{data.pok.detil.u3}}</option>
+                                                        {{/if}}
+                                                        {{#each detail}}
+                                                            <option value="{{this.nmitem}}">{{this.nmitem}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil3" id="nilaiDetil3" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n3}}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 4</label>
+                                                    <select name="loketDetailPok4" id="loketDetailPok4" class="form-select">
+                                                        <option>Pilih Detail</option>
+                                                        {{#if data.pok.detil}}
+                                                            <option value="{{data.pok.detil.u4}}" selected>{{data.pok.detil.u4}}</option>
+                                                        {{/if}}
+                                                        {{#each detail}}
+                                                            <option value="{{this.nmitem}}">{{this.nmitem}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil4" id="nilaiDetil4" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n4}}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 5</label>
+                                                    <select name="loketDetailPok5" id="loketDetailPok5" class="form-select">
+                                                        <option>Pilih Detail</option>
+                                                        {{#if data.pok.detil}}
+                                                            <option value="{{data.pok.detil.u5}}" selected>{{data.pok.detil.u5}}</option>
+                                                        {{/if}}
+                                                        {{#each detail}}
+                                                            <option value="{{this.nmitem}}">{{this.nmitem}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil5" id="nilaiDetil5" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n5}}">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketOutput" class="col ml-1 col-form-label">KRO</label>
-                                        <div class="col-md-10 input-group">
-                                            <select name="loketOutput" id="loketOutput" class="form-select">
-                                                {{#if data.kdoutput}}
-                                                    <option value="{{data.kdoutput}}" selected>{{data.kdoutput}} {{data.uraianOutput}}</option>
-                                                {{else}}
-                                                    <option>Pilih KRO</option>
-                                                {{/if}}
-                                                {{#each output}}
-                                                    <option value="{{this.kdoutput}}">{{this.kdoutput}} {{this.uraian}}</option>
-                                                {{/each}}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketKomponen" class="col ml-1 col-form-label">Komponen</label>
-                                        <div class="col-md-10 input-group">
-                                            <select name="loketKomponen" id="loketKomponen" class="form-select">
-                                                {{#if data.kdkomponen}}
-                                                    <option value="{{data.kdkomponen}}" selected>{{data.kdkomponen}} {{data.uraianKomponen}}</option>
-                                                {{else}}
-                                                    <option>Pilih Komponen</option>
-                                                {{/if}}
-                                                {{#each komponen}}
-                                                    <option value="{{this.kdkmpnen}}">{{this.kdkmpnen}} {{this.urkmpnen}}</option>
-                                                {{/each}}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketAkun" class="col ml-1 col-form-label">Akun</label>
-                                        <div class="col-md-10 input-group">
-                                            <select name="loketAkun" id="loketAkun" class="form-select">
-                                                {{#if data.kdakun}}
-                                                    <option value="{{data.kdakun}}" selected>{{data.kdakun}} {{data.uraianAkun}}</option>
-                                                {{else}}
-                                                    <option>Pilih Akun</option>
-                                                {{/if}}
-                                                {{#each akun}}
-                                                    <option value="{{this.kdakun}}">{{this.kdakun}} {{this.uraian}}</option>
-                                                {{/each}}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketDetailPok" class="col ml-1 col-form-label">Detail POK</label>
-                                        <div class="col-md-10">
-                                            <select name="loketDetailPok" id="loketDetailPok" class="form-select">
-                                                {{#if data.uraianDetail}}
-                                                    <option value="{{data.uraianDetail}}" selected>{{data.uraianDetail}}</option>
-                                                {{else}}
-                                                    <option>Pilih Detail</option>
-                                                {{/if}}
-                                                {{#each detail}}
-                                                    <option value="{{this.nmitem}}">{{this.nmitem}}</option>
-                                                {{/each}}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-md-2"></div>
-                                        <div class="col-md-10" id="pokWarning"></div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketTglPelaksanaan" class="col ml-1 col-form-label">Tanggal Pelaksanaan</label>
-                                        <div class="col-md-10">
-                                            <input type="text" name="loketTglPelaksanaan" id="loketTglPelaksanaan" class="form-control" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketDetail" class="col ml-1 col-form-label">Detail SPJ</label>
-                                        <div class="col-md-10">
-                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" value="{{data.detail}}" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketNilai" class="col ml-1 col-form-label">Nilai Bruto</label>
-                                        <label class="ml-2 col-form-label" for="">Rp</label>
-                                        <div class="col-md-9">
-                                            <input type="text" name="loketNilai" id="loketNilai" class="form-control" value="{{data.nilaiPengajuan}}" disabled>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-group row">
-                                        <label for="" class="col-md-2 col-form-label">Checklist</label>
-                                        <div class="col-md-2"></div>
-                                        <label for="" class="col-md-1 col-form-label" style="text-align:center">Unit</label>
-                                        <label for="" class="col-md-1 col-form-label" style="text-align:center">PPK</label>
-                                        <label for="" class="col-md-1 col-form-label" style="text-align:center">PPSPM</label>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-md-2"></div>
-                                        <label for="" class="col-md-2 form-control-label">SPJ</label>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistSpjUnit" name="checklistSpjUnit" id="checklistSpjUnit"
-                                            disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistSpjPpk" name="checklistSpjPpk" id="checklistSpjPpk"
-                                            disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistSpjPpspm" name="checklistSpjPpspm"
-                                            id="checklistSpjPpspm">
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-md-2"></div>
-                                        <label for="" class="col-md-2 form-control-label">Daftar Hadir</label>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistDaftarHadirUnit" name="checklistDaftarHadirUnit"
-                                            id="checklistDaftarHadirUnit" disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistDaftarHadirPpk" name="checklistDaftarHadirPpk"
-                                            id="checklistDaftarHadirPpk" disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistDaftarHadirPpspm" name="checklistDaftarHadirPpspm"
-                                            id="checklistDaftarHadirPpspm">
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-md-2"></div>
-                                        <label for="" class="col-md-2 form-control-label">Dokumentasi</label>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistDokumentasiUnit" name="checklistDokumentasiUnit"
-                                            id="checklistDokumentasiUnit" disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistDokumentasiPpk" name="checklistDokumentasiPpk"
-                                            id="checklistDokumentasiPpk" disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistDokumentasiPpspm" name="checklistDokumentasiPpspm"
-                                            id="checklistDokumentasiPpspm">
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-md-2"></div>
-                                        <label for="" class="col-md-2 form-control-label">Notulensi</label>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistNotulensiUnit" name="checklistNotulensiUnit"
-                                            id="checklistNotulensiUnit" disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistNotulensiPpk" name="checklistNotulensiPpk"
-                                            id="checklistNotulensiPpk" disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistNotulensiPpspm" name="checklistNotulensiPpspm"
-                                            id="checklistNotulensiPpspm">
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-md-2"></div>
-                                        <label for="" class="col-md-2 form-control-label">CV Narasumber</label>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistCvUnit" name="checklistCvUnit" id="checklistCvUnit"
-                                            disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistCvPpk" name="checklistCvPpk" id="checklistCvPpk"
-                                            disabled>
-                                        <input class="col-md-1 form-check" type="checkbox" value="True"
-                                            aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm">
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="loketAdkSpj" class="col-md-2 col-form-label">ADK SPJ</label>
                                         <div class="col">
-                                            <p id="loketAdkSpj">{{data.fileSpj}}</p>
+                                            <label for="loketDetail" class="form-label">Detail SPJ</label>
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" value="{{data.detail}}" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketSpp" class="col-md-2 col-form-label">SPP</label>
                                         <div class="col">
+                                            <label for="loketTglPelaksanaan" class="form-label">Tanggal Pelaksanaan</label>
+                                            <input type="text" name="loketTglPelaksanaan" id="loketTglPelaksanaan" class="form-control" readonly>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketNilai" class="form-label">Total Nilai Bruto</label>
+                                            <div class="row">
+                                                <label class="col-1 form-label" for="" style="text-align: right;">Rp</label>
+                                                <div class="col">
+                                                    <input type="number" name="loketNilai" id="loketNilai" class="form-control" autocomplete="off" readonly {{#if data}}value="{{data.nilai.bruto}}" {{else}}value="0"{{/if}}>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-3"><label for="" class="form-label">Checklist</label></div>
+                                        <div class="col-1"><label for="" class="form-label" style="text-align:left">Unit</label></div>
+                                        <div class="col-1"><label for="" class="form-label" style="text-align:left">PPK</label></div>
+                                        <div class="col-1"><label for="" class="form-label" style="text-align:left">PPSPM</label></div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">SPJ</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistSpjUnit" name="checklistSpjUnit" id="checklistSpjUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistSpjPpk" name="checklistSpjPpk" id="checklistSpjPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistSpjPpspm" name="checklistSpjPpspm" id="checklistSpjPpspm">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">Daftar Hadir</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDaftarHadirUnit" name="checklistDaftarHadirUnit" id="checklistDaftarHadirUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDaftarHadirPpk" name="checklistDaftarHadirPpk" id="checklistDaftarHadirPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDaftarHadirPpspm" name="checklistDaftarHadirPpspm" id="checklistDaftarHadirPpspm">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">Dokumentasi</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDokumentasiUnit" name="checklistDokumentasiUnit" id="checklistDokumentasiUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDokumentasiPpk" name="checklistDokumentasiPpk" id="checklistDokumentasiPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDokumentasiPpspm" name="checklistDokumentasiPpspm" id="checklistDokumentasiPpspm">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">Notulensi</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistNotulensiUnit" name="checklistNotulensiUnit" id="checklistNotulensiUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistNotulensiPpk" name="checklistNotulensiPpk" id="checklistNotulensiPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistNotulensiPpspm" name="checklistNotulensiPpspm" id="checklistNotulensiPpspm">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">CV Narasumber</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistCvUnit" name="checklistCvUnit" id="checklistCvUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistCvPpk" name="checklistCvPpk" id="checklistCvPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="loketAdkSpj" class="form-label">ADK SPJ</label>
+                                            <input type="text" class="form-control" name="" id="" value="{{data.fileSpj}}" disabled>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketSpp" class="form-label">SPP</label>
                                             <input type="text" value="{{data.spp}}" class="form-control" disabled>
-                                            {{!-- <select name="loketSpp" id="loketSpp" form="form-select" disabled>
-                                                <option selected></option>
-                                                <option value="sudah">Sudah</option>
-                                            </select> --}}
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketCatatanPpk" class="col-md-2 col-form-label mt-1">Catatan PPK</label>
                                         <div class="col">
-                                            <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control" disabled>{{data.catatan.ppk}}</textarea>
+                                            <label for="loketCatatanPpk" class="form-label">Catatan PPK</label>
+                                            <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control" readonly>{{data.catatan.ppk}}</textarea>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="loketCatatanPpspm" class="col-md-2 col-form-label mt-1">Catatan PPSPM</label>
                                         <div class="col">
+                                            <label for="loketCatatanPpspm" class="form-label">Catatan PPSPM</label>
                                             <textarea name="loketCatatanPpspm" id="loketCatatanPpspm" class="form-control" placeholder="Jika tidak ada catatan, isian ini dapat dikosongkan">{{data.catatan.ppspm}}</textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button id="tolakFormPpspm" type="submit" class="btn btn-danger">Tolak</button>
-                                        <button id="kirimFormPpspmReviewer" type="submit" class="btn btn-success">Kirim<br><small>(Reviewer)</small></button>
+                                        <button id="kirimFormPpspmReviewer" type="submit" class="btn btn-success">Kirim</button>
                                     </div>
+                                </div>
+                                <div class="col-6">
                                 </div>
                             </div>
                         </form>
@@ -286,40 +379,120 @@
         var not = [{{data.checklist.notulensi}}]
         var cv = [{{data.checklist.cvNarasumber}}]
         
-        if (spj[0]) $('#checklistSpjUnit').attr("checked", true)
-        if (hadir[0]) $('#checklistDaftarHadirUnit').attr("checked", true)
-        if (dok[0]) $('#checklistDokumentasiUnit').attr("checked", true)
-        if (not[0]) $('#checklistNotulensiUnit').attr("checked", true)
-        if (cv[0]) $('#checklistCvUnit').attr("checked", true)
-        if (spj[1]) $('#checklistSpjPpk').attr("checked", true)
-        if (hadir[1]) $('#checklistDaftarHadirPpk').attr("checked", true)
-        if (dok[1]) $('#checklistDokumentasiPpk').attr("checked", true)
-        if (not[1]) $('#checklistNotulensiPpk').attr("checked", true)
-        if (cv[1]) $('#checklistCvPpk').attr("checked", true)
-        if (spj[2]) $('#checklistSpjPpspm').attr("checked", true)
-        if (hadir[2]) $('#checklistDaftarHadirPpspm').attr("checked", true)
-        if (dok[2]) $('#checklistDokumentasiPpspm').attr("checked", true)
-        if (not[2]) $('#checklistNotulensiPpspm').attr("checked", true)
-        if (cv[2]) $('#checklistCvPpspm').attr("checked", true)
+        if (spj[0]) $('#checklistSpjUnit').prop("checked", true)
+        if (hadir[0]) $('#checklistDaftarHadirUnit').prop("checked", true)
+        if (dok[0]) $('#checklistDokumentasiUnit').prop("checked", true)
+        if (not[0]) $('#checklistNotulensiUnit').prop("checked", true)
+        if (cv[0]) $('#checklistCvUnit').prop("checked", true)
+        if (spj[1]) $('#checklistSpjPpk').prop("checked", true)
+        if (hadir[1]) $('#checklistDaftarHadirPpk').prop("checked", true)
+        if (dok[1]) $('#checklistDokumentasiPpk').prop("checked", true)
+        if (not[1]) $('#checklistNotulensiPpk').prop("checked", true)
+        if (cv[1]) $('#checklistCvPpk').prop("checked", true)
+        if (spj[2]) $('#checklistSpjPpspm').prop("checked", true)
+        if (hadir[2]) $('#checklistDaftarHadirPpspm').prop("checked", true)
+        if (dok[2]) $('#checklistDokumentasiPpspm').prop("checked", true)
+        if (not[2]) $('#checklistNotulensiPpspm').prop("checked", true)
+        if (cv[2]) $('#checklistCvPpspm').prop("checked", true)
 
         $('#loketProgram').focus()
+
+        //jumlah total nilai bruto
+        if ("{{data}}"){
+            var nilai1 = parseInt("{{data.pok.detil.n1}}") 
+            var nilai2 = parseInt("{{data.pok.detil.n2}}")
+            var nilai3 = parseInt("{{data.pok.detil.n3}}")
+            var nilai4 = parseInt("{{data.pok.detil.n4}}") 
+            var nilai5 = parseInt("{{data.pok.detil.n5}}")
+        } else {
+            var nilai1 = 0
+            var nilai2 = 0
+            var nilai3 = 0
+            var nilai4 = 0
+            var nilai5 = 0
+        }
+        $('#nilaiDetil1').focusout(function(){
+            if ($('#nilaiDetil1').val()){
+                nilai1 = parseInt($(this).val())
+            } else {
+                nilai1 = 0
+            }
+            $('#loketNilai').val(nilai1+nilai2+nilai3+nilai4+nilai5)
+        })
+        $('#nilaiDetil2').focusout(function(){
+            if ($('#nilaiDetil2').val()){
+                nilai2 = parseInt($(this).val())
+            } else {
+                nilai2 = 0
+            }
+            $('#loketNilai').val(nilai1+nilai2+nilai3+nilai4+nilai5)
+        })
+        $('#nilaiDetil3').focusout(function(){
+            if ($('#nilaiDetil3').val()){
+                nilai3 = parseInt($(this).val())
+            } else {
+                nilai3 = 0
+            }
+            $('#loketNilai').val(nilai1+nilai2+nilai3+nilai4+nilai5)
+        })
+        $('#nilaiDetil4').focusout(function(){
+            if ($('#nilaiDetil4').val()){
+                nilai4 = parseInt($(this).val())
+            } else {
+                nilai4 = 0
+            }
+            $('#loketNilai').val(nilai1+nilai2+nilai3+nilai4+nilai5)
+        })
+        $('#nilaiDetil5').focusout(function(){
+            if ($('#nilaiDetil5').val()){
+                nilai5 = parseInt($(this).val())
+            } else {
+                nilai5 = 0
+            }
+            $('#loketNilai').val(nilai1+nilai2+nilai3+nilai4+nilai5)
+        })
 
         //validasi isian
         $('#tolakFormPpspm').click(function (e) {
             e.preventDefault()
             $('form').attr('action', 'loket/ppspmTolak')
-            let va = confirm('Anda yakin?')
-            if(va) {
-                if (!$('#loketCatatanPpspm').val() || $('#loketCatatanPpspm').val() == '-') {
-                    generalAlert('Catatan harus diisi ketika tiket ditolak')
-                    $('#loketCatatanPpspm').focus()
-                } else {
-                    generalAlert('Tiket akan Dikembalikan ke Unit dan Redirect ke dashboard dalam 5 detik')
-                    setTimeout( function () { 
-                        $('form').submit()
-                    }, 5000)
+            $.confirm({
+                title: 'Konfirmasi Tolak Permintaan',
+                content: 'Apakah Anda yakin akan menolak permintaan dana?',
+                buttons: {
+                    confirm: {
+                        text: 'Yakin',
+                        btnClass: 'btn-danger',
+                        action: function () {
+                            if (!$('#loketCatatanPpspm').val() || $('#loketCatatanPpspm').val() == '-') {
+                                generalAlert('Catatan harus diisi ketika permintaan ditolak')
+                                $('#loketCatatanPpspm').focus()
+                            } else {
+                                if ($('#loketDetailPok2').val()=="Pilih Detail"){
+                                    $('#loketDetailPok2').attr('disabled', true)
+                                }
+                                if ($('#loketDetailPok3').val()=="Pilih Detail"){
+                                    $('#loketDetailPok3').attr('disabled', true)
+                                }
+                                if ($('#loketDetailPok4').val()=="Pilih Detail"){
+                                    $('#loketDetailPok4').attr('disabled', true)
+                                }
+                                if ($('#loketDetailPok5').val()=="Pilih Detail"){
+                                    $('#loketDetailPok5').attr('disabled', true)
+                                }
+                                generalAlert('Permintaan akan dikembalikan ke Unit dan Redirect ke dashboard dalam 5 detik')
+                                setTimeout( function () { 
+                                    $('form').submit()
+                                }, 5000)
+                            }
+                        },
+                    },
+                    cancel: {
+                        text: 'Batalkan',
+                        action: function () {},
+                    },
                 }
-            }
+            })
         })
 
         $('#kirimFormPpspmReviewer').click(function (e) {
@@ -328,26 +501,71 @@
             if ($('#loketProgram').val()=="Pilih Program"){
                 generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
-            } else if ($('#loketKegiatan').val()=="Pilih Kegiatan"){
-                generalAlert("Silahkan pilih kegiatan")
+            } else if ($('#loketKegiatan').val()=="Pilih Aktivitas"){
+                generalAlert("Silahkan pilih aktivitas")
                 $('#loketKegiatan').focus()
-            } else if ($('#loketOutput').val()=="Pilih Output"){
-                generalAlert("Silahkan pilih output")
+            } else if ($('#loketOutput').val()=="Pilih KRO"){
+                generalAlert("Silahkan pilih KRO")
                 $('#loketOutput').focus()
+            } else if ($('#loketsOutput').val()=="Pilih RO"){
+                generalAlert("Silahkan pilih RO")
+                $('#loketsOutput').focus()
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
                 generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
+            } else if ($('#loketsKomponen').val()=="Pilih Sub Komponen"){
+                generalAlert("Silahkan pilih sub komponen")
+                $('#loketsKomponen').focus()
             } else if ($('#loketAkun').val()=="Pilih Akun"){
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
-            } else if ($('#loketDetailPok').val()=="Pilih Detail"){
-                generalAlert("Silahkan pilih detail")
-                $('#loketDetailPok').focus()
+            } else if ($('#loketDetailPok1').val()=="Pilih Detail"){
+                generalAlert("Silahkan pilih setidaknya 1 detail")
+                $('#loketDetailPok1').focus()
+            } else if (!$('#nilaiDetil1').val()){
+                generalAlert('Silahkan masukkan Nilai Bruto pada Detil POK 1')
+                $('#nilaiDetil1').focus()
+            } else if (
+                !($('#checklistSpjPpspm').prop('checked')==true||
+                $('#checklistDaftarHadirPpspm').prop('checked')==true||
+                $('#checklistDokumentasiPpspm').prop('checked')==true||
+                $('#checklistNotulensiPpspm').prop('checked')==true||
+                $('#checklistCvPpspm').prop('checked')==true)
+            ){
+                generalAlert('Silahkan pilih setidaknya 1 checklist')
             } else {
-                generalAlert("Tiket akan diteruskan ke Reviewer dan Redirect ke dashboard dalam 5 detik")
-                setTimeout( function () { 
-                    $('form').submit()
-                }, 5000)
+                $.confirm({
+                    title: 'Konfirmasi permintaan',
+                    content: 'Apakah Anda yakin isian sudah benar?',
+                    buttons: {
+                        confirm: {
+                            text: 'Yakin',
+                            btnClass: 'btn-success',
+                            action: function () {
+                                if ($('#loketDetailPok2').val()=="Pilih Detail"){
+                                    $('#loketDetailPok2').attr('disabled', true)
+                                }
+                                if ($('#loketDetailPok3').val()=="Pilih Detail"){
+                                    $('#loketDetailPok3').attr('disabled', true)
+                                }
+                                if ($('#loketDetailPok4').val()=="Pilih Detail"){
+                                    $('#loketDetailPok4').attr('disabled', true)
+                                }
+                                if ($('#loketDetailPok5').val()=="Pilih Detail"){
+                                    $('#loketDetailPok5').attr('disabled', true)
+                                }
+                                generalAlert("Permintaan akan diteruskan ke Reviewer dan Redirect ke dashboard dalam 5 detik")
+                                setTimeout( function () { 
+                                    $('form').submit()
+                                }, 5000)
+                            },
+                        },
+                        cancel: {
+                            text: 'Batalkan',
+                            action: function () {},
+                        },
+                    }
+                })
             }
         })
 

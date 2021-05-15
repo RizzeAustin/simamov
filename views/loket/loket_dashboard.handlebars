@@ -1,126 +1,290 @@
 <div class="animated fadeIn">
     <div class="card" id="new">
-        <div class="card-header"><i class="icon-pencil"></i> E-LOKET</div>
+        <div class="card-header"> 
+            <div class="container w-100 p-0">
+                <div class="row">
+                    <div class="col-10">
+                        <i class="icon-pencil"></i> E-LOKET Dashboard
+                    </div>
+                    <div class="col-2">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon-clock"></i>
+                            </span>
+                            <select onchange="this.form.submit()" data-toggle="tooltip" title="Tahun anggaran" id="tahun_anggaran" name="tahun_anggaran" class="form-control" size="1" disabled>
+                                <option value="{{tahunAktif}}">{{tahunAktif}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card-block">
             <div class="row">
                 <div class="col-md-12">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#usulanKegiatan" role="tab"><i class="icon-bell"></i> Usulan Kegiatan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#pengajuanBerjalan" role="tab"><i class="icon-clock"></i> Pengajuan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#pengajuanSelesai" role="tab"><i class="icon-check"></i> Pengajuan Selesai</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#grafikRealisasi" role="tab"><i class="icon-chart"></i> Realisasi</a>
+                        </li>
+                    </ul>
                     <div class="tab-content">
-                        {{!-- table transaksi selesai --}}
-                        <div class="row col">
-                            <h5>I. TRANSAKSI SELESAI</h5>
-                        </div>
-                        <div class="row">
-                            <div class="col-8">
-                                <div id="navSelesai"><ul class="pagination"></ul></div>
+                        <div class="tab-pane active" id="usulanKegiatan" role="tabpanel">
+                            <div class="row col">
+                                <h5>USULAN KEGIATAN</h5>
                             </div>
-                            <div class="col">
-                                <table class="borderless">
-                                    <tbody>
-                                        <td>Cari: </td>
-                                        <td><input type="text" class="form-control" onkeyup="cariTiket1()" id="cariPengajuan1" placeholder="no transaksi, metode pembayaran, deskripsi"></td>
-                                    </tbody>
-                                </table>
-                            </div>
+                            {{!-- <div class="row col">
+                                <ul style="list-style: none; padding-left: 0;">
+                                    <li>Keterangan:</li>
+                                    <li><button class="btn btn-success"></button> Telah dikonfirmasi oleh PPK</li>
+                                    <li><button class="btn btn-primary"></button> Belum dikonfirmasi oleh PPK</li>
+                                </ul>
+                            </div> --}}
+                            <table id="tableUsulan" class="table table-bordered table-striped" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Waktu Perubahan Status Terakhir</th>
+                                        <th>Unit</th>
+                                        <th>Usulan Detil baru</th>
+                                        <th>Total Nilai Bruto</th>
+                                        <th>Status</th>
+                                        <th>Cek Detail</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each usulan}}
+                                        <tr id="{{this._id}}">
+                                            <td style="text-align:center">{{this.timestamp}}</td>
+                                            <td style="text-align:center">{{this.unit}}</td>
+                                            <td>{{this.pok.detilBaru}}</td>
+                                            <td class="format-uang">{{this.nilaiBruto}}</td>
+                                            <td>{{this.status}}</td>
+                                            <td style="text-align:center">
+                                                <button type="button" class="btn btn-primary" id="btnUsulan" data-toggle="modal" data-target="#modalUsulan">Detail</button>
+                                            </td>
+                                        </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
                         </div>
-                        <table id="tableSelesai" class="table table-bordered table-striped" width="100%">
-                            <thead>
-                                <tr>
-                                    <th width="1%">No</th>
-                                    <th width="10%">Nomor Transaksi</th>
-                                    <th width="15%">Tanggal Selesai</th>
-                                    <th width="15%">Tanggal Pembayaran</th>
-                                    <th width="6%">Nilai Pengajuan</th>
-                                    <th width="6%">Pajak</th>
-                                    <th width="6%">Nilai Pembayaran</th>
-                                    <th width="6%">Metode Pembayaran</th>
-                                    <th width="20%">Deskripsi</th>
-                                    <th width="10%">Cek Detail</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                                {{#unless daftarSelesai}}
-                                    <p class="text-center">Belum terdapat pengajuan yang selesai</p>
-                                {{/unless}}
-                        {{!-- table pengajuan --}}
-                        <div class="row col">
-                            <h5>II. PENGAJUAN</h5>
-                        </div>
-                        <div class="row">
-                            <div class="col-8">
-                                <div id="navPengajuan"><ul class="pagination"></ul></div>
-                            </div>
-                            <div class="col">
-                                <table class="borderless">
-                                    <tbody>
-                                        <td>Cari: </td>
-                                        <td><input type="text" class="form-control" onkeyup="cariTiket2()" id="cariPengajuan2" placeholder="kode unit, no transaksi, deskripsi, posisi"></td>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <table id="tablePengajuan" class="table table-bordered table-striped"
-                            width="100%">
-                            <thead>
-                                <tr>
-                                    <th width="1%">No</th>
-                                    <th width="4%">Kode Unit</th>
-                                    <th width="10%">Nomor Transaksi</th>
-                                    <th width="15%">Tanggal Pengajuan</th>
-                                    <th width="6%">Nilai Pengajuan</th>
-                                    <th width="20%">Deskripsi</th>
-                                    <th width="7%">Posisi</th>
-                                    <th width="7%">Status</th>
-                                    <th width="20%">Catatan</th>
-                                    <th width="10%">Cek Akun</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                                {{#unless daftarPengajuan}}
-                                    <p class="text-center">Belum terdapat pengajuan</p>
-                                {{/unless}}
-                        {{!-- realisasi --}}
-                        <div class="row col">
-                            <h5 class="row col-12">III. REALISASI</h5><br>
-                            <h6 class="row col-9">a. Realisasi Unit</h6><br>
-                            {{#if_eq jabatan '3'}}
-                            {{else}}
-                                <div class="row col-3">
-                                    <select name="" id="grafikRealisasiUnit" class="form-select" style="width: 100%; height: 40px; margin: 0 auto;">
-                                        <option value="BAU">BAU</option>
-                                        <option value="BAAK">BAAK</option>
-                                        <option value="PRODI">PRODI</option>
-                                        <option value="UPPPM">UPPPM</option>
-                                        <option value="SPM">SPM</option>
-                                        <option value="Perpustakaan">Perpustakaan</option>
-                                        <option value="IT">IT</option>
-                                        <option value="Lainnya">Lainnya</option>
-                                    </select>
-                                </div>
-                            {{/if_eq}}
+                        <div class="tab-pane" id="pengajuanSelesai" role="tabpanel">
                             <div class="row">
-                                <div class="col-m-4">
-                                    <div id="unitRealisasi" style="width: 100%; height: 420px; margin: 0 auto"></div>
+                                <div class="col-10">
+                                    <h5>TRANSAKSI SELESAI</h5>
                                 </div>
-                                <div class="col-m-8">
-                                    <div id="unitTerendah" style="width: 100%; height: 420px; margin: 0 auto"></div>
-                                </div>
+                                {{!-- <div class="col-2">
+                                    <select class="form-control" size="1" name="thangSelesai" id="thangSelesai" style="margin-bottom: 1rem;"></select>
+                                </div> --}}
                             </div>
-                            <h6 class="row col-12">b. Total Realisasi</h6>
-                            <div class="row">
-                                <div class="col-m-4">
-                                    <div id="allRealisasi" style="width: 100%; height: 420px; margin: 0 auto"></div>
+                            {{!-- <div class="row">
+                                <div class="col-8">
+                                    <div id="navSelesai"><ul class="pagination"></ul></div>
                                 </div>
-                                <div class="col-m-8">
-                                    <div id="allTerendah" style="width: 100%; height: 420px; margin: 0 auto"></div>
+                                <div class="col">
+                                    <table class="borderless">
+                                        <tbody>
+                                            <td>Cari: </td>
+                                            <td><input type="text" class="form-control" onkeyup="cariTiket1()" id="cariPengajuan1" placeholder="no transaksi, metode pembayaran, deskripsi"></td>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
+                            </div> --}}
+                            <table id="tableSelesai" class="table table-bordered table-striped" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="1%">No</th>
+                                        <th width="8%">Nomor Transaksi</th>
+                                        <th width="8%">Tanggal Selesai</th>
+                                        <th width="8%">Tanggal Pembayaran</th>
+                                        <th width="8%">Nilai Pengajuan</th>
+                                        <th width="8%">Pajak</th>
+                                        <th width="8%">Nilai Pembayaran</th>
+                                        <th width="7%">Metode Pembayaran</th>
+                                        <th width="26%">Deskripsi</th>
+                                        <th width="13%">Cek Detail</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each daftarSelesai}}
+                                        <tr id="{{this._id}}">
+                                            <td style="text-align:center"></td>
+                                            <td style="text-align:center">{{this.nomorTransaksi}}</td>
+                                            <td style="text-align:center">{{this.tanggal.selesai}}</td>
+                                            <td style="text-align:center">{{this.tanggal.transfer}}</td>
+                                            <td class="format-uang">{{this.nilai.bruto}}</td>
+                                            <td class="format-uang">{{this.nilai.pajak}}</td>
+                                            <td class="format-uang">{{this.nilai.transfer}}</td>
+                                            <td style="text-align:center">{{this.metodeTransfer}}</td>
+                                            <td>{{this.detail}}</td>
+                                            <td style="text-align:center">
+                                                <form action="/loket/downloadSpjTiketBank" method="post">
+                                                    <input type="hidden" name="tiketId" value="{{this._id}}">
+                                                    <button type="submit" class="btn btn-primary" id="downloadSpjTiket" data-toggle="tooltip" title="Dokumen Bank"><i class="icon-doc"></i></button>
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailTiket">Detail</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="row col">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="">Test Modal</button>
+                        <div class="tab-pane" id="pengajuanBerjalan" role="tabpanel">
+                            <div class="row col">
+                                <h5>PENGAJUAN</h5>
+                            </div>
+                            {{!-- <div class="row">
+                                <div class="col-8">
+                                    <div id="navPengajuan"><ul class="pagination"></ul></div>
+                                </div>
+                                <div class="col">
+                                    <table class="borderless">
+                                        <tbody>
+                                            <td>Cari: </td>
+                                            <td><input type="text" class="form-control" onkeyup="cariTiket2()" id="cariPengajuan2" placeholder="kode unit, no transaksi, deskripsi, posisi"></td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div> --}}
+                            <table id="tablePengajuan" class="table table-bordered table-striped"
+                                width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="2%">No</th>
+                                        <th width="8%">Kode Unit</th>
+                                        <th width="8%">Nomor Transaksi</th>
+                                        <th width="8%">Tanggal Pengajuan</th>
+                                        <th width="8%">Nilai Pengajuan</th>
+                                        <th width="20%">Deskripsi</th>
+                                        <th width="8%">Posisi</th>
+                                        <th width="8%">Status</th>
+                                        <th width="20%">Catatan</th>
+                                        <th width="10%">Cek Detail</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each daftarPengajuan}}  
+                                        <tr id="{{this._id}}">
+                                            <td style="text-align:center"></td>
+                                            <td style="text-align:center">{{this.unit.kode}}</td>
+                                            <td style="text-align:center">{{this.nomorTransaksi}}</td>
+                                            <td style="text-align:center">{{this.tanggal.pengajuan}}</td>
+                                            <td class="format-uang">{{this.nilai.bruto}}</td>
+                                            <td>{{this.detail}}</td>
+                                            <td style="text-align:center">{{this.posisi}}</td>
+                                            <td style="text-align:center">{{this.status}}</td>
+                                            <td>
+                                                {{#if_eq this.status 'Belum selesai'}}
+                                                    {{#if_eq this.posisi 'Verifikator'}}
+                                                    {{else}}
+                                                        {{#if_eq this.posisi 'PPK'}}
+                                                        {{else}}
+                                                            {{#if_eq this.posisi 'PPSPM'}}
+                                                                PPK : {{this.catatan.ppk}}    
+                                                            {{else}}
+                                                                {{#if_eq this.posisi 'Reviewer'}}
+                                                                    PPK : {{this.catatan.ppk}}<br>
+                                                                    PPSPM : {{this.catatan.ppspm}}        
+                                                                {{else}}
+                                                                    PPK : {{this.catatan.ppk}}<br>
+                                                                    PPSPM : {{this.catatan.ppspm}}<br>
+                                                                    Reviewer : {{this.catatan.reviewer}}
+                                                                {{/if_eq}}
+                                                            {{/if_eq}}
+                                                        {{/if_eq}}
+                                                    {{/if_eq}}
+                                                {{else}}                    
+                                                    {{#if_eq this.posisi 'PPK'}}
+                                                        PPK: {{this.catatan.ppk}}    
+                                                    {{else}}
+                                                        {{#if_eq this.posisi 'PPSPM'}}
+                                                        PPK: {{this.catatan.ppk}}<br>
+                                                        PPSPM: {{this.catatan.ppspm}}
+                                                        {{else}}
+                                                            {{#if_eq this.posisi 'Reviewer'}}
+                                                                PPK: {{this.catatan.ppk}}<br>
+                                                                PPSPM: {{this.catatan.ppspm}}<br>
+                                                                Reviewer: {{this.catatan.reviewer}}
+                                                            {{/if_eq}}
+                                                        {{/if_eq}}
+                                                    {{/if_eq}}
+                                                {{/if_eq}}
+                                            </td>
+                                            <td style="text-align:center">
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailTiket">Detail</button>
+                                                {{!-- {{#if_eq this.posisi 'Verifikator'}
+                                                    {{#if_eq ../jabatan '3'}
+                                                        <form action="/loket/unitEdit" method="POST">
+                                                            <input type="text" name="tiketId" value="{{this._id}" hidden>
+                                                            <button type="sumbit" class="btn btn-warning icon-pencil" id="editTiketButton"></button>
+                                                            <button type="button" class="btn btn-danger icon-trash" id="hapusTiketButton"></button>
+                                                        </form>
+                                                    {{else}
+                                                        {{#if_eq ../admin "1"}
+                                                            <form action="/loket/unitEdit" method="POST">
+                                                                <input type="text" name="tiketId" value="{{this._id}" hidden>
+                                                                <button type="sumbit" class="btn btn-warning icon-pencil" id="editTiketButton"></button>
+                                                                <button type="button" class="btn btn-danger icon-trash" id="hapusTiketButton"></button>
+                                                            </form>
+                                                        {{/if_eq}
+                                                    {{/if_eq}
+                                                {{/if_eq}} --}}
+                                            </td>
+                                        </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="grafikRealisasi" role="tabpanel">
+                            <div class="row col">
+                                <h5 class="row col-12">REALISASI</h5><br>
+                                {{#if_eq jabatan '3'}} {{!-- UNIT --}}
+                                    <h6 class="row col-9" id="gunittitle">a. Total Realisasi {{unit}}</h6><br>
+                                    {{#if_eq role '31'}}
+                                        {{#if_eq unit 'BAU'}}
+                                            <div class="row col-3">
+                                                <select name="" id="grafikRealisasiUnit" class="form-select" style="width: 100%; height: 40px; margin-bottom:2rem;">
+                                                    {{#each daftarUnit}}
+                                                        <option value="{{namaUnit}}">{{namaUnit}}</option>
+                                                    {{/each}}
+                                                </select>
+                                            </div>
+                                        {{/if_eq}}
+                                    {{/if_eq}}
+                                {{else}} {{!-- ADMIN/PIMPINAN --}}
+                                    <h6 class="row col-9" id="gunittitle">a. Total Realisasi BAU</h6><br>
+                                    <div class="row col-3">
+                                        <select name="" id="grafikRealisasiUnit" class="form-select" style="width: 100%; height: 40px; margin-bottom:2rem;">
+                                            {{#each daftarUnit}}
+                                                <option value="{{namaUnit}}">{{namaUnit}}</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>
+                                {{/if_eq}}
+                                <div class="row">
+                                    <div class="col-m-4">
+                                        <div id="unitRealisasi" style="width: 100%; height: 420px; margin: 0 auto; margin-bottom: 3rem;"></div>
+                                    </div>
+                                    <div class="col-m-8">
+                                        <div id="unitTerendah" style="width: 100%; height: 420px; margin: 0 auto"></div>
+                                    </div>
+                                </div>
+                                <h6 class="row col-12">b. Total Realisasi Polstat STIS</h6>
+                                <div class="row">
+                                    <div class="col-m-4">
+                                        <div id="allRealisasi" style="width: 100%; height: 420px; margin: 0 auto; margin-top: 2rem;"></div>
+                                    </div>
+                                    <div class="col-m-8">
+                                        <div id="allTerendah" style="width: 100%; height: 420px; margin: 0 auto"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -132,16 +296,30 @@
 
 {{!-- --------------------------- MODAL ------------------------------ --}}
 
-<div class="modal fade" id="modalDetail" role="dialog" data-backdrop="static"
-    aria-labelledby="modalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="modalUsulan" role="dialog" data-backdrop="static" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #1ecbe1;">
+                <h5 class="modal-title row ml-2" id="">Rincian Usulan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row" id="modalUsulanBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDetail" role="dialog" data-backdrop="static" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #1ecbe1;">
-                <h5 class="modal-title row ml-2" id="">Detail tiket</h5>
-                <button type="button" class="close" data-dismiss="modal"
-                    aria-label="Close"><span
-                        aria-hidden="true">&times;</span>
+                <h5 class="modal-title row ml-2" id="">Detail Permintaan Dana</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body row" id="modalDetailTiket">
@@ -154,108 +332,12 @@
     </div>
 </div>
 
-
-
-
 {{!-- --------------------------- SCRIPT ------------------------------ --}}
 
-<script id="daftarSelesai" type="text/x-handlebars-template">
-    {{#each daftarSelesai}}
-        <tr id="{{this._id}}">
-            <td style="text-align:center"></td>
-            <td style="text-align:center">{{this.nomorTransaksi}}</td>
-            <td style="text-align:center">{{this.tanggal.selesai}}</td>
-            <td style="text-align:center">{{this.tanggal.transfer}}</td>
-            <td class="format-uang">{{this.nilaiPengajuan}}</td>
-            <td class="format-uang">{{this.nilaiPajak}}</td>
-            <td class="format-uang">{{this.nilaiTransfer}}</td>
-            <td style="text-align:center">{{this.metodeTransfer}}</td>
-            <td>{{this.detail}}</td>
-            <td style="text-align:center">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailTiket">Detail</button>
-                <form action="/loket/downloadSpjTiketBank" method="post">
-                    <input type="hidden" name="tiketId" value="{{this._id}}">
-                    <button type="submit" class="btn btn-success" id="downloadSpjTiket" data-toggle="tooltip" title="Dokumen Bank"><i class="icon-doc"></i></button>
-                </form>
-            </td>
-        </tr>
-    {{/each}}
-</script>
-<script id="daftarPengajuan" type="text/x-handlebars-template">
-    {{#each daftarPengajuan}}  
-        <tr id="{{this._id}}">
-            <td style="text-align:center"></td>
-            <td style="text-align:center">{{this.kodeUnit}}</td>
-            <td style="text-align:center">{{this.nomorTransaksi}}</td>
-            <td style="text-align:center">{{this.tanggal.pengajuan}}</td>
-            <td class="format-uang">{{this.nilaiPengajuan}}</td>
-            <td>{{this.detail}}</td>
-            <td style="text-align:center">{{this.posisi}}</td>
-            <td style="text-align:center">{{this.status}}</td>
-            <td>
-                {{#if_eq this.status 'Belum selesai'}}
-                    {{#if_eq this.posisi 'Verifikator'}}
-                    {{else}}
-                        {{#if_eq this.posisi 'PPK'}}
-                        {{else}}
-                            {{#if_eq this.posisi 'PPSPM'}}
-                                PPK : {{this.catatan.ppk}}    
-                            {{else}}
-                                {{#if_eq this.posisi 'Reviewer'}}
-                                    PPK : {{this.catatan.ppk}}<br>
-                                    PPSPM : {{this.catatan.ppspm}}        
-                                {{else}}
-                                    PPK : {{this.catatan.ppk}}<br>
-                                    PPSPM : {{this.catatan.ppspm}}<br>
-                                    Reviewer : {{this.catatan.reviewer}}
-                                {{/if_eq}}
-                            {{/if_eq}}
-                        {{/if_eq}}
-                    {{/if_eq}}
-                {{else}}                    
-                    {{#if_eq this.posisi 'PPK'}}
-                        PPK: {{this.catatan.ppk}}    
-                    {{else}}
-                        {{#if_eq this.posisi 'PPSPM'}}
-                        PPK: {{this.catatan.ppk}}<br>
-                        PPSPM: {{this.catatan.ppspm}}
-                        {{else}}
-                            {{#if_eq this.posisi 'Reviewer'}}
-                                PPK: {{this.catatan.ppk}}<br>
-                                PPSPM: {{this.catatan.ppspm}}<br>
-                                Reviewer: {{this.catatan.reviewer}}
-                            {{/if_eq}}
-                        {{/if_eq}}
-                    {{/if_eq}}
-                {{/if_eq}}
-            </td>
-            <td style="text-align:center">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetail" id="btnDetailTiket">Detail</button>
-                {{!-- {{#if_eq this.posisi 'Verifikator'}}
-                    {{#if_eq ../jabatan '3'}}
-                        <form action="/loket/unitEdit" method="POST">
-                            <input type="text" name="tiketId" value="{{this._id}}" hidden>
-                            <button type="sumbit" class="btn btn-warning icon-pencil" id="editTiketButton"></button>
-                            <button type="button" class="btn btn-danger icon-trash" id="hapusTiketButton"></button>
-                        </form>
-                    {{else}}
-                        {{#if_eq ../admin "1"}}
-                            <form action="/loket/unitEdit" method="POST">
-                                <input type="text" name="tiketId" value="{{this._id}}" hidden>
-                                <button type="sumbit" class="btn btn-warning icon-pencil" id="editTiketButton"></button>
-                                <button type="button" class="btn btn-danger icon-trash" id="hapusTiketButton"></button>
-                            </form>
-                        {{/if_eq}}
-                    {{/if_eq}}
-                {{/if_eq}} --}}
-            </td>
-        </tr>
-    {{/each}}
-</script>
 <script src="/js/handsontable.full.min.js"></script>
 <script src="/js/highcharts.js"></script>
 
-<script src="js/select2.js"></script>
+<script src="/js/select2.js"></script>
 
 <script type="text/javascript">
     var socket = io.connect($(location).attr('host'));
@@ -265,9 +347,6 @@
     // var user_aktiv = '{{username}}';
 
     $(document).ready(function () {
-        //console.log("{{admmin}}")
-        //console.log("{{jabatan}}")
-        //console.log("{{role}}")
 
         //reset modal
         $(".modal").on("hidden.bs.modal", function() {
@@ -275,18 +354,14 @@
             $(".modal-footer").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>');
         });
 
-        //iterasi tabel selesai dan pengjuan
-        var dPengajuan = $("#daftarPengajuan").html()
-        $("#tablePengajuan tbody").html(dPengajuan)
-        var dSelesai = $("#daftarSelesai").html()
-        $("#tableSelesai tbody").html(dSelesai)
+        //format tabel selesai dan pengajuan
+        $("#tableUsulan").find("th").css("textAlign", "center")
+        $("#tablePengajuan").find("th").css("textAlign", "center")
+        $("#tableSelesai").find("th").css("textAlign", "center")
 
         //iterasi nomor row dan tanggal
         $("#tableSelesai tr").each(function(index){
-            $(this).find("td:eq(0)").each(function(){
-                $(this).text(index)
-                //console.log($(this).text())
-            })
+            $(this).find("td:eq(0)").text(index)
             $(this).find("td:eq(2)").each(function(){
                 $(this).text(formatTanggal(new Date($(this).text())))
             })
@@ -295,17 +370,559 @@
             })
         })
         $("#tablePengajuan tr").each(function(index){
-            $(this).find("td:eq(0)").each(function(){
-                $(this).text(index)
-                //console.log($(this).text())
-            })
+            $(this).find("td:eq(0)").text(index)
             $(this).find("td:eq(3)").each(function(){
                 $(this).text(formatTanggal(new Date($(this).text())))
             })
         })
+        $("#tableUsulan tr").each(function(){
+            $(this).find("td:eq(0)").each(function(){
+                //console.log(new Date(parseInt($(this).text())))
+                $(this).text(formatWaktu(parseInt($(this).text())))
+            })
+        })
+        //format uang
+        $('td.format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+        //format uang2 bisa pake ini
+        //$('td.format-uang').each(function() {
+        //    $(this).text(formatUang($(this).text()));
+        //});
 
-        //pagination
-        var rowsShown = 10;
+        //ubah menjadi dataTable
+        var tabelUsulan = $('#tableUsulan').DataTable({
+            "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"] ],
+            "language": {
+                "emptyTable": "Belum terdapat usulan"
+            },
+            "autoWidth": false,
+            "order": [],
+        })
+        var tabelPengajuan = $('#tablePengajuan').DataTable({
+            "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"] ],
+            "language": {
+                "emptyTable": "Belum terdapat pengajuan"
+            },
+            "autoWidth": false,
+            "order": [],
+        })
+        var tabelSelesai = $('#tableSelesai').DataTable({
+            "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"] ],
+            "language": {
+                "emptyTable": "Belum terdapat pengajuan yang selesai"
+            },
+            "autoWidth": false,
+            "order": [],
+        })
+
+        //lihat detail row terpilih :button
+        $("#tableUsulan tbody").on('click', 'button', function(){
+            var id = tabelUsulan.row($(this).closest('tr')).id()
+            var thisRow = tabelUsulan.row($(this).closest('tr'))
+            
+            socket.emit('rincianUsulan', id, function(response){
+                var templateUsulan =
+                    `<div class="col-5 kiri">`
+                    +   `<div class="row col">`
+                    +      `<table class="tableTiket table-borderless table-striped">`
+                    +         `<tr>`
+                    +             `<th class="col-2">Jenis</th>`
+                    +             `<td colspan="4" class="col-10">${response.jenis}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2">Eselon I</th>`
+                    +             `<td class="col-4">${response.eselon.i}</td>`
+                    +             `<th class="col-2">Eselon II</th>`
+                    +             `<td class="col-4">${response.eselon.ii}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2">Bagian</th>`
+                    +             `<td class="col-4">${response.bagian}</td>`
+                    +             `<th class="col-2">Penyelenggara</th>`
+                    +             `<td class="col-4">${response.penyelenggara || '-'}</td>`                    
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Program</th>`
+                    +             `<td colspan="4" class="col-10">${response.pok.kdprogram} ${response.pok.uraianProgram}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Aktivitas</th>`
+                    +             `<td colspan="4" class="col-10">${response.pok.kdaktivitas} ${response.pok.uraianAktivitas}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">KRO</th>`
+                    +             `<td colspan="4" class="col-10">${response.pok.kdkro} ${response.pok.uraianKro}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">RO</th>`
+                    +             `<td colspan="4" class="col-10">${response.pok.kdro} ${response.pok.uraianRo}</td>`
+                    +         `</tr>`                    
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Komponen</th>`
+                    +             `<td colspan="4" class="col-10">${response.pok.kdkomponen} ${response.pok.uraianKomponen}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Sub Komponen</th>`
+                    +             `<td colspan="4" class="col-10">${response.pok.kdsubkomponen || ''} ${response.pok.uraianSubKomponen}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Akun</th>`
+                    +             `<td colspan="4" class="col-10">${response.pok.kdakun} ${response.pok.uraianAkun}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Detil 1</th>`
+                    +             `<td colspan="2" class="col-8">${response.pok.detil.u1}</td>`
+                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n1)})</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Detil 2</th>`
+                    +             `<td colspan="2" class="col-8">${response.pok.detil.u2 || '-'}</td>`
+                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n2) || '-'})</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Detil 3</th>`
+                    +             `<td colspan="2" class="col-8">${response.pok.detil.u3 || '-'}</td>`
+                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n3) || '-'})</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Detil 4</th>`
+                    +             `<td colspan="2" class="col-8">${response.pok.detil.u4 || '-'}</td>`
+                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n4) || '-'})</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2" style="padding-left:3%">Detil 5</th>`
+                    +             `<td colspan="2" class="col-8">${response.pok.detil.u5 || '-'}</td>`
+                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n5) || '-'})</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2">Usulan Detil Baru</th>`
+                    +             `<td colspan="4" class="col-10">${response.pok.detilBaru || '-'}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2">Volume yang digunakan</th>`
+                    +             `<td class="col-4">${response.volume || '-'}</td>`
+                    +             `<th class="col-2">Total Nilai Bruto</th>`
+                    +             `<td class="col-4">RP ${formatUang(response.nilaiBruto)}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2">Materi</th>`
+                    +             `<td colspan="4" class="col-10">${response.materi || '-'}</td>`
+                    +         `</tr>`
+                    +         `<tr>`
+                    +             `<th class="col-2">Catatan Unit</th>`
+                    +             `<td colspan="4" class="col-10">${response.catatanUnit || '-'}</td>`
+                    +         `</tr>`
+                    +      `</table>`
+                    +   `</div>`
+                    +`</div>`
+                    +`<div class="col-7 kanan">`
+                    +   `<h6>Daftar Penggunaan Anggaran ${response.unit}</h6>`
+                    +   `<table id="penggunaanUnit" class="table table-striped table-bordered" width="100%">`
+                    +       `<thead>`
+                    +           `<tr>`
+                    +               `<th width="1%">No</th>`
+                    +               `<th width="15%">Akun - Item Kegiatan</th>`
+                    +               `<th width="10%">Pagu POK</th>`
+                    +               `<th width="10%">Realisasi Anggaran</th>`
+                    +               `<th width="10%">Sisa Anggaran yang dapat digunakan</th>`
+                    +               `<th width="10%">Anggaran yang akan digunakan</th>`
+                    +               `<th width="10%">Sisa Anggaran</th>`
+                    +           `</tr>`
+                    +       `</thead>`
+                    +       `<tbody></tbody>`
+                    +   `</table>`
+                    +`</div>`
+                $('#modalUsulanBody').html(templateUsulan)
+                
+                if (response.status=='Belum disetujui PPK' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}"=="12" || "{{admin}}"=="1")){
+                    $(".modal-footer").append(
+                        `<button type="button" class="btn btn-success" id="btnKomfirmUsulan">Konfirmasi Usulan</button>`
+                    +   `<button type="button" class="btn btn-danger" id="btnTolakUsulan">Tolak Usulan</button>`
+                    +   `<form method="POST" action="loket/pengusulan">`
+                    +       `<input type="hidden" name="idUsulan" id="idUsulan" value="${response._id}">`
+                    +       `<button type="submit" class="btn btn-warning" id="btnUbahUsulan">Ubah POK dan Konfirmasi</button>`
+                    +   `</form>`
+                    )
+                    $(`.kiri`).append(
+                        //+`<div class="row col">`
+                        `<form class="" method="POST" action="loket/ppkKirimBinagram">`
+                        +    `<input type="text" name="idUsulan" id="idUsulan" class="form-control" value="${response._id}" hidden>`
+                        +    `<textarea name="catatanPPKUsulanUnit" id="catatanPPKUsulanUnit" class="form-control" placeholder="Catatan PPK untuk Binagram"></textarea>`
+                        +    `<button type="button" class="btn btn-warning" id="usulanPpkBinagram">Kirim ke Binagram</button>`
+                        +`</form>`
+                        //+`</div>`
+                    )
+                } else if (response.status=='Disetujui PPK' && "{{jabatan}}"=="3" && response.unit=="{{unit}}" && "{{tahunAktif}}"==`${new Date().getFullYear()}`){
+                    $(".modal-footer").append(
+                        `<form method="POST" action="loket/user">`
+                        +    `<input type="hidden" name="idUsulan" id="idUsulan" value="${response._id}">`
+                        +    `<button type="submit" class="btn btn-primary" id="btnPermintaanDana">Ajukan Pencairan Dana</button>`
+                        +`</form>`
+                    )
+                }
+                socket.emit('tabelRealisasiUnit', response.unit, response)
+
+                //kirim rincian ke binagram
+                $("#usulanPpkBinagram").click(function(e){
+                    e.preventDefault()
+                    if ($("#catatanPPKUsulanUnit").val()){
+                        $.ajax({
+                            url: location.protocol+'//'+window.location.host+'/'+$(this).closest("form").attr('action'),
+                            type: 'POST',
+                            data: $(this).closest("form").serialize(),
+                            error: function(){
+                                generalAlert("Permintaan gagal, server bermasalah")
+                            },
+                            success: function(){
+                                generalAlert("Permintaan revisi telah dikirimkan")
+                            }
+                        });
+                    } else {
+                        generalAlert('catatan PPK harus diisi')
+                    }
+                })
+
+                //konfirm dan tolak usulan oleh ppk
+                $("#btnKomfirmUsulan").click(function(){
+                    $.confirm({
+                        title: 'Konfirmasi Usulan',
+                        content: 'Apakah Anda yakin?',
+                        buttons: {
+                            confirm: {
+                                text: 'Yakin',
+                                btnClass: 'btn-success',
+                                action: function () {
+                                    socket.emit('konfirmUsulan', id, function(response){
+                                        if (response=='berhasil'){
+                                            $(".kiri form").attr('hidden', true)
+                                            $("#btnKomfirmUsulan").attr('hidden', true)
+                                            $("#btnTolakUsulan").attr('hidden', true)
+                                            $("#btnUbahUsulan").attr('hidden', true)
+                                            tabelUsulan.cell(thisRow, 4).data('Disetujui PPK')
+                                            generalAlert('Konfirmasi berhasil')
+                                        } else {
+                                            generalAlert('Konfirmasi gagal, database bermasalah')
+                                        }
+                                    })
+                                },
+                            },
+                            cancel: {
+                                text: 'Batalkan',
+                                action: function () {},
+                            },
+                        }
+                    });
+                    
+                })
+                $("#btnTolakUsulan").click(function(){
+                    $.confirm({
+                        title: 'Tolak Usulan',
+                        content: 'Apakah Anda yakin?',
+                        buttons: {
+                            confirm: {
+                                text: 'Yakin',
+                                btnClass: 'btn-danger',
+                                action: function () {
+                                    socket.emit('tolakUsulan', id, function(response){
+                                        if (response=='berhasil'){
+                                            $(".kiri form").attr('hidden', true)
+                                            $("#btnKomfirmUsulan").attr('hidden', true)
+                                            $("#btnTolakUsulan").attr('hidden', true)
+                                            $("#btnUbahUsulan").attr('hidden', true)
+                                            tabelUsulan.cell(thisRow, 4).data('Ditolak')
+                                            generalAlert('Usulan telah ditolak')
+                                        } else {
+                                            generalAlert('Penolakan gagal, database bermasalah')
+                                        }
+                                    })
+                                },
+                            },
+                            cancel: {
+                                text: 'Batalkan',
+                                action: function () {},
+                            },
+                        },
+                    });
+                })
+            })
+        })
+        socket.on('tabelRealisasiUnitRes', function(data, responseUsulan){
+            $('#penggunaanUnit tbody').append(
+                '<tr>'
+                +   `<td>${$('#penggunaanUnit tr').length}</td>`
+                +   `<td>${data.kdakun} ${data.nmitem}</td>`
+                +   `<td>Rp ${formatUang(data.pagu)}</td>`
+                +   `<td>Rp ${formatUang(data.realis)}</td>`
+                +   `<td>Rp ${formatUang(data.sisa)}</td>`
+                +   `<td>Rp </td>`
+                +   `<td>Rp ${formatUang(data.sisa)}</td>`
+                +'</tr>'
+            )
+            highlight(responseUsulan.pok.kdakun, 
+                responseUsulan.pok.detil.u1, responseUsulan.pok.detil.u2, responseUsulan.pok.detil.u3, responseUsulan.pok.detil.u4, responseUsulan.pok.detil.u5, 
+                responseUsulan.pok.detil.n1, responseUsulan.pok.detil.n2, responseUsulan.pok.detil.n3, responseUsulan.pok.detil.n4, responseUsulan.pok.detil.n5)            
+        })
+
+        $("#tablePengajuan tbody").on('click', 'button', function(){
+            var id = tabelPengajuan.row($(this).closest('tr')).id()
+            socket.emit('mintaDetailTiket', id)
+        })
+        $("#tableSelesai tbody").on('click', 'button', function(){
+            var id = tabelSelesai.row($(this).closest('tr')).id()
+            socket.emit('mintaDetailTiket', id)
+        })
+        socket.on('terimaDetailTiket', function(detail){
+            //ambil nilai di checklist
+            var check = []
+            if (detail.posisi == 'PPK' || detail.posisi == 'Verifikator') {
+                for (key in detail.checklist) {
+                    if (detail.checklist.hasOwnProperty(key)) {
+                        var value = detail.checklist[key];
+                        if (value[0] == true) {
+                            var l = ' '+key
+                            check.push(l)
+                        }
+                    }
+                }
+            } else if (detail.posisi == 'PPSPM') {
+                for (key in detail.checklist) {
+                    if (detail.checklist.hasOwnProperty(key)) {
+                        var value = detail.checklist[key];
+                        if (value[0] == true && value[1] == true) {
+                            var l = ' '+key
+                            check.push(l)
+                        }
+                    }
+                }
+            } else {
+                for (key in detail.checklist) {
+                    if (detail.checklist.hasOwnProperty(key)) {
+                        var value = detail.checklist[key];
+                        if (value[0] == true && value[1] == true && value[2] == true) {
+                            var l = ' '+key
+                            check.push(l)
+                        }
+                    }
+                }
+            }
+
+            //ambil nilai di catatan
+            var catat = []
+            for (key in detail.catatan) {
+                if (detail.catatan.hasOwnProperty(key)) {
+                    var value = detail.catatan[key];
+                    catat.push(value)
+                }
+            }
+
+            //isi modal-body
+            var templatePengajuan =
+                `<div class="col">`
+                +   `<table class="tableTiket table-borderless table-striped">`
+                +      `<tr>`
+                +          `<th class="col-2">Unit</th>`
+                +          `<td class="col-2">${detail.unit.nama}</td>`
+                +          `<th class="col-2">Kode Unit</th>`
+                +          `<td class="col-2">${detail.unit.kode}</td>`
+                +          `<th class="col-2">Operator</th>`
+                +          `<td class="col-2">${detail.operator}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Program</th>`
+                +          `<td colspan="5">${detail.pok.kdprogram} ${detail.pok.uraianProgram}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Aktivitas</th>`
+                +          `<td colspan="5">${detail.pok.kdaktivitas} ${detail.pok.uraianAktivitas}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">KRO</th>`
+                +          `<td colspan="5">${detail.pok.kdkro} ${detail.pok.uraianKro}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Komponen</th>`
+                +          `<td colspan="5">${detail.pok.kdkomponen} ${detail.pok.uraianKomponen}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Akun</th>`
+                +          `<td colspan="5">${detail.pok.kdakun} ${detail.pok.uraianAkun}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Detil 1</th>`
+                +          `<td colspan="3">${detail.pok.detil.u1}</td>`
+                +          `<td colspan="2">(Rp ${formatUang(detail.pok.detil.n1)})</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Detil 2</th>`
+                +          `<td colspan="3">${detail.pok.detil.u2 || '-'}</td>`
+                +          `<td colspan="2">(Rp ${formatUang(detail.pok.detil.n2) || '-'})</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Detil 3</th>`
+                +          `<td colspan="3">${detail.pok.detil.u3 || '-'}</td>`
+                +          `<td colspan="2">(Rp ${formatUang(detail.pok.detil.n3) || '-'})</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Detil 4</th>`
+                +          `<td colspan="3">${detail.pok.detil.u4 || '-'}</td>`
+                +          `<td colspan="2">(Rp ${formatUang(detail.pok.detil.n4) || '-'})</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Detil 5</th>`
+                +          `<td colspan="3">${detail.pok.detil.u5 || '-'}</td>`
+                +          `<td colspan="2">(Rp ${formatUang(detail.pok.detil.n5) || '-'})</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th>Detail SPJ</th>`
+                +          `<td colspan="5">${detail.detail}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th>Tanggal Pelaksanaan</th>`
+                +          `<td colspan="2">${formatTanggal(detail.tanggal.pelaksanaan)}</td>`
+                +          `<th>Nilai Bruto</th>`
+                +          `<td colspan="2">Rp ${formatUang(detail.nilai.bruto)}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th>ADK SPJ</th>`
+                +          `<td colspan="3">${detail.fileSpj}</td>`
+                +          `<td colspan="2" width="20%"><form action="/loket/downloadSpjTiket" method="post">` 
+                +              `<input type="hidden" name="tiketId" value="${detail._id}">` 
+                +              `<button type="submit" class="btn btn-primary" id="downloadSpjTiket">Download SPJ</button>` 
+                +          `</form></td>` 
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th>Checklist</th>`
+                +          `<td colspan="2">${check}</td>`
+                +          `<th>SPP</th>`
+                +          `<td colspan="2">${detail.spp}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th>Catatan</th>`
+                +          `<td colspan="5"></td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">PPK</th>`
+                +          `<td colspan="5">${catat[0] || '-'}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">PPSPM</th>`
+                +          `<td colspan="5">${catat[1] || '-'}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th style="padding-left:5%">Reviewer</th>`
+                +          `<td colspan="5">${catat[2] || '-'}</td>`
+                +      `</tr>`
+                +      `<tr>`
+                +          `<th>Metode Transfer</th>`
+                +          `<td>${detail.metodeTransfer || '-'}</td>`
+                +          `<th>Nilai Pajak</th>`
+                +          `<td>Rp ${formatUang(detail.nilai.pajak) || '-'}</td>`
+                +          `<th>Nilai Transfer</th>`
+                +          `<td>Rp ${formatUang(detail.nilai.transfer) || '-'}</td>`
+                +      `</tr>`
+                +   `</table>`
+                +`</div>`
+
+            $('#modalDetailTiket').html(templatePengajuan)
+
+            //tombol periksa pada modal
+            if (!document.getElementById("periksaTiketVerifikator") && detail.posisi == "Verifikator" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '11' || "{{admin}}" == "1")){
+                $(".modal-footer").append(
+                    '<form action="/loket/verifikator" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketVerifikator">Proses permintaan (Verifikator)</button>' +
+                    '</form>')
+                $('#periksaTiketVerifikator').click(function (e) {
+                    cekUser(e, "11", "Verifikator", $('#periksaTiketVerifikator'))
+                })
+            } else if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '12' || "{{admin}}" == "1")){
+                $(".modal-footer").append(
+                    '<form action="/loket/ppk" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketPpk">Proses permintaan (PPK)</button>' +
+                    '</form>')
+                $('#periksaTiketPpk').click(function (e) {
+                    cekUser(e, "12", "PPK", $('#periksaTiketPpk'))
+                })
+            } else if (!document.getElementById("periksaTiketPpspm") && detail.posisi == "PPSPM" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '13' || "{{admin}}" == "1")){
+                $(".modal-footer").append(
+                    '<form action="/loket/ppspm" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketPpspm")">Proses permintaan (PPSPM)</button>' +
+                    '</form>')
+                $('#periksaTiketPpspm').click(function (e) {
+                    cekUser(e, "13", "PPSPM", $('#periksaTiketPpspm'))
+                })
+            } else if (!document.getElementById("periksaTiketReviewer") && detail.posisi == "Reviewer" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '14' || "{{admin}}" == "1")){
+                $(".modal-footer").append(
+                    '<form action="/loket/reviewer" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketReviewer">Proses permintaan (Reviewer)</button>' +
+                    '</form>')
+                $('#periksaTiketReviewer').click(function (e) {
+                    cekUser(e, "14", "Reviewer", $('#periksaTiketReviewer'))
+                })
+            } else if (!document.getElementById("periksaTiketBendahara") && detail.posisi == "Bendahara" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '15' || "{{admin}}" == "1")){
+                $(".modal-footer").append(
+                    '<form action="/loket/bendahara" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketBendahara">Proses permintaan (Bendahara)</button>' +
+                    '</form>')
+                $('#periksaTiketBendahara').click(function (e) {
+                    cekUser(e, "15", "Bendahara", $('#periksaTiketBendahara'))
+                })
+            } else if (!document.getElementById("periksaTiketBank") && detail.posisi == "Operator Bank" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '16' || "{{admin}}" == "1")){
+                $(".modal-footer").append(
+                    '<form action="/loket/bank" method="post">' +
+                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+                        '<button type="submit" class="btn btn-primary" id="periksaTiketBank">Proses permintaan (Operator Bank)</button>' +
+                    '</form>')
+                $('#periksaTiketBank').click(function (e) {
+                    cekUser(e, "16", "Operator Bank", $('#periksaTiketBank'))
+                })
+            }
+
+            //tombol bendahara
+            //if (!document.getElementById("kirimArsiparis") && !document.getElementById("inputRealisasi") && !document.getElementById("inputPajak") && detail.posisi == "Operator Bank" && ("{{role}}" == "5" || "{{admin}}" == "1")){
+            //    $(".modal-footer").append(
+            //        '<form action="/loket/bendaharaKirimArsiparis" method="post">' +
+            //            '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+            //            '<button type="button" class="btn btn-primary" id="kirimArsiparis">Kirim Arsiparis</button>' +
+            //        '</form>' +
+            //        '<form action="/loket/bendaharaKirimBmn" method="post">' +
+            //           '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+            //            '<button type="button" class="btn btn-primary" id="kirimBmn" hidden>Kirim Opr BMN</button>' +
+            //        '</form>' +
+            //        '<form action="/loket/bendaharaInputRealisasi" method="post">' +
+            //            '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+            //            '<button type="button" class="btn btn-warning" id="inputRealisasi">Input Realisasi</button>' +
+            //        '</form>' +
+            //        '<form action="/loket/bendaharaInputPajak" method="post">' +
+            //            '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
+            //            '<button type="button" class="btn btn-warning" id="inputPajak">Input Pajak</button>' +
+            //        '</form>'
+            //    )
+            //    $('#kirimArsiparis').click(function (e) {
+            //        cekUser(e, "5", "Bendahara", $('#kirimArsiparis'))
+            //    })
+            //    $('#kirimBmn').click(function (e) {
+            //        cekUser(e, "5", "Bendahara", $('#kirimBmn'))
+            //    })
+            //    $('#inputRealisasi').click(function (e) {
+            //        cekUser(e, "5", "Bendahara", $('#inputRealisasi'))
+            //    })
+            //    $('#inputPajak').click(function (e) {
+            //        cekUser(e, "5", "Bendahara", $('#inputPajak'))
+            //    })
+            //}
+
+            //if (detail.kdakun=="521811" || detail.kdakun.slice(0,3)=="532") {
+            //    $("#kirimBmn").prop("hidden", false)
+            //} else {$("#kirimBmn").prop("hidden", true)}
+
+        })
+        
+        //manual pagination
+{{!--   var rowsShown = 10;
         //pagination selesai
         var rownSelesai = $('#tableSelesai tbody tr').length;
         var pageSelesai = Math.ceil(rownSelesai/rowsShown);
@@ -396,308 +1013,9 @@
                 $("#navPengajuan ul li:eq(3) a").attr('rel', pages[3]).text(pages[4]).removeClass('active')
             }
         });
+ --}}
 
-        //lihat detail row terpilih :button
-        var tableBtnDetail = $("table #btnDetailTiket")
-        tableBtnDetail.click(function () {
-            var id = $(this).closest('tr').attr('id')
-            //console.log('idtiket:' + id)
-            //console.log('idbutton: ' + this.id)
-            socket.emit('mintaDetailTiket', id)
-        })
-
-        socket.on('terimaDetailTiket', function (detail) {
-
-            //ambil nilai di checklist
-            var check = []
-            if (detail.posisi == 'PPK' || 'Verifikator') {
-                for (key in detail.checklist) {
-                    if (detail.checklist.hasOwnProperty(key)) {
-                        var value = detail.checklist[key];
-                        if (value[0] == true) {
-                            var l = ' '+key
-                            check.push(l)
-                        }
-                    }
-                }
-            } else if (detail.posisi == 'PPSPM') {
-                for (key in detail.checklist) {
-                    if (detail.checklist.hasOwnProperty(key)) {
-                        var value = detail.checklist[key];
-                        if (value[0] == true && value[1] == true) {
-                            var l = ' '+key
-                            check.push(l)
-                        }
-                    }
-                }
-            } else {
-                for (key in detail.checklist) {
-                    if (detail.checklist.hasOwnProperty(key)) {
-                        var value = detail.checklist[key];
-                        if (value[0] == true && value[1] == true && value[2] == true) {
-                            var l = ' '+key
-                            check.push(l)
-                        }
-                    }
-                }
-            }
-
-            //ambil nilai di catatan
-            var catat = []
-            for (key in detail.catatan) {
-                if (detail.catatan.hasOwnProperty(key)) {
-                    var value = detail.catatan[key];
-                    catat.push(value)
-                }
-            }
-
-            //isi modal-body
-            var templatePengajuan =
-                '<table class="col-11 tableTiket table-borderless table-striped">'+
-                    '<tr>'+
-                        '<th class="col-2">Unit</th>'+
-                        '<td colspan="2" class="col-10">'+detail.unit+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Kode Unit</th>'+
-                        '<td colspan="2">'+detail.kodeUnit+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Operator</th>'+
-                        '<td colspan="2">'+detail.operator+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">POK</th>'+
-                        '<td colspan="2"></td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2" style="padding-left:5%">Program</th>'+
-                        '<td colspan="2">'+detail.kdprogram+' '+detail.uraianProgram+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2" style="padding-left:5%">Aktivitas</th>'+
-                        '<td colspan="2">'+detail.kdkegiatan+' '+detail.uraianKegiatan+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2" style="padding-left:5%">KRO</th>'+
-                        '<td colspan="2">'+detail.kdoutput+' '+detail.uraianOutput+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2" style="padding-left:5%">Komponen</th>'+
-                        '<td colspan="2">'+detail.kdkomponen+' '+detail.uraianKomponen+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2" style="padding-left:5%">Akun</th>'+
-                        '<td colspan="2">'+detail.kdakun+' '+detail.uraianAkun+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2" style="padding-left:5%">Detail POK</th>'+
-                        '<td colspan="2">'+detail.uraianDetail+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Tanggal Pelaksanaan</th>'+
-                        '<td colspan="2">'+formatTanggal(detail.tanggal.pelaksanaan)+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Detail SPJ</th>'+
-                        '<td colspan="2">'+detail.detail+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Nilai Bruto</th>'+
-                        '<td colspan="2">Rp '+formatUang(detail.nilaiPengajuan)+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Checklist</th>'+
-                        '<td colspan="2">'+check+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">File SPJ</th>'+
-                        '<td>'+detail.fileSpj+'</td>'+
-                        '<td width="20%"><form action="/loket/downloadSpjTiket" method="post">' +
-                            '<input type="hidden" name="tiketId" value="' + detail._id + '">' +
-                            '<button type="submit" class="btn btn-primary" id="downloadSpjTiket">Download SPJ</button>' +
-                        '</form></td>' +
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">SPP</th>'+
-                        '<td colspan="2">'+detail.spp+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Catatan</th>'+
-                        '<td colspan="2"></td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2" style="padding-left:5%">PPK</th>'+
-                        '<td colspan="2">'+catat[0]+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2" style="padding-left:5%">PPSPM</th>'+
-                        '<td colspan="2">'+catat[1]+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2" style="padding-left:5%">Reviewer</th>'+
-                        '<td colspan="2">'+catat[2]+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Metode Transfer</th>'+
-                        '<td colspan="2">'+detail.metodeTransfer+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Nilai Pajak</th>'+
-                        '<td colspan="2">Rp '+formatUang(detail.nilaiPajak)+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                        '<th class="col-2">Nilai Transfer</th>'+
-                        '<td colspan="2">Rp '+formatUang(detail.nilaiTransfer)+'</td>'+
-                    '</tr>'+
-                '</table>'
-
-            $('#modalDetailTiket').html(templatePengajuan)
-
-            //tombol periksa pada modal
-            if (!document.getElementById("periksaTiketVerifikator") && detail.posisi == "Verifikator" && detail.status == 'Belum selesai' && ("{{role}}" == '11' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
-                    '<form action="/loket/verifikator" method="post">' +
-                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-                        '<button type="submit" class="btn btn-primary" id="periksaTiketVerifikator">Periksa Tiket Verifikator</button>'+
-                    '</form>')
-                $('#periksaTiketVerifikator').click(function (e) {
-                    cekUser(e, "11", "Verifikator", $('#periksaTiketVerifikator'))
-                })
-            } else if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai' && ("{{role}}" == '12' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
-                    '<form action="/loket/ppk" method="post">' +
-                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-                        '<button type="submit" class="btn btn-primary" id="periksaTiketPpk">Periksa Tiket PPK</button>' +
-                    '</form>')
-                $('#periksaTiketPpk').click(function (e) {
-                    cekUser(e, "12", "PPK", $('#periksaTiketPpk'))
-                })
-            } else if (!document.getElementById("periksaTiketPpspm") && detail.posisi == "PPSPM" && detail.status == 'Belum selesai' && ("{{role}}" == '13' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
-                    '<form action="/loket/ppspm" method="post">' +
-                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-                        '<button type="submit" class="btn btn-primary" id="periksaTiketPpspm")">Periksa Tiket PPSPM</button>' +
-                    '</form>')
-                $('#periksaTiketPpspm').click(function (e) {
-                    cekUser(e, "13", "PPSPM", $('#periksaTiketPpspm'))
-                })
-            } else if (!document.getElementById("periksaTiketReviewer") && detail.posisi == "Reviewer" && detail.status == 'Belum selesai' && ("{{role}}" == '14' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
-                    '<form action="/loket/reviewer" method="post">' +
-                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-                        '<button type="submit" class="btn btn-primary" id="periksaTiketReviewer">Periksa Tiket Reviewer</button>' +
-                    '</form>')
-                $('#periksaTiketReviewer').click(function (e) {
-                    cekUser(e, "14", "Reviewer", $('#periksaTiketReviewer'))
-                })
-            } else if (!document.getElementById("periksaTiketBendahara") && detail.posisi == "Bendahara" && detail.status == 'Belum selesai' && ("{{role}}" == '15' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
-                    '<form action="/loket/bendahara" method="post">' +
-                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-                        '<button type="submit" class="btn btn-primary" id="periksaTiketBendahara">Periksa Tiket Bendahara</button>' +
-                    '</form>')
-                $('#periksaTiketBendahara').click(function (e) {
-                    cekUser(e, "15", "Bendahara", $('#periksaTiketBendahara'))
-                })
-            } else if (!document.getElementById("periksaTiketBank") && detail.posisi == "Operator Bank" && detail.status == 'Belum selesai' && ("{{role}}" == '16' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
-                    '<form action="/loket/bank" method="post">' +
-                        '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-                        '<button type="submit" class="btn btn-primary" id="periksaTiketBank">Periksa Tiket Operator Bank</button>' +
-                    '</form>')
-                $('#periksaTiketBank').click(function (e) {
-                    cekUser(e, "16", "Operator Bank", $('#periksaTiketBank'))
-                })
-            }
-
-            //tombol bendahara
-            //if (!document.getElementById("kirimArsiparis") && !document.getElementById("inputRealisasi") && !document.getElementById("inputPajak") && detail.posisi == "Operator Bank" && ("{{role}}" == "5" || "{{admin}}" == "1")){
-            //    $(".modal-footer").append(
-            //        '<form action="/loket/bendaharaKirimArsiparis" method="post">' +
-            //            '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-            //            '<button type="button" class="btn btn-primary" id="kirimArsiparis">Kirim Arsiparis</button>' +
-            //        '</form>' +
-            //        '<form action="/loket/bendaharaKirimBmn" method="post">' +
-            //           '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-            //            '<button type="button" class="btn btn-primary" id="kirimBmn" hidden>Kirim Opr BMN</button>' +
-            //        '</form>' +
-            //        '<form action="/loket/bendaharaInputRealisasi" method="post">' +
-            //            '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-            //            '<button type="button" class="btn btn-warning" id="inputRealisasi">Input Realisasi</button>' +
-            //        '</form>' +
-            //        '<form action="/loket/bendaharaInputPajak" method="post">' +
-            //            '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
-            //            '<button type="button" class="btn btn-warning" id="inputPajak">Input Pajak</button>' +
-            //        '</form>'
-            //    )
-            //    $('#kirimArsiparis').click(function (e) {
-            //        cekUser(e, "5", "Bendahara", $('#kirimArsiparis'))
-            //    })
-            //    $('#kirimBmn').click(function (e) {
-            //        cekUser(e, "5", "Bendahara", $('#kirimBmn'))
-            //    })
-            //    $('#inputRealisasi').click(function (e) {
-            //        cekUser(e, "5", "Bendahara", $('#inputRealisasi'))
-            //    })
-            //    $('#inputPajak').click(function (e) {
-            //        cekUser(e, "5", "Bendahara", $('#inputPajak'))
-            //    })
-            //}
-
-            //if (detail.kdakun=="521811" || detail.kdakun.slice(0,3)=="532") {
-            //    $("#kirimBmn").prop("hidden", false)
-            //} else {$("#kirimBmn").prop("hidden", true)}
-
-        })
-
-        //format uang
-        $('td.format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
-        //format uang2 bisa pake ini
-        //$('td.format-uang').each(function() {
-        //    $(this).text(formatUang($(this).text()));
-        //});
-        //format uang dari net--------
-        //let cells = Array.prototype.slice.call(document.querySelectorAll(".format-uang"));
-        //console.log(cells)
-        //cells.forEach(function(cell){
-        //    cell.textContent = (+cell.textContent).toLocaleString('in-ID', { style: 'currency', currency: 'IDR' });
-        //});
-
-        //$('table #editTiketButton').click(function(){
-        //    var id = $(this).closest('tr').attr('id')
-        //})
-
-        //hapus tiket
-        $('table #hapusTiketButton').click(function(){
-            var id = $(this).closest('tr').attr('id')
-            var notr = $(this).closest('tr').find('td:eq(2)').text()
-            target_delete = $(this).closest('tr')
-            target_delete.hide()
-            state_undo = false
-            $.toast({
-                text: 'Tiket '+notr+' akan dihapus dalam 5 detik | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm"></i> Batal</a>',
-                hideAfter: 5000,
-                loader: false,
-                stack: false,
-                position: 'bottom-right',
-                allowToastClose: false,
-                afterHidden: function () {
-                    if(!state_undo){
-                        socket.emit('hapusTiket', id)
-                        target_delete = null
-                        generalAlert('Berhasil Terhapus')
-                    }
-                }
-            })
-            $('#undo_delete').click(function(){
-                state_undo = true;
-                target_delete.show();
-                target_delete = null;
-                $.toast().reset('all')
-            })
-        })
-
+        //grafik realisasi
         Highcharts.setOptions({
             global: {
                 useUTC: false,
@@ -706,57 +1024,35 @@
             lang: {
               decimalPoint: '.',
               thousandsSep: ','
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
             }
         });
-
-        if ("{{admin}}" == "1" || "{{jabatan}}" == "1" || "{{jabatan}}" == "2"){
+        //realiasasi unit
+        if ("{{admin}}" == "1" || "{{jabatan}}" == "1" || "{{jabatan}}" == "2" || ("{{role}}" == "31" && "{{unit}}" == "BAU")){
             socket.emit('realisasiUnit', new Date().getMonth(), "BAU", function(response){
-                    chartRealisasi(response, 'unitRealisasi', 'unitTerendah');
-                    Highcharts.setOptions({
-                        plotOptions: {
-                            series: {
-                                animation: false
-                            }
-                        }
-                    });
-                });
+                chartRealisasi(response, 'unitRealisasi', 'unitTerendah');
+            });
             $("#grafikRealisasiUnit").change(function(){
                 socket.emit('realisasiUnit', new Date().getMonth(), $("#grafikRealisasiUnit").val(), function(response){
                     chartRealisasi(response, 'unitRealisasi', 'unitTerendah');
-                    Highcharts.setOptions({
-                        plotOptions: {
-                            series: {
-                                animation: false
-                            }
-                        }
-                    });
                 });
+                $("#gunittitle").html(`a. Total Realisasi ${$("#grafikRealisasiUnit").val()}`)
             })
         } else {
             socket.emit('realisasiUnit', new Date().getMonth(), "{{unit}}", function(response){
                 chartRealisasi(response, 'unitRealisasi', 'unitTerendah');
-                Highcharts.setOptions({
-                    plotOptions: {
-                        series: {
-                            animation: false
-                        }
-                    }
-                });
             });
         }
-
+        //realiasasi polstat
         socket.emit('realisasiAll', new Date().getMonth(), function(response){
             chartRealisasi(response, 'allRealisasi', 'allTerendah');
-            Highcharts.setOptions({
-                plotOptions: {
-                    series: {
-                        animation: false
-                    }
-                }
-            });
         });
 
-    });
+    });//doc ready
 
     //fungsi
     function formatTanggal(date) {
@@ -772,9 +1068,33 @@
         let year = dat.getFullYear();
         return day + ' ' + monthNames[monthIndex] + ' ' + year;
     };
+    function formatWaktu(date) {
+        let dat = new Date(date)
+        let monthNames = [
+            "Januari", "Februari", "Maret",
+            "April", "Mei", "Juni", "Juli",
+            "Agustus", "September", "Oktober",
+            "November", "Desember"
+        ];
+        let h = dat.getHours()
+        if (h<10){h='0'+h}
+        let m = dat.getMinutes()
+        if (m<10){m='0'+m}
+        let day = dat.getDate();
+        let monthIndex = dat.getMonth();
+        let year = dat.getFullYear();
+        return h + ':' + m + ' - ' + day + ' ' + monthNames[monthIndex] + ' ' + year;
+    };
 
     function formatUang(x) {
         if (x) {return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        } else return ''
+    }
+
+    function reverseFormatUang(x) {
+        if (x) {
+            let p = x.replace(/\,/g,'')
+            return parseInt(p)
         } else return ''
     }
 
@@ -800,6 +1120,7 @@
         }
     }
 
+{{!-- //manual search
     function cariTiket1(){
         var input, filter, table, tr, td1, td2, td3, td4, i, txtValue1, txtValue2, txtValue3, txtValue4;
         input = document.getElementById("cariPengajuan1");
@@ -861,6 +1182,7 @@
             }
         }
     }
+ --}}
 
     function chartRealisasi(response, t1, t2){
         realisasi_bulan_lalu = response.sampai_bln_lalu;
@@ -929,7 +1251,7 @@
                         enabled: true,
                         format: '{point.y:.2f}%'
                     },
-                    //stacking: 'normal'
+                    stacking: 'normal'
                 }
             },
 
@@ -962,6 +1284,8 @@
                 data: [{y: +bulan_lalu_p, jumlah: realisasi_bulan_lalu}]
             }]
         });
+        
+        Chart.reflow()
 
         var Chart = new Highcharts.chart(t2, {
             chart: {
@@ -1044,6 +1368,8 @@
 
             }]
         });
+    
+        Chart.reflow()
     }
 
     function getNumber(obj){
@@ -1051,4 +1377,48 @@
         if (typeof obj === 'string' || obj instanceof String) return +obj.replace(/\D/g, '');
         return +obj;
     }
+
+    function highlight(akun, detail1, detail2, detail3, detail4, detail5, nilai1, nilai2, nilai3, nilai4, nilai5){
+        let row = $("#penggunaanUnit tbody tr:last-child")
+        let ta = row.find("td:eq(1)").text().slice(0,6)
+        let td = row.find("td:eq(1)").text().slice(7)
+        switch (ta, td){
+            case akun, detail1: 
+                row.css("background-color", "#b0efeb")
+                let sisa1 = reverseFormatUang(row.find("td:eq(4)").text().slice(3)) - nilai1
+                row.find("td:eq(5)").text(`Rp ${formatUang(nilai1)}`)
+                row.find("td:eq(6)").text(`Rp ${formatUang(sisa1)}`)
+                break
+            case akun, detail2:
+                row.css("background-color", "#b0efeb")
+                let sisa2 = reverseFormatUang(row.find("td:eq(4)").text().slice(3)) - nilai2
+                row.find("td:eq(5)").text(`Rp ${formatUang(nilai2)}`)
+                row.find("td:eq(6)").text(`Rp ${formatUang(sisa2)}`)
+                break
+            case akun, detail3:
+                row.css("background-color", "#b0efeb")
+                let sisa3 = reverseFormatUang(row.find("td:eq(4)").text().slice(3)) - nilai3
+                row.find("td:eq(5)").text(`Rp ${formatUang(nilai3)}`)
+                row.find("td:eq(6)").text(`Rp ${formatUang(sisa3)}`)
+                break
+            case akun, detail4:
+                row.css("background-color", "#b0efeb")
+                let sisa4 = reverseFormatUang(row.find("td:eq(4)").text().slice(3)) - nilai4
+                row.find("td:eq(5)").text(`Rp ${formatUang(nilai4)}`)
+                row.find("td:eq(6)").text(`Rp ${formatUang(sisa4)}`)
+                break
+            case akun, detail5:
+                row.css("background-color", "#b0efeb")
+                let sisa5 = reverseFormatUang(row.find("td:eq(4)").text().slice(3)) - nilai5
+                row.find("td:eq(5)").text(`Rp ${formatUang(nilai5)}`)
+                row.find("td:eq(6)").text(`Rp ${formatUang(sisa5)}`)
+                break
+            default: 
+                row.css("background-color", "white")
+                row.find("td:eq(5)").text(`Rp 0`)
+                row.find("td:eq(6)").text(row.find("td:eq(4)").text())
+
+        }
+    }
+
 </script>

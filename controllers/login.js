@@ -113,8 +113,8 @@ login.post('/', bruteforce.prevent, function(req, res) {
         req.session.tahun_anggaran = new Date().getFullYear();
         req.session.user_id = user._id;
         req.session.jenis = user.jenis;
-        req.session.userRole = user.role;
         req.session.userJabatan = user.jabatan;
+        req.session.userRole = user.role;
         req.session.userUnit = user.unit;
         req.session.userEmail = user.email;
 
