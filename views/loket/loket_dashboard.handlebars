@@ -425,91 +425,91 @@
                     +   `<div class="row col">`
                     +      `<table class="tableTiket table-borderless table-striped">`
                     +         `<tr>`
-                    +             `<th class="col-2">Jenis</th>`
-                    +             `<td colspan="4" class="col-10">${response.jenis}</td>`
+                    +             `<th width="25%">Jenis</th>`
+                    +             `<td colspan="3" class="col-10">${response.jenis}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2">Eselon I</th>`
-                    +             `<td class="col-4">${response.eselon.i}</td>`
-                    +             `<th class="col-2">Eselon II</th>`
-                    +             `<td class="col-4">${response.eselon.ii}</td>`
+                    +             `<th width="25%">Eselon I</th>`
+                    +             `<td width="25%">${response.eselon.i}</td>`
+                    +             `<th width="25%">Eselon II</th>`
+                    +             `<td width="25%">${response.eselon.ii}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2">Bagian</th>`
-                    +             `<td class="col-4">${response.bagian}</td>`
-                    +             `<th class="col-2">Penyelenggara</th>`
-                    +             `<td class="col-4">${response.penyelenggara || '-'}</td>`                    
+                    +             `<th width="25%">Bagian</th>`
+                    +             `<td width="25%">${response.bagian}</td>`
+                    +             `<th width="25%">Penyelenggara</th>`
+                    +             `<td width="25%">${response.penyelenggara || '-'}</td>`                    
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Program</th>`
-                    +             `<td colspan="4" class="col-10">${response.pok.kdprogram} ${response.pok.uraianProgram}</td>`
+                    +             `<th width="25%" style="padding-left:3%">Program</th>`
+                    +             `<td colspan="3" class="col-10">${response.pok.kdprogram} ${response.pok.uraianProgram}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Aktivitas</th>`
-                    +             `<td colspan="4" class="col-10">${response.pok.kdaktivitas} ${response.pok.uraianAktivitas}</td>`
+                    +             `<th width="25%" style="padding-left:3%">Aktivitas</th>`
+                    +             `<td colspan="3" class="col-10">${response.pok.kdaktivitas} ${response.pok.uraianAktivitas}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">KRO</th>`
-                    +             `<td colspan="4" class="col-10">${response.pok.kdkro} ${response.pok.uraianKro}</td>`
+                    +             `<th width="25%" style="padding-left:3%">KRO</th>`
+                    +             `<td colspan="3" class="col-10">${response.pok.kdkro} ${response.pok.uraianKro}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">RO</th>`
-                    +             `<td colspan="4" class="col-10">${response.pok.kdro} ${response.pok.uraianRo}</td>`
+                    +             `<th width="25%" style="padding-left:3%">RO</th>`
+                    +             `<td colspan="3" class="col-10">${response.pok.kdro} ${response.pok.uraianRo}</td>`
                     +         `</tr>`                    
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Komponen</th>`
-                    +             `<td colspan="4" class="col-10">${response.pok.kdkomponen} ${response.pok.uraianKomponen}</td>`
+                    +             `<th width="25%" style="padding-left:3%">Komponen</th>`
+                    +             `<td colspan="3" class="col-10">${response.pok.kdkomponen} ${response.pok.uraianKomponen}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Sub Komponen</th>`
-                    +             `<td colspan="4" class="col-10">${response.pok.kdsubkomponen || ''} ${response.pok.uraianSubKomponen}</td>`
+                    +             `<th width="25%" style="padding-left:3%">Sub Komponen</th>`
+                    +             `<td colspan="3" class="col-10">${response.pok.kdsubkomponen || ''} ${response.pok.uraianSubKomponen}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Akun</th>`
-                    +             `<td colspan="4" class="col-10">${response.pok.kdakun} ${response.pok.uraianAkun}</td>`
+                    +             `<th width="25%" style="padding-left:3%">Akun</th>`
+                    +             `<td colspan="3" class="col-10">${response.pok.kdakun} ${response.pok.uraianAkun}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Detil 1</th>`
+                    +             `<th width="25%" style="padding-left:3%">Detil 1</th>`
                     +             `<td colspan="2" class="col-8">${response.pok.detil.u1}</td>`
-                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n1)})</td>`
+                    +             `<td width="25%">(Rp ${formatUang(response.pok.detil.n1)})</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Detil 2</th>`
+                    +             `<th width="25%" style="padding-left:3%">Detil 2</th>`
                     +             `<td colspan="2" class="col-8">${response.pok.detil.u2 || '-'}</td>`
-                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n2) || '-'})</td>`
+                    +             `<td width="25%">(Rp ${formatUang(response.pok.detil.n2) || '-'})</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Detil 3</th>`
+                    +             `<th width="25%" style="padding-left:3%">Detil 3</th>`
                     +             `<td colspan="2" class="col-8">${response.pok.detil.u3 || '-'}</td>`
-                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n3) || '-'})</td>`
+                    +             `<td width="25%">(Rp ${formatUang(response.pok.detil.n3) || '-'})</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Detil 4</th>`
+                    +             `<th width="25%" style="padding-left:3%">Detil 4</th>`
                     +             `<td colspan="2" class="col-8">${response.pok.detil.u4 || '-'}</td>`
-                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n4) || '-'})</td>`
+                    +             `<td width="25%">(Rp ${formatUang(response.pok.detil.n4) || '-'})</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2" style="padding-left:3%">Detil 5</th>`
+                    +             `<th width="25%" style="padding-left:3%">Detil 5</th>`
                     +             `<td colspan="2" class="col-8">${response.pok.detil.u5 || '-'}</td>`
-                    +             `<td class="col-2">(Rp ${formatUang(response.pok.detil.n5) || '-'})</td>`
+                    +             `<td width="25%">(Rp ${formatUang(response.pok.detil.n5) || '-'})</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2">Usulan Detil Baru</th>`
-                    +             `<td colspan="4" class="col-10">${response.pok.detilBaru || '-'}</td>`
+                    +             `<th width="25%">Usulan Detil Baru</th>`
+                    +             `<td colspan="3" class="col-10">${response.pok.detilBaru || '-'}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2">Volume yang digunakan</th>`
-                    +             `<td class="col-4">${response.volume || '-'}</td>`
-                    +             `<th class="col-2">Total Nilai Bruto</th>`
-                    +             `<td class="col-4">RP ${formatUang(response.nilaiBruto)}</td>`
+                    +             `<th width="25%">Volume yang digunakan</th>`
+                    +             `<td width="25%">${response.volume || '-'}</td>`
+                    +             `<th width="25%">Total Nilai Bruto</th>`
+                    +             `<td width="25%">RP ${formatUang(response.nilaiBruto)}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2">Materi</th>`
-                    +             `<td colspan="4" class="col-10">${response.materi || '-'}</td>`
+                    +             `<th width="25%">Materi</th>`
+                    +             `<td colspan="3" class="col-10">${response.materi || '-'}</td>`
                     +         `</tr>`
                     +         `<tr>`
-                    +             `<th class="col-2">Catatan Unit</th>`
-                    +             `<td colspan="4" class="col-10">${response.catatanUnit || '-'}</td>`
+                    +             `<th width="25%">Catatan Unit</th>`
+                    +             `<td colspan="3" class="col-10">${response.catatanUnit || '-'}</td>`
                     +         `</tr>`
                     +      `</table>`
                     +   `</div>`
@@ -719,12 +719,12 @@
                 `<div class="col">`
                 +   `<table class="tableTiket table-borderless table-striped">`
                 +      `<tr>`
-                +          `<th class="col-2">Unit</th>`
-                +          `<td class="col-2">${detail.unit.nama}</td>`
-                +          `<th class="col-2">Kode Unit</th>`
-                +          `<td class="col-2">${detail.unit.kode}</td>`
-                +          `<th class="col-2">Operator</th>`
-                +          `<td class="col-2">${detail.operator}</td>`
+                +          `<th width="15%">Unit</th>`
+                +          `<td width="15%">${detail.unit.nama}</td>`
+                +          `<th width="15%">Kode Unit</th>`
+                +          `<td width="15%">${detail.unit.kode}</td>`
+                +          `<th width="15%">Operator</th>`
+                +          `<td width="15%">${detail.operator}</td>`
                 +      `</tr>`
                 +      `<tr>`
                 +          `<th style="padding-left:5%">Program</th>`
@@ -820,9 +820,89 @@
                 +          `<td>Rp ${formatUang(detail.nilai.transfer) || '-'}</td>`
                 +      `</tr>`
                 +   `</table>`
+                +   `<section>`
+                +       `<ul class="progress-bar">`
+                +           `<li class="is-uncomplete"><span>Unit</span></li>  `
+                +           `<li class="is-uncomplete"><span>Verifikator</span></li>  `
+                +           `<li class="is-uncomplete"><span>PPK</span></li>`
+                +           `<li class="is-uncomplete"><span>PPSPM</span></li>  `
+                +           `<li class="is-uncomplete"><span>Reviewer</span></li>`
+                +           `<li class="is-uncomplete"><span>Bendahara</span></li>`
+                +           `<li class="is-uncomplete"><span>Operator Bank</span></li>`
+                +       `</ul>`
+                +   `</section>`
                 +`</div>`
 
+
             $('#modalDetailTiket').html(templatePengajuan)
+
+            if (detail.status=='Belum selesai'){
+                switch (detail.posisi){
+                    case 'Verifikator':
+                        $(".progress-bar").find('li:eq(0)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(1)').removeClass().addClass('is-active')
+                        break
+                    case 'PPK':
+                        $(".progress-bar").find('li:eq(0)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(1)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(2)').removeClass().addClass('is-active')
+                        break
+                    case 'PPSPM':
+                        $(".progress-bar").find('li:eq(0)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(1)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(2)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(3)').removeClass().addClass('is-active')
+                        break
+                    case 'Reviewer':
+                        $(".progress-bar").find('li:eq(0)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(1)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(2)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(3)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(4)').removeClass().addClass('is-active')
+                        break
+                    case 'Bendahara':
+                        $(".progress-bar").find('li:eq(0)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(1)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(2)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(3)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(4)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(5)').removeClass().addClass('is-active')
+                        break
+                    case 'Operator Bank':
+                        $(".progress-bar").find('li:eq(0)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(1)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(2)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(3)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(4)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(5)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(6)').removeClass().addClass('is-active')
+                        break
+                }
+            } else if (detail.status=='Dikembalikan ke unit'){
+                switch (detail.posisi){
+                    case 'PPK':
+                        $(".progress-bar").find('li:eq(0)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(1)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(2)').removeClass().addClass('is-decline')
+                        break
+                    case 'PPSPM':
+                        $(".progress-bar").find('li:eq(0)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(1)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(2)').removeClass().addClass('is-complete')
+                        $(".progress-bar").find('li:eq(3)').removeClass().addClass('is-decline')
+                        break
+                }
+            } else if (detail.status=='Selesai'){
+                $(".progress-bar").find('li:eq(0)').removeClass().addClass('is-complete')
+                $(".progress-bar").find('li:eq(1)').removeClass().addClass('is-complete')
+                $(".progress-bar").find('li:eq(2)').removeClass().addClass('is-complete')
+                $(".progress-bar").find('li:eq(3)').removeClass().addClass('is-complete')
+                $(".progress-bar").find('li:eq(4)').removeClass().addClass('is-complete')
+                $(".progress-bar").find('li:eq(5)').removeClass().addClass('is-complete')
+                $(".progress-bar").find('li:eq(6)').removeClass().addClass('is-complete')
+            }
+
+            
 
             //tombol periksa pada modal
             if (!document.getElementById("periksaTiketVerifikator") && detail.posisi == "Verifikator" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '11' || "{{admin}}" == "1")){
@@ -1422,3 +1502,6 @@
     }
 
 </script>
+
+
+

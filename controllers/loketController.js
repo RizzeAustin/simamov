@@ -1416,6 +1416,8 @@ loket.post('/ppkKirim', function(req, res) {
             data.pok.detil.u5 = req.body.loketDetailPok5 || ''
             data.pok.detil.n5 = req.body.nilaiDetil5 || 0
 
+            data.nilai.bruto = req.body.loketNilai
+
             data.checklist.spj = [data.checklist.spj[0], bol(req.body.checklistSpjPpk)]
             data.checklist.daftarHadir = [data.checklist.daftarHadir[0], bol(req.body.checklistDaftarHadirPpk)]
             data.checklist.dokumentasi = [data.checklist.dokumentasi[0], bol(req.body.checklistDokumentasiPpk)]
@@ -1515,6 +1517,8 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                 data.pok.detil.n4 = req.body.nilaiDetil4 || 0
                 data.pok.detil.u5 = req.body.loketDetailPok5 || ''
                 data.pok.detil.n5 = req.body.nilaiDetil5 || 0
+
+                data.nilai.bruto = req.body.loketNilai
 
                 data.checklist.spj = [data.checklist.spj[0], data.checklist.spj[1], bol(req.body.checklistSpjPpspm)]
                 data.checklist.daftarHadir = [data.checklist.daftarHadir[0], data.checklist.daftarHadir[1], bol(req.body.checklistDaftarHadirPpspm)]
@@ -1711,6 +1715,8 @@ loket.post('/ppspmKirimReviewer', function(req, res) {
             data.pok.detil.u5 = req.body.loketDetailPok5 || ''
             data.pok.detil.n5 = req.body.nilaiDetil5 || 0
 
+            data.nilai.bruto = req.body.loketNilai
+
             data.checklist.spj = [data.checklist.spj[0], data.checklist.spj[1], bol(req.body.checklistSpjPpspm)]
             data.checklist.daftarHadir = [data.checklist.daftarHadir[0], data.checklist.daftarHadir[1], bol(req.body.checklistDaftarHadirPpspm)]
             data.checklist.dokumentasi = [data.checklist.dokumentasi[0], data.checklist.dokumentasi[1], bol(req.body.checklistDokumentasiPpspm)]
@@ -1806,6 +1812,7 @@ loket.post('/reviewerPending', function(req, res) {
             data.pok.detil.u5 = req.body.loketDetailPok5 || ''
             data.pok.detil.n5 = req.body.nilaiDetil5 || 0
 
+            data.nilai.bruto = req.body.loketNilai
             data.catatan.reviewer = req.body.loketCatatanReviewer
 
             userAct(req, 'Mempending permintaan ' + data.nomorTransaksi)
@@ -1893,6 +1900,8 @@ loket.post('/reviewerProses', function(req, res) {
             data.pok.detil.n4 = req.body.nilaiDetil4 || 0
             data.pok.detil.u5 = req.body.loketDetailPok5 || ''
             data.pok.detil.n5 = req.body.nilaiDetil5 || 0
+
+            data.nilai.bruto = req.body.loketNilai
 
             data.catatan.reviewer = req.body.loketCatatanReviewer
             data.posisi = 'Bendahara'
@@ -1983,6 +1992,8 @@ loket.post('/bendaharaKirimSpp', function(req, res) {
             data.pok.detil.u5 = req.body.loketDetailPok5 || ''
             data.pok.detil.n5 = req.body.nilaiDetil5 || 0
 
+            data.nilai.bruto = req.body.loketNilai
+
             data.spp = req.body.loketSpp
             data.posisi = 'PPSPM'
             userAct(req, 'Meneruskan permintaan ' + data.nomorTransaksi + ' ke PPSPM')
@@ -2064,6 +2075,8 @@ loket.post('/bendaharaProses', function(req, res) {
             data.pok.detil.n4 = req.body.nilaiDetil4 || 0
             data.pok.detil.u5 = req.body.loketDetailPok5 || ''
             data.pok.detil.n5 = req.body.nilaiDetil5 || 0
+
+            data.nilai.bruto = req.body.loketNilai
 
             data.metodeTransfer = req.body.loketMetodeTransfer
             data.nilai.pajak = req.body.loketNilaiPajak

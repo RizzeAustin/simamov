@@ -114,46 +114,96 @@ $(document).ready(function() {
         }
     })
 
+    let sama = false
+
     socket.on('terimaKegiatan', function(kegiatan) {
         $("#loketKegiatan").empty().append('<option>Pilih Aktivitas</option>')
         for (let i = 0; i < kegiatan.length; i++) {
             let s = '<option value="' + kegiatan[i].kdgiat + '">' + kegiatan[i].kdgiat + ' ' + kegiatan[i].uraian + '</option>'
-            $("#loketKegiatan").append(s)
+            $("#loketKegiatan > option").each(function() {
+                if ($(this).val() == kegiatan[i].kdgiat) {
+                    sama = true
+                }
+            })
+            if (!sama) {
+                $("#loketKegiatan").append(s)
+                sama = false
+            }
         }
     })
     socket.on('terimaOutput', function(output) {
         $("#loketOutput").empty().append('<option>Pilih KRO</option>')
         for (let i = 0; i < output.length; i++) {
             let s = '<option value="' + output[i].kdoutput + '">' + output[i].kdoutput + ' ' + output[i].uraian + '</option>'
-            $("#loketOutput").append(s)
+            $("#loketOutput > option").each(function() {
+                if ($(this).val() == output[i].kdoutput) {
+                    sama = true
+                }
+            })
+            if (!sama) {
+                $("#loketOutput").append(s)
+                sama = false
+            }
         }
     })
     socket.on('terimasOutput', function(soutput) {
         $("#loketsOutput").empty().append('<option>Pilih RO</option>')
         for (let i = 0; i < soutput.length; i++) {
             let s = '<option value="' + soutput[i].kdsoutput + '">' + soutput[i].kdsoutput + ' ' + soutput[i].ursoutput + '</option>'
-            $("#loketsOutput").append(s)
+            $("#loketsOutput > option").each(function() {
+                if ($(this).val() == soutput[i].kdsoutput) {
+                    sama = true
+                }
+            })
+            if (!sama) {
+                $("#loketsOutput").append(s)
+                sama = false
+            }
         }
     })
     socket.on('terimaKomponen', function(komponen) {
         $("#loketKomponen").empty().append('<option>Pilih Komponen</option>')
         for (let i = 0; i < komponen.length; i++) {
             let s = '<option value="' + komponen[i].kdkmpnen + '">' + komponen[i].kdkmpnen + ' ' + komponen[i].urkmpnen + '</option>'
-            $("#loketKomponen").append(s)
+            $("#loketKomponen > option").each(function() {
+                if ($(this).val() == komponen[i].kdkmpnen) {
+                    sama = true
+                }
+            })
+            if (!sama) {
+                $("#loketKomponen").append(s)
+                sama = false
+            }
         }
     })
     socket.on('terimasKomponen', function(skomponen) {
         $("#loketsKomponen").empty().append('<option>Pilih Sub Komponen</option>')
         for (let i = 0; i < skomponen.length; i++) {
             let s = '<option value="' + skomponen[i].kdskmpnen + '">' + skomponen[i].kdskmpnen + ' ' + skomponen[i].urskmpnen + '</option>'
-            $("#loketsKomponen").append(s)
+            $("#loketsKomponen > option").each(function() {
+                if ($(this).val() == skomponen[i].kdskmpnen) {
+                    sama = true
+                }
+            })
+            if (!sama) {
+                $("#loketsKomponen").append(s)
+                sama = false
+            }
         }
     })
     socket.on('terimaAkun', function(akun) {
         $("#loketAkun").empty().append('<option>Pilih Akun</option>')
         for (let i = 0; i < akun.length; i++) {
             let s = '<option value="' + akun[i].kdakun + '">' + akun[i].kdakun + ' ' + akun[i].uraian + '</option>'
-            $("#loketAkun").append(s)
+            $("#loketAkun > option").each(function() {
+                if ($(this).val() == akun[i].kdakun) {
+                    sama = true
+                }
+            })
+            if (!sama) {
+                $("#loketAkun").append(s)
+                sama = false
+            }
         }
     })
     socket.on('terimaDetailPok', function(detail) {
