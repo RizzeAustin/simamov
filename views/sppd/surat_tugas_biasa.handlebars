@@ -1,0 +1,729 @@
+<div class="animated fadeIn">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card-group mb-0">
+                    <div class="card p-2">
+                        <div class="card-block">
+                        <div class="row">
+                            <h3><i class="icon-paper-plane"></i> Surat Tugas Biasa</h3>
+                        </div>
+                            <form id="suratTugas" action="/sppd/surat_tugas_biasa" method="POST">  
+                                <div class="form-group row">
+                                    <label for="nomor">Nomor Surat</label>
+                                    <div class="input-group">
+                                        <input type="text" id="nomor" name="nomor" class="form-control" placeholder="Nomor surat" value="02722.{{setting.last_nmr_surat}}" autocomplete="off">
+                                        <span class="input-group-btn">
+                                            <button id="btn-riwayat-surat-tugas" type="button" class="btn btn-secondary"><i class="icon-list"></i></button>
+                                        </span>
+                                    </div>
+                                </div>                          
+                                <div class="form-group row">
+                                    <label for="nama_lengkap">Nama<span> *</span></label>
+                                    <input id="nama_lengkap_label" type="text" name="nama_lengkap_label" class="form-control" required autofocus>
+                                    <input style="display: none;" type="text" id="nama_lengkap" name="nama_lengkap" value="">
+                                </div>
+                                <div class="form-group row">
+                                    <label for="anggota">Anggota</label>
+                                    <input id="anggota" type="text" name="anggota" class="form-control">
+                                </div>                                
+                                <div class="form-group row">
+                                    <label for="detail_tugas">Tujuan/Tugas<span> *</span></label>
+                                    <input id="detail_tugas" type="text" name="tugas" class="form-control" required>
+                                </div>                                 
+                                <div class="form-group row">
+                                    <label for="lokasi">Lokasi<span> *</span></label>
+                                    <input id="lokasi" type="text" name="lokasi" class="form-control" required>
+                                    <!-- <input style="display: none;" type="text" id="lokasi" name="lokasi" value=""> -->
+                                </div>                                                       
+                                <div class="form-group row">
+                                    <label for="tgl_berangkat">Waktu Pelaksanaan<span> *</span></label>
+                                    <div class="form-group row">
+                                        <div class="col-md-6">
+                                            <input type='text-input' class="form-control date tgl_ttd" name="tgl_berangkat" id="tgl_berangkat" required>
+                                            <span class="help-block text-muted">berangkat</span> 
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type='text-input' class="form-control date tgl_ttd" name="tgl_kembali" id="tgl_kembali" required>
+                                            <span class="help-block text-muted">kembali</span> 
+                                        </div>
+                                    </div>
+                                </div>                                                                            
+                                <div class="form-group row">
+                                    <label for="ttd_surat_tugas">Penanda Tangan Surat Tugas</label>
+                                    <select id="ttd_surat_tugas" name="ttd_surat_tugas" class="form-control input-lg" size="1">
+                                        {{#each setting.ttd_st}}
+                                            <option value="{{_id}}" {{#if_eq _id ../setting.ttd_st_default}}selected{{/if_eq}}>{{nama}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>                          
+                                <div class="form-group row">
+                                    <label for="ttd_legalitas">Penanda Tangan Legalitas</label>
+                                    <select list="ttd_legalitasb"  id="ttd_legalitas" name="ttd_legalitas" class="form-control input-lg" size="1">
+                                        {{#each setting.ttd_leg}}
+                                            <option value="{{_id}}" {{#if_eq _id ../setting.ttd_leg_default}}selected{{/if_eq}}>{{nama}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>                                    
+                                <div class="form-group row">     
+                                    <div class="col-md-6" style="padding-left: 0">    
+                                        <label for="tgl_ttd_st">Tanggal Tanda Tangan</label>
+                                        <input type="text-input" id="tgl_ttd_st" class="form-control date tgl_ttd" name="tgl_ttd_st" value="" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <button id="generateLetter" type="submit" class="px-2">Buat Surat</button><span><pre> </pre></span>
+                                    {{#if admin}}
+                                    <div class="input-group-btn">
+                                        <button id="download" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Download
+                                            <span class="caret"></span>
+                                        </button>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a id="unduh_docx" class="dropdown-item" href="#">Docx</a>
+                                            <a id="unduh_pdf" class="dropdown-item" href="#">PDF</a>
+                                        </div>
+                                    </div>
+                                    {{/if}}
+                                </div>                         
+                            </form>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <iframe id="realTimeView" class="preview-pane" type="application/pdf" width="100%" height="690" frameborder="0" style="position:relative;z-index:999;" src=""></iframe>
+            </div>
+        </div>
+    </div>
+    <!--/.row-->
+</div>
+
+<div class="modal fade" id="riwayat-surat-tugas" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-primary modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Riwayat Surat Tugas Biasa</span></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0 15px;">
+                <div style="padding: 15px; padding-bottom: 0">
+                    <div style="height: 510px;position:relative;">
+                        <div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">
+                            <div class="row" style="margin-bottom: 20px">
+                                <div class="col-md-6">  
+                                    <div class="row" style="margin-bottom: 5px">
+                                        <div class="col-md-12">
+                                            <strong>Berdasarkan waktu :</strong>
+                                        </div>
+                                    </div>
+                                    <form id="riwayat_form" method="post" action="/pok/riwayat_pengeluaran">
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <div class="radio">
+                                                    <label for="tampil-riwayat-by-range">
+                                                        <input type="radio" id="tampil-riwayat-by-range" name="tampil_riwayat" value="0"> Periode <input id="riwayat-lower_ts" type="text"> - <input id="riwayat-upper_ts" type="text">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <div class="radio">
+                                                    <label for="tampil-riwayat-by-month">
+                                                        <input type="radio" id="tampil-riwayat-by-month" name="tampil_riwayat" value="1" checked="checked"> Bulan 
+                                                        <select id="bulan_st_modal" name="bulan_st_modal" size="1">
+                                                            <option value="none">--pilih--</option>
+                                                            <option value="0">Januari</option>
+                                                            <option value="1">Februari</option>
+                                                            <option value="2">Maret</option>
+                                                            <option value="3">April</option>
+                                                            <option value="4">Mei</option>
+                                                            <option value="5">Juni</option>
+                                                            <option value="6">Juli</option>
+                                                            <option value="7">Agustus</option>
+                                                            <option value="8">September</option>
+                                                            <option value="9">Oktober</option>
+                                                            <option value="10">November</option>
+                                                            <option value="11">Desember</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="tbl_riwayat" class="table" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>No. Surat</th>
+                                                <th>Nama</th>
+                                                <th>Tujuan</th>
+                                                <th>Tgl. Berangkat</th>
+                                                <th>Tgl. Kembali</th>
+                                                <th>Pilihan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script src="/js/bootstrap-tokenfield.js"></script>
+
+<script src="/js/moment.min.js"></script>
+<script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        moment.locale('id');
+        $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/bootstrap-tokenfield.css"));
+
+        //function
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+    
+        //Inisialisasi pdf viewer
+        $("#realTimeView").attr("src", location.protocol+'//'+location.host+'/result/surat_tugas_biasa.pdf');
+
+        //Input tgl sekarang utk ttd
+        $(".tgl_ttd").val(moment().format('D MMMM YYYY'));
+
+        //Inisialisasi input tgl Brgkt & Kembali
+        $('#tgl_berangkat').datetimepicker({
+                locale: 'id',
+                format: 'D MMMM YYYY'
+            });
+        $('#tgl_kembali').datetimepicker({
+            locale: 'id',
+            format: 'D MMMM YYYY',
+            useCurrent: false
+        });
+        $('.tgl_ttd').datetimepicker({
+            locale: 'id',
+            format: 'D MMMM YYYY',
+            useCurrent: false
+        });
+
+        $('<input />').attr('type', 'hidden')
+              .attr('name', "timestamp")
+              .attr('id', "timestamp")
+              .attr('value', $('#tgl_berangkat').data('DateTimePicker').date().unix())
+              .appendTo('#suratTugas');
+
+        //Disable tgl sblm tgl berangkat pd input tgl kembali
+        $("#tgl_berangkat").on("dp.change", function (e) {
+            $('#tgl_kembali').data("DateTimePicker").minDate(e.date);
+
+            $('#tgl_kembali').val($("#tgl_berangkat").val())
+
+            $('#timestamp').remove()
+
+            $('<input />').attr('type', 'hidden')
+              .attr('name', "timestamp")
+              .attr('id', "timestamp")
+              .attr('value', e.date.unix())
+              .appendTo('#suratTugas');
+        });
+        //Autocomplete
+        $('#anggota').tokenfield({
+          typeahead: [null, { source: function(q, p){
+            {
+                socket.emit('penerima_list', {'query': q, 'type': 'pegawai_and_bps'}, function (data) {
+                    if($('#anggota').val()){
+                        var regEx = new RegExp(q+"$");
+                        if(regEx.test($('#anggota').val())){
+                            return p([]);
+                        }
+                    }
+                    return p(_.map(data, function(peg){ return {_id: peg._id, value: peg.nama}}))
+                });
+            }
+          }}]
+        });
+
+        var nama_anggota = [];
+        $("#anggota").on("tokenfield:createdtoken", function(e) {
+            delete e.attrs.label;
+            nama_anggota.push(e.attrs);
+        });
+        $("#anggota").on("tokenfield:removetoken", function(e) {
+            nama_anggota = _.without(nama_anggota, _.findWhere(nama_anggota, {
+              value: e.attrs.value
+            }));
+        });
+
+        $('#nama_lengkap_label').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('penerima_list', {'query': q, 'type': 'pegawai_only'}, function (data) {
+                                return p(_.map(data, function(ur){ return {_id: ur._id, value: ur.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $("#nama_lengkap_label").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
+             $('#nama_lengkap').val(datum._id);
+        });
+
+        $("#detail_tugas").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
+             $('#detail_tugas').val(toTitleCase(datum.value));
+        });
+
+        $('#detail_tugas').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('komponen_list_extra', q, function (data) {
+                                return p(_.map(data, function(ur){ return {kdkmpnen: (ur.kdkmpnen || ur._id), value: (ur.urkmpnen || ur.nama)}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        $('#lokasi').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            }, {
+                source: function(q, p){
+                        {
+                            socket.emit('lokasi_list', q, function (data) {
+                                return p(_.map(data, function(lok){ return {_id: lok._id, value: lok.nama}}))
+                            });
+                        }
+                }
+            }
+        );
+
+        function resetForm(){
+            nama_anggota = [];
+            $('#anggota').tokenfield('setTokens', []);
+            $('#anggota').val('');
+            
+            $('#lokasi').val('');
+            $('#nama_lengkap').val('');
+            $('#nama_lengkap_label').val('');
+            $('#detail_tugas').val('');
+            // $('#tgl_berangkat').val('');
+            // $('#tgl_kembali').val('');
+        }
+
+        function checkInput(){
+            if($('#lokasi').val()=='' || $('#nama_lengkap_label').val()==''
+                || $('#detail_tugas').val()=='' || $('#tgl_berangkat').val()=='' || $('#tgl_kembali').val()==''){
+                 return false
+            } else{
+                return true;
+            }
+        }
+
+        var current_month = new Date().getMonth()+1;
+        $('#bulan_st_modal option:eq('+current_month+')').prop('selected', true);
+        $('#tbl_riwayat').DataTable({
+            aaSorting: [],
+            rowReorder: {
+                enable: false
+            },
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
+            createdRow: function( row, data, dataIndex ) {
+                $( row ).find('td:eq(0)').attr('class', 'text-center');
+                $( row ).find('td:eq(3)').attr('class', 'text-center');
+                $( row ).find('td:eq(4)').attr('class', 'text-center');
+                $( row ).find('td:eq(5)').attr('class', 'text-center');
+            }
+        });
+        //tgl modal riwayat soal
+        $('#riwayat-lower_ts, #riwayat-upper_ts').datetimepicker({
+            locale: 'id',
+            format: 'D MMMM YYYY',
+            useCurrent: false,
+            widgetPositioning: {
+                horizontal: 'left',
+                vertical: 'bottom'
+            }
+        });
+
+        $('#btn-riwayat-surat-tugas').click(function(){
+            var selected = $('#bulan_st_modal').val();
+            socket.emit('riwayat_surat_tugas', {month: selected, type: 'surat_tugas_biasa'}, 
+                function(response){
+                    $('#tbl_riwayat').DataTable().clear();
+                    _.each(response, function(surat, i, list){
+                        if(surat && surat.nama_lengkap){
+                            var row = [
+                                surat._id,
+                                surat.nama_lengkap.nama,
+                                surat.tugas,
+                                surat.tgl_berangkat,
+                                surat.tgl_kembali,
+                                '<button type="button" class="edit-surat"><i class="icon-pencil"></i></button>'
+                            ]
+                            $('#tbl_riwayat').DataTable().row.add( row );
+                        }
+                    });
+                    $('#tbl_riwayat').DataTable().draw(false);
+            })
+            $('#riwayat-surat-tugas').modal('show');
+        });
+
+        $("input[name='tampil_riwayat']").change(function(e){
+            var s = $(this).val();
+            if(s == '0') {
+                if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
+                var lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()
+                var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix() + 86399;
+                socket.emit('riwayat_surat_tugas', {'lower_ts': lower_ts, 'upper_ts': upper_ts, type: 'surat_tugas_biasa'}, 
+                    function(response){
+                        $('#tbl_riwayat').DataTable().clear();
+                        _.each(response, function(surat, i, list){
+                            if(surat && surat.nama_lengkap){
+                                var row = [
+                                    surat._id,
+                                    surat.nama_lengkap.nama,
+                                    surat.tugas,
+                                    surat.tgl_berangkat,
+                                    surat.tgl_kembali,
+                                    '<button type="button" class="edit-surat"><i class="icon-pencil"></i></button>'
+                                ]
+                                $('#tbl_riwayat').DataTable().row.add( row );
+                            }
+                        });
+                        $('#tbl_riwayat').DataTable().draw(false);
+                })
+            } else {
+                var selected = $('#bulan_st_modal').val();
+                if(selected == 'none') return;
+                socket.emit('riwayat_surat_tugas', {month: selected, type: 'surat_tugas_biasa'}, 
+                    function(response){
+                        $('#tbl_riwayat').DataTable().clear();
+                        _.each(response, function(surat, i, list){
+                            if(surat && surat.nama_lengkap){
+                                var row = [
+                                    surat._id,
+                                    surat.nama_lengkap.nama,
+                                    surat.tugas,
+                                    surat.tgl_berangkat,
+                                    surat.tgl_kembali,
+                                    '<button type="button" class="edit-surat"><i class="icon-pencil"></i></button>'
+                                ]
+                                $('#tbl_riwayat').DataTable().row.add( row );
+                            }
+                        });
+                        $('#tbl_riwayat').DataTable().draw(false);
+                })
+            }
+        });
+
+        $('#bulan_st_modal').change(function(){
+            if(!$('#tampil-riwayat-by-month').is(':checked')) return;
+            var selected = $(this).val();
+            if(selected == 'none') return;
+            socket.emit('riwayat_surat_tugas', {month: selected, type: 'surat_tugas_biasa'}, 
+                function(response){
+                    $('#tbl_riwayat').DataTable().clear();
+                    _.each(response, function(surat, i, list){
+                        if(surat && surat.nama_lengkap){
+                            var row = [
+                                surat._id,
+                                surat.nama_lengkap.nama,
+                                surat.tugas,
+                                surat.tgl_berangkat,
+                                surat.tgl_kembali,
+                                '<button type="button" class="edit-surat"><i class="icon-pencil"></i></button>'
+                            ]
+                            $('#tbl_riwayat').DataTable().row.add( row );
+                        }
+                    });
+                    $('#tbl_riwayat').DataTable().draw(false);
+            })
+        });
+
+        $('#riwayat-lower_ts, #riwayat-upper_ts').on('dp.change', function(e){
+            if($('#tampil-riwayat-by-range').is(':checked')){
+                if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
+                var lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()
+                var upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix() + 86399;
+                socket.emit('riwayat_surat_tugas', {'lower_ts': lower_ts, 'upper_ts': upper_ts, type: 'surat_tugas_biasa'}, 
+                    function(response){
+                        $('#tbl_riwayat').DataTable().clear();
+                        _.each(response, function(surat, i, list){
+                            if(surat && surat.nama_lengkap){
+                                var row = [
+                                    surat._id,
+                                    surat.nama_lengkap.nama,
+                                    surat.tugas,
+                                    surat.tgl_berangkat,
+                                    surat.tgl_kembali,
+                                    '<button type="button" class="edit-surat"><i class="icon-pencil"></i></button>'
+                                ]
+                                $('#tbl_riwayat').DataTable().row.add( row );
+                            }
+                        });
+                        $('#tbl_riwayat').DataTable().draw(false);
+                })
+            }
+        });
+
+        $('#tbl_riwayat').on('click', '.edit-surat', function(){
+            var nomor = $(this).closest('tr').find('td:eq(0)').text();
+            socket.emit('get_surat_tugas', {'nomor': nomor, 'type': 'surat_tugas_biasa'}, 
+                function(response){
+                    // return;
+                    resetForm();
+                    var nomor_temp =  $('#nomor').val();
+                    $('#nomor').val(
+                        nomor_temp.replace(/\d*$/, response._id)
+                    );
+                    _.each(response.anggota, function(item, i, list){
+                        $("#anggota").tokenfield('createToken', {_id: item._id, value: item.value});
+                    })
+                    $("#detail_tugas").val(response.tugas);
+                    if(response.lokasi){
+                        $("#lokasi").val(response.lokasi);
+                    }
+                    
+                    $("#kode_output").val(response.kode_output);
+                    if(response.nama_lengkap){
+                        $("#nama_lengkap_label").val(response.nama_lengkap.nama);
+                        $("#nama_lengkap").val(response.nama_lengkap._id);
+                    }
+                    
+                    // $("#tgl_berangkat").val(response.tgl_berangkat);
+                    $("#tgl_berangkat").data('DateTimePicker').date(response.tgl_berangkat);
+                    // $("#tgl_kembali").val(response.tgl_kembali);
+                    $("#tgl_kembali").data('DateTimePicker').date(response.tgl_kembali);
+                    $("#tgl_ttd_st").val(response.tgl_ttd_st);
+
+                    $('#ttd_surat_tugas option[value="'+response.ttd_surat_tugas+'"]').prop('selected','selected');
+                    $('#ttd_legalitas option[value="'+response.ttd_legalitas+'"]').prop('selected','selected');
+            })
+            $('#riwayat-surat-tugas').modal('toggle');
+        })
+
+        function clearForm(){
+            setTimeout(function() {
+                resetForm();
+                socket.emit('last_nmr_surat', '', 
+                    function(last_nmr_surat){
+                        var nomor_temp =  $('#nomor').val();
+                        $('#nomor').val(
+                            nomor_temp.replace(/\d*$/, last_nmr_surat)
+                        )
+                    })
+            }, 2000);
+        }
+
+        //Reload pdf viewer
+        var download_surat = false;
+        $('#suratTugas').on('submit', function(e) {
+            if($("#anggota-tokenfield").val()){
+                $("#anggota").tokenfield('createToken', {value: $("#anggota-tokenfield").val()});
+                $("#anggota-tokenfield").val('');
+            }
+            if(!$('#ttd_surat_tugas').val() || !$('#ttd_legalitas').val()){
+                generalAlert('Setting Penanda Tangan Surat Tugas atau Legalitas belum ditentukan. Silahkan ubah di pengaturan SPPD.')
+                e.preventDefault();
+                return false;
+            }
+            if($('#nama_lengkap').val() == ''){
+                generalAlert('Kolom Nama: Harap pilih nama dari daftar saran atau silahkan tambahkan pegawai baru.')
+                e.preventDefault();
+                return false;
+            }
+            if(download_surat){
+                download_surat = false;
+                clearForm();
+                return true;
+            } else {
+                $('#anggota_temp').remove();
+                $('#docx').remove();
+                $('#pdf').remove();
+                $('#pelaksanaan').remove(); 
+            }
+            e.preventDefault();
+            $('#generateLetter').prop('disabled', true);
+            $("#generateLetter").html('<i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i>'+$("#generateLetter").text());
+
+            var data = $('#suratTugas').serializeObject();
+            data.anggota = nama_anggota;
+
+            var start = $("#tgl_berangkat").data('DateTimePicker').date()._d,
+                end = $("#tgl_kembali").data('DateTimePicker').date()._d,
+                currentDate = new Date(start);
+            
+            data.pelaksanaan = [];
+
+            while (currentDate <= end) {
+                if(new Date(currentDate).getDay() > 0 && new Date(currentDate).getDay() < 6) data.pelaksanaan.push({tgl: moment(new Date(currentDate)).format("D MMMM YYYY")});
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            socket.emit('surat_tugas_biasa', data, 
+                function(response){
+                    if(response.last_nmr_surat){
+                        resetForm();
+
+                        var nomor_temp =  $('#nomor').val();
+                        $('#nomor').val(
+                            nomor_temp.replace(/\d*$/, response.last_nmr_surat)
+                        )
+                        $("#realTimeView").attr("src", location.protocol+'//'+location.host+response.outputPdf)
+                        generalAlert('Surat dibuat.');
+                    } else {
+                        generalAlert('Gagal buat surat. Hubungi Admin.');
+                    }
+                    $("#generateLetter").html('Buat Surat');
+                    $('#generateLetter').prop('disabled', false);
+            })
+        });
+
+        $('#unduh_docx').click(function(){
+            if(!checkInput()){
+                 generalAlert('Input ada yang kosong.');
+                 return;
+            };
+            $('#anggota_temp').remove();
+            $('#docx').remove();
+            $('#pdf').remove();  
+            $('#pelaksanaan').remove();  
+
+            $('<input />').attr('type', 'hidden')
+              .attr('name', "anggota_temp")
+              .attr('id', "anggota_temp")
+              .attr('value', JSON.stringify(nama_anggota))
+              .appendTo('#suratTugas');
+            
+            $('<input />').attr('type', 'hidden')
+              .attr('name', "docx")
+              .attr('id', "docx")
+              .attr('value', true)
+              .appendTo('#suratTugas');
+
+            var start = $("#tgl_berangkat").data('DateTimePicker').date()._d,
+                end = $("#tgl_kembali").data('DateTimePicker').date()._d,
+                currentDate = new Date(start),
+                pelaksanaan = [];
+
+            moment.locale('id');
+
+            while (currentDate <= end) {
+                if(new Date(currentDate).getDay() > 0 && new Date(currentDate).getDay() < 6) pelaksanaan.push({tgl: moment(new Date(currentDate)).format("D MMMM YYYY")});
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            $('<input />').attr('type', 'hidden')
+              .attr('name', "pelaksanaan")
+              .attr('id', "pelaksanaan")
+              .attr('value', JSON.stringify(pelaksanaan))
+              .appendTo('#suratTugas');
+
+            download_surat = true;
+
+            $('#suratTugas').submit();
+        })
+
+        $('#unduh_pdf').click(function(){   
+            if(!checkInput()){
+                 generalAlert('Input ada yang kosong.');
+                 return;
+            };  
+            $('#anggota_temp').remove();
+            $('#docx').remove();
+            $('#pdf').remove(); 
+            $('#pelaksanaan').remove();
+
+            $('<input />').attr('type', 'hidden')
+              .attr('name', "anggota_temp")
+              .attr('id', "anggota_temp")
+              .attr('value', JSON.stringify(nama_anggota))
+              .appendTo('#suratTugas');
+            
+            $('<input />').attr('type', 'hidden')
+              .attr('name', "pdf")
+              .attr('id', "pdf")
+              .attr('value', true)
+              .appendTo('#suratTugas');
+
+            var start = $("#tgl_berangkat").data('DateTimePicker').date()._d,
+                end = $("#tgl_kembali").data('DateTimePicker').date()._d,
+                currentDate = new Date(start),
+                pelaksanaan = [];
+
+            moment.locale('id');
+
+            while (currentDate <= end) {
+                if(new Date(currentDate).getDay() > 0 && new Date(currentDate).getDay() < 6) pelaksanaan.push({tgl: moment(new Date(currentDate)).format("D MMMM YYYY")});
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            $('<input />').attr('type', 'hidden')
+              .attr('name', "pelaksanaan")
+              .attr('id', "pelaksanaan")
+              .attr('value', JSON.stringify(pelaksanaan))
+              .appendTo('#suratTugas');
+
+            download_surat = true;
+
+            $('#suratTugas').submit();
+        })
+
+        function generalAlert(message){
+            $.toast({
+                text: message,
+                textAlign: 'left', 
+                hideAfter: 4000,
+                loader: false,
+                position: 'bottom-right'
+            })
+        }
+
+        function toTitleCase(str)
+        {
+            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}).replace(/Stis/g, 'STIS').replace(/Pnbp/g, 'PNBP').replace(/Div/g, 'DIV');
+        }
+    });
+</script>

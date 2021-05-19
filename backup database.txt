@@ -1,0 +1,13 @@
+mongodump -d simamov -o C:\
+
+mongorestore -d simamov C:\simamov\simamov
+
+mongorestore --db mydbname --collection mycollection
+
+mongodump --db=simamov --collection=pok_detailBelanja --out=C:\db
+
+mongorestore --db=simamov --collection=pok_detailBelanja C:\db\simamov\pok_detailBelanja.bson
+
+git remote add origin https://github.com/mhshmd/m.git
+git fetch --all
+git reset --hard origin/master
