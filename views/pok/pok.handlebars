@@ -402,7 +402,7 @@
 
 
 <div class="modal fade" id="refisi_modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div id="modal-remove-lg" style="max-width: 500px;" class="modal-dialog modal-primary" role="document">
+    <div id="modal-remove-lg" style="max-width: 700px;" class="modal-dialog modal-primary" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title">Riwayat Perubahan <span class="detail_blnj_entry"></span></h6>
@@ -413,7 +413,8 @@
             <table id="pok_table_refisi" class="table table-bordered" width="100%">
                 <thead>
                     <tr>
-                        <th>Revisi</th>
+                        <th>Tanggal</th>
+                        <th>Tahun Anggaran</th>
                         <th>Uraian</th>
                         <th>Volume</th>
                         <th>Satuan</th>
@@ -448,17 +449,19 @@
                             <label for="unit1"> BAU</label><br>
                             <input type="checkbox" class="unitCheckbox" id="unit2" name="unit2" value="BAAK">
                             <label for="unit2"> BAAK</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit3" name="unit3" value="PRODI">
-                            <label for="unit3"> PRODI</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit4" name="unit4" value="UPPPM">
+                            <input type="checkbox" class="unitCheckbox" id="unit3" name="unit3" value="PRODI-D4">
+                            <label for="unit3"> PRODI-D4</label><br>
+                            <input type="checkbox" class="unitCheckbox" id="unit4" name="unit4" value="PRODI-D3">
+                            <label for="unit3"> PRODI-D3</label><br>
+                            <input type="checkbox" class="unitCheckbox" id="unit4" name="unit5" value="UPPPM">
                             <label for="unit4"> UPPPM</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit5" name="unit5" value="SPM">
+                            <input type="checkbox" class="unitCheckbox" id="unit5" name="unit6" value="SPM">
                             <label for="unit5"> SPM</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit6" name="unit6" value="Perpustakaan">
+                            <input type="checkbox" class="unitCheckbox" id="unit6" name="unit7" value="Perpustakaan">
                             <label for="unit6"> Perpustakaan</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit7" name="unit7" value="IT">
+                            <input type="checkbox" class="unitCheckbox" id="unit7" name="unit8" value="IT">
                             <label for="unit7"> IT</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit8" name="unit8" value="Lainnya">
+                            <input type="checkbox" class="unitCheckbox" id="unit8" name="unit9" value="Lainnya">
                             <label for="unit8"> Lainnya</label><br>
                         </div>
                     </div>
@@ -959,8 +962,6 @@
 <script src="/js/exporting.js"></script>
 <script src="/js/offline-exporting.js"></script>
 
-<script src="js/select2.js"></script>  
-
 <script type="text/javascript">
     socket = io.connect($(location).attr('host'));
 
@@ -971,8 +972,6 @@
 
 
     $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/handsontable.full.min.css"));
-    $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css"));
-    $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/select2.css"));
     /////////// UMUM ////////////
     //plug in
     //reset sorting table
@@ -1019,6 +1018,13 @@
         ////////// ENTRY
         //search & sort
         //tabel pok entry
+        var ta = '{{tahun_anggaran}}';
+        var colen = [];
+        if (ta < new Date().getFullYear()) {
+            colen = [ 0, 1, 14 ];
+        } else {
+            colen = [ 0, 1 ]
+        }
         tabel_pok_entry.DataTable({
             scrollY:        false,//'500px',
             scrollX:        true,
@@ -1069,11 +1075,16 @@
             }
         });
         
-
+        var rlampau = [];
+        if (ta != new Date().getFullYear()) {
+            rlampau = [ 0, 1, 14 ]
+        } else {
+            rlampau = [ 0 ]
+        }
         tabel_riwayat.DataTable({
             columnDefs: [
                 {
-                    "targets": [ 0 ],
+                    "targets": rlampau,
                     "visible": false,
                     "searchable": false
                 },
@@ -1432,10 +1443,21 @@
         //Tombol refisi
         var detail_id_target;
         tabel_pok_entry.on('click', '.refisi', function () {
+            $('#pok_table_refisi').DataTable().clear().draw(false);
             var all_row_target_td = tabel_pok_entry.DataTable().row($(this).closest('tr')).data();
             detail_id_target = all_row_target_td[0];
-            $('.detail_blnj_entry').html(all_row_target_td[4])
-            $('#pagu_entry_form').html(all_row_target_td[8])
+            //$('.detail_blnj_entry').html(all_row_target_td[4])
+            //$('#pagu_entry_form').html(all_row_target_td[8])
+            socket.emit('refisi', {target: detail_id_target});
+            socket.on('refisi_response', function(data,cb) {
+                if(data.row == ''){
+                    cb();
+                    return;
+                }
+                // $("#pok_table tbody").append(data);
+                $('#pok_table_refisi').DataTable().row.add( data ).draw(false);
+                cb();
+            })
             refisi_modal.modal('show');
         });
 
@@ -1452,6 +1474,13 @@
         form_edit_unit.on('submit', function(e) {
             e.preventDefault();
             var new_unit = {};
+            var strunit = '';
+            var target_row = $('#pok_table_edit').DataTable()
+                            .rows(function ( idx, dataa, node ) {
+                                return dataa[0] == detail_id_target ?
+                                true : false;})
+                            .nodes()
+                            .to$();
             unt =[];
             new_unit.id = detail_id_target;
             var unit1 = document.getElementById('unit1');
@@ -1462,32 +1491,49 @@
             var unit6 = document.getElementById('unit6');
             var unit7 = document.getElementById('unit7');
             var unit8 = document.getElementById('unit8');
+            var unit9 = document.getElementById('unit9');
             if (unit1.checked) {
                 unt.push(unit1.value);
+                strunit = strunit + ',' + unit1.value;
             };
             if (unit2.checked) {
                 unt.push(unit2.value);
+                strunit = strunit + ',' + unit2.value;
             };
             if (unit3.checked) {
                 unt.push(unit3.value);
+                strunit = strunit + ',' + unit3.value;
             };
             if (unit4.checked) {
                 unt.push(unit4.value);
+                strunit = strunit + ',' + unit4.value;
             };
             if (unit5.checked) {
                 unt.push(unit5.value);
+                strunit = strunit + ',' + unit5.value;
             };
             if (unit6.checked) {
                 unt.push(unit6.value);
+                strunit = strunit + ',' + unit6.value;
             };
             if (unit7.checked) {
                 unt.push(unit7.value);
+                strunit = strunit + ',' + unit7.value;
             };
             if (unit8.checked) {
                 unt.push(unit8.value);
+                strunit = strunit + ',' + unit8.value;
+            };
+            if (unit8.checked) {
+                unt.push(unit9.value);
+                strunit = strunit + ',' + unit9.value;
             };
             new_unit.unit = unt;
+            if (strunit.charAt(0) == ',') {
+                var strunit = strunit.slice(1);
+            }
             socket.emit('put_unit', new_unit);
+            $('#pok_table_edit').DataTable().cell(target_row.find('td:eq(3)')).data('<a class="munit">' + strunit + '</a>');
             form_edit_unit[0].reset();
             unit_modal.modal('hide');
             //new_unit.unit = document.querySelector('.unitCheckbox:checked').value;
@@ -3198,9 +3244,9 @@
         var usrnm = '{{username}}';
         var colm = [];
         if (usrnm === "rifki") {
-            colm = [0,1]
+            colm = [0,1,10]
         } else {
-            colm = [0,1,5]
+            colm = [0,1,5,10]
         };
 
         $('#pok_table_edit').DataTable({
@@ -3946,7 +3992,8 @@
         $('#pok_table_edit').on('dblclick', 'tr td', function () {
             active = $(this);
             var type = active.closest('tr').find('span').html();
-            if(state_active_editor || active.is(':nth-child(1)') || active.is(':nth-child(7)') 
+            if(state_active_editor || active.is(':nth-child(1)') || active.is(':nth-child(3)') 
+                || active.is(':nth-child(7)') || active.is(':nth-child(4)')
                 || active.is(':nth-child(8)') || (type == 'detail' && active.is(':nth-child(2)'))
                 || (type != 'detail' && (active.is(':nth-child(4)') || active.is(':nth-child(5)') || active.is(':nth-child(6)'))) ){
                 $.toast({
@@ -5151,7 +5198,7 @@
             socket.emit('pok_row_init', 'edit');
         })
 
-        socket.on('pok_row_init_response', function(data, cb) {
+        socket.on('pok_row_init_response', function(data,cb) {
             if(data.row == ''){
                 cb();
                 return;

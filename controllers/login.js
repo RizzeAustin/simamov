@@ -53,7 +53,7 @@ login.get('/', function(req, res) {
             thang = [{ thang: new Date().getFullYear() }];
         } else {
             for (var i = (programs.thang); i < new Date().getFullYear() + 1; i++) {
-                thang.push({ thang: i });
+                thang.unshift({ thang: i });
             }
         }
         res.render('login', { layout: false, href: href, 'thang': thang, 'this_year': new Date().getFullYear() });
@@ -110,7 +110,7 @@ login.post('/', bruteforce.prevent, function(req, res) {
         }
         //simpan session utk nama & tahun anggaran & user
         req.session.username = req.body.username;
-        req.session.tahun_anggaran = new Date().getFullYear();
+        req.session.tahun_anggaran = req.body.tahun_anggaran;
         req.session.user_id = user._id;
         req.session.jenis = user.jenis;
         req.session.userRole = user.role;
