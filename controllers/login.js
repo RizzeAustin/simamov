@@ -108,11 +108,15 @@ login.post('/', bruteforce.prevent, function(req, res) {
             })
             return;
         }
-        //simpan session utk nama & tahun anggaran
+        //simpan session utk nama & tahun anggaran & user
         req.session.username = req.body.username;
-        req.session.tahun_anggaran = req.body.tahun_anggaran;
-        req.session.jenis = user.jenis;
+        req.session.tahun_anggaran = new Date().getFullYear();
         req.session.user_id = user._id;
+        req.session.jenis = user.jenis;
+        req.session.userJabatan = user.jabatan;
+        req.session.userRole = user.role;
+        req.session.userUnit = user.unit;
+        req.session.userEmail = user.email;
 
         //ke home
         if (!req.query.href) req.query.href = ''
@@ -122,10 +126,8 @@ login.post('/', bruteforce.prevent, function(req, res) {
         User.update({ _id: user._id }, {
             ip_address: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
             last_login_time: formatDate(new Date()),
-            $push: { "act": { label: 'Login' } }
-        }, function(err, status) {
-
-        })
+            $push: { "act": { label: 'Login', timestamp: new Date().getTime() } }
+        }, function(err, status) {})
     });
 });
 
@@ -145,7 +147,7 @@ function formatDate(date) {
     var min = date.getMinutes();
     var hour = date.getHours();
 
-    return hour + ':' + min + ' ' + day + ' ' + monthNames[monthIndex] + ' ' + year;
+    return hour + ':' + min + ', ' + day + ' ' + monthNames[monthIndex] + ' ' + year;
 }
 
 module.exports = login;

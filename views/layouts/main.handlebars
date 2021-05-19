@@ -14,71 +14,81 @@
     <link href="/css/font-awesome.min.css" rel="stylesheet">
     <link href="/css/simple-line-icons.css" rel="stylesheet">
 
-    <!-- Main styles for this application <link href="/css/bootstrap.min.css" rel="stylesheet"> -->    
+    <!-- Main styles for this application <link href="/css/bootstrap.min.css" rel="stylesheet"> -->
     <link href="/css/style.css" rel="stylesheet">
-    <link href="/css/jquery.dataTables.css" rel="stylesheet"> 
-    <link href="/css/dataTables.bootstrap.min.css" rel="stylesheet"> 
-    <link href="/css/fixedColumns.bootstrap.min.css" rel="stylesheet">  
-    <link href="/css/jquery.toast.min.css" rel="stylesheet"> 
+    <link href="/css/jquery.dataTables.css" rel="stylesheet">
+    <link href="/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <link href="/css/fixedColumns.bootstrap.min.css" rel="stylesheet">
+    <link href="/css/jquery.toast.min.css" rel="stylesheet">
     <link href="/css/tokenfield-typeahead.css" rel="stylesheet">
-    <link href="/css/bootstrap-tokenfield.css" rel="stylesheet"> 
+    <link href="/css/bootstrap-tokenfield.css" rel="stylesheet">
     <link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
+    {{!-- custom css --}}
+    <link rel="stylesheet" href="/css/auliacss.css">
+    <link rel="stylesheet" href="/css/jquery-confirm.min.css">
+
     <style type="text/css">
-        .table > tbody > tr > td {
-             vertical-align: middle;
-             border: 1px solid black;
-             table-layout: fixed;
+        .table>tbody>tr>td {
+            vertical-align: middle;
+            border: 1px solid black;
+            table-layout: fixed;
         }
 
-        .token{
+        .token {
             line-height: 1.9;
         }
 
-        .level1{
-          text-indent: 10px;
+        .level1 {
+            text-indent: 10px;
         }
 
-        .level2{
-          text-indent: 10px;
+        .level2 {
+            text-indent: 10px;
         }
 
-        .level3{
-          text-indent: 10px;
+        .level3 {
+            text-indent: 10px;
         }
 
-        .level4{
-          text-indent: 30px;
+        .level4 {
+            text-indent: 30px;
         }
 
-        .level5{
-          text-indent: 30px;
+        .level5 {
+            text-indent: 30px;
         }
 
-        .level6{
-          text-indent: 40px;
+        .level6 {
+            text-indent: 40px;
         }
 
-        .format-uang{
-          text-align: right !important;
+        .format-uang {
+            text-align: right !important;
         }
 
-        .no-left-padding{
+        .no-left-padding {
             padding-left: 0 !important;
         }
 
-        body{
-            counter-reset: Serial;           /* Set the Serial counter to 0 */
-        }tbl_riwayat
-
-        .table-auto-number tbody tr td:first-child:before{
-          counter-increment: Serial;      /* Increment the Serial counter */
-          content: counter(Serial); /* Display the counter */
+        body {
+            counter-reset: Serial;
+            /* Set the Serial counter to 0 */
         }
 
-        #pok_table_entry th, #pok_table_edit td:nth-child(8) { white-space: nowrap; }
+        tbl_riwayat .table-auto-number tbody tr td:first-child:before {
+            counter-increment: Serial;
+            /* Increment the Serial counter */
+            content: counter(Serial);
+            /* Display the counter */
+        }
 
-        .DTFC_LeftBodyLiner{
+        #pok_table_entry th,
+        #pok_table_edit td:nth-child(8) {
+            white-space: nowrap;
+        }
+
+        .DTFC_LeftBodyLiner {
             overflow-y: hidden !important;
         }
 
@@ -86,38 +96,41 @@
             width: 1200px;
             margin: 0 auto;
         }
-        div#tbl_riwayat_wrapper{
-            width: 100%;
-            margin: 0 auto;
-        }
-        div#tbl_tambah_penerima_wrapper{
+
+        div#tbl_riwayat_wrapper {
             width: 100%;
             margin: 0 auto;
         }
 
-        label span{
+        div#tbl_tambah_penerima_wrapper {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        label span {
             color: red;
         }
 
         .htContextMenu.handsontable {
             z-index: 1100;
         }
+
         #tbl_pegawai_stis .twitter-typeahead .tt-dropdown-menu {
-          top: 35px !important;
-          left: auto !important;
-          right: 990px !important;
+            top: 35px !important;
+            left: auto !important;
+            right: 990px !important;
         }
 
-        #tbl_riwayat .twitter-typeahead .tt-dropdown-menu{
-          top: 35px !important;
-          left: auto !important;
-          right: 750px !important;
+        #tbl_riwayat .twitter-typeahead .tt-dropdown-menu {
+            top: 35px !important;
+            left: auto !important;
+            right: 750px !important;
         }
 
-        #tbl_tambah_penerima .twitter-typeahead .tt-dropdown-menu{
-          top: 35px !important;
-          left: auto !important;
-          right: 750px !important;
+        #tbl_tambah_penerima .twitter-typeahead .tt-dropdown-menu {
+            top: 35px !important;
+            left: auto !important;
+            right: 750px !important;
         }
     </style>
 
@@ -155,12 +168,14 @@
         </ul>
         <ul class="nav navbar-nav ml-auto">
             <li class="nav-item">
-                <span class="text-muted">Anggaran</span> <span id="tahun_anggaran" class="badge badge-default">{{tahun_anggaran}}</span>
+                <span class="text-muted">Anggaran</span> <span id="tahun_anggaran"
+                    class="badge badge-default">{{tahun_anggaran}}</span>
             </li>
         </ul>
-        <ul class="nav navbar-nav ml-auto">            
+        <ul class="nav navbar-nav ml-auto">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button"
+                    aria-haspopup="true" aria-expanded="false">
                     <img src="/img/avatars/6.png" class="img-avatar" alt="admin@bootstrapmaster.com">
                     <span class="hidden-md-down">{{display_name}}</span>
                 </a>
@@ -185,6 +200,60 @@
                     <li class="nav-item">
                         <a id="pok_menu" class="nav-link" href="pok"><i class="icon-calculator"></i> Pengelolaan POK</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-basket"></i> E-LOKET</a>
+                        <ul class="nav-dropdown-items">
+                            <li class="nav-item">
+                                <a id="loket" class="nav-link" href="loket/dashboard"><i
+                                        class="icon-screen-desktop"></i> Dashboard</a>
+                            </li>
+                            {{#if admin}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/pengusulan"><i class="icon-user"></i>
+                                        Pengusulan Kegiatan</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
+                                        Permintaan Dana</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/verifikator"><i class="icon-user"></i>
+                                        Verifikator</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/ppk"><i class="icon-user"></i>
+                                        PPK</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/ppspm"><i class="icon-user"></i>
+                                        PPSPM</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/reviewer"><i class="icon-user"></i>
+                                        Reviewer</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/bendahara"><i class="icon-user"></i>
+                                        Bendahara</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/bank"><i class="icon-user"></i>
+                                        Operator Bank</a>
+                                </li>
+                            {{else}}
+                                {{#if_eq jabatan '3'}}
+                                <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/pengusulan"><i class="icon-user"></i>
+                                        Pengusulan Kegiatan</a>
+                                </li>
+                                {{!-- <li class="nav-item">
+                                    <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
+                                        Permintaan Dana</a>
+                                </li> --}}
+                                {{/if_eq}}
+                            {{/if}}
+                        </ul>
+                    </li>
                     <li class="nav-title">
                         Surat-Surat
                     </li>
@@ -192,18 +261,29 @@
                         <a class="nav-link nav-dropdown-toggle" href="#"><i class="icon-plane"></i> Pengelolaan SPPD</a>
                         <ul class="nav-dropdown-items">
                             <li class="nav-item">
-                                <a id="suratTugasMenu" class="nav-link" href="sppd/surat_tugas"><i class="icon-plane"></i> Surat Tugas</a>
+                                <a id="suratTugasMenu" class="nav-link" href="sppd/surat_tugas"><i
+                                        class="icon-plane"></i> Surat Tugas</a>
                             </li>
                             <li class="nav-item">
-                                <a id="suratTugasBiasaMenu" class="nav-link" href="sppd/surat_tugas_biasa"><i class="icon-paper-plane"></i> Surat Tugas Biasa</a>
+                                <a id="suratTugasBiasaMenu" class="nav-link" href="sppd/surat_tugas_biasa"><i
+                                        class="icon-paper-plane"></i> Surat Tugas Biasa</a>
                             </li>
                             <li class="nav-item">
-                                <a id="perhitunganSTMenu" class="nav-link" href="sppd/perhitungan"><i class="icon-check"></i> Perhitungan</a>
+                                <a id="perhitunganSTMenu" class="nav-link" href="sppd/perhitungan"><i
+                                        class="icon-check"></i> Perhitungan</a>
                             </li>
                             {{#if admin}}
                             <li class="nav-item">
-                                <a id="pengaturanSPPD" class="nav-link" href="sppd/pengaturan"><i class="icon-wrench"></i> Pengaturan</a>
+                                <a id="pengaturanSPPD" class="nav-link" href="sppd/pengaturan"><i
+                                        class="icon-wrench"></i> Pengaturan</a>
                             </li>
+                            {{else}}
+                                {{#if_eq jabatan '3'}}
+                                <li class="nav-item">
+                                    <a id="pengaturanSPPD" class="nav-link" href="sppd/pengaturan"><i
+                                            class="icon-wrench"></i> Pengaturan</a>
+                                </li>
+                                {{/if_eq}}
                             {{/if}}
                         </ul>
                     </li>
@@ -214,7 +294,8 @@
                                 <a class="nav-link" href="spj/honor"><i class="fa fa-credit-card"></i> Honor Dosen</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="spj/transport"><i class="fa fa-bus"></i> Transport Dosen Non STIS</a>
+                                <a class="nav-link" href="spj/transport"><i class="fa fa-bus"></i> Transport Dosen Non
+                                    STIS</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="spj/spj_lainnya"><i class="icon-docs"></i> SPJ Lainnya</a>
@@ -223,12 +304,19 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="spj/pengaturan"><i class="icon-wrench"></i> Pengaturan</a>
                             </li>
+                            {{else}}
+                                {{#if_eq jabatan '3'}}
+                                <li class="nav-item">
+                                    <a class="nav-link" href="spj/pengaturan"><i class="icon-wrench"></i> Pengaturan</a>
+                                </li>
+                                {{/if_eq}}
                             {{/if}}
                         </ul>
                     </li>
                     {{#if admin}}
                     <li class="nav-item">
-                        <a class="nav-link" href="pegawai" id="pegawai_menu"><i class="icon-people"></i> Pengelolaan Pegawai</a>
+                        <a class="nav-link" href="pegawai" id="pegawai_menu"><i class="icon-people"></i> Pengelolaan
+                            Pegawai</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="admin"><i class="icon-lock-open"></i> Administrator</a>
@@ -266,6 +354,8 @@
     <script src="/js/tether.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script data-pace-options='{ "ajax": false }' src="/js/pace.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.3.0/handlebars.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.4/handlebars.js"></script>
 
 
     <!-- Plugins and scripts required by all views -->
@@ -288,52 +378,55 @@
 
     <script src="/js/spin.min.js"></script>
 
+    <script src="/js/jquery-confirm.min.js"></script>
+
     <script type="text/javascript">
         var socket = io.connect($(location).attr('host'));
 
-        if(!socket) location.reload();
+        if (!socket) location.reload();
 
-        $(document).ready(function(){
+        $(document).ready(function () {
+            
             $('#ui-view').on('focus', 'input.format-uang', function () {
-                $(this).autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
+                $(this).autoNumeric('init', { digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0' });
             })
 
-            function GlobalAlert(message){
+            function GlobalAlert(message) {
                 $.toast({
                     text: message,
-                    textAlign: 'left', 
+                    textAlign: 'left',
                     hideAfter: 4000,
                     loader: false,
                     position: 'bottom-right'
                 })
             }
 
-            socket.on('connect', function(data) {
+            socket.on('connect', function (data) {
                 socket.emit('join');
             });
 
-            socket.on('login_required', function(data) {
+            socket.on('login_required', function (data) {
                 $.toast({
                     text: data,
-                    textAlign: 'left', 
+                    textAlign: 'left',
                     hideAfter: 2000,
                     loader: false,
                     position: 'bottom-right',
                     allowToastClose: true,
                     afterHidden: function () {
-                        window.location.replace(location.protocol+"//"+$(location).attr('host')+"/login");
+                        window.location.replace(location.protocol + "//" + $(location).attr('host') + "/login");
                     }
                 })
             });
 
             socket.removeListener('messages');
-            socket.on('messages', function(data) {
+            socket.on('messages', function (data) {
                 GlobalAlert(data)
             });
 
         })
-        
-    </script>   
+
+    </script>
 </body>
 
 </html>
