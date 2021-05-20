@@ -55,6 +55,7 @@ var url = 'mongodb://127.0.0.1:27017/simamov';
 var mongoose = require('mongoose');
 
 mongoose.connect(url);
+mongoose.set('useCreateIndex', true)
 var Program = require(__dirname + "/model/Program.model");
 
 //Untuk auto Increment
