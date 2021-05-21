@@ -5007,7 +5007,7 @@ function getMatchDetail(nmitem, akundetails) {
 
     var matched = _.max(p, function(detail) { return detail.score; })
 
-    if (matched.score >= 0.91) {
+    if (matched.score >= 0.85) {
         matched.taken = true;
         return matched;
     } else {
