@@ -1,0 +1,849 @@
+<div class="animated fadeIn">
+    <div class="card" id="new">
+        <div class="card-header"><i class="icon-lock-open"></i> Administrator</div>
+            <div class="card-block"> 
+                <div class="row">
+                    <div class="col-md-12" id="for_spinner">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a id="User" class="nav-link active" data-toggle="tab" href="#Userchild" role="tab" aria-control="Userchild"><i class="icon-user"></i> Pengguna</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="Unit" class="nav-link" data-toggle="tab" href="#Unitchild" role="tab" aria-control="Unitchild"><i class="icon-people"></i> Unit</a>
+                            </li>
+                        </ul> 
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="Userchild" role="tabpanel">
+                                <h5><i class="icon-user-follow"></i> Tambah Pengguna:</h5>
+                                <form id="tambah_user" action="/admin/tambah_user" method="POST">
+                                    <div class="row">
+                                            <div class="form-group col-sm-2">
+                                                <label for="username">Nama Pengguna</label>
+                                                <input type="text" class="form-control" id="username" name='username' autocomplete="off" required>
+                                            </div>
+
+                                            <div class="form-group col-sm-2">
+                                                <label for="password">Password</label>
+                                                <input type="password" class="form-control" id="password" autocomplete="off" name='password' placeholder="Minimal 6 karakter" required>
+                                            </div>
+
+                                            <div class="form-group col-sm-2">
+                                                <label for="jenis_user">Jenis</label>
+                                                <select id="jenis_user" name="jenis" class="form-control" size="1" id='jenis_user' required>
+                                                    <option></option>
+                                                    <option value="1">Administrator</option>
+                                                    <option value="0">Pengguna</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group col-sm-2">
+                                                <label for="jabatanUser">Jabatan</label>
+                                                <select id="jabatanUser" name="jabatan" class="form-control" size="1" disabled>
+                                                    <option></option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group col-sm-2">
+                                                <label for="roleUser">Role</label>
+                                                <select id="roleUser" name="role" class="form-control" size="1" disabled>
+                                                    <option></option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group col-sm-2">
+                                                <label for="unitUser">Unit</label>
+                                                <select id="unitUser" name="unit" class="form-control" size="1" disabled>
+                                                    <option></option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group col-sm-2">
+                                                <label for="emailUser">Email</label>
+                                                <input type="text" id="emailUser" name="email" class="form-control" placeholder="contoh@stis.ac.id" autocomplete="off">
+                                            </div>
+
+                                            <div class="form-group col-sm-2">
+                                                <label for="cvv">&nbsp;</label>
+                                                <input type="submit" class="btn btn-primary form-control" value="Tambah User">
+                                            </div>
+
+                                    </div> 
+                                <!--/.row-->    
+                                </form>
+                                <h5>Administrator</h5>
+                                <table id="adm_table" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%">Nama Pengguna</th>
+                                            <th width="10%">Alamat IP terakhir</th>
+                                            <th width="20%">Waktu login terakhir</th>
+                                            <th width="10%">Pilihan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                            
+                                    {{#each adm_user}}
+                                        <tr>
+                                            <td class="username">{{username}}</td>
+                                            <td>{{ip_address}}</td>
+                                            <td>{{last_login_time}}</td>
+                                            <td id="{{_id}}" class="text-center">
+                                                <button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button>
+                                                <button type="button" class="del"><i class="icon-user-unfollow"></i></button>
+                                                <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button>
+                                            </td>
+                                        </tr>
+                                    {{/each}}  
+                                    </tbody>
+                                </table> 
+                                <h5>Pengguna</h5>
+                                <table id="editor_table" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%">Nama Pengguna</th>
+                                            <th width="10%">Jabatan</th>
+                                            <th width="10%">Role</th>
+                                            <th width="10%">Alamat IP terakhir</th>
+                                            <th width="10%">Waktu login terakhir</th>
+                                            <th width="10%">Pilihan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>                                            
+                                    {{#each user}}
+                                        <tr>
+                                            <td class='username'>{{username}}</td>
+                                            <td>{{jabatan}}</td>
+                                            <td>{{role}}</td>
+                                            <td>{{ip_address}}</td>
+                                            <td>{{last_login_time}}</td>
+                                            <td id="{{_id}}" class="text-center">
+                                                <button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button>
+                                                <button type="button" class="del"><i class="icon-user-unfollow"></i></button>
+                                                <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button>
+                                            </td>
+                                        </tr>
+                                    {{/each}}  
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="Unitchild" role="tabpanel">
+                                <form id="formTambahUnit" action="/admin/tambahUnit" method="POST">
+                                    <div class="row">
+                                        <div class="form-group col-sm-1">
+                                            <button type="submit" class="btn btn-success" id="tambahUnit"><i class="icon-plus"></i></button>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <input type="text" class="form-control" name="kodeUnit" id="kodeUnit" placeholder="Kode unit" required>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                            <input type="text" class="form-control" name="namaUnit" id="namaUnit" placeholder="Nama Unit" required>
+                                        </div>
+                                    </div> 
+                                </form>
+                                <table class="borderless row col" style="text-align: center;" id="tabelDaftarUnit">
+                                    <tbody>
+                                        {{#each unit}}
+                                            <tr id="{{this._id}}">
+                                                <td>
+                                                    <button type="button" class="btn btn-danger" id="hapusUnit"><i class="icon-minus"></i></button>
+                                                </td>
+                                                <td>
+                                                    {{this.kodeUnit}}
+                                                </td>
+                                                <td>
+                                                    {{this.namaUnit}}
+                                                </td>
+                                            </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/.row-->
+</div>
+
+{{!-- edit user --}}
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <form id="edit_user" action="/admin/edit/" method="POST">
+                <div class="modal-header">
+                    <h6 class="modal-title">Edit pengguna</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 15px">
+                        <div class="form-group row">
+                            <label for="username">Nama Pengguna</label>
+                            <input type="text" class="form-control" id="username_edit" name='username' disabled>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="password">Password</label>
+                            <input data-animation="false" data-toggle="tooltip" title="Kosongkan jika tidak ingin diubah" type="password" class="form-control" id="password_edit" name='password'>
+                        </div>
+                        <div class="form-group row">
+                            <label for="email">Email</label>
+                            <input data-animation="false" data-toggle="tooltip" title="Biarkan jika tidak ingin diubah" type="email" class="form-control" id="email_edit" name='email' autocomplete="off">
+                        </div>
+
+                        <div class="form-group row">
+
+                            <label for="jenis_user">Jenis</label>
+                            <select id="jenis_user_edit" name="jenis" class="form-control" size="1" id='jenis_user'>
+                                <option value="1">Administrator</option>
+                                <option value="0">User</option>
+                            </select>
+
+                        </div> 
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+{{!-- riwayat user --}}
+<div class="modal fade" id="riwayat-user" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Riwayat Pengguna</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0 15px;">
+                <div style="padding: 15px; padding-bottom: 0">
+                    <div style="height: 510px;position:relative;">
+                        <div style="max-height:100%;overflow-y:auto;overflow-x:hidden;">
+                            <div class="row" style="margin-bottom: 20px">
+                                <div class="col-md-12">  
+                                    <div class="row" style="margin-bottom: 5px">
+                                        <div class="col-md-12">
+                                            <strong>Berdasarkan waktu :</strong>
+                                        </div>
+                                    </div>
+                                    <form id="riwayat_form" method="post" action="/pok/riwayat_pengeluaran">
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <div class="radio">
+                                                    <label for="tampil-riwayat-by-range">
+                                                        <input type="radio" id="tampil-riwayat-by-range" name="tampil_riwayat" value="0"> Periode <input id="riwayat-lower_ts" type="text"> - <input id="riwayat-upper_ts" type="text">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <div class="radio">
+                                                    <label for="tampil-riwayat-by-month">
+                                                        <input type="radio" id="tampil-riwayat-by-month" name="tampil_riwayat" value="1" checked="checked"> Bulan 
+                                                        <select id="bulan_st_modal" name="bulan_st_modal" size="1">
+                                                            <option value="none">--pilih--</option>
+                                                            <option value="0">Januari</option>
+                                                            <option value="1">Februari</option>
+                                                            <option value="2">Maret</option>
+                                                            <option value="3">April</option>
+                                                            <option value="4">Mei</option>
+                                                            <option value="5">Juni</option>
+                                                            <option value="6">Juli</option>
+                                                            <option value="7">Agustus</option>
+                                                            <option value="8">September</option>
+                                                            <option value="9">Oktober</option>
+                                                            <option value="10">November</option>
+                                                            <option value="11">Desember</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="tbl_riwayat" class="table" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Waktu</th>
+                                                <th>Aktivitas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script src="/js/moment.min.js"></script>
+<script src="/js/locale/id.js"></script>
+<script src="/js/bootstrap-datetimepicker.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //convert role dan jabatan pada tabel
+        $("#editor_table tr").each(function(){
+            $(this).find("td:eq(1)").each(function(){
+                //console.log($(this).text())
+                switch ($(this).text()){
+                    case "1":
+                        $(this).text("Petugas BAU")
+                        break
+                    case "2":
+                        $(this).text("Pimpinan")
+                        break
+                    case "3":
+                        $(this).text("Unit")
+                        break
+                }
+            })
+            $(this).find("td:eq(2)").each(function(){
+                switch ($(this).text()){
+                    case "11":
+                        $(this).text("Verifikator")
+                        break
+                    case "12":
+                        $(this).text("PPK")
+                        break
+                    case "13":
+                        $(this).text("PPSPM")
+                        break
+                    case "14":
+                        $(this).text("Reviewer")
+                        break
+                    case "15":
+                        $(this).text("Bendahara")
+                        break
+                    case "16":
+                        $(this).text("Operator Bank")
+                        break
+                    case "21":
+                        $(this).text("Direktur")
+                        break
+                    case "22":
+                        $(this).text("Wakil Direktur")
+                        break
+                    case "31":
+                        $(this).text("Pimpinan Unit")
+                        break
+                    case "32":
+                        $(this).text("Operator Unit")
+                        break
+                }
+            })
+            
+        })
+    })
+
+    //iterasi role dan jabatan
+    $("#jenis_user").change(function(){
+        //console.log($("#jenis_user").val())
+        if ($("#jenis_user").val()=='0'){
+            $("#jabatanUser").attr('disabled', false).empty().append(
+                '<option></option>'+
+                '<option value="1">Petugas BAU</option>'+
+                '<option value="2">Pimpinan</option>'+
+                '<option value="3">Unit</option>'
+            )
+        } else {
+            $("#jabatanUser").empty().attr('disabled', true)
+            $("#roleUser").empty().attr('disabled', true)
+            $("#unitUser").empty().attr('disabled', true)
+        }
+    })
+
+    $("#jabatanUser").change(function(){
+        if ($("#jabatanUser").val()=='1'){
+            $("#roleUser").empty().attr('disabled', false).append(
+                '<option></option>'+
+                '<option value="11">Verifikator</option>'+
+                '<option value="12">PPK</option>'+
+                '<option value="13">PPSPM</option>'+
+                '<option value="14">Reviewer</option>'+
+                '<option value="15">Bendahara</option>'+
+                '<option value="16">Operator Bank</option>'
+            )
+            $("#unitUser").empty().attr('disabled', true)
+        } else if ($("#jabatanUser").val()=='2'){
+            $("#roleUser").empty().attr('disabled', false).append(
+                '<option value="21" selected>Direktur</option>'+
+                '<option value="22">Wakil Direktur</option>'
+            )
+            $("#unitUser").empty().attr('disabled', true)
+        } else if ($("#jabatanUser").val()=='3'){
+            $("#roleUser").empty().attr('disabled', false).append(
+                '<option></option>'+
+                '<option value="31">Pimpinan Unit</option>'+
+                '<option value="32">Operator Unit</option>'
+            )
+            $("#unitUser").empty().attr('disabled', true)
+        } else {
+            $("#roleUser").empty().attr('disabled', true)
+            $("#unitUser").empty().attr('disabled', true)
+        }
+    })
+
+    $("#roleUser").change(function(){
+        let r = $("#roleUser").val()
+        if (r=='11'||r=='12'||r=='13'||r=='14'||r=='15'||r=='16') {
+            $("#unitUser").empty().attr('disabled', false).append(
+                '<option value="BAU" selected>BAU</option>'
+            )
+        } else if (r=='21'||r=='22') {
+            $("#unitUser").empty().attr('disabled', true)
+        } else if (r=='31'||r=='32') {
+            socket.emit('mintaUnit', function(result){
+                $("#unitUser").empty().append(`<option value=""></option>`)
+                for (let i=0;i<result.length;i++){
+                    $("#unitUser").attr('disabled', false).append(`<option value="${result[i].namaUnit}">${result[i].namaUnit}</option>`)
+                }
+            })
+        } else {
+            $("#unitUser").empty().attr('disabled', true)
+        }
+    })
+
+    //tambah user
+    $('#tambah_user').on('submit', function(e) {
+        e.preventDefault();
+        if($('#password').val().length < 6){
+            generalAlert('Password minimal 6 karakter.');
+            $('#password').focus()
+            return false;
+        }
+        if ($("#jenis_user").val()=='0'){
+            if (!$("#jabatanUser").val()){
+                generalAlert('User harus memiliki jabatan');
+                $("#jabatanUser").focus()
+                return false;
+            }
+            if (!$("#roleUser").val()){
+                generalAlert('User harus memiliki role');
+                $("#roleUser").focus()
+                return false;
+            }
+            if ($("#jabatanUser").val()!='2'){
+                if (!$("#unitUser").val()){
+                    generalAlert('User harus memiliki unit');
+                    $("#jabatanUser").focus()
+                    return false;
+                }                
+            }
+            if(!$("#emailUser").val()){
+                generalAlert('Email harus diisi');
+                $("#emailUser").focus()
+                return false;
+            }
+        }
+        
+        $.ajax({
+            url : $(this).attr('action'),
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (data) {
+                if(data == 'existed'){
+                    generalAlert('Pengguna sudah ada.');
+                } else{
+                    generalAlert('Pengguna berhasil dibuat.');
+                    if($('#jenis_user').val() == '1'){
+                        $('#adm_table > tbody:last-child').append(
+                            '<tr>'+
+                                '<td class="username">'+$('#username').val()+'</td>'+
+                                '<td></td><td></td>'+
+                                '<td id="'+data+'" class="text-center">'+
+                                    '<button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button>'+
+                                    '<button type="button" class="del"><i class="icon-user-unfollow"></i></button>'+
+                                    '<button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td>'+
+                            '</tr>'
+                        );
+                    } else{
+                        $('#editor_table > tbody:last-child').append(
+                            '<tr>'+
+                                '<td class="username">'+$('#username').val()+'</td>'+
+                                '<td></td>'+
+                                '<td></td>'+
+                                '<td></td>'+
+                                '<td></td>'+
+                                '<td id="'+data+'" class="text-center"><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button> <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td>'+
+                                '</tr>');
+                    }
+                    $('#tambah_user')[0].reset();
+                    $("#roleUser").empty().attr('disabled', true);
+                    $("#jabatanUser").empty().attr('disabled', true);
+                    $("#unitUser").empty().attr('disabled', true);
+                }
+            },
+            error: function (jXHR, textStatus, errorThrown) {
+                generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+            }
+        });
+    });
+
+    //edit user
+    var row_editing;
+    var row_editing_jenis_now;
+    $('table').on('click', '.edit', function () {
+        socket.emit('mintaUser', $(this).closest('td').attr('id'), function(response){
+            $('#email_edit').val(response[0])
+        })
+        row_editing = $(this).closest('tr');
+        if($(this).closest('table').attr('id') == 'adm_table'){
+            row_editing_jenis_now = 1;
+            $('#jenis_user_edit').val(1);
+        }else {
+            row_editing_jenis_now = 0;
+            $('#jenis_user_edit').val(0);
+        }
+        var target = $(this).closest('tr');
+        $('#edit_user').attr('action', '/admin/edit/'+$(this).closest('td').attr('id'))
+        $('#username_edit').val(target.children('td.username').text());
+        $('#password_edit').val('');
+        $('#email_edit').val('');
+    })
+    $('#edit_user').on('submit', function(e) {
+        e.preventDefault();
+        if($('#password_edit').val() && $('#password_edit').val().length < 6){
+            generalAlert('Password minimal 6 karakter.');
+            return false;
+        }
+        $.ajax({
+            url : $(this).attr('action'),
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (data) {
+                $('#editModal').modal('toggle');
+                if($('#jenis_user_edit').val() != row_editing_jenis_now){
+                    if($('#jenis_user_edit').val() == 0){
+                        $('#editor_table > tbody:last-child').append(row_editing)
+                    } else {
+                        $('#adm_table > tbody:last-child').append(row_editing)
+                    }
+                }
+                generalAlert('Pengguna berhasil diedit.');
+            },
+            error: function (jXHR, textStatus, errorThrown) {
+                generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+            }
+        });
+    });
+
+    //hapus user
+    var target_delete;
+    var target;
+    $('table').on('click', '.del', function () {
+        if(target_delete){
+            $.ajax({
+                url: '/admin/hapus_user/'+target.closest('td').attr('id'),
+                type: 'DELETE',
+                success: function(data) {
+                    generalAlert(data);
+                    target_delete.remove()
+                },
+                error: function (jXHR, textStatus, errorThrown) {
+                    generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+                }
+            });
+            target_delete = null;
+        }
+        var state_undo = false;
+        target = $(this);
+        target_delete = $(this).closest('tr');
+        target_delete.hide();
+        $.toast({
+            text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
+            textAlign: 'right', 
+            hideAfter: 4000,
+            loader: false,
+            stack: false,
+            position: 'bottom-right',
+            allowToastClose: false,
+            afterHidden: function () {
+                if(!state_undo){
+                    $.ajax({
+                        url: '/admin/hapus_user/'+target.closest('td').attr('id'),
+                        type: 'DELETE',
+                        success: function(data) {
+                            generalAlert(data);
+                            target_delete.remove()
+                        },
+                        error: function (jXHR, textStatus, errorThrown) {
+                            generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+                        }
+                    });
+                    target_delete = null;
+                }
+            }
+        })
+        $('#undo_delete').click(function(){
+            row_to_delete = null;
+            state_undo = true;
+            target_delete.show();
+            $.toast().reset('all');
+        })
+    });
+
+    //init bulan
+    var current_month = new Date().getMonth()+1;
+    $('#bulan_st_modal option:eq('+current_month+')').prop('selected', true);
+
+    $('#tbl_riwayat').DataTable({
+        aaSorting: [],
+        rowReorder: {
+            enable: false
+        },
+        createdRow: function( row, data, dataIndex ) {
+            $( row ).find('td:eq(0)').attr('class', 'text-center');
+            $( row ).find('td:eq(1)').attr('class', 'text-center');
+        }
+    })
+
+    moment.locale('id');
+
+    $('#riwayat-lower_ts, #riwayat-upper_ts').datetimepicker({
+        locale: 'id',
+        format: 'D MMMM YYYY',
+        useCurrent: false,
+        widgetPositioning: {
+            horizontal: 'left',
+            vertical: 'bottom'
+        }
+    });
+
+    var opts = {
+          lines: 13 // The number of lines to draw
+        , length: 28 // The length of each line
+        , width: 14 // The line thickness
+        , radius: 42 // The radius of the inner circle
+        , scale: 0.25 // Scales overall size of the spinner
+        , corners: 1 // Corner roundness (0..1)
+        , color: '#000' // #rgb or #rrggbb or array of colors
+        , opacity: 0.25 // Opacity of the lines
+        , rotate: 0 // The rotation offset
+        , direction: 1 // 1: clockwise, -1: counterclockwise
+        , speed: 1 // Rounds per second
+        , trail: 60 // Afterglow percentage
+        , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+        , zIndex: 2e9 // The z-index (defaults to 2000000000)
+        , className: 'spinner' // The CSS class to assign to the spinner
+        , top: '50%' // Top position relative to parent
+        , left: '50%' // Left position relative to parent
+        , shadow: false // Whether to render a shadow
+        , hwaccel: false // Whether to use hardware acceleration
+        , position: 'absolute' // Element positioning
+    }
+
+    var target = document.getElementById('riwayat-user');
+    var spinner = new Spinner(opts);
+
+    var current_id;
+    $('.track').click(function(){
+        $('#riwayat-user').modal('show');
+        spinner.spin(target);
+        $('#tbl_riwayat').DataTable().clear().draw(false);
+        var syarat = {};
+        syarat._id = $(this).closest('td').attr('id');
+        current_id = syarat._id;
+        syarat.month = $('#bulan_st_modal').val();
+        socket.emit('list_user_acts', syarat, function (data) {
+            _.each(data, function(row, index, list){
+                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, DD MMMM YYYY"), row.label] );
+            })
+            $('#tbl_riwayat').DataTable().draw(false);
+            spinner.stop();
+        });
+    });
+        
+    $('#bulan_st_modal').change(function(){
+        if(!$('#tampil-riwayat-by-month').is(':checked')) return;
+        spinner.spin(target);
+        $('#tbl_riwayat').DataTable().clear().draw(false);
+        var syarat = {};
+        syarat._id = current_id;
+        syarat.month = $('#bulan_st_modal').val();
+        if(syarat.month == 'none') return;
+        socket.emit('list_user_acts', syarat, function (data) {
+            _.each(data, function(row, index, list){
+                $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, D MMMM YYYY"), row.label] );
+            })
+            $('#tbl_riwayat').DataTable().draw(false);
+            spinner.stop();
+        });
+    });
+
+    $('#riwayat-lower_ts, #riwayat-upper_ts').on('dp.change', function(e){
+        if($('#tampil-riwayat-by-range').is(':checked')){
+            if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
+            $('#tbl_riwayat').DataTable().clear().draw(false);
+            var syarat = {};
+            syarat._id = current_id;
+            syarat.lower_ts = $('#riwayat-lower_ts').data('DateTimePicker').date().unix()*1000;
+            syarat.upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()*1000 + 86399000;
+            socket.emit('list_user_acts', syarat, function (data) {
+                _.each(data, function(row, index, list){
+                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, D MMMM YYYY"), row.label] );
+                })
+                $('#tbl_riwayat').DataTable().draw(false);
+            });
+        }
+    });
+
+    $("input[name='tampil_riwayat']").change(function(e){
+        if ($(this).val() == '0'){
+            if($('#riwayat-lower_ts').val() == '' || $('#riwayat-upper_ts').val() == '') return;
+            $('#tbl_riwayat').DataTable().clear().draw(false);
+            var syarat = {};
+            syarat._id = current_id;
+            syarat.lower_ts = ($('#riwayat-lower_ts').data('DateTimePicker').date().unix() - $('#riwayat-lower_ts').data('DateTimePicker').date().unix()% 86400-25200)*1000;
+            syarat.upper_ts = $('#riwayat-upper_ts').data('DateTimePicker').date().unix()*1000 + 86399000;
+            socket.emit('list_user_acts', syarat, function (data) {
+                _.each(data, function(row, index, list){
+                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, D MMMM YYYY"), row.label] );
+                })
+                $('#tbl_riwayat').DataTable().draw(false);
+            })
+        } else {
+            $('#tbl_riwayat').DataTable().clear().draw(false);
+            var syarat = {};
+            syarat._id = current_id;
+            syarat.month = $('#bulan_st_modal').val();
+            if(syarat.month == 'none') return;
+            socket.emit('list_user_acts', syarat, function (data) {
+                _.each(data, function(row, index, list){
+                    $('#tbl_riwayat').DataTable().row.add( [index+1, moment.unix(row.timestamp/1000).format("HH:mm:ss, D MMMM YYYY"), row.label] );
+                })
+                $('#tbl_riwayat').DataTable().draw(false);
+            });
+        }
+    })
+
+    //tooltip utk pass edit
+    $('#password_edit').tooltip({
+        placement: "right"
+    });
+    $('#email_edit').tooltip({
+        placement: "right"
+    });
+
+    //UNIT
+    $('#tambahUnit').click(function (e) {
+        e.preventDefault()
+        let cekKode = false
+        let form = $(this).closest('form').serialize()
+
+        //cek kesamaan kode unit
+        //$("#tabelDaftarUnit tbody tr").each(function(index){
+        //    $(this).find("td:eq(1)").each(function(){
+        //        if ($.trim($(this).text())==$('#kodeUnit').val()){
+        //            cekKode = true
+        //        }
+        //    })
+        //})
+
+        //validasi
+        if (!$.isNumeric($('#kodeUnit').val())){
+            generalAlert("Kode harus angka")
+        } else if (!$('#namaUnit').val()){
+            generalAlert('Nama unit tidak boleh kosong')
+        } else {
+            $.ajax({
+                url: '/admin/tambahUnit', 
+                type: 'POST',
+                data: $(this).closest("form").serialize(),
+                error: function(){
+                    generalAlert("Gagal menambahkan, jaringan bermasalah")
+                },
+                success: function(){
+                    generalAlert("Berhasil menambahkan")
+                    $("#tabelDaftarUnit tbody").append(
+                        '<tr>'
+                        +   '<td>'
+                        +       '<button type="submit" class="btn btn-danger"><i class="icon-minus"></i></button>'
+                        +   '</td>'
+                        +   '<td>'
+                        +       $('#kodeUnit').val()
+                        +   '</td>'
+                        +   '<td>'
+                        +       $('#namaUnit').val()
+                        +   '</td>'
+                        +'</tr>'
+                    )
+                }
+            });
+        }
+    })
+
+    $('table #hapusUnit').click(function (){
+        var idun = $(this).closest('tr').attr('id')
+        var namaun = $(this).closest('tr').find('td:eq(2)').text()
+        var target_delete = $(this).closest('tr')
+        target_delete.hide()
+        state_undo = false
+        $.toast({
+            text: 'Unit '+namaun+' akan dihapus dalam 5 detik | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm"></i> Batal</a>',
+            hideAfter: 5000,
+            loader: false,
+            stack: false,
+            position: 'bottom-right',
+            allowToastClose: false,
+            afterHidden: function () {
+                if(!state_undo){
+                    $.ajax({
+                        url: '/admin/hapusUnit/'+idun,
+                        type: 'DELETE',
+                        success: function(data) {
+                            generalAlert(data);
+                            target_delete.remove()
+                            target_delete = null;
+                        },
+                        error: function (jXHR, textStatus, errorThrown) {
+                            generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+                        }
+                    });
+                }
+            }
+        })
+        $('#undo_delete').click(function(){
+            state_undo = true;
+            target_delete.show();
+            target_delete = null;
+            $.toast().reset('all')
+        })
+    })
+    function generalAlert(message){
+        $.toast({
+            text: message,
+            textAlign: 'left', 
+            hideAfter: 4000,
+            loader: false,
+            position: 'bottom-right'
+        })
+    }
+</script>

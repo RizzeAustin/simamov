@@ -1,0 +1,429 @@
+<div class="animated fadeIn">
+    <div class="card" id="new">
+        <div class="card-header"><i class="icon-pencil"></i> E-LOKET</div>
+        <div class="card-block">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tab-content">
+                        {{!-- form pengajuan user --}}
+                        <div class="row col">
+                            <h1><strong>- OPERATOR BANK -</strong></h1>
+                        </div>
+                        <form id="loketForm" method="POST" action="loket/bankKirim" class="modal-body" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-6">
+                                    <input name="tiketId" type="hidden" value="{{data._id}}">
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="loketNamaUnit" class="form-label">Unit</label>
+                                            <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" value="{{data.unit.nama}}" disabled>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketKodeUnit" class="form-label">Kode Unit</label>
+                                            <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" value="{{data.unit.kode}}" disabled>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketOperator" class="form-label">Operator</label>
+                                            <input type="text" name="loketOperator" id="loketOperator" class="form-control" value="{{data.operator}}" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-11">
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketProgram" class="form-label">Program</label>
+                                                    <select name="loketProgram" id="loketProgram" class="form-select" disabled>
+                                                        <option>{{data.pok.kdprogram}} {{data.pok.uraianProgram}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketKegiatan" class="form-label">Aktivitas</label>
+                                                    <select name="loketKegiatan" id="loketKegiatan" class="form-select" disabled>
+                                                        <option>{{data.pok.kdaktivitas}} {{data.pok.uraianAktivitas}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketOutput" class="form-label">KRO</label>
+                                                    <select name="loketOutput" id="loketOutput" class="form-select" disabled>
+                                                        <option>{{data.pok.kdkro}} {{data.pok.uraianKro}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketsOutput" class="form-label">RO</label>
+                                                    <select name="loketsOutput" id="loketsOutput" class="form-select" disabled>
+                                                        <option>{{data.pok.kdro}} {{data.pok.uraianRo}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketKomponen" class="form-label">Komponen</label>
+                                                    <select name="loketKomponen" id="loketKomponen" class="form-select" disabled>
+                                                        <option>{{data.pok.kdkomponen}} {{data.pok.uraianKomponen}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketsKomponen" class="form-label">Sub Komponen</label>
+                                                    <select name="loketsKomponen" id="loketsKomponen" class="form-select" disabled>
+                                                        <option>{{data.pok.kdsubkomponen}} {{data.pok.uraianSubKomponen}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col">
+                                                    <label for="loketAkun" class="form-label">Akun</label>
+                                                    <select name="loketAkun" id="loketAkun" class="form-select" disabled>
+                                                        <option>{{data.pok.kdakun}} {{data.pok.uraianAkun}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-11">
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 1</label>
+                                                    <select name="loketDetailPok1" id="loketDetailPok1" class="form-select" disabled>
+                                                        <option>{{data.pok.detil.u1}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil1" id="nilaiDetil1" class="form-control" autocomplete="off" value="{{data.pok.detil.n1}}" disabled>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 2</label>
+                                                    <select name="loketDetailPok2" id="loketDetailPok2" class="form-select" disabled>
+                                                        <option>{{data.pok.detil.u2}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil2" id="nilaiDetil2" class="form-control" autocomplete="off" value="{{data.pok.detil.n2}}" disabled>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 3</label>
+                                                    <select name="loketDetailPok3" id="loketDetailPok3" class="form-select" disabled>
+                                                        <option>{{data.pok.detil.u3}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil3" id="nilaiDetil3" class="form-control" autocomplete="off" value="{{data.pok.detil.n3}}" disabled>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 4</label>
+                                                    <select name="loketDetailPok4" id="loketDetailPok4" class="form-select" disabled>
+                                                        <option>{{data.pok.detil.u4}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil4" id="nilaiDetil4" class="form-control" autocomplete="off" value="{{data.pok.detil.n4}}" disabled>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-8">
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 5</label>
+                                                    <select name="loketDetailPok5" id="loketDetailPok5" class="form-select" disabled>
+                                                        <option>{{data.pok.detil.u5}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-4">
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <input type="number" name="nilaiDetil5" id="nilaiDetil5" class="form-control" autocomplete="off" value="{{data.pok.detil.n5}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="loketDetail" class="form-label">Detail SPJ</label>
+                                            <input type="text" name="loketDetail" id="loketDetail" class="form-control" value="{{data.detail}}" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="loketTglPelaksanaan" class="form-label">Tanggal Pelaksanaan</label>
+                                            <input type="text" name="loketTglPelaksanaan" id="loketTglPelaksanaan" class="form-control" disabled>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketNilai" class="form-label">Total Nilai Bruto</label>
+                                            <div class="row">
+                                                <label class="col-1 form-label" for="" style="text-align: right;">Rp</label>
+                                                <div class="col">
+                                                    <input type="number" name="loketNilai" id="loketNilai" class="form-control" autocomplete="off" disabled {{#if data}}value="{{data.nilai.bruto}}" {{else}}value="0"{{/if}}>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-3"><label for="" class="form-label">Checklist</label></div>
+                                        <div class="col-1"><label for="" class="form-label" style="text-align:left">Unit</label></div>
+                                        <div class="col-1"><label for="" class="form-label" style="text-align:left">PPK</label></div>
+                                        <div class="col-1"><label for="" class="form-label" style="text-align:left">PPSPM</label></div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">SPJ</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistSpjUnit" name="checklistSpjUnit" id="checklistSpjUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistSpjPpk" name="checklistSpjPpk" id="checklistSpjPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistSpjPpspm" name="checklistSpjPpspm" id="checklistSpjPpspm" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">Daftar Hadir</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDaftarHadirUnit" name="checklistDaftarHadirUnit" id="checklistDaftarHadirUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDaftarHadirPpk" name="checklistDaftarHadirPpk" id="checklistDaftarHadirPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDaftarHadirPpspm" name="checklistDaftarHadirPpspm" id="checklistDaftarHadirPpspm" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">Dokumentasi</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDokumentasiUnit" name="checklistDokumentasiUnit" id="checklistDokumentasiUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDokumentasiPpk" name="checklistDokumentasiPpk" id="checklistDokumentasiPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistDokumentasiPpspm" name="checklistDokumentasiPpspm" id="checklistDokumentasiPpspm" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">Notulensi</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistNotulensiUnit" name="checklistNotulensiUnit" id="checklistNotulensiUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistNotulensiPpk" name="checklistNotulensiPpk" id="checklistNotulensiPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistNotulensiPpspm" name="checklistNotulensiPpspm" id="checklistNotulensiPpspm" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-1"></div>
+                                        <div class="col-2"><label for="" class="form-control-label">CV Narasumber</label></div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistCvUnit" name="checklistCvUnit" id="checklistCvUnit" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistCvPpk" name="checklistCvPpk" id="checklistCvPpk" disabled>
+                                        </div>
+                                        <div class="col-1">
+                                            <input class="form-check" type="checkbox" value="True" aria-label="checklistCvPpspm" name="checklistCvPpspm" id="checklistCvPpspm" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="loketAdkSpj" class="form-label">ADK SPJ</label>
+                                            <input type="text" class="form-control" name="" id="" value="{{data.fileSpj}}" disabled>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketSpp" class="form-label">SPP</label>
+                                            <input type="text" value="{{data.spp}}" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="loketCatatanPpk" class="form-label">Catatan PPK</label>
+                                            <textarea name="loketCatatanPpk" id="loketCatatanPpk" class="form-control" disabled>{{data.catatan.ppk}}</textarea>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketCatatanPpspm" class="form-label">Catatan PPSPM</label>
+                                            <textarea name="loketCatatanPpspm" id="loketCatatanPpspm" class="form-control" disabled>{{data.catatan.ppspm}}</textarea>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketCatatanReviewer" class="form-label">Catatan Reviewer</label>
+                                            <textarea name="loketCatatanReviewer" id="loketCatatanReviewer" class="form-control" disabled>{{data.catatan.reviewer}}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="loketMetodeTransfer" class="form-label">Metode Transfer</label>
+                                            <input type="text" name="loketMetodeTransfer" id="loketMetodeTransfer" class="form-control" value="{{data.metodeTransfer}}" disabled>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketNilaiPajak" class="form-label">Nilai Pajak</label>
+                                            <div class="row">
+                                                <label class="col-1 form-label" for="" style="text-align: right;">Rp</label>
+                                                <div class="col">
+                                                    <input type="number" name="loketNilaiPajak" id="loketNilaiPajak" class="form-control" value="{{data.nilai.pajak}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketNilaiTransfer" class="form-label">Nilai Transfer</label>
+                                            <div class="row">
+                                                <label class="col-1 form-label" for="" style="text-align: right;">Rp</label>
+                                                <div class="col">
+                                                    <input type="number" name="loketNilaiTransfer" id="loketNilaiTransfer" class="form-control" value="{{data.nilai.transfer}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="dokumenBank" class="col-form-label">Unggah dokumen (.xls .xlsx)</label><br>
+                                            <input type="file" class="form-control" name="dokumenBank" id="dokumenBank" aria-label="dokumenBank" accept=".xlsx,.xls" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="loketStatusTransfer" class="form-label">Status Transfer</label>
+                                            <select name="loketStatusTransfer" id="loketStatusTransfer" class="form-select">
+                                                <option></option>
+                                                <option value="ditransfer">Telah Ditransfer</option>
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <label for="loketTglTransfer" class="form-label">Tanggal Transfer</label>
+                                            <input type="date" name="loketTglTransfer" id="loketTglTransfer" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button id="kirimFormBank" type="submit" class="btn btn-success">Selesaikan tiket</button>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- main script --}}
+<script type="text/javascript">
+    var socket = io.connect($(location).attr('host'));
+    //var socket = io();
+
+    //untuk hak akses
+    //var user_aktiv = '{{username}}';
+
+    $(document).ready(function () {
+
+        //autofill form
+        var t1 = new Date("{{data.tanggal.pelaksanaan}}")
+        var t2 = formatTanggal(t1)
+        $("#loketTglPelaksanaan").val(t2)
+
+        var spj = [{{data.checklist.spj}}]
+        var hadir = [{{data.checklist.daftarHadir}}]
+        var dok = [{{data.checklist.dokumentasi}}]
+        var not = [{{data.checklist.notulensi}}]
+        var cv = [{{data.checklist.cvNarasumber}}]
+        
+        if (spj[0]) $("#checklistSpjUnit").prop("checked", true)
+        if (hadir[0]) $("#checklistDaftarHadirUnit").prop("checked", true)
+        if (dok[0]) $("#checklistDokumentasiUnit").prop("checked", true)
+        if (not[0]) $("#checklistNotulensiUnit").prop("checked", true)
+        if (cv[0]) $("#checklistCvUnit").prop("checked", true)
+        if (spj[1]) $("#checklistSpjPpk").prop("checked", true)
+        if (hadir[1]) $("#checklistDaftarHadirPpk").prop("checked", true)
+        if (dok[1]) $("#checklistDokumentasiPpk").prop("checked", true)
+        if (not[1]) $("#checklistNotulensiPpk").prop("checked", true)
+        if (cv[1]) $("#checklistCvPpk").prop("checked", true)
+        if (spj[2]) $("#checklistSpjPpspm").prop("checked", true)
+        if (hadir[2]) $("#checklistDaftarHadirPpspm").prop("checked", true)
+        if (dok[2]) $("#checklistDokumentasiPpspm").prop("checked", true)
+        if (not[2]) $("#checklistNotulensiPpspm").prop("checked", true)
+        if (cv[2]) $("#checklistCvPpspm").prop("checked", true)
+
+
+        //validasi isian form
+        $("#kirimFormBank").click(function (e) {
+            e.preventDefault()
+            if (!$("#dokumenBank").val()) {
+                generalAlert("Dokumen bank belum di unggah")
+                $("#dokumenBank").focus()
+            } else if (!$("#loketStatusTransfer").val()){
+                generalAlert("Silahkan pilih status transfer")
+                $("#loketStatusTransfer").focus()
+            } else if (!$("#loketTglTransfer").val()){
+                generalAlert("Silahkan pilih tanggal transfer")
+                $("#loketTglTransfer").focus()
+            } else {
+                $.confirm({
+                    title: 'Konfirmasi permintaan',
+                    content: 'Apakah Anda yakin isian sudah benar?',
+                    buttons: {
+                        confirm: {
+                            text: 'Yakin',
+                            btnClass: 'btn-success',
+                            action: function () {
+                                generalAlert("Permintaan akan diselesaikan dan Redirect ke dashboard dalam 5 detik")
+                                setTimeout( function () { 
+                                    $('form').submit()
+                                }, 5000)
+                            },
+                        },
+                        cancel: {
+                            text: 'Batalkan',
+                            action: function () {},
+                        },
+                    }
+                })
+            }
+        }) 
+    });
+
+    function formatTanggal(date) {
+        let monthNames = [
+            "Januari", "Februari", "Maret",
+            "April", "Mei", "Juni", "Juli",
+            "Agustus", "September", "Oktober",
+            "November", "Desember"
+        ];
+        let day = date.getDate();
+        let monthIndex = date.getMonth();
+        let year = date.getFullYear();
+        return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    };
+
+    function generalAlert(message){
+        $.toast({
+            text: message,
+            textAlign: 'left', 
+            hideAfter: 5000,
+            loader: false,
+            position: 'bottom-right',
+            stack: 2
+        })
+    }
+
+</script>
