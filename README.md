@@ -54,3 +54,9 @@ SIMAMOV v1.x
 -----------
 
 Hasil merge dengan mahasiswa yang lain
+
+------------------------------------------------------------------------------------------------------------------
+
+SIMAMOV v2.0
+
+Developer: Moh. Rifki Arif, M. Rizqi Aulia

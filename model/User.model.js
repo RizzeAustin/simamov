@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
+var Unit = require(__dirname + "/../model/Unit.model");
+
 var UserSchema = new Schema({
     username: String,
     password: String,

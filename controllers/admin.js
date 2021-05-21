@@ -6,6 +6,7 @@ var admin = express.Router();
 
 //load model User
 var User = require(__dirname + "/../model/User.model");
+var Unit = require(__dirname + "/../model/Unit.model");
 var ObjectId = require('mongoose').Types.ObjectId;
 
 //load crypto utk hashing password
@@ -41,6 +42,18 @@ admin.socket = function(io, connections, client) {
             cb(real);
         })
     })
+
+    client.on('mintaUnit', function(response) {
+        Unit.find().lean().sort('kodeUnit').exec(function(err, result) {
+            response(result)
+        })
+    })
+
+    client.on('mintaUser', function(id, response) {
+        User.findById(id).lean().distinct('email').exec((err, result) => {
+            response(result)
+        })
+    })
 }
 
 //route GET /admin
@@ -52,20 +65,22 @@ admin.get('/', function(req, res) {
     }
     User.find({ jenis: 1, active: true }, null, { sort: { username: 1 } }).lean().exec(function(err, adm_user) {
         User.find({ jenis: 0, active: true }, null, { sort: { username: 1 } }).lean().exec(function(err, user) {
-            //console.log(JSON.stringify(JSON.parse(user)))
-            //console.log(adm_user)
-            res.render('admin', {
-                layout: false,
-                adm_user: adm_user,
-                user: user
-            });
+            Unit.find({ active: true }, null, { sort: { kodeUnit: 1 } }).lean().exec(function(err, unit) {
+                //console.log(JSON.stringify(JSON.parse(user)))
+                //console.log(adm_user)
+                res.render('admin', {
+                    layout: false,
+                    adm_user: adm_user,
+                    user: user,
+                    unit: unit,
+                });
+            })
         });
     });
 });
 //route tambah user
 admin.post('/tambah_user', function(req, res) {
-    req.body.password = crypto.createHmac('sha256', req.body.password)
-        .digest('hex');
+    req.body.password = crypto.createHmac('sha256', req.body.password).digest('hex');
     var user = new User(req.body);
     console.log(req.body);
     User.findOne({ username: user.username, active: true }, function(err, result) {
@@ -114,6 +129,33 @@ admin.post('/edit/:_id', function(req, res) {
                 function(err, status) {})
         }
     );
+});
+
+//tambah unit
+admin.post('/tambahUnit', function(req, res) {
+    const unit = new Unit({
+        namaUnit: req.body.namaUnit,
+        kodeUnit: req.body.kodeUnit,
+    })
+
+    unit.save()
+    res.status(200).send()
+    User.update({ _id: req.session.user_id }, {
+        $push: { "act": { label: `Tambah unit ${req.body.kodeUnit}-${req.body.namaUnit}`, timestamp: new Date().getTime() } }
+    }, function(err, status) {})
+})
+
+//hapus unit
+admin.delete('/hapusUnit/:id', function(req, res) {
+    Unit.update({ _id: new ObjectId(req.params.id) }, { active: false }, function(err) {
+        if (err) {
+            res.send('Database bermasalah, mohon hubungi admin');
+            return;
+        }
+        res.send('Berhasil dihapus');
+        User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Hapus unit ' + req.params.id, timestamp: new Date().getTime() } } },
+            function(err, status) {})
+    });
 });
 
 function sendNotification(user_id, message) {
