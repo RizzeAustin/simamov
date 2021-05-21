@@ -421,7 +421,7 @@
             $("#unitUser").empty().attr('disabled', true)
         } else if (r=='31'||r=='32') {
             socket.emit('mintaUnit', function(result){
-                $("#unitUser").empty()
+                $("#unitUser").empty().append(`<option value=""></option>`)
                 for (let i=0;i<result.length;i++){
                     $("#unitUser").attr('disabled', false).append(`<option value="${result[i].namaUnit}">${result[i].namaUnit}</option>`)
                 }
@@ -436,25 +436,30 @@
         e.preventDefault();
         if($('#password').val().length < 6){
             generalAlert('Password minimal 6 karakter.');
+            $('#password').focus()
             return false;
         }
         if ($("#jenis_user").val()=='0'){
             if (!$("#jabatanUser").val()){
                 generalAlert('User harus memiliki jabatan');
+                $("#jabatanUser").focus()
                 return false;
             }
             if (!$("#roleUser").val()){
                 generalAlert('User harus memiliki role');
+                $("#roleUser").focus()
                 return false;
             }
             if ($("#jabatanUser").val()!='2'){
                 if (!$("#unitUser").val()){
                     generalAlert('User harus memiliki unit');
+                    $("#jabatanUser").focus()
                     return false;
                 }                
             }
             if(!$("#emailUser").val()){
                 generalAlert('Email harus diisi');
+                $("#emailUser").focus()
                 return false;
             }
         }

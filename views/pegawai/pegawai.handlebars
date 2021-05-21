@@ -1590,6 +1590,12 @@
             $('#tambah_pegawai').modal('show');
         });
 
+        $('#btn-rekap-pajak').click(()=>{
+            socket.emit('pok.rekapPajak_all', 'ok', function(link){
+                window.open(location.protocol+"//"+$(location).attr('host')+'/result/rekapPajak/'+link,'_blank');
+            })
+        })
+
         $('#btn-tbh-pgw-bps').click(function(){
             $('#nip span, #gol span, #jab span').remove();
             $('#nip').html($('#nip').html()+'<span>*</span>');

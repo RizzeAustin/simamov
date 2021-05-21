@@ -44,7 +44,7 @@ admin.socket = function(io, connections, client) {
     })
 
     client.on('mintaUnit', function(response) {
-        Unit.find().lean().sort('kodeUnit').exec(function(err, result) {
+        Unit.find({ active: true }).lean().sort('kodeUnit').exec(function(err, result) {
             response(result)
         })
     })

@@ -9,6 +9,7 @@ var async = require('async');
 
 //modul path utk concenate path
 var path = require('path');
+const moment = require('moment');
 
 //modul formidable utk parse POST gambar
 var formidable = require('formidable');
@@ -64,6 +65,8 @@ var mysql = require('mysql');
 
 //similarity between string
 var clj_fuzzy = require('clj-fuzzy');
+
+var timeOutUnlink = require('./functions/timeOutUnlink')
 
 const url = require('url');
 const { Promise } = require('mongoose');
@@ -2230,6 +2233,68 @@ pok.socket = function(io, connections, client) {
         })
     })
 
+    client.on('pok.rekapPajak_all', function(data, cb) {
+        var row = {}
+        DetailBelanja.find({ thang: thang, realisasi: { $exists: true, $ne: [] } }, 'realisasi', (err, res_allRealisasi) => {
+            // console.log(res_allRealisasi);
+            _.each(res_allRealisasi, function(detail, index, list) {
+                _.each(detail.realisasi, function(realisasi, index, list) {
+                    if (/\d{8}\s\d{6}\s\d\s\d{3}/.test(realisasi.penerima_id)) {
+                        if (row[realisasi.penerima_id]) {
+                            row[realisasi.penerima_id].jumlah += realisasi.jumlah
+                            row[realisasi.penerima_id].pph21 += realisasi.pph21
+                        } else {
+                            row[realisasi.penerima_id] = {}
+                            row[realisasi.penerima_id].penerima_nama = realisasi.penerima_nama
+                                // row[ realisasi.penerima_id ].nip = realisasi.nip
+                                // row[ realisasi.penerima_id ].gol = realisasi.gol
+                                // row[ realisasi.penerima_id ].jabatan = realisasi.jabatan
+                            row[realisasi.penerima_id].jumlah = realisasi.jumlah
+                            row[realisasi.penerima_id].pph21 = realisasi.pph21
+                        }
+                    }
+                })
+            })
+            var arr = [];
+            var task_row = []
+            _.forEach(row, function(e, k) {
+                task_row.push((cb_oToA) => {
+                    Pegawai.findOne({ _id: k }, 'nama nip gol jabatan', (err, pgw) => {
+                        arr.push({
+                            nama: pgw.nama,
+                            nip: pgw._id,
+                            gol: pgw.gol,
+                            jabatan: pgw.jabatan,
+                            bruto: e.jumlah,
+                            pph: e.pph21,
+                            netto: e.jumlah - e.pph21
+                        })
+                        cb_oToA(null, pgw.nama + ' ok')
+                    })
+                })
+            });
+            async.auto(task_row, (err, finish) => {
+                async.series([cb_1 => {
+                    generateXlsx(
+                        arr,
+                        mergeDataToTemplate_rekapPajak,
+                        false, //apakah pdf
+                        __dirname + "/../template/RekapPajak.xlsx", //path +nama template xlsx
+                        __dirname + "/../template/output/rekapPajak/" + moment().format('DD-MM-YYYY-hh-mm-ss') + "-rekap-pajak.xlsx", //path + nama outp docx
+                        __dirname + "/../template/output/rekapPajak/" + moment().format('DD-MM-YYYY-hh-mm-ss') + "-rekap-pajak.pdf", //path + nama outp pdf
+                        cb_1
+                    );
+                }], (err, finish2) => {
+                    // console.log( finish2[0] );
+                    setTimeout(() => {
+                        cb(finish2[0])
+                    }, 1000)
+                })
+            })
+
+        })
+    })
+
     client.on('riwayat_init', function(data, cb) {
         if ((!data.detail_id || data.detail_id == '--pilih--') && !data.call_from_pengguna) {
             errorHandler(client, 'Detail belanja belum ditentukan.');
@@ -3040,6 +3105,68 @@ function getRealisasiSum(client, lower_ts, upper_ts, bypass) {
     })
 }
 
+function mergeDataToTemplate_rekapPajak(data, workbook) {
+    var row = 5;
+    var nmr = 1;
+
+    _.each(data, function(item, index, list) {
+        var r;
+        r = workbook.sheet(0).range('A' + row + ':H' + row)
+        r.value([
+            [
+                nmr++,
+                item.nama,
+                item.nip,
+                item.gol,
+                item.jabatan,
+                item.bruto,
+                item.pph,
+                item.netto,
+            ]
+        ]).style('verticalAlignment', 'center');
+        row++;
+    })
+
+    //border
+    //NAMA2
+    workbook.sheet(0).range('A5' + ':H' + (row - 1)).style('border', true)
+        //format uang
+    workbook.sheet(0).range('F5' + ':H' + (row - 1)).style('numberFormat', '_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)');
+}
+
+function generateXlsx(data, mergeDataToTemplate, toPDF, xlsxTemplatePath, outputXlsxPath, outputPDFPath, cb) {
+    XlsxPopulate
+        .fromFileAsync(xlsxTemplatePath)
+        .then(workbook => {
+            if (mergeDataToTemplate) mergeDataToTemplate(data, workbook);
+            workbook.toFileAsync(outputXlsxPath);
+        })
+        .then(() => {
+            if (toPDF) {
+                msopdf(null, function(error, office) {
+                    office.excel({ 'input': outputXlsxPath, 'output': outputPDFPath }, function(error, pdf) {
+                        timeOutUnlink(outputXlsxPath)
+                    })
+                    office.close(null, function(error) {
+                        if (cb) {
+                            cb(null, outputPDFPath)
+                        } else {
+                            return outputPDFPath;
+                        }
+                        timeOutUnlink(outputPDFPath, 600000)
+                    });
+                });
+            } else {
+                if (cb) {
+                    cb(null, outputXlsxPath.match(/\d{2}.*\.\w{3,4}$/)[0])
+                } else {
+                    return outputXlsxPath;
+                }
+                timeOutUnlink(outputXlsxPath, 600000)
+            }
+        })
+}
+
 //root pok
 pok.get('/', function(req, res) {
     var tang = [];
@@ -3055,7 +3182,14 @@ pok.get('/', function(req, res) {
 
     Setting.findOne({ 'thang': req.session.tahun_anggaran || new Date().getFullYear(), type: 'pok' }, function(err, pok_setting) {
         if (pok_setting) res.render('pok/pok', { layout: false, pok_name: pok_setting.toObject().name, admin: req.session.jenis, username: req.session.username, tahun_anggaran: req.session.tahun_anggaran, 'tang': tang });
-        else res.render('pok/pok', { layout: false, pok_name: 'POK', admin: req.session.jenis, username: req.session.username, tahun_anggaran: req.session.tahun_anggaran, 'tang': tang });
+        else res.render('pok/pok', {
+            layout: false,
+            pok_name: 'POK',
+            admin: req.session.jenis,
+            username: req.session.username,
+            tahun_anggaran: req.session.tahun_anggaran,
+            'tang': tang
+        });
     })
 })
 

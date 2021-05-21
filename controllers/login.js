@@ -16,7 +16,7 @@ var MongoStore = require('express-brute-mongo');
 var MongoClient = require('mongodb').MongoClient;
 
 var store = new MongoStore(function(ready) {
-    MongoClient.connect('mongodb://127.0.0.1:27017/', function(err, client) {
+    MongoClient('mongodb://127.0.0.1:27017/', { useNewUrlParser: true, useUnifiedTopology: true }).connect(function(err, client) {
         var db = client.db('simamov');
         if (err) throw err;
         ready(db.collection('bruteforce-store'));

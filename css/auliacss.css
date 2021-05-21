@@ -226,6 +226,10 @@ section {
     border-top: 2px solid var(--color-gray-disabled);
 }
 
+.progress-bar li.is-decline {
+    color: red;
+}
+
 .progress-bar li:first-child,
 .progress-bar li:last-child {
     flex: 1;
@@ -328,7 +332,7 @@ section {
 
 .progress-bar .is-active:before {
     background-color: var(--color-white);
-    border-color: var(--color-green);
+    border-color: var(--color-white);
     font-family: 'simple-line-icons';
     text-align: center;
     padding-top: 0px;
@@ -337,7 +341,7 @@ section {
 
 .progress-bar .is-decline:before {
     background-color: var(--color-white);
-    border-color: var(--color-red);
+    border-color: var(--color-white);
     font-family: 'simple-line-icons';
     text-align: center;
     padding-top: 0px;

@@ -49,18 +49,20 @@
                             </div> --}}
                             <table id="tableUsulan" class="table table-bordered table-striped" width="100%">
                                 <thead>
-                                    <tr>
-                                        <th>Waktu Perubahan Status Terakhir</th>
-                                        <th>Unit</th>
-                                        <th>Usulan Detil baru</th>
-                                        <th>Total Nilai Bruto</th>
-                                        <th>Status</th>
-                                        <th>Cek Detail</th>
+                                    <tr style="background-color: #20a8d8; color: white;">
+                                        <th width="1%">No</th>
+                                        <th width="14%">Waktu Perubahan Status Terakhir</th>
+                                        <th width="10%">Unit</th>
+                                        <th width="30%">Usulan Detil baru</th>
+                                        <th width="15%">Total Nilai Bruto</th>
+                                        <th width="20%">Status</th>
+                                        <th width="10%">Cek Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {{#each usulan}}
                                         <tr id="{{this._id}}">
+                                            <td style="text-align:center"></td>
                                             <td style="text-align:center">{{this.timestamp}}</td>
                                             <td style="text-align:center">{{this.unit}}</td>
                                             <td>{{this.pok.detilBaru}}</td>
@@ -98,7 +100,7 @@
                             </div> --}}
                             <table id="tableSelesai" class="table table-bordered table-striped" width="100%">
                                 <thead>
-                                    <tr>
+                                    <tr style="background-color: #20a8d8; color: white;">
                                         <th width="1%">No</th>
                                         <th width="8%">Nomor Transaksi</th>
                                         <th width="8%">Tanggal Selesai</th>
@@ -155,7 +157,7 @@
                             <table id="tablePengajuan" class="table table-bordered table-striped"
                                 width="100%">
                                 <thead>
-                                    <tr>
+                                    <tr style="background-color: #20a8d8; color: white;">
                                         <th width="2%">No</th>
                                         <th width="8%">Kode Unit</th>
                                         <th width="8%">Nomor Transaksi</th>
@@ -375,8 +377,9 @@
                 $(this).text(formatTanggal(new Date($(this).text())))
             })
         })
-        $("#tableUsulan tr").each(function(){
-            $(this).find("td:eq(0)").each(function(){
+        $("#tableUsulan tr").each(function(index){
+            $(this).find("td:eq(0)").text(index)
+            $(this).find("td:eq(1)").each(function(){
                 //console.log(new Date(parseInt($(this).text())))
                 $(this).text(formatWaktu(parseInt($(this).text())))
             })
