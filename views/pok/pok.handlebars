@@ -410,21 +410,21 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <table id="pok_table_refisi" class="table table-bordered" width="100%">
-                <thead>
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Tahun Anggaran</th>
-                        <th>Uraian</th>
-                        <th>Volume</th>
-                        <th>Satuan</th>
-                        <th>Haraga Satuan</th>
-                        <th>Jumlah</th>
-                    </tr>
-                </thead>
-                <tbody>             
-                </tbody>
-            </table>
+            <div style="padding: 15px 15px;">
+                <table id="pok_table_refisi" class="table table-bordered" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Tahun Anggaran</th>
+                            <th>Uraian</th>
+                            <th>Volume</th>
+                            <th>Satuan</th>
+                            <th>Haraga Satuan</th>
+                            <th>Jumlah</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
         <!-- /.modal-content -->
     </div>
@@ -445,24 +445,6 @@
                 <div class="modal-body" style="padding: 0 15px;">
                     <div style="padding: 15px; padding-bottom: 0">
                         <div id="fields_form_unit">
-                            <input type="checkbox" class="unitCheckbox" id="unit1" name="unit1" value="BAU">
-                            <label for="unit1"> BAU</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit2" name="unit2" value="BAAK">
-                            <label for="unit2"> BAAK</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit3" name="unit3" value="PRODI-D4">
-                            <label for="unit3"> PRODI-D4</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit4" name="unit4" value="PRODI-D3">
-                            <label for="unit3"> PRODI-D3</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit4" name="unit5" value="UPPPM">
-                            <label for="unit4"> UPPPM</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit5" name="unit6" value="SPM">
-                            <label for="unit5"> SPM</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit6" name="unit7" value="Perpustakaan">
-                            <label for="unit6"> Perpustakaan</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit7" name="unit8" value="IT">
-                            <label for="unit7"> IT</label><br>
-                            <input type="checkbox" class="unitCheckbox" id="unit8" name="unit9" value="Lainnya">
-                            <label for="unit8"> Lainnya</label><br>
                         </div>
                     </div>
                 </div>
@@ -1466,6 +1448,10 @@
             var all_row_target_td = tabel_pok_edit.DataTable().row($(this).closest('tr')).data();
             $('.detail_unit').html(all_row_target_td[4])
             detail_id_target = all_row_target_td[0];
+            socket.emit('unit', {target: detail_id_target});
+            socket.on('cbunit_response', function(data,cb) {
+              $('#fields_form_unit').html(data);  
+            })
             form_edit_unit[0].reset();
             unit_modal.modal('show');
         });
@@ -1483,51 +1469,11 @@
                             .to$();
             unt =[];
             new_unit.id = detail_id_target;
-            var unit1 = document.getElementById('unit1');
-            var unit2 = document.getElementById('unit2');
-            var unit3 = document.getElementById('unit3');
-            var unit4 = document.getElementById('unit4');
-            var unit5 = document.getElementById('unit5');
-            var unit6 = document.getElementById('unit6');
-            var unit7 = document.getElementById('unit7');
-            var unit8 = document.getElementById('unit8');
-            var unit9 = document.getElementById('unit9');
-            if (unit1.checked) {
-                unt.push(unit1.value);
-                strunit = strunit + ',' + unit1.value;
-            };
-            if (unit2.checked) {
-                unt.push(unit2.value);
-                strunit = strunit + ',' + unit2.value;
-            };
-            if (unit3.checked) {
-                unt.push(unit3.value);
-                strunit = strunit + ',' + unit3.value;
-            };
-            if (unit4.checked) {
-                unt.push(unit4.value);
-                strunit = strunit + ',' + unit4.value;
-            };
-            if (unit5.checked) {
-                unt.push(unit5.value);
-                strunit = strunit + ',' + unit5.value;
-            };
-            if (unit6.checked) {
-                unt.push(unit6.value);
-                strunit = strunit + ',' + unit6.value;
-            };
-            if (unit7.checked) {
-                unt.push(unit7.value);
-                strunit = strunit + ',' + unit7.value;
-            };
-            if (unit8.checked) {
-                unt.push(unit8.value);
-                strunit = strunit + ',' + unit8.value;
-            };
-            if (unit8.checked) {
-                unt.push(unit9.value);
-                strunit = strunit + ',' + unit9.value;
-            };
+            const cbunit = document.querySelectorAll('input[name="unitcb"]:checked');
+            cbunit.forEach((checkbox) => {
+                unt.push(checkbox.value);
+                strunit = strunit + ',' + checkbox.value;
+            });
             new_unit.unit = unt;
             if (strunit.charAt(0) == ',') {
                 var strunit = strunit.slice(1);
@@ -1536,7 +1482,6 @@
             $('#pok_table_edit').DataTable().cell(target_row.find('td:eq(3)')).data('<a class="munit">' + strunit + '</a>');
             form_edit_unit[0].reset();
             unit_modal.modal('hide');
-            //new_unit.unit = document.querySelector('.unitCheckbox:checked').value;
         })
         
 
@@ -3243,7 +3188,7 @@
         var usrnm = '{{username}}';
         var colm = [];
         if (usrnm === "rifki") {
-            colm = [0,1,10]
+            colm = [0,1]
         } else {
             colm = [0,1,5,10]
         };
@@ -3993,7 +3938,7 @@
             var type = active.closest('tr').find('span').html();
             if(state_active_editor || active.is(':nth-child(1)') || active.is(':nth-child(3)') 
                 || active.is(':nth-child(7)') || active.is(':nth-child(4)')
-                || active.is(':nth-child(8)') || (type == 'detail' && active.is(':nth-child(2)'))
+                || active.is(':nth-child(8)') || active.is(':nth-child(9)') || (type == 'detail' && active.is(':nth-child(2)'))
                 || (type != 'detail' && (active.is(':nth-child(4)') || active.is(':nth-child(5)') || active.is(':nth-child(6)'))) ){
                 $.toast({
                     text: 'Anda tidak dapat mengedit sel tersebut.',

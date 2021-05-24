@@ -56,6 +56,17 @@ loket.socket = function(io, connections, client) {
 
     var thang = client.handshake.session.tahun_anggaran || new Date().getFullYear();
 
+    client.on('detailid', function(dt) {
+        DetailBelanja.findOne({ kdprogram: dt.kdprogram, kdgiat: dt.giat, kdoutput: dt.kdoutput, kdkmpnen: dt.kdkmpnen, kdakun: dt.kdakun, nmitem: dt.nmitem }, function(err, detail) {
+            var dt = {};
+            dt.id = detail._id;
+            dt.nmitem = detail.nmitem;
+            client.emit('id_response', dt, function() {
+                //jika sudah  append, iterasi tiap output
+            })
+        })
+    })
+
     //lihat detail tiket
     client.on('mintaDetailTiket', function(id, response) {
         Loket.findById(id).lean().exec((err, data) => {

@@ -4,10 +4,13 @@ var Schema = mongoose.Schema;
 
 var UnitSchema = new Schema({
     'namaUnit': String,
-    'kodeUnit': String,
     active: {
         type: Boolean,
         default: true
+    },
+    'created_at': {
+        type: Date,
+        default: new Date(),
     },
 }, { collection: 'unit' });
 

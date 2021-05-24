@@ -134,7 +134,7 @@
                                         <div class="col-1"></div>
                                         <div class="col-11">
                                             <div class="form-group row">
-                                                <div class="col-8">
+                                                <div class="col-6">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 1</label>
                                                     <select name="loketDetailPok1" id="loketDetailPok1" class="form-select">
                                                         <option>Pilih Detail</option>
@@ -150,9 +150,13 @@
                                                     <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
                                                     <input type="number" name="nilaiDetil1" id="nilaiDetil1" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" value="{{data.pok.detil.n1}}">
                                                 </div>
+                                                <div class="col-2">
+                                                    <label class="form-label">Realisasi</label>
+                                                    <button type="button" class="loketInputRealisasi1 btn btn-primary form-control">Input</button>
+                                                </div>
                                             </div>
                                             <div class="form-group row">
-                                                <div class="col-8">
+                                                <div class="col-6">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 2</label>
                                                     <select name="loketDetailPok2" id="loketDetailPok2" class="form-select">
                                                         <option>Pilih Detail</option>
@@ -168,9 +172,13 @@
                                                     <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
                                                     <input type="number" name="nilaiDetil2" id="nilaiDetil2" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n2}}">
                                                 </div>
+                                                <div class="col-2">
+                                                    <label class="form-label">Realisasi</label>
+                                                    <button type="button" class="loketInputRealisasi2 btn btn-primary form-control">Input</button>
+                                                </div>
                                             </div>
                                             <div class="form-group row">
-                                                <div class="col-8">
+                                                <div class="col-6">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 3</label>
                                                     <select name="loketDetailPok3" id="loketDetailPok3" class="form-select">
                                                         <option>Pilih Detail</option>
@@ -186,9 +194,13 @@
                                                     <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
                                                     <input type="number" name="nilaiDetil3" id="nilaiDetil3" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n3}}">
                                                 </div>
+                                                <div class="col-2">
+                                                    <label class="form-label">Realisasi</label>
+                                                    <button type="button" class="loketInputRealisasi3 btn btn-primary form-control">Input</button>
+                                                </div>
                                             </div>
                                             <div class="form-group row">
-                                                <div class="col-8">
+                                                <div class="col-6">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 4</label>
                                                     <select name="loketDetailPok4" id="loketDetailPok4" class="form-select">
                                                         <option>Pilih Detail</option>
@@ -204,9 +216,13 @@
                                                     <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
                                                     <input type="number" name="nilaiDetil4" id="nilaiDetil4" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n4}}">
                                                 </div>
+                                                <div class="col-2">
+                                                    <label class="form-label">Realisasi</label>
+                                                    <button type="button" class="loketInputRealisasi4 btn btn-primary form-control">Input</button>
+                                                </div>
                                             </div>
                                             <div class="form-group row">
-                                                <div class="col-8">
+                                                <div class="col-6">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 5</label>
                                                     <select name="loketDetailPok5" id="loketDetailPok5" class="form-select">
                                                         <option>Pilih Detail</option>
@@ -221,6 +237,10 @@
                                                 <div class="col-4">
                                                     <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
                                                     <input type="number" name="nilaiDetil5" id="nilaiDetil5" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n5}}">
+                                                </div>
+                                                <div class="col-2">
+                                                    <label class="form-label">Realisasi</label>
+                                                    <button type="button" class="loketInputRealisasi5 btn btn-primary form-control">Input</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -387,9 +407,9 @@
                                         <button id="kirimFormBendaharaArsiparis" type="submit" class="btn btn-primary">Kirim<br><small>(Arsiparis)</small></button>
                                         <button id="kirimFormBendaharaOperatorBmn" type="submit" class="btn btn-primary">Kirim<br><small>(Operator BMN)</small></button>
                                     </div>
-                                    <div class="modal-footer">
+                                    {{!-- <div class="modal-footer">
                                         <button id="loketInputRealisasi" class="btn btn-primary" type="button">Input Realisasi</button>
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <div class="col-6">
                                     
@@ -533,8 +553,6 @@
 
     //var n = '{{data.uraianDetail}}';
     $('head').append( $('<link rel="stylesheet" type="text/css"/>').attr('href', "/css/handsontable.full.min.css"));
-    var sdtid = '{{dt.[0]._id}}';
-    var sdtpagu = '{{dt.[0].jumlah}}';
     //untuk hak akses
     //var user_aktiv = '{{username}}';
 
@@ -569,10 +587,10 @@
 
         var entry_modal = $('#entry_modal');
         var form_entri_pok = $('#entri_form');
-        var n = $( "#loketDetailPok" ).val();
-        $('#loketDetailPok').on('change', function() {
-            n = this.value
-        });
+        //var n = $( "#loketDetailPok" ).val();
+        //$('#loketDetailPok').on('change', function() {
+        //    n = this.value
+        //});
         
         //console.log(dt);
 
@@ -949,12 +967,89 @@
         //var sdt = $( "#loketDetailPok" ).val();
         //var rdt = detail.find( ({ nmitem }) => nmitem === sdt );
 
-        $("#loketForm").on('click', '#loketInputRealisasi', function () {
-            detail_id_target = sdtid;
-            $('.detail_blnj_entry').html(n)
-            $('#pagu_entry_form').html(sdtpagu)
+ 
+        if($('#loketDetailPok1').val()=="Pilih Detail" && !$('#nilaiDetil1').val()){
+            $('.loketInputRealisasi1').attr('disabled', true)
+        }
+        if($('#loketDetailPok2').val()=="Pilih Detail" && !$('#nilaiDetil2').val()){
+            $('.loketInputRealisasi2').attr('disabled', true)
+        }
+        if($('#loketDetailPok3').val()=="Pilih Detail" && !$('#nilaiDetil3').val()){
+            $('.loketInputRealisasi3').attr('disabled', true)
+        }
+        if($('#loketDetailPok4').val()=="Pilih Detail" && !$('#nilaiDetil4').val()){
+            $('.loketInputRealisasi4').attr('disabled', true)
+        }
+        if($('#loketDetailPok5').val()=="Pilih Detail" && !$('#nilaiDetil5').val()){
+            $('.loketInputRealisasi5').attr('disabled', true)
+        }
+
+        var dtpick = {};
+        dtpick.kdprogram = $('#loketProgram').val();
+        dtpick.kdgiat = $('#loketKegiatan').val();
+        dtpick.kdoutput = $('#loketOutput').val();
+        dtpick.kdsoutput = $('#loketsOutput').val();
+        dtpick.kdkmpnen = $('#loketKomponen').val();
+        dtpick.kdskmpnen = $('#loketsKomponen').val();
+        dtpick.kdakun = $('#loketAkun').val();
+        
+        $("#loketForm").on('click', '.loketInputRealisasi1', function () {
+            dtpick.nmitem = $('#loketDetailPok1').val();
+            socket.emit('detailid', dtpick);
+            socket.on('id_response', function(dt,cb) {
+                detail_id_target = dt.id;
+                $('.detail_blnj_entry').html(dt.nmitem);
+                $('#pagu_entry_form').html(dt.jumlah);  
+            })
+            $('#entry_jumlah_field').val() = $('#nilaiDetil1').val();
             entry_modal.modal('show');
         });
+        $("#loketForm").on('click', '.loketInputRealisasi2', function () {
+            dtpick.nmitem = $('#loketDetailPok1').val();
+            socket.emit('detailid', dtpick);
+            socket.on('id_response', function(dt,cb) {
+                detail_id_target = dt.id;
+                $('.detail_blnj_entry').html(dt.nmitem);
+                $('#pagu_entry_form').html(dt.jumlah);
+            })
+            $('#entry_jumlah_field').val() = $('#nilaiDetil2').val();
+            entry_modal.modal('show');
+        });
+        $("#loketForm").on('click', '.loketInputRealisasi3', function () {
+            dtpick.nmitem = $('#loketDetailPok1').val();
+            socket.emit('detailid', dtpick);
+            socket.on('id_response', function(dt,cb) {
+                detail_id_target = dt.id;
+                $('.detail_blnj_entry').html(dt.nmitem);
+                $('#pagu_entry_form').html(dt.jumlah);  
+            })
+            $('#entry_jumlah_field').val() = $('#nilaiDetil3').val();
+            entry_modal.modal('show');
+        });
+        $("#loketForm").on('click', '.loketInputRealisasi4', function () {
+            dtpick.nmitem = $('#loketDetailPok1').val();
+            socket.emit('detailid', dtpick);
+            socket.on('id_response', function(dt,cb) {
+                detail_id_target = dt.id;
+                $('.detail_blnj_entry').html(dt.nmitem);
+                $('#pagu_entry_form').html(dt.jumlah);  
+            })
+            $('#entry_jumlah_field').val() = $('#nilaiDetil4').val();
+            entry_modal.modal('show');
+        });
+        $("#loketForm").on('click', '.loketInputRealisasi5', function () {
+            dtpick.nmitem = $('#loketDetailPok1').val();
+            socket.emit('detailid', dtpick);
+            socket.on('id_response', function(dt,cb) {
+                detail_id_target = dt.id;
+                $('.detail_blnj_entry').html(dt.nmitem);
+                $('#pagu_entry_form').html(dt.jumlah);  
+            })
+            $('#entry_jumlah_field').val() = $('#nilaiDetil5').val();
+            entry_modal.modal('show');
+        });
+        
+
 
         $(".penerima-autocomplete").on("typeahead:selected typeahead:autocompleted", function(e,datum) {
              $('#entry_penerima_id_field').val(datum._id);

@@ -45,6 +45,7 @@ var SubOutput = require(__dirname + "/../model/SubOutput.model");
 var Komponen = require(__dirname + "/../model/Komponen.model");
 var SubKomponen = require(__dirname + "/../model/SubKomponen.model");
 var Akun = require(__dirname + "/../model/Akun.model");
+var Unit = require(__dirname + "/../model/Unit.model");
 var DetailBelanja = require(__dirname + "/../model/DetailBelanja.model");
 
 var UraianAkun = require(__dirname + "/../model/UraianAkun.model");
@@ -102,6 +103,24 @@ pok.socket = function(io, connections, client) {
     //join sesama tahun anggaran utk broadcast
     client.join(thang);
 
+    client.on('unit', function(id_ref) {
+        var cbunit = '';
+        DetailBelanja.findOne({ _id: new ObjectId(id_ref.target) }, function(err, detail) {
+            Unit.find({}, function(err, units) {
+                _.each(units, function(unit) {
+                    if (detail.unit.includes(unit.namaUnit)) {
+                        cbunit = cbunit + '<input type="checkbox" class="unitCheckbox" name="unitcb" checked value="' + unit.namaUnit + '"><label> ' + unit.namaUnit + '</label><br>';
+                    } else {
+                        cbunit = cbunit + '<input type="checkbox" class="unitCheckbox" name="unitcb" value="' + unit.namaUnit + '"><label> ' + unit.namaUnit + '</label><br>';
+                    }
+                })
+                client.emit('cbunit_response', cbunit, function() {
+                    //jika sudah  append, iterasi tiap output
+                })
+            })
+        })
+    })
+
     client.on('refisi', function(id_ref) {
         DetailBelanja.findOne({ _id: new ObjectId(id_ref.target) }, function(err, detail) {
             var timestamp = detail.timestamp;
@@ -111,30 +130,30 @@ pok.socket = function(io, connections, client) {
             var satkeg = detail.satkeg;
             var hargasat = detail.hargasat;
             var jumlah = detail.jumlah;
-            console.log(detail.old[0]);
-            for (i = 0; i < detail.old.length - 1; i++) {
-                var idx = detail.old.length - i - 1;
-                if (detail.old[idx].timestamp) {
-                    timestamp = detail.old[idx].timestamp;
-                }
-                if (detail.old[idx].thang) {
-                    console.log(th);
-                    th = detail.old[idx].thang;
-                }
-                if (detail.old[idx].nmitem) {
-                    nmitem = detail.old[idx].nmitem;
-                }
-                if (detail.old[idx].volkeg) {
-                    volkeg = detail.old[idx].volkeg;
-                }
-                if (detail.old[idx].satkeg) {
-                    satkeg = detail.old[idx].satkeg;
-                }
-                if (detail.old[idx].hargasat) {
-                    hargasat = detail.old[idx].hargasat;
-                }
-                if (detail.old[idx].jumlah) {
-                    jumlah = detail.old[idx].jumlah;
+            for (i = 0; i < detail.old.length; i++) {
+                var idx = detail.old.length - i;
+                if (idx < detail.old.length) {
+                    if (detail.old[idx].timestamp) {
+                        timestamp = detail.old[idx].timestamp;
+                    }
+                    if (detail.old[idx].thang) {
+                        th = detail.old[idx].thang;
+                    }
+                    if (detail.old[idx].nmitem) {
+                        nmitem = detail.old[idx].nmitem;
+                    }
+                    if (detail.old[idx].volkeg) {
+                        volkeg = detail.old[idx].volkeg;
+                    }
+                    if (detail.old[idx].satkeg) {
+                        satkeg = detail.old[idx].satkeg;
+                    }
+                    if (detail.old[idx].hargasat) {
+                        hargasat = detail.old[idx].hargasat;
+                    }
+                    if (detail.old[idx].jumlah) {
+                        jumlah = detail.old[idx].jumlah;
+                    }
                 }
                 var dt;
                 dt = [
@@ -5007,7 +5026,7 @@ function getMatchDetail(nmitem, akundetails) {
 
     var matched = _.max(p, function(detail) { return detail.score; })
 
-    if (matched.score >= 0.85) {
+    if (matched.score >= 0.91) {
         matched.taken = true;
         return matched;
     } else {
