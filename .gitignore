@@ -1,3 +1,4 @@
+db_latest/*
 node_modules/*
 uploaded/*
 .env

@@ -2,8 +2,10 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
-var UnitSchema = new Schema({
-    'namaUnit': String,
+var RoleSchema = new Schema({
+    'kodeJabatan': String,
+    'kodeRole': String,
+    'namaRole': String,
     active: {
         type: Boolean,
         default: true
@@ -12,6 +14,6 @@ var UnitSchema = new Schema({
         type: Date,
         default: new Date(),
     },
-}, { collection: 'unit' });
+}, { collection: 'role' });
 
-module.exports = mongoose.model('Unit', UnitSchema);
+module.exports = mongoose.model('Role', RoleSchema);

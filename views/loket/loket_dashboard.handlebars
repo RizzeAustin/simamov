@@ -23,10 +23,10 @@
                 <div class="col-md-12">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#usulanKegiatan" role="tab"><i class="icon-bell"></i> Usulan Kegiatan</a>
+                            <a class="nav-link" data-toggle="tab" href="#usulanKegiatan" role="tab"><i class="icon-bell"></i> Usulan Kegiatan</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#pengajuanBerjalan" role="tab"><i class="icon-clock"></i> Pengajuan</a>
+                            <a class="nav-link active" data-toggle="tab" href="#pengajuanBerjalan" role="tab"><i class="icon-clock"></i> Pengajuan</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#pengajuanSelesai" role="tab"><i class="icon-check"></i> Pengajuan Selesai</a>
@@ -36,7 +36,7 @@
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane active" id="usulanKegiatan" role="tabpanel">
+                        <div class="tab-pane" id="usulanKegiatan" role="tabpanel">
                             <div class="row col">
                                 <h5>USULAN KEGIATAN</h5>
                             </div>
@@ -50,11 +50,11 @@
                             <table id="tableUsulan" class="table table-bordered table-striped" width="100%">
                                 <thead>
                                     <tr style="background-color: #20a8d8; color: white;">
-                                        <th width="1%">No</th>
-                                        <th width="14%">Waktu Perubahan Status Terakhir</th>
+                                        <th width="5%">Nomor Usulan</th>
+                                        <th width="15%">Waktu Perubahan Status Terakhir</th>
                                         <th width="10%">Unit</th>
                                         <th width="30%">Usulan Detil baru</th>
-                                        <th width="15%">Total Nilai Bruto</th>
+                                        <th width="10%">Total Nilai Bruto</th>
                                         <th width="20%">Status</th>
                                         <th width="10%">Cek Detail</th>
                                     </tr>
@@ -62,7 +62,7 @@
                                 <tbody>
                                     {{#each usulan}}
                                         <tr id="{{this._id}}">
-                                            <td style="text-align:center"></td>
+                                            <td style="text-align:center">{{this.nomorUsulan}}</td>
                                             <td style="text-align:center">{{this.timestamp}}</td>
                                             <td style="text-align:center">{{this.unit}}</td>
                                             <td>{{this.pok.detilBaru}}</td>
@@ -137,7 +137,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane" id="pengajuanBerjalan" role="tabpanel">
+                        <div class="tab-pane active" id="pengajuanBerjalan" role="tabpanel">
                             <div class="row col">
                                 <h5>PENGAJUAN</h5>
                             </div>
@@ -246,29 +246,14 @@
                         <div class="tab-pane" id="grafikRealisasi" role="tabpanel">
                             <div class="row col">
                                 <h5 class="row col-12">REALISASI</h5><br>
-                                {{#if_eq jabatan '3'}} {{!-- UNIT --}}
-                                    <h6 class="row col-9" id="gunittitle">a. Total Realisasi {{unit}}</h6><br>
-                                    {{#if_eq role '31'}}
-                                        {{#if_eq unit 'BAU'}}
-                                            <div class="row col-3">
-                                                <select name="" id="grafikRealisasiUnit" class="form-select" style="width: 100%; height: 40px; margin-bottom:2rem;">
-                                                    {{#each daftarUnit}}
-                                                        <option value="{{namaUnit}}">{{namaUnit}}</option>
-                                                    {{/each}}
-                                                </select>
-                                            </div>
-                                        {{/if_eq}}
-                                    {{/if_eq}}
-                                {{else}} {{!-- ADMIN/PIMPINAN --}}
-                                    <h6 class="row col-9" id="gunittitle">a. Total Realisasi BAU</h6><br>
-                                    <div class="row col-3">
-                                        <select name="" id="grafikRealisasiUnit" class="form-select" style="width: 100%; height: 40px; margin-bottom:2rem;">
-                                            {{#each daftarUnit}}
-                                                <option value="{{namaUnit}}">{{namaUnit}}</option>
-                                            {{/each}}
-                                        </select>
-                                    </div>
-                                {{/if_eq}}
+                                <h6 class="row col-9" id="gunittitle">a. Total Realisasi {{unit}}</h6><br>
+                                <div class="row col-3">
+                                    <select name="" id="grafikRealisasiUnit" class="form-select" style="width: 100%; height: 40px; margin-bottom:2rem;">
+                                        {{#each daftarUnit}}
+                                            <option value="{{namaUnit}}">{{namaUnit}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
                                 <div class="row">
                                     <div class="col-m-4">
                                         <div id="unitRealisasi" style="width: 100%; height: 420px; margin: 0 auto; margin-bottom: 3rem;"></div>
@@ -309,7 +294,8 @@
             <div class="modal-body row" id="modalUsulanBody">
 
             </div>
-            <div class="modal-footer">
+            
+            <div class="modal-footer" id="modalUsulanFooter">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             </div>
         </div>
@@ -327,7 +313,7 @@
             <div class="modal-body row" id="modalDetailTiket">
 
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" id="modalDetailFooter">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
             </div>
         </div>
@@ -378,7 +364,7 @@
             })
         })
         $("#tableUsulan tr").each(function(index){
-            $(this).find("td:eq(0)").text(index)
+            //$(this).find("td:eq(0)").text(index)
             $(this).find("td:eq(1)").each(function(){
                 //console.log(new Date(parseInt($(this).text())))
                 $(this).text(formatWaktu(parseInt($(this).text())))
@@ -386,10 +372,6 @@
         })
         //format uang
         $('td.format-uang').autoNumeric('init', {digitGroupSeparator: ',', decimalCharacter: '.', decimalPlacesOverride: '0'});
-        //format uang2 bisa pake ini
-        //$('td.format-uang').each(function() {
-        //    $(this).text(formatUang($(this).text()));
-        //});
 
         //ubah menjadi dataTable
         var tabelUsulan = $('#tableUsulan').DataTable({
@@ -398,7 +380,7 @@
                 "emptyTable": "Belum terdapat usulan"
             },
             "autoWidth": false,
-            "order": [],
+            "order": [ 0, 'desc' ]
         })
         var tabelPengajuan = $('#tablePengajuan').DataTable({
             "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"] ],
@@ -491,7 +473,7 @@
                     +             `<td colspan="2" class="col-8">${response.pok.detil.u4 || '-'}</td>`
                     +             `<td width="25%">(Rp ${formatUang(response.pok.detil.n4) || '-'})</td>`
                     +         `</tr>`
-                    +         `<tr>`
+                    +         `<tr>` 
                     +             `<th width="25%" style="padding-left:3%">Detil 5</th>`
                     +             `<td colspan="2" class="col-8">${response.pok.detil.u5 || '-'}</td>`
                     +             `<td width="25%">(Rp ${formatUang(response.pok.detil.n5) || '-'})</td>`
@@ -514,6 +496,10 @@
                     +             `<th width="25%">Catatan Unit</th>`
                     +             `<td colspan="3" class="col-10">${response.catatanUnit || '-'}</td>`
                     +         `</tr>`
+                    +         `<tr>`
+                    +             `<th width="25%">Catatan PPK</th>`
+                    +             `<td colspan="3" class="col-10">${response.catatanPpk || '-'}</td>`
+                    +         `</tr>`
                     +      `</table>`
                     +   `</div>`
                     +`</div>`
@@ -521,7 +507,7 @@
                     +   `<h6>Daftar Penggunaan Anggaran ${response.unit}</h6>`
                     +   `<table id="penggunaanUnit" class="table table-striped table-bordered" width="100%">`
                     +       `<thead>`
-                    +           `<tr>`
+                    +           `<tr style="background-color: #20a8d8; color: white;">`
                     +               `<th width="1%">No</th>`
                     +               `<th width="15%">Akun - Item Kegiatan</th>`
                     +               `<th width="10%">Pagu POK</th>`
@@ -537,25 +523,27 @@
                 $('#modalUsulanBody').html(templateUsulan)
                 
                 if (response.status=='Belum disetujui PPK' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}"=="12" || "{{admin}}"=="1")){
-                    $(".modal-footer").append(
-                        `<button type="button" class="btn btn-success" id="btnKomfirmUsulan">Konfirmasi Usulan</button>`
-                    +   `<button type="button" class="btn btn-danger" id="btnTolakUsulan">Tolak Usulan</button>`
-                    +   `<form method="POST" action="loket/pengusulan">`
-                    +       `<input type="hidden" name="idUsulan" id="idUsulan" value="${response._id}">`
-                    +       `<button type="submit" class="btn btn-warning" id="btnUbahUsulan">Ubah POK dan Konfirmasi</button>`
+                    $("#modalUsulanFooter").prepend(
+                        `<form class="modal-body" method="POST" action="loket/ppkKirimBinagram">`
+                    +       `<div class="row" style="margin: -1rem;">`
+                    +           `<div class="col" style="margin: 0 -.75rem;">`
+                    +               `<input type="text" name="idUsulan" id="idUsulanKirimBinagram" class="form-control" value="${response._id}" hidden>`
+                    +               `<textarea name="catatanPPKUsulanUnit" id="catatanPPKUsulanUnit" class="form-control" placeholder="Catatan PPK untuk Binagram / Catatan penolakan usulan"></textarea>`
+                    +           `</div>`
+                    +           `<div class="col-3" style="margin: 0 -.75rem;">`
+                    +               `<button type="button" class="form-control btn btn-danger" id="btnTolakUsulan">Tolak Usulan</button>`
+                    +               `<button type="button" class="form-control btn btn-warning" id="usulanPpkBinagram">Kirim ke Binagram</button>`
+                    +           `</div>`
+                    +       `</div>`
                     +   `</form>`
+                    +               `<button type="button" class="btn btn-success" id="btnKomfirmUsulan">Konfirmasi Usulan</button>`
+                    +               `<form method="POST" action="loket/pengusulan">`
+                    +                   `<input type="hidden" name="idUsulan" id="idUsulanKonfirmasiPpk" value="${response._id}">`
+                    +                   `<button type="submit" class="btn btn-warning" id="btnUbahUsulan">Ubah POK dan Konfirmasi</button>`
+                    +               `</form>`
                     )
-                    $(`.kiri`).append(
-                        //+`<div class="row col">`
-                        `<form class="" method="POST" action="loket/ppkKirimBinagram">`
-                        +    `<input type="text" name="idUsulan" id="idUsulan" class="form-control" value="${response._id}" hidden>`
-                        +    `<textarea name="catatanPPKUsulanUnit" id="catatanPPKUsulanUnit" class="form-control" placeholder="Catatan PPK untuk Binagram"></textarea>`
-                        +    `<button type="button" class="btn btn-warning" id="usulanPpkBinagram">Kirim ke Binagram</button>`
-                        +`</form>`
-                        //+`</div>`
-                    )
-                } else if (response.status=='Disetujui PPK' && "{{jabatan}}"=="3" && response.unit=="{{unit}}" && "{{tahunAktif}}"==`${new Date().getFullYear()}`){
-                    $(".modal-footer").append(
+                } else if (response.status=='Disetujui PPK' && ("{{jabatan}}"!="1" || "{{jabatan}}"!="2") && response.unit=="{{unit}}" && "{{tahunAktif}}"==`${new Date().getFullYear()}`){
+                    $("#modalUsulanFooter").prepend(
                         `<form method="POST" action="loket/user">`
                         +    `<input type="hidden" name="idUsulan" id="idUsulan" value="${response._id}">`
                         +    `<button type="submit" class="btn btn-primary" id="btnPermintaanDana">Ajukan Pencairan Dana</button>`
@@ -596,11 +584,11 @@
                                 action: function () {
                                     socket.emit('konfirmUsulan', id, function(response){
                                         if (response=='berhasil'){
-                                            $(".kiri form").attr('hidden', true)
+                                            $("#modalUsulanFooter form").attr('hidden', true)
                                             $("#btnKomfirmUsulan").attr('hidden', true)
                                             $("#btnTolakUsulan").attr('hidden', true)
                                             $("#btnUbahUsulan").attr('hidden', true)
-                                            tabelUsulan.cell(thisRow, 4).data('Disetujui PPK')
+                                            tabelUsulan.cell(thisRow, 5).data('Disetujui PPK')
                                             generalAlert('Konfirmasi berhasil')
                                         } else {
                                             generalAlert('Konfirmasi gagal, database bermasalah')
@@ -625,18 +613,22 @@
                                 text: 'Yakin',
                                 btnClass: 'btn-danger',
                                 action: function () {
-                                    socket.emit('tolakUsulan', id, function(response){
-                                        if (response=='berhasil'){
-                                            $(".kiri form").attr('hidden', true)
-                                            $("#btnKomfirmUsulan").attr('hidden', true)
-                                            $("#btnTolakUsulan").attr('hidden', true)
-                                            $("#btnUbahUsulan").attr('hidden', true)
-                                            tabelUsulan.cell(thisRow, 4).data('Ditolak')
-                                            generalAlert('Usulan telah ditolak')
-                                        } else {
-                                            generalAlert('Penolakan gagal, database bermasalah')
-                                        }
-                                    })
+                                    if ($("#catatanPPKUsulanUnit").val()){
+                                        socket.emit('tolakUsulan', id, $('#catatanPPKUsulanUnit').val(), function(response){
+                                            if (response=='berhasil'){
+                                                $("#modalUsulanFooter form").attr('hidden', true)
+                                                $("#btnKomfirmUsulan").attr('hidden', true)
+                                                $("#btnTolakUsulan").attr('hidden', true)
+                                                $("#btnUbahUsulan").attr('hidden', true)
+                                                tabelUsulan.cell(thisRow, 5).data('Ditolak')
+                                                generalAlert('Usulan telah ditolak')
+                                            } else {
+                                                generalAlert('Penolakan gagal, database bermasalah')
+                                            }
+                                        })
+                                    } else {
+                                        generalAlert('catatan PPK harus diisi')
+                                    }
                                 },
                             },
                             cancel: {
@@ -909,7 +901,7 @@
 
             //tombol periksa pada modal
             if (!document.getElementById("periksaTiketVerifikator") && detail.posisi == "Verifikator" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '11' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
+                $("#modalDetailFooter").append(
                     '<form action="/loket/verifikator" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
                         '<button type="submit" class="btn btn-primary" id="periksaTiketVerifikator">Proses permintaan (Verifikator)</button>' +
@@ -918,7 +910,7 @@
                     cekUser(e, "11", "Verifikator", $('#periksaTiketVerifikator'))
                 })
             } else if (!document.getElementById("periksaTiketPpk") && detail.posisi == "PPK" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '12' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
+                $("#modalDetailFooter").append(
                     '<form action="/loket/ppk" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
                         '<button type="submit" class="btn btn-primary" id="periksaTiketPpk">Proses permintaan (PPK)</button>' +
@@ -927,7 +919,7 @@
                     cekUser(e, "12", "PPK", $('#periksaTiketPpk'))
                 })
             } else if (!document.getElementById("periksaTiketPpspm") && detail.posisi == "PPSPM" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '13' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
+                $("#modalDetailFooter").append(
                     '<form action="/loket/ppspm" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
                         '<button type="submit" class="btn btn-primary" id="periksaTiketPpspm")">Proses permintaan (PPSPM)</button>' +
@@ -936,7 +928,7 @@
                     cekUser(e, "13", "PPSPM", $('#periksaTiketPpspm'))
                 })
             } else if (!document.getElementById("periksaTiketReviewer") && detail.posisi == "Reviewer" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '14' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
+                $("#modalDetailFooter").append(
                     '<form action="/loket/reviewer" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
                         '<button type="submit" class="btn btn-primary" id="periksaTiketReviewer">Proses permintaan (Reviewer)</button>' +
@@ -945,7 +937,7 @@
                     cekUser(e, "14", "Reviewer", $('#periksaTiketReviewer'))
                 })
             } else if (!document.getElementById("periksaTiketBendahara") && detail.posisi == "Bendahara" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '15' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
+                $("#modalDetailFooter").append(
                     '<form action="/loket/bendahara" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
                         '<button type="submit" class="btn btn-primary" id="periksaTiketBendahara">Proses permintaan (Bendahara)</button>' +
@@ -954,7 +946,7 @@
                     cekUser(e, "15", "Bendahara", $('#periksaTiketBendahara'))
                 })
             } else if (!document.getElementById("periksaTiketBank") && detail.posisi == "Operator Bank" && detail.status == 'Belum selesai' && "{{tahunAktif}}"==`${new Date().getFullYear()}` && ("{{role}}" == '16' || "{{admin}}" == "1")){
-                $(".modal-footer").append(
+                $("#modalDetailFooter").append(
                     '<form action="/loket/bank" method="post">' +
                         '<input type="hidden" name="tiketId" value="' + detail._id + '" />' +
                         '<button type="submit" class="btn btn-primary" id="periksaTiketBank">Proses permintaan (Operator Bank)</button>' +
@@ -1003,100 +995,6 @@
             //} else {$("#kirimBmn").prop("hidden", true)}
 
         })
-        
-        //manual pagination
-{{!--   var rowsShown = 10;
-        //pagination selesai
-        var rownSelesai = $('#tableSelesai tbody tr').length;
-        var pageSelesai = Math.ceil(rownSelesai/rowsShown);
-        var last = pageSelesai-1
-        $("#navSelesai ul").append(
-            '<li class="page-item">'+
-                '<a class="page-link" href="#" rel="0">First</a>'+
-            '</li>'
-        )
-        for(i = 0;i < pageSelesai;i++) {
-            if (i < 3){
-                var pageNum = i + 1;
-                $("#navSelesai ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+i+'">'+pageNum+'</a></li>')
-            } else {break}
-        }
-        $("#navSelesai ul").append(
-            '<li class="page-item">'+
-                '<a class="page-link" href="#" rel="'+last+'">Last</a>'+
-            '</li>'
-        )
-        $('#tableSelesai tbody tr').hide();
-        $('#tableSelesai tbody tr').slice(0, rowsShown).show();
-        $('#navSelesai a:first').addClass('active');
-        $('#navSelesai a').bind('click', function(){
-            $('#navSelesai a').removeClass('active');
-            $(this).addClass('active');
-            var currPage = parseInt($(this).attr('rel'));
-            var pages = [currPage-2, currPage-1, currPage, currPage+1, currPage+2, currPage+3]
-            var startItem = currPage * rowsShown;
-            var endItem = startItem + rowsShown;
-            $('#tableSelesai tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display','table-row').animate({opacity:1}, 300)
-            if (pages[1]==-1 && pageSelesai>3){
-                $("#navSelesai ul li:eq(1) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
-                $("#navSelesai ul li:eq(2) a").attr('rel', pages[3]).text(pages[4])
-                $("#navSelesai ul li:eq(3) a").attr('rel', pages[4]).text(pages[5])
-            } else if (pages[3]==pageSelesai && pageSelesai>3) {
-                $("#navSelesai ul li:eq(1) a").attr('rel', pages[0]).text(pages[1])
-                $("#navSelesai ul li:eq(2) a").attr('rel', pages[1]).text(pages[2])
-                $("#navSelesai ul li:eq(3) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
-            } else if(pageSelesai>3) {
-                $("#navSelesai ul li:eq(1) a").attr('rel', pages[1]).text(pages[2]).removeClass('active')
-                $("#navSelesai ul li:eq(2) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
-                $("#navSelesai ul li:eq(3) a").attr('rel', pages[3]).text(pages[4]).removeClass('active')
-            }
-        });
-        //pagination pengajuan
-        var rownPengajuan = $('#tablePengajuan tbody tr').length;
-        var pagePengajuan = Math.ceil(rownPengajuan/rowsShown);
-        var last = pagePengajuan-1 //rel
-        $("#navPengajuan ul").append(
-            '<li class="page-item">'+
-                '<a class="page-link" href="#" rel="0">First</a>'+
-            '</li>'
-        )
-        for(i = 0;i < pagePengajuan;i++) {
-            if (i < 3) {
-                var pageNum = i + 1;
-                $("#navPengajuan ul").append('<li class="page-item"><a class="page-link" href="#" rel="'+i+'">'+pageNum+'</a></li>')
-            } else {break}
-        }
-        $("#navPengajuan ul").append(
-            '<li class="page-item">'+
-                '<a class="page-link" href="#" rel="'+last+'">Last</a>'+
-            '</li>'
-        )
-        $('#tablePengajuan tbody tr').hide();
-        $('#tablePengajuan tbody tr').slice(0, rowsShown).show();
-        $('#navPengajuan a:first').addClass('active');
-        $('#navPengajuan a').bind('click', function(){
-            $('#navPengajuan a').removeClass('active');
-            $(this).addClass('active');
-            var currPage = parseInt($(this).attr('rel'));
-            var pages = [currPage-2, currPage-1, currPage, currPage+1, currPage+2, currPage+3]
-            var startItem = currPage * rowsShown;
-            var endItem = startItem + rowsShown;
-            $('#tablePengajuan tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display','table-row').animate({opacity:1}, 300)
-            if (pages[1]==-1 && pagePengajuan>3){
-                $("#navPengajuan ul li:eq(1) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
-                $("#navPengajuan ul li:eq(2) a").attr('rel', pages[3]).text(pages[4])
-                $("#navPengajuan ul li:eq(3) a").attr('rel', pages[4]).text(pages[5])
-            } else if (pages[3]==pagePengajuan && pagePengajuan>3) {
-                $("#navPengajuan ul li:eq(1) a").attr('rel', pages[0]).text(pages[1])
-                $("#navPengajuan ul li:eq(2) a").attr('rel', pages[1]).text(pages[2])
-                $("#navPengajuan ul li:eq(3) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
-            } else if(pagePengajuan>3) {
-                $("#navPengajuan ul li:eq(1) a").attr('rel', pages[1]).text(pages[2]).removeClass('active')
-                $("#navPengajuan ul li:eq(2) a").attr('rel', pages[2]).text(pages[3]).addClass('active')
-                $("#navPengajuan ul li:eq(3) a").attr('rel', pages[3]).text(pages[4]).removeClass('active')
-            }
-        });
- --}}
 
         //grafik realisasi
         Highcharts.setOptions({
@@ -1116,7 +1014,8 @@
         });
         //realiasasi unit
         if ("{{admin}}" == "1" || "{{jabatan}}" == "1" || "{{jabatan}}" == "2" || ("{{role}}" == "31" && "{{unit}}" == "BAU")){
-            socket.emit('realisasiUnit', new Date().getMonth(), "BAU", function(response){
+            $("#gunittitle").html(`a. Total Realisasi ${$("#grafikRealisasiUnit").val()}`)
+            socket.emit('realisasiUnit', new Date().getMonth(), $('#grafikRealisasiUnit').val(), function(response){
                 chartRealisasi(response, 'unitRealisasi', 'unitTerendah');
             });
             $("#grafikRealisasiUnit").change(function(){
@@ -1126,6 +1025,7 @@
                 $("#gunittitle").html(`a. Total Realisasi ${$("#grafikRealisasiUnit").val()}`)
             })
         } else {
+            $('#grafikRealisasiUnit').append(`<option value="${"{{unit}}"}">${"{{unit}}"}</option>`)
             socket.emit('realisasiUnit', new Date().getMonth(), "{{unit}}", function(response){
                 chartRealisasi(response, 'unitRealisasi', 'unitTerendah');
             });
@@ -1171,6 +1071,8 @@
 
     function formatUang(x) {
         if (x) {return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        } else if (x=0) {
+            return '0'
         } else return ''
     }
 
@@ -1202,70 +1104,6 @@
             j.closest('form').submit()
         }
     }
-
-{{!-- //manual search
-    function cariTiket1(){
-        var input, filter, table, tr, td1, td2, td3, td4, i, txtValue1, txtValue2, txtValue3, txtValue4;
-        input = document.getElementById("cariPengajuan1");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("tableSelesai");
-        tr = table.getElementsByTagName("tr");
-
-        // Loop through all table rows, and hide those who don't match the search query
-        for (i = 0; i < tr.length; i++) {
-            td1 = tr[i].getElementsByTagName("td")[7];
-            td2 = tr[i].getElementsByTagName("td")[8];
-            td3 = tr[i].getElementsByTagName("td")[1];
-            if (td1 || td2 || td3) {
-                txtValue1 = td1.textContent || td1.innerText;
-                txtValue2 = td2.textContent || td2.innerText;
-                txtValue3 = td3.textContent || td3.innerText;
-                if (txtValue1.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else if (txtValue2.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else if (txtValue3.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-        }
-    }
-
-    function cariTiket2(){
-        var input, filter, table, tr, td1, td2, td3, td4, i, txtValue1, txtValue2, txtValue3, txtValue4;
-        input = document.getElementById("cariPengajuan2");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("tablePengajuan");
-        tr = table.getElementsByTagName("tr");
-
-        // Loop through all table rows, and hide those who don't match the search query
-        for (i = 0; i < tr.length; i++) {
-            td1 = tr[i].getElementsByTagName("td")[1];
-            td2 = tr[i].getElementsByTagName("td")[5];
-            td3 = tr[i].getElementsByTagName("td")[6];
-            td4 = tr[i].getElementsByTagName("td")[2];
-            if (td1 || td2 || td3 || td4) {
-                txtValue1 = td1.textContent || td1.innerText;
-                txtValue2 = td2.textContent || td2.innerText;
-                txtValue3 = td3.textContent || td3.innerText;
-                txtValue4 = td4.textContent || td4.innerText;
-                if (txtValue1.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else if (txtValue2.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else if (txtValue3.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else if (txtValue4.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-        }
-    }
- --}}
 
     function chartRealisasi(response, t1, t2){
         realisasi_bulan_lalu = response.sampai_bln_lalu;

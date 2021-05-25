@@ -15,37 +15,37 @@
                                     <input name="tiketId" type="hidden" value="{{data._id}}">
                                     <div class="form-group row">
                                         <div class="col">
-                                            <label for="jenisPermintaan" class="form-label">Jenis Permintaan</label>
+                                            <label for="jenisPermintaan" class="form-label">Jenis Permintaan <strong style="color: red;">*</strong></label>
                                             <select name="jenisPermintaan" id="jenisPermintaan" class="form-select" required {{#if data}}disabled{{/if}}>
                                                 {{#if data}}
                                                     <option value="{{data.jenis}}">{{data.jenis}}</option>
                                                 {{/if}}
                                                 <option value="">Pilih Permintaan</option>
-                                                <option value="Bahan">Belanja Bahan Percetakan/Penggandaan/Perlengkapan</option>
-                                                <option value="Persediaan">Belanja Barang Persediaan ATK/ARK/Bahan Komputer</option>
-                                                <option value="Pemeliharaan">Belanja Pemeliharaan</option>
-                                                <option value="Modal">Belanja Modal</option>
-                                                <option value="Sewa">Belanja Sewa</option>
-                                                <option value="Jasa Konsultan">Belanja Jasa Konsultan</option>
-                                                <option value="Jasa Profesi">Belanja Jasa Profesi</option>
-                                                <option value="Honor">Honor yang Terkait dengan Output Kegiatan</option>
-                                                <option value="JLN">Belanja Perjalanan Dinas Biasa/Dalam Kota</option>
-                                                <option value="Fullday-Halfday">Paket Pertemuan Fullday/Halfday</option>
-                                                <option value="Fullboard Dalam Kota">Paket Meeting/Fullboard Dalam Kota</option>
-                                                <option value="Fullboard Luar Kota">Paket Meeting/Fullboard Luar Kota</option>
-                                                <option value="Rapat di Luar Jam Kerja">Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)</option>
-                                                <option value="Rapat Biasa">Rapat di Dalam Kantor (Di Dalam Jam Kerja)</option>
+                                                <option value="Belanja Bahan Percetakan/Penggandaan/Perlengkapan">Belanja Bahan Percetakan/Penggandaan/Perlengkapan</option>
+                                                <option value="Belanja Barang Persediaan ATK/ARK/Bahan Komputer">Belanja Barang Persediaan ATK/ARK/Bahan Komputer</option>
+                                                <option value="Belanja Pemeliharaan">Belanja Pemeliharaan</option>
+                                                <option value="Belanja Modal">Belanja Modal</option>
+                                                <option value="elanja Sewa">Belanja Sewa</option>
+                                                <option value="Belanja Jasa Konsultan">Belanja Jasa Konsultan</option>
+                                                <option value="Belanja Jasa Profesi">Belanja Jasa Profesi</option>
+                                                <option value="Honor yang Terkait dengan Output Kegiatan">Honor yang Terkait dengan Output Kegiatan</option>
+                                                <option value="Belanja Perjalanan Dinas Biasa/Dalam Kota">Belanja Perjalanan Dinas Biasa/Dalam Kota</option>
+                                                <option value="Paket Pertemuan Fullday/Halfday">Paket Pertemuan Fullday/Halfday</option>
+                                                <option value="Paket Meeting/Fullboard Dalam Kota">Paket Meeting/Fullboard Dalam Kota</option>
+                                                <option value="Paket Meeting/Fullboard Luar Kota">Paket Meeting/Fullboard Luar Kota</option>
+                                                <option value="Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)">Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)</option>
+                                                <option value="Rapat di Dalam Kantor (Di Dalam Jam Kerja)">Rapat di Dalam Kantor (Di Dalam Jam Kerja)</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-4">
                                             <label for="unitEselonI" class="form-label">Unit Eselon I</label>
-                                            <input type="text" name="unitEselonI" id="unitEselonI" class="form-control" value="Sekretariat Utama" disabled>
+                                            <input type="text" name="unitEselonI" id="unitEselonI" class="form-control" value="Sekretariat Utama" readonly>
                                         </div>
                                         <div class="col-4">
                                             <label for="unitEselonII" class="form-label">Unit Eselon II</label>
-                                            <input type="text" name="unitEselonII" id="unitEselonII" class="form-control" value="Politeknik Statistika STIS" disabled>
+                                            <input type="text" name="unitEselonII" id="unitEselonII" class="form-control" value="Politeknik Statistika STIS" readonly>
                                         </div>
                                         <div class="col-4">
                                             <label for="bagian" class="form-label">Bagian/Sub Direktorat</label>
@@ -63,7 +63,7 @@
                                         <div class="col-11">
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketProgram" class="form-label">Program</label>
+                                                    <label for="loketProgram" class="form-label">Program <strong style="color: red;">*</strong></label>
                                                     <select name="loketProgram" id="loketProgram" class="form-select">
                                                         <option>Pilih Program</option>
                                                         {{#if data}}
@@ -77,7 +77,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketKegiatan" class="form-label">Aktivitas</label>
+                                                    <label for="loketKegiatan" class="form-label">Aktivitas <strong style="color: red;">*</strong></label>
                                                     <select name="loketKegiatan" id="loketKegiatan" class="form-select">
                                                         <option>Pilih Aktivitas</option>
                                                         {{#if data.pok.kdaktivitas}}
@@ -91,7 +91,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketOutput" class="form-label">KRO</label>
+                                                    <label for="loketOutput" class="form-label">KRO <strong style="color: red;">*</strong></label>
                                                     <select name="loketOutput" id="loketOutput" class="form-select">
                                                         <option>Pilih KRO</option>
                                                         {{#if data.pok.kdkro}}
@@ -105,7 +105,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketOutput" class="form-label">RO</label>
+                                                    <label for="loketOutput" class="form-label">RO <strong style="color: red;">*</strong></label>
                                                     <select name="loketsOutput" id="loketsOutput" class="form-select">
                                                         <option>Pilih RO</option>
                                                         {{#if data.pok.kdkro}}
@@ -119,7 +119,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketKomponen" class="form-label">Komponen</label>
+                                                    <label for="loketKomponen" class="form-label">Komponen <strong style="color: red;">*</strong></label>
                                                     <select name="loketKomponen" id="loketKomponen" class="form-select">
                                                         <option>Pilih Komponen</option>
                                                         {{#if data.pok.kdkomponen}}
@@ -147,7 +147,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketAkun" class="form-label">Akun</label>
+                                                    <label for="loketAkun" class="form-label">Akun <strong style="color: red;">*</strong></label>
                                                     <select name="loketAkun" id="loketAkun" class="form-select">
                                                         <option>Pilih Akun</option>
                                                         {{#if data.pok.kdakun}}
@@ -166,9 +166,9 @@
                                         <div class="col-11">
                                             <div class="form-group row">
                                                 <div class="col-8">
-                                                    <label for="loketDetailPok" class="form-label">Detil POK 1</label>
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 1 <strong style="color: red;">*</strong></label>
                                                     <select name="loketDetailPok1" {{#if data}}id="loketDetailPok1"{{else}}id="loketDetailPokUnit1"{{/if}} class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u1}}" selected>{{data.pok.detil.u1}}</option>
                                                         {{/if}}
@@ -178,7 +178,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <label for="nilaiDetil1" class="form-label">Nilai Bruto <strong style="color: red;">*</strong></label>
                                                     <input type="number" name="nilaiDetil1" id="nilaiDetil1" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" value="{{data.pok.detil.n1}}">
                                                 </div>
                                             </div>
@@ -186,7 +186,7 @@
                                                 <div class="col-8">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 2</label>
                                                     <select name="loketDetailPok2" {{#if data}}id="loketDetailPok2"{{else}}id="loketDetailPokUnit2"{{/if}} class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u2}}" selected>{{data.pok.detil.u2}}</option>
                                                         {{/if}}
@@ -196,7 +196,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <label for="nilaiDetil2" class="form-label">Nilai Bruto</label>
                                                     <input type="number" name="nilaiDetil2" id="nilaiDetil2" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n2}}">
                                                 </div>
                                             </div>
@@ -204,7 +204,7 @@
                                                 <div class="col-8">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 3</label>
                                                     <select name="loketDetailPok3" {{#if data}}id="loketDetailPok3"{{else}}id="loketDetailPokUnit3"{{/if}} class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u3}}" selected>{{data.pok.detil.u3}}</option>
                                                         {{/if}}
@@ -214,7 +214,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <label for="nilaiDetil3" class="form-label">Nilai Bruto</label>
                                                     <input type="number" name="nilaiDetil3" id="nilaiDetil3" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n3}}">
                                                 </div>
                                             </div>
@@ -222,7 +222,7 @@
                                                 <div class="col-8">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 4</label>
                                                     <select name="loketDetailPok4" {{#if data}}id="loketDetailPok4"{{else}}id="loketDetailPokUnit4"{{/if}} class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u4}}" selected>{{data.pok.detil.u4}}</option>
                                                         {{/if}}
@@ -232,7 +232,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <label for="nilaiDetil4" class="form-label">Nilai Bruto</label>
                                                     <input type="number" name="nilaiDetil4" id="nilaiDetil4" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled value="{{data.pok.detil.n4}}">
                                                 </div>
                                             </div>
@@ -240,7 +240,7 @@
                                                 <div class="col-8">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 5</label>
                                                     <select name="loketDetailPok5" {{#if data}}id="loketDetailPok5"{{else}}id="loketDetailPokUnit5"{{/if}} class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u5}}" selected>{{data.pok.detil.u5}}</option>
                                                         {{/if}}
@@ -250,7 +250,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <label for="nilaiDetil5" class="form-label">Nilai Bruto</label>
                                                     <input type="number" name="nilaiDetil5" id="nilaiDetil5" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" disabled  value="{{data.pok.detil.n5}}">
                                                 </div>
                                             </div>
@@ -258,7 +258,7 @@
                                     </div> 
                                     <div class="form-group row" id="detilBaruBox">
                                         <div class="col">
-                                            <label for="volume" class="form-label">Usulkan Detil POK 1 baru</label>
+                                            <label for="detilBaruInput" class="form-label">Usulkan Detil POK 1 baru</label>
                                             <input type="text" name="detilBaruInput" id="detilBaruInput" class="form-control" placeholder="Detil baru yang akan diusulkan" autocomplete="off" value="{{data.pok.detilBaru}}">
                                         </div>
                                     </div>
@@ -279,7 +279,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col">
-                                            <label for="volume" class="form-label">Materi</label>
+                                            <label for="materi" class="form-label">Materi</label>
                                             <input type="text" name="materi" id="materi" class="form-control" value="{{data.materi}}" disabled>
                                         </div>
                                     </div>
@@ -301,7 +301,7 @@
                                 {{else}}
                                     <h5>Daftar Penggunaan Anggaran {{unit}}</h5>
                                 {{/if}}
-                                <i><small style="color: lightcoral;">*Highlight on Nilai Bruto changes</small></i>
+                                <i><small style="color: lightseagreen;">*Highlight on Detail changes</small></i>
                                 <table id="penggunaanUnit" class="table table-bordered" width="100%">
                                     <thead>
                                         <tr>
@@ -402,28 +402,40 @@
         $('#jenisPermintaan').change(function(){
             var jp = $('#jenisPermintaan').val()
             
-            if (jp == 'Fullday-Halfday' || jp == 'Fullboard Dalam Kota' || jp == 'Fullboard Luar Kota' || jp == 'Rapat di Luar Jam Kerja' || jp == 'Rapat Biasa'){
+            if (jp == 'Paket Pertemuan Fullday/Halfday' || jp == 'Paket Meeting/Fullboard Dalam Kota' || jp == 'Paket Meeting/Fullboard Luar Kota' || jp == 'Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)' || jp == 'Rapat di Dalam Kantor (Di Dalam Jam Kerja)'){
                 $('#volume').prop('disabled', true)
+                $("label[for='volume']").text('Satuan Volume yang digunakan')
             } else {
                 $('#volume').prop('disabled', false)
+                $("label[for='volume']").text('Satuan Volume yang digunakan')
+                $("label[for='volume']").append(' <strong style="color: red;">*</strong>')
             }
 
-            if(jp == 'Fullboard Dalam Kota' || jp == 'Fullboard Luar Kota'){
+            if(jp == 'Paket Meeting/Fullboard Dalam Kota' || jp == 'Paket Meeting/Fullboard Luar Kota'){
                 $('#penyelenggara').prop('disabled', false)
+                $("label[for='penyelenggara']").text('Penyelenggara')
+                $("label[for='penyelenggara']").append(' <strong style="color: red;">*</strong>')
             } else {
                 $('#penyelenggara').prop('disabled', true)
+                $("label[for='penyelenggara']").text('Penyelenggara')
             }
 
-            if (jp == 'Fullboard Dalam Kota' || jp == 'Fullboard Luar Kota' || jp == 'Rapat di Luar Jam Kerja'){
+            if (jp == 'Paket Meeting/Fullboard Dalam Kota' || jp == 'Paket Meeting/Fullboard Luar Kota' || jp == 'Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)'){
                 $('#materi').prop('disabled', false)
+                $("label[for='materi']").text('Materi')
+                $("label[for='materi']").append(' <strong style="color: red;">*</strong>')
             } else {
                 $('#materi').prop('disabled', true)
+                $("label[for='materi']").text('Materi')
             }
 
-            if (jp == 'Rapat di Luar Jam Kerja'){
+            if (jp == 'Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)'){
                 $('#loketsKomponen').prop('disabled', false)
+                $("label[for='loketsKomponen']").text('Sub Komponen')
+                $("label[for='loketsKomponen']").append(' <strong style="color: red;">*</strong>')
             } else {
                 $('#loketsKomponen').prop('disabled', true)
+                $("label[for='loketsKomponen']").text('Sub Komponen')
             }
         })
 
@@ -441,6 +453,22 @@
             var nilai4 = 0
             var nilai5 = 0
         }
+        $('#loketDetailPokUnit1, #loketDetailPok1').change(function(){
+            highlight(nilai1, nilai2, nilai3, nilai4, nilai5)
+        })
+        $('#loketDetailPokUnit2, #loketDetailPok2').change(function(){
+            highlight(nilai1, nilai2, nilai3, nilai4, nilai5)
+        })
+        $('#loketDetailPokUnit3, #loketDetailPok3').change(function(){
+            highlight(nilai1, nilai2, nilai3, nilai4, nilai5)
+        })
+        $('#loketDetailPokUnit4, #loketDetailPok4').change(function(){
+            highlight(nilai1, nilai2, nilai3, nilai4, nilai5)
+        })
+        $('#loketDetailPokUnit5, #loketDetailPok5').change(function(){
+            highlight(nilai1, nilai2, nilai3, nilai4, nilai5)
+        })
+
         $('#nilaiDetil1').focusout(function(){
             if ($('#nilaiDetil1').val()){
                 nilai1 = parseInt($(this).val())
@@ -496,51 +524,59 @@
             if ($('#jenisPermintaan').val()==''){
                 generalAlert("Silahkan pilih jenis permintaan")
                 $('#jenisPermintaan').focus()
+                return false
             } else if (!$('#bagian').val()){
                 generalAlert('Isian Bagian/Sub Direktorat tidak boleh kosong')
                 $('#bagian').focus()
+                return false
             } else if ($('#loketProgram').val()=="Pilih Program"){
                 generalAlert("Silahkan pilih program")
                 $('#loketProgram').focus()
+                return false
             } else if ($('#loketKegiatan').val()=="Pilih Aktivitas"){
                 generalAlert("Silahkan pilih aktivitas")
                 $('#loketKegiatan').focus()
+                return false
             } else if ($('#loketOutput').val()=="Pilih KRO"){
                 generalAlert("Silahkan pilih KRO")
                 $('#loketOutput').focus()
+                return false
             } else if ($('#loketsOutput').val()=="Pilih RO"){
                 generalAlert("Silahkan pilih RO")
                 $('#loketsOutput').focus()
+                return false
             } else if ($('#loketKomponen').val()=="Pilih Komponen"){
                 generalAlert("Silahkan pilih komponen")
                 $('#loketKomponen').focus()
+                return false
             } else if ($('#loketAkun').val()=="Pilih Akun"){
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
-            } else if ($('#loketDetailPok1').val()=="Pilih Detail"||$('#loketDetailPokUnit1').val()=="Pilih Detail"){
+                return false
+            } else if ($('#loketDetailPok1').val()=="Pilih Detil"||$('#loketDetailPokUnit1').val()=="Pilih Detil"){
                 generalAlert("Silahkan pilih setidaknya 1 detail pada Detil POK 1")
                 $('#loketDetailPok1').focus()
+                return false
             } else if (!$('#nilaiDetil1').val()){
                 generalAlert('Silahkan masukkan Nilai Bruto pada Detil POK 1')
                 $('#nilaiDetil1').focus()
-            } else if (!(jp == 'Fullday-Halfday' || jp == 'Fullboard Dalam Kota' || jp == 'Fullboard Luar Kota' || jp == 'Rapat di Luar Jam Kerja' || jp == 'Rapat Biasa') && !$('#volume').val()){
+                return false
+            } else if (!(jp == 'Paket Pertemuan Fullday/Halfday' || jp == 'Paket Meeting/Fullboard Dalam Kota' || jp == 'Paket Meeting/Fullboard Luar Kota' || jp == 'Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)' || jp == 'Rapat di Dalam Kantor (Di Dalam Jam Kerja)') && !$('#volume').val()){
                 generalAlert('Isian volume tidak boleh kosong')
                 $('#volume').focus()
-            } else if(jp == 'Fullboard Dalam Kota' || jp == 'Fullboard Luar Kota'){
-                if(!$('#penyelenggara').val()){
-                    generalAlert('Isian penyelenggara tidak boleh kosong')
-                    $('#penyelenggara').focus()
-                }
-            } else if (jp == 'Fullboard Dalam Kota' || jp == 'Fullboard Luar Kota' || jp == 'Rapat di Luar Jam Kerja'){
-                if(!$('#materi').val()){
-                    generalAlert('Isian materi tidak boleh kosong')
-                    $('#materi').focus()
-                }
-            } else if (jp == 'Rapat di Luar Jam Kerja'){
-                if($('#loketsKomponen').val()=='Pilih Sub Komponen'){
-                    generalAlert("Silahkan pilih sub komponen")
-                    $('#loketsKomponen').focus()
-                }
+                return false
+            } else if((jp == 'Paket Meeting/Fullboard Dalam Kota' || jp == 'Paket Meeting/Fullboard Luar Kota') && !$('#penyelenggara').val()){
+                generalAlert('Isian penyelenggara tidak boleh kosong')
+                $('#penyelenggara').focus()
+                return false
+            } else if ((jp == 'Paket Meeting/Fullboard Dalam Kota' || jp == 'Paket Meeting/Fullboard Luar Kota' || jp == 'Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)') && !$('#materi').val()){
+                generalAlert('Isian materi tidak boleh kosong')
+                $('#materi').focus()
+                return false
+            } else if (jp == 'Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)' && $('#loketsKomponen').val()=='Pilih Sub Komponen'){
+                generalAlert("Silahkan pilih sub komponen")
+                $('#loketsKomponen').focus()
+                return false
             } else {
                 if ("{{data}}"){
                     $.confirm({
@@ -551,19 +587,19 @@
                                 text: 'Yakin',
                                 btnClass: 'btn-success',
                                 action: function () {
-                                    if ($('#loketDetailPok2').val()=="Pilih Detail"||$('#loketDetailPokUnit2').val()=="Pilih Detail"){
+                                    if ($('#loketDetailPok2').val()=="Pilih Detil"||$('#loketDetailPokUnit2').val()=="Pilih Detil"){
                                         $('#loketDetailPok2').attr('disabled', true)
                                         $('#loketDetailPokUnit2').attr('disabled', true)
                                     }
-                                    if ($('#loketDetailPok3').val()=="Pilih Detail"||$('#loketDetailPokUnit3').val()=="Pilih Detail"){
+                                    if ($('#loketDetailPok3').val()=="Pilih Detil"||$('#loketDetailPokUnit3').val()=="Pilih Detil"){
                                         $('#loketDetailPok3').attr('disabled', true)
                                         $('#loketDetailPokUnit3').attr('disabled', true)
                                     }
-                                    if ($('#loketDetailPok4').val()=="Pilih Detail"||$('#loketDetailPokUnit4').val()=="Pilih Detail"){
+                                    if ($('#loketDetailPok4').val()=="Pilih Detil"||$('#loketDetailPokUnit4').val()=="Pilih Detil"){
                                         $('#loketDetailPok4').attr('disabled', true)
                                         $('#loketDetailPokUnit4').attr('disabled', true)
                                     }
-                                    if ($('#loketDetailPok5').val()=="Pilih Detail"||$('#loketDetailPokUnit5').val()=="Pilih Detail"){
+                                    if ($('#loketDetailPok5').val()=="Pilih Detil"||$('#loketDetailPokUnit5').val()=="Pilih Detil"){
                                         $('#loketDetailPok5').attr('disabled', true)
                                         $('#loketDetailPokUnit5').attr('disabled', true)
                                     }
@@ -588,19 +624,19 @@
                                 text: 'Yakin',
                                 btnClass: 'btn-success',
                                 action: function () {
-                                    if ($('#loketDetailPok2').val()=="Pilih Detail"||$('#loketDetailPokUnit2').val()=="Pilih Detail"){
+                                    if ($('#loketDetailPok2').val()=="Pilih Detil"||$('#loketDetailPokUnit2').val()=="Pilih Detil"){
                                         $('#loketDetailPok2').attr('disabled', true)
                                         $('#loketDetailPokUnit2').attr('disabled', true)
                                     }
-                                    if ($('#loketDetailPok3').val()=="Pilih Detail"||$('#loketDetailPokUnit3').val()=="Pilih Detail"){
+                                    if ($('#loketDetailPok3').val()=="Pilih Detil"||$('#loketDetailPokUnit3').val()=="Pilih Detil"){
                                         $('#loketDetailPok3').attr('disabled', true)
                                         $('#loketDetailPokUnit3').attr('disabled', true)
                                     }
-                                    if ($('#loketDetailPok4').val()=="Pilih Detail"||$('#loketDetailPokUnit4').val()=="Pilih Detail"){
+                                    if ($('#loketDetailPok4').val()=="Pilih Detil"||$('#loketDetailPokUnit4').val()=="Pilih Detil"){
                                         $('#loketDetailPok4').attr('disabled', true)
                                         $('#loketDetailPokUnit4').attr('disabled', true)
                                     }
-                                    if ($('#loketDetailPok5').val()=="Pilih Detail"||$('#loketDetailPokUnit5').val()=="Pilih Detail"){
+                                    if ($('#loketDetailPok5').val()=="Pilih Detil"||$('#loketDetailPokUnit5').val()=="Pilih Detil"){
                                         $('#loketDetailPok5').attr('disabled', true)
                                         $('#loketDetailPokUnit5').attr('disabled', true)
                                     }
@@ -634,6 +670,8 @@
 
     function formatUang(x) {
         if (x) {return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        } else if (x==0) {
+            return '0'
         } else return ''
     }
 

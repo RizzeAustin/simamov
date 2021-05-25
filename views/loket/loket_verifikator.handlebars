@@ -15,15 +15,15 @@
                                     <input name="tiketId" type="hidden" value="{{data._id}}">
                                     <div class="form-group row">
                                         <div class="col">
-                                            <label for="loketNamaUnit" class="form-label">Unit</label>
+                                            <label for="loketNamaUnit" class="form-label">Unit <strong style="color: red;">*</strong></label>
                                             <input type="text" name="loketNamaUnit" id="loketNamaUnit" class="form-control" value="{{data.unit.nama}}" readonly>
                                         </div>
                                         <div class="col">
-                                            <label for="loketKodeUnit" class="form-label">Kode Unit</label>
+                                            <label for="loketKodeUnit" class="form-label">Kode Unit <strong style="color: red;">*</strong></label>
                                             <input type="text" name="loketKodeUnit" id="loketKodeUnit" class="form-control" value="{{data.unit.kode}}" readonly>
                                         </div>
                                         <div class="col">
-                                            <label for="loketOperator" class="form-label">Operator</label>
+                                            <label for="loketOperator" class="form-label">Operator <strong style="color: red;">*</strong></label>
                                             <input type="text" name="loketOperator" id="loketOperator" class="form-control" value="{{data.operator}}" readonly>
                                         </div>
                                     </div>
@@ -32,7 +32,7 @@
                                         <div class="col-11">
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketProgram" class="form-label">Program</label>
+                                                    <label for="loketProgram" class="form-label">Program <strong style="color: red;">*</strong></label>
                                                     <select name="loketProgram" id="loketProgram" class="form-select">
                                                         <option>Pilih Program</option>
                                                         {{#if data.pok.kdprogram}}
@@ -46,7 +46,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketKegiatan" class="form-label">Aktivitas</label>
+                                                    <label for="loketKegiatan" class="form-label">Aktivitas <strong style="color: red;">*</strong></label>
                                                     <select name="loketKegiatan" id="loketKegiatan" class="form-select">
                                                         <option>Pilih Aktivitas</option>
                                                         {{#if data.pok.kdaktivitas}}
@@ -60,7 +60,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketOutput" class="form-label">KRO</label>
+                                                    <label for="loketOutput" class="form-label">KRO <strong style="color: red;">*</strong></label>
                                                     <select name="loketOutput" id="loketOutput" class="form-select">
                                                         <option>Pilih KRO</option>
                                                         {{#if data.pok.kdkro}}
@@ -74,7 +74,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketOutput" class="form-label">RO</label>
+                                                    <label for="loketOutput" class="form-label">RO <strong style="color: red;">*</strong></label>
                                                     <select name="loketsOutput" id="loketsOutput" class="form-select">
                                                         <option>Pilih RO</option>
                                                         {{#if data.pok.kdkro}}
@@ -88,7 +88,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketKomponen" class="form-label">Komponen</label>
+                                                    <label for="loketKomponen" class="form-label">Komponen <strong style="color: red;">*</strong></label>
                                                     <select name="loketKomponen" id="loketKomponen" class="form-select">
                                                         <option>Pilih Komponen</option>
                                                         {{#if data.pok.kdkomponen}}
@@ -102,7 +102,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketsKomponen" class="form-label">Sub Komponen</label>
+                                                    <label for="loketsKomponen" class="form-label">Sub Komponen <strong style="color: red;">*</strong></label>
                                                     <select name="loketsKomponen" id="loketsKomponen" class="form-select">
                                                         <option>Pilih Sub Komponen</option>
                                                         {{#if data.pok.kdsubkomponen}}
@@ -116,7 +116,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketAkun" class="form-label">Akun</label>
+                                                    <label for="loketAkun" class="form-label">Akun <strong style="color: red;">*</strong></label>
                                                     <select name="loketAkun" id="loketAkun" class="form-select">
                                                         <option>Pilih Akun</option>
                                                         {{#if data.pok.kdakun}}
@@ -135,9 +135,9 @@
                                         <div class="col-11">
                                             <div class="form-group row">
                                                 <div class="col-8">
-                                                    <label for="loketDetailPok" class="form-label">Detil POK 1</label>
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 1 <strong style="color: red;">*</strong></label>
                                                     <select name="loketDetailPok1" id="loketDetailPok1" class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detiil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u1}}" selected>{{data.pok.detil.u1}}</option>
                                                         {{/if}}
@@ -147,7 +147,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto <strong style="color: red;">*</strong></label>
                                                     <input type="number" name="nilaiDetil1" id="nilaiDetil1" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" value="{{data.pok.detil.n1}}">
                                                 </div>
                                             </div>
@@ -155,7 +155,7 @@
                                                 <div class="col-8">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 2</label>
                                                     <select name="loketDetailPok2" id="loketDetailPok2" class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detiil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u2}}" selected>{{data.pok.detil.u2}}</option>
                                                         {{/if}}
@@ -173,7 +173,7 @@
                                                 <div class="col-8">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 3</label>
                                                     <select name="loketDetailPok3" id="loketDetailPok3" class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detiil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u3}}" selected>{{data.pok.detil.u3}}</option>
                                                         {{/if}}
@@ -191,7 +191,7 @@
                                                 <div class="col-8">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 4</label>
                                                     <select name="loketDetailPok4" id="loketDetailPok4" class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detiil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u4}}" selected>{{data.pok.detil.u4}}</option>
                                                         {{/if}}
@@ -209,7 +209,7 @@
                                                 <div class="col-8">
                                                     <label for="loketDetailPok" class="form-label">Detil POK 5</label>
                                                     <select name="loketDetailPok5" id="loketDetailPok5" class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detiil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u5}}" selected>{{data.pok.detil.u5}}</option>
                                                         {{/if}}
@@ -227,13 +227,13 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col">
-                                            <label for="loketDetail" class="form-label">Detail SPJ</label>
+                                            <label for="loketDetail" class="form-label">Detail SPJ <strong style="color: red;">*</strong></label>
                                             <input type="text" name="loketDetail" id="loketDetail" class="form-control" placeholder="Isikan sesuai dengan SPJ" required value="{{data.detail}}">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <div class="col">
-                                            <label for="loketTglPelaksanaan" class="form-label">Tanggal Pelaksanaan</label>
+                                            <label for="loketTglPelaksanaan" class="form-label">Tanggal Pelaksanaan <strong style="color: red;">*</strong></label>
                                             <input type="date" name="loketTglPelaksanaan" id="loketTglPelaksanaan" class="form-control" required>
                                         </div>
                                         <div class="col">
@@ -247,7 +247,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <div class="col-3"><label for="" class="form-label">Checklist</label></div>
+                                        <div class="col-3"><label for="" class="form-label">Checklist <strong style="color: red;">*</strong></label></div>
                                         <div class="col-1"><label for="" class="form-label" style="text-align:left">Unit</label></div>
                                         <div class="col-1"><label for="" class="form-label" style="text-align:left"></label></div>
                                         <div class="col-1"><label for="" class="form-label" style="text-align:left"></label></div>
@@ -459,7 +459,7 @@
             } else if ($('#loketAkun').val()=="Pilih Akun"){
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
-            } else if ($('#loketDetailPok1').val()=="Pilih Detail"){
+            } else if ($('#loketDetailPok1').val()=="Pilih Detiil"){
                 generalAlert("Silahkan pilih setidaknya 1 detail")
                 $('#loketDetailPok1').focus()
             } else if (!$('#nilaiDetil1').val()){
@@ -488,16 +488,16 @@
                             text: 'Yakin',
                             btnClass: 'btn-success',
                             action: function () {
-                                if ($('#loketDetailPok2').val()=="Pilih Detail"){
+                                if ($('#loketDetailPok2').val()=="Pilih Detiil"){
                                     $('#loketDetailPok2').attr('disabled', true)
                                 }
-                                if ($('#loketDetailPok3').val()=="Pilih Detail"){
+                                if ($('#loketDetailPok3').val()=="Pilih Detiil"){
                                     $('#loketDetailPok3').attr('disabled', true)
                                 }
-                                if ($('#loketDetailPok4').val()=="Pilih Detail"){
+                                if ($('#loketDetailPok4').val()=="Pilih Detiil"){
                                     $('#loketDetailPok4').attr('disabled', true)
                                 }
-                                if ($('#loketDetailPok5').val()=="Pilih Detail"){
+                                if ($('#loketDetailPok5').val()=="Pilih Detiil"){
                                     $('#loketDetailPok5').attr('disabled', true)
                                 }
                                 generalAlert("Permintaan akan diteruskan ke PPK dan Redirect ke dashboard dalam 5 detik")

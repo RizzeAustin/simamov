@@ -3242,7 +3242,7 @@
         //tabel pok edit
         var usrnm = '{{username}}';
         var colm = [];
-        if (usrnm === "rifki") {
+        if (usrnm === "rizqia") {
             colm = [0,1,10]
         } else {
             colm = [0,1,5,10]
@@ -5178,13 +5178,13 @@
                 }
             });
 
-            setInterval(
-                function(){
-                    socket.emit('pok_summary', new Date().getMonth(), function(response){
-                        summaryUpdate(response);
-                    });
-                }
-            ,10000);
+            //setInterval(
+            //    function(){
+            //        socket.emit('pok_summary', new Date().getMonth(), function(response){
+            //            summaryUpdate(response);
+            //        });
+            //    }
+            //,10000);
         });
 
         $('#pok_entry_tab').one('click', function(e) {

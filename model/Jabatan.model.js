@@ -2,8 +2,9 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema;
 
-var UnitSchema = new Schema({
-    'namaUnit': String,
+var JabatanSchema = new Schema({
+    'kodeJabatan': String,
+    'namaJabatan': String,
     active: {
         type: Boolean,
         default: true
@@ -12,6 +13,6 @@ var UnitSchema = new Schema({
         type: Date,
         default: new Date(),
     },
-}, { collection: 'unit' });
+}, { collection: 'jabatan' });
 
-module.exports = mongoose.model('Unit', UnitSchema);
+module.exports = mongoose.model('Jabatan', JabatanSchema);

@@ -28,8 +28,8 @@ $(document).ready(function() {
     })
     $("#loketKegiatan").change(function() {
         if ($("#loketKegiatan").val() != "Pilih Aktivitas") {
-            console.log($("#loketKegiatan").val())
             let s = [$("#loketProgram").val(), $("#loketKegiatan").val()]
+            console.log(s)
             socket.emit('mintaOutput', s)
         } else {
             $("#loketOutput").empty().append('<option selected>Pilih KRO</option>')
@@ -51,8 +51,8 @@ $(document).ready(function() {
     })
     $("#loketOutput").change(function() {
         if ($("#loketOutput").val() != "Pilih KRO") {
-            console.log($("#loketOutput").val())
             let s = [$("#loketProgram").val(), $("#loketKegiatan").val(), $("#loketOutput").val()]
+            console.log(s)
             socket.emit('mintasOutput', s)
             socket.emit('mintaKomponen', s)
         } else {
@@ -74,8 +74,8 @@ $(document).ready(function() {
     })
     $("#loketKomponen").change(function() {
         if ($("#loketKomponen").val() != "Pilih Komponen") {
-            console.log($("#loketKomponen").val())
             let s = [$("#loketProgram").val(), $("#loketKegiatan").val(), $("#loketOutput").val(), $("#loketKomponen").val()]
+            console.log(s)
             socket.emit('mintasKomponen', s)
             socket.emit('mintaAkun', s)
         } else {
@@ -95,8 +95,8 @@ $(document).ready(function() {
     })
     $("#loketAkun").change(function() {
         if ($("#loketAkun").val() != "Pilih Akun") {
-            console.log($("#loketAkun").val())
             let s = [$("#loketProgram").val(), $("#loketKegiatan").val(), $("#loketOutput").val(), $("#loketKomponen").val(), $("#loketAkun").val()]
+            console.log(s)
             socket.emit('mintaDetailPok', s)
             socket.emit('mintaDetailPokUnit', s)
 
@@ -127,8 +127,8 @@ $(document).ready(function() {
             })
             if (!sama) {
                 $("#loketKegiatan").append(s)
-                sama = false
             }
+            sama = false
         }
     })
     socket.on('terimaOutput', function(output) {
@@ -142,8 +142,8 @@ $(document).ready(function() {
             })
             if (!sama) {
                 $("#loketOutput").append(s)
-                sama = false
             }
+            sama = false
         }
     })
     socket.on('terimasOutput', function(soutput) {
@@ -157,8 +157,8 @@ $(document).ready(function() {
             })
             if (!sama) {
                 $("#loketsOutput").append(s)
-                sama = false
             }
+            sama = false
         }
     })
     socket.on('terimaKomponen', function(komponen) {
@@ -172,8 +172,8 @@ $(document).ready(function() {
             })
             if (!sama) {
                 $("#loketKomponen").append(s)
-                sama = false
             }
+            sama = false
         }
     })
     socket.on('terimasKomponen', function(skomponen) {
@@ -187,8 +187,8 @@ $(document).ready(function() {
             })
             if (!sama) {
                 $("#loketsKomponen").append(s)
-                sama = false
             }
+            sama = false
         }
     })
     socket.on('terimaAkun', function(akun) {
@@ -202,16 +202,16 @@ $(document).ready(function() {
             })
             if (!sama) {
                 $("#loketAkun").append(s)
-                sama = false
             }
+            sama = false
         }
     })
     socket.on('terimaDetailPok', function(detail) {
-        $("#loketDetailPok1").empty().append('<option>Pilih Detail</option>')
-        $("#loketDetailPok2").empty().append('<option>Pilih Detail</option>')
-        $("#loketDetailPok3").empty().append('<option>Pilih Detail</option>')
-        $("#loketDetailPok4").empty().append('<option>Pilih Detail</option>')
-        $("#loketDetailPok5").empty().append('<option>Pilih Detail</option>')
+        $("#loketDetailPok1").empty().append('<option>Pilih Detil</option>')
+        $("#loketDetailPok2").empty().append('<option>Pilih Detil</option>')
+        $("#loketDetailPok3").empty().append('<option>Pilih Detil</option>')
+        $("#loketDetailPok4").empty().append('<option>Pilih Detil</option>')
+        $("#loketDetailPok5").empty().append('<option>Pilih Detil</option>')
         for (let i = 0; i < detail.length; i++) {
             let s = '<option value="' + detail[i].nmitem + '">' + detail[i].nmitem + '</option>'
             $("#loketDetailPok1").append(s)
@@ -222,11 +222,11 @@ $(document).ready(function() {
         }
     })
     socket.on('terimaDetailPokUnit', function(detail) {
-        $("#loketDetailPokUnit1").empty().append('<option>Pilih Detail</option>')
-        $("#loketDetailPokUnit2").empty().append('<option>Pilih Detail</option>')
-        $("#loketDetailPokUnit3").empty().append('<option>Pilih Detail</option>')
-        $("#loketDetailPokUnit4").empty().append('<option>Pilih Detail</option>')
-        $("#loketDetailPokUnit5").empty().append('<option>Pilih Detail</option>')
+        $("#loketDetailPokUnit1").empty().append('<option>Pilih Detil</option>')
+        $("#loketDetailPokUnit2").empty().append('<option>Pilih Detil</option>')
+        $("#loketDetailPokUnit3").empty().append('<option>Pilih Detil</option>')
+        $("#loketDetailPokUnit4").empty().append('<option>Pilih Detil</option>')
+        $("#loketDetailPokUnit5").empty().append('<option>Pilih Detil</option>')
         for (let i = 0; i < detail.length; i++) {
             let s = '<option value="' + detail[i].nmitem + '">' + detail[i].nmitem + '</option>'
             $("#loketDetailPokUnit1").append(s)
@@ -248,22 +248,22 @@ $(document).ready(function() {
     // })
 
     //edit form initialization
-    if ($('#loketDetailPok2, #loketDetailPokUnit2').val() != 'Pilih Detail' && $('#loketDetailPok2, #loketDetailPokUnit2').val()) {
+    if ($('#loketDetailPok2, #loketDetailPokUnit2').val() != 'Pilih Detil' && $('#loketDetailPok2, #loketDetailPokUnit2').val()) {
         $('#nilaiDetil2').attr('disabled', false)
     } else {
         $('#nilaiDetil2').attr('disabled', true).empty()
     }
-    if ($('#loketDetailPok3, #loketDetailPokUnit3').val() != 'Pilih Detail' && $('#loketDetailPok3, #loketDetailPokUnit3').val()) {
+    if ($('#loketDetailPok3, #loketDetailPokUnit3').val() != 'Pilih Detil' && $('#loketDetailPok3, #loketDetailPokUnit3').val()) {
         $('#nilaiDetil3').attr('disabled', false)
     } else {
         $('#nilaiDetil3').attr('disabled', true).empty()
     }
-    if ($('#loketDetailPok4, #loketDetailPokUnit4').val() != 'Pilih Detail' && $('#loketDetailPok4, #loketDetailPokUnit4').val()) {
+    if ($('#loketDetailPok4, #loketDetailPokUnit4').val() != 'Pilih Detil' && $('#loketDetailPok4, #loketDetailPokUnit4').val()) {
         $('#nilaiDetil4').attr('disabled', false)
     } else {
         $('#nilaiDetil4').attr('disabled', true).empty()
     }
-    if ($('#loketDetailPok5, #loketDetailPokUnit5').val() != 'Pilih Detail' && $('#loketDetailPok5, #loketDetailPokUnit5').val()) {
+    if ($('#loketDetailPok5, #loketDetailPokUnit5').val() != 'Pilih Detil' && $('#loketDetailPok5, #loketDetailPokUnit5').val()) {
         $('#nilaiDetil5').attr('disabled', false)
     } else {
         $('#nilaiDetil5').attr('disabled', true).empty()
@@ -271,28 +271,28 @@ $(document).ready(function() {
 
     //dynamic form
     $('#loketDetailPok2, #loketDetailPokUnit2').change(function() {
-        if ($('#loketDetailPok2, #loketDetailPokUnit2').val() != 'Pilih Detail' && $('#loketDetailPok2, #loketDetailPokUnit2').val()) {
+        if ($('#loketDetailPok2, #loketDetailPokUnit2').val() != 'Pilih Detil' && $('#loketDetailPok2, #loketDetailPokUnit2').val()) {
             $('#nilaiDetil2').attr('disabled', false)
         } else {
             $('#nilaiDetil2').attr('disabled', true).empty()
         }
     })
     $('#loketDetailPok3, #loketDetailPokUnit3').change(function() {
-        if ($('#loketDetailPok3, #loketDetailPokUnit3').val() != 'Pilih Detail' && $('#loketDetailPok3, #loketDetailPokUnit3').val()) {
+        if ($('#loketDetailPok3, #loketDetailPokUnit3').val() != 'Pilih Detil' && $('#loketDetailPok3, #loketDetailPokUnit3').val()) {
             $('#nilaiDetil3').attr('disabled', false)
         } else {
             $('#nilaiDetil3').attr('disabled', true).empty()
         }
     })
     $('#loketDetailPok4, #loketDetailPokUnit4').change(function() {
-        if ($('#loketDetailPok4, #loketDetailPokUnit4').val() != 'Pilih Detail' && $('#loketDetailPok4, #loketDetailPokUnit4').val()) {
+        if ($('#loketDetailPok4, #loketDetailPokUnit4').val() != 'Pilih Detil' && $('#loketDetailPok4, #loketDetailPokUnit4').val()) {
             $('#nilaiDetil4').attr('disabled', false)
         } else {
             $('#nilaiDetil4').attr('disabled', true).empty()
         }
     })
     $('#loketDetailPok5, #loketDetailPokUnit5').change(function() {
-        if ($('#loketDetailPok5, #loketDetailPokUnit5').val() != 'Pilih Detail' && $('#loketDetailPok5, #loketDetailPokUnit5').val()) {
+        if ($('#loketDetailPok5, #loketDetailPokUnit5').val() != 'Pilih Detil' && $('#loketDetailPok5, #loketDetailPokUnit5').val()) {
             $('#nilaiDetil5').attr('disabled', false)
         } else {
             $('#nilaiDetil5').attr('disabled', true).empty()
