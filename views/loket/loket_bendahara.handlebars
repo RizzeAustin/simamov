@@ -968,19 +968,19 @@
         //var rdt = detail.find( ({ nmitem }) => nmitem === sdt );
 
  
-        if($('#loketDetailPok1').val()=="Pilih Detail" && !$('#nilaiDetil1').val()){
+        if($('#loketDetailPok1').val()=="" && $('#nilaiDetil1').val() == 0){
             $('.loketInputRealisasi1').attr('disabled', true)
         }
-        if($('#loketDetailPok2').val()=="Pilih Detail" && !$('#nilaiDetil2').val()){
+        if($('#loketDetailPok2').val()=="" && $('#nilaiDetil2').val() == 0){
             $('.loketInputRealisasi2').attr('disabled', true)
         }
-        if($('#loketDetailPok3').val()=="Pilih Detail" && !$('#nilaiDetil3').val()){
+        if($('#loketDetailPok3').val()=="" && $('#nilaiDetil3').val() == 0){
             $('.loketInputRealisasi3').attr('disabled', true)
         }
-        if($('#loketDetailPok4').val()=="Pilih Detail" && !$('#nilaiDetil4').val()){
+        if($('#loketDetailPok4').val()=="" && $('#nilaiDetil4').val() == 0){
             $('.loketInputRealisasi4').attr('disabled', true)
         }
-        if($('#loketDetailPok5').val()=="Pilih Detail" && !$('#nilaiDetil5').val()){
+        if($('#loketDetailPok5').val()=="" && $('#nilaiDetil5').val() == 0){
             $('.loketInputRealisasi5').attr('disabled', true)
         }
 
@@ -998,10 +998,11 @@
             socket.emit('detailid', dtpick);
             socket.on('id_response', function(dt,cb) {
                 detail_id_target = dt.id;
-                $('.detail_blnj_entry').html(dt.nmitem);
-                $('#pagu_entry_form').html(dt.jumlah);  
+                dtpick.jumlah = dt.jumlah;
             })
-            $('#entry_jumlah_field').val() = $('#nilaiDetil1').val();
+            $('.detail_blnj_entry').html(dtpick.nmitem);
+            $('#pagu_entry_form').html(dtpick.jumlah);  
+            $('#entry_jumlah_field').val($('#nilaiDetil1').val());
             entry_modal.modal('show');
         });
         $("#loketForm").on('click', '.loketInputRealisasi2', function () {
@@ -1009,10 +1010,11 @@
             socket.emit('detailid', dtpick);
             socket.on('id_response', function(dt,cb) {
                 detail_id_target = dt.id;
-                $('.detail_blnj_entry').html(dt.nmitem);
-                $('#pagu_entry_form').html(dt.jumlah);
+                dtpick.jumlah = dt.jumlah;
             })
-            $('#entry_jumlah_field').val() = $('#nilaiDetil2').val();
+            $('.detail_blnj_entry').html(dtpick.nmitem);
+            $('#pagu_entry_form').html(dtpick.jumlah);
+            $('#entry_jumlah_field').val($('#nilaiDetil2').val());
             entry_modal.modal('show');
         });
         $("#loketForm").on('click', '.loketInputRealisasi3', function () {
@@ -1020,10 +1022,11 @@
             socket.emit('detailid', dtpick);
             socket.on('id_response', function(dt,cb) {
                 detail_id_target = dt.id;
-                $('.detail_blnj_entry').html(dt.nmitem);
-                $('#pagu_entry_form').html(dt.jumlah);  
+                dtpick.jumlah = dt.jumlah;
             })
-            $('#entry_jumlah_field').val() = $('#nilaiDetil3').val();
+            $('.detail_blnj_entry').html(dtpick.nmitem);
+            $('#pagu_entry_form').html(dtpick.jumlah);
+            $('#entry_jumlah_field').val($('#nilaiDetil3').val());
             entry_modal.modal('show');
         });
         $("#loketForm").on('click', '.loketInputRealisasi4', function () {
@@ -1031,10 +1034,11 @@
             socket.emit('detailid', dtpick);
             socket.on('id_response', function(dt,cb) {
                 detail_id_target = dt.id;
-                $('.detail_blnj_entry').html(dt.nmitem);
-                $('#pagu_entry_form').html(dt.jumlah);  
+                dtpick.jumlah = dt.jumlah;
             })
-            $('#entry_jumlah_field').val() = $('#nilaiDetil4').val();
+            $('.detail_blnj_entry').html(dtpick.nmitem);
+            $('#pagu_entry_form').html(dtpick.jumlah);
+            $('#entry_jumlah_field').val($('#nilaiDetil4').val());
             entry_modal.modal('show');
         });
         $("#loketForm").on('click', '.loketInputRealisasi5', function () {
@@ -1042,10 +1046,11 @@
             socket.emit('detailid', dtpick);
             socket.on('id_response', function(dt,cb) {
                 detail_id_target = dt.id;
-                $('.detail_blnj_entry').html(dt.nmitem);
-                $('#pagu_entry_form').html(dt.jumlah);  
+                dtpick.jumlah = dt.jumlah;
             })
-            $('#entry_jumlah_field').val() = $('#nilaiDetil5').val();
+            $('.detail_blnj_entry').html(dtpick.nmitem);
+            $('#pagu_entry_form').html(dtpick.jumlah);
+            $('#entry_jumlah_field').val($('#nilaiDetil5').val());
             entry_modal.modal('show');
         });
         

@@ -7,6 +7,7 @@ var DetailBelanjaSchema = new Schema({
         type: Number,
         default: new Date().getFullYear()
     },
+    'tanggal': String,
     'kdprogram': String,
     'kdgiat': String,
     'kdoutput': String,

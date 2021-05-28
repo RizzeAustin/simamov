@@ -402,7 +402,7 @@
 
 
 <div class="modal fade" id="refisi_modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div id="modal-remove-lg" style="max-width: 700px;" class="modal-dialog modal-primary" role="document">
+    <div id="modal-remove-lg" style="max-width: 900px;" class="modal-dialog modal-primary" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title">Riwayat Perubahan <span class="detail_blnj_entry"></span></h6>
@@ -1425,13 +1425,16 @@
         //Tombol refisi
         var detail_id_target;
         tabel_pok_entry.on('click', '.refisi', function () {
-            $('#pok_table_refisi').DataTable().clear().draw(false);
             var all_row_target_td = tabel_pok_entry.DataTable().row($(this).closest('tr')).data();
             detail_id_target = all_row_target_td[0];
             //$('.detail_blnj_entry').html(all_row_target_td[4])
             //$('#pagu_entry_form').html(all_row_target_td[8])
             socket.emit('refisi', {target: detail_id_target});
-            socket.on('refisi_response', function(data,cb) {
+            $('#pok_table_refisi').DataTable().clear().draw(false);
+            refisi_modal.modal('show');
+        });
+
+        socket.on('refisi_response', function(data,cb) {
                 if(data.row == ''){
                     cb();
                     return;
@@ -1439,8 +1442,6 @@
                 // $("#pok_table tbody").append(data);
                 $('#pok_table_refisi').DataTable().row.add( data ).draw(false);
                 cb();
-            })
-            refisi_modal.modal('show');
         });
 
 
@@ -1449,13 +1450,13 @@
             $('.detail_unit').html(all_row_target_td[4])
             detail_id_target = all_row_target_td[0];
             socket.emit('unit', {target: detail_id_target});
-            socket.on('cbunit_response', function(data,cb) {
-              $('#fields_form_unit').html(data);  
-            })
             form_edit_unit[0].reset();
             unit_modal.modal('show');
         });
 
+        socket.on('cbunit_response', function(data,cb) {
+              $('#fields_form_unit').html(data);  
+        });
         
         form_edit_unit.on('submit', function(e) {
             e.preventDefault();

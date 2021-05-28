@@ -57,11 +57,15 @@ loket.socket = function(io, connections, client) {
     var thang = client.handshake.session.tahun_anggaran || new Date().getFullYear();
 
     client.on('detailid', function(dt) {
-        DetailBelanja.findOne({ kdprogram: dt.kdprogram, kdgiat: dt.giat, kdoutput: dt.kdoutput, kdkmpnen: dt.kdkmpnen, kdakun: dt.kdakun, nmitem: dt.nmitem }, function(err, detail) {
-            var dt = {};
-            dt.id = detail._id;
-            dt.nmitem = detail.nmitem;
-            client.emit('id_response', dt, function() {
+        console.log(dt);
+        DetailBelanja.findOne({ kdprogram: dt.kdprogram, kdgiat: dt.kdgiat, kdoutput: dt.kdoutput, kdsoutput: dt.kdsoutput, kdkmpnen: dt.kdkmpnen, kdskmpnen: dt.kdskmpnen, kdakun: dt.kdakun, nmitem: dt.nmitem }, function(err, detail) {
+            console.log(detail);
+            var dts = {};
+            dts.id = detail._id;
+            dts.nmitem = detail.nmitem;
+            dts.jumlah = detail.jumlah;
+            console.log(dts);
+            client.emit('id_response', dts, function() {
                 //jika sudah  append, iterasi tiap output
             })
         })

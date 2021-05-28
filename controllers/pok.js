@@ -123,47 +123,67 @@ pok.socket = function(io, connections, client) {
 
     client.on('refisi', function(id_ref) {
         DetailBelanja.findOne({ _id: new ObjectId(id_ref.target) }, function(err, detail) {
-            var timestamp = detail.timestamp;
+            var tanggal = detail.tanggal;
             var th = detail.thang;
             var nmitem = detail.nmitem;
             var volkeg = detail.volkeg;
             var satkeg = detail.satkeg;
             var hargasat = detail.hargasat;
             var jumlah = detail.jumlah;
-            for (i = 0; i < detail.old.length; i++) {
+            for (i = 1; i <= detail.old.length; i++) {
                 var idx = detail.old.length - i;
+                var th1 = th;
+                var nmitem1 = nmitem;
+                var volkeg1 = volkeg;
+                var satkeg1 = satkeg;
+                var hargasat1 = hargasat;
+                var jumlah1 = jumlah;
+                let count = 0;
+                for (var c in detail.old[idx]) {
+                    count = count + 1;
+                }
+                var dihapus = (count == 1 && detail.old[idx].timestamp) || (count == 2 && (detail.old[idx].timestamp && detail.old[idx].tanggal));
+                if (detail.old[idx].volkeg == 0 || dihapus) {
+                    continue;
+                }
                 if (idx < detail.old.length) {
-                    if (detail.old[idx].timestamp) {
-                        timestamp = detail.old[idx].timestamp;
+                    if (detail.old[idx].tanggal) {
+                        tanggal = detail.old[idx].tanggal;
                     }
                     if (detail.old[idx].thang) {
+                        th1 = detail.old[idx].thang + ' ==> ' + th;
                         th = detail.old[idx].thang;
                     }
-                    if (detail.old[idx].nmitem) {
+                    if (detail.old[idx].nmitem && detail.old[idx].nmitem != nmitem) {
+                        nmitem1 = detail.old[idx].nmitem + ' ==> ' + nmitem;
                         nmitem = detail.old[idx].nmitem;
                     }
-                    if (detail.old[idx].volkeg) {
+                    if (detail.old[idx].volkeg && detail.old[idx].volkeg != volkeg && detail.old[idx].volkeg != 0) {
+                        volkeg1 = detail.old[idx].volkeg + ' ==> ' + volkeg;
                         volkeg = detail.old[idx].volkeg;
                     }
-                    if (detail.old[idx].satkeg) {
+                    if (detail.old[idx].satkeg && detail.old[idx].satkeg != satkeg) {
+                        satkeg1 = detail.old[idx].satkeg + ' ==> ' + satkeg;
                         satkeg = detail.old[idx].satkeg;
                     }
-                    if (detail.old[idx].hargasat) {
+                    if (detail.old[idx].hargasat && detail.old[idx].hargasat != hargasat) {
+                        hargasat1 = detail.old[idx].hargasat + ' ==> ' + hargasat;
                         hargasat = detail.old[idx].hargasat;
                     }
-                    if (detail.old[idx].jumlah) {
+                    if (detail.old[idx].jumlah && detail.old[idx].jumlah != jumlah && detail.old[idx].jumlah != 0) {
+                        jumlah1 = detail.old[idx].jumlah + ' ==> ' + jumlah;
                         jumlah = detail.old[idx].jumlah;
                     }
                 }
                 var dt;
                 dt = [
-                    timestamp,
-                    th,
-                    nmitem,
-                    volkeg,
-                    satkeg,
-                    hargasat,
-                    jumlah
+                    tanggal,
+                    th1,
+                    nmitem1,
+                    volkeg1,
+                    satkeg1,
+                    hargasat1,
+                    jumlah1
                 ]
                 client.emit('refisi_response', dt, function() {
                     //jika sudah  append, iterasi tiap output
@@ -3018,8 +3038,9 @@ pok.socket = function(io, connections, client) {
         DetailBelanja.findOne({ _id: new ObjectId(ids.target_id) }, function(err, target) {
             if (target) {
                 DetailBelanja.findOne({ _id: new ObjectId(ids.source_id) }, function(err, source) {
-                    var detail_belanja_var = ['nmitem', 'volkeg', 'satkeg', 'hargasat', 'jumlah'];
+                    var detail_belanja_var = ['tanggal', 'nmitem', 'volkeg', 'satkeg', 'hargasat', 'jumlah'];
                     var old = {};
+                    old.tanggal = target.tanggal;
                     old.nmitem = target.nmitem;
                     old.volkeg = target.volkeg;
                     old.satkeg = target.satkeg;
@@ -3102,24 +3123,26 @@ pok.socket = function(io, connections, client) {
 }
 
 function getRealisasiSum(client, lower_ts, upper_ts, bypass) {
-    DetailBelanja.find({ 'thang': client.handshake.session.tahun_anggaran, active: true, realisasi: { $exists: true, $ne: [] } }, 'realisasi', function(err, reals) {
+    DetailBelanja.find({ 'thang': client.handshake.session.tahun_anggaran, active: true, realisasi: { $exists: true, $ne: [] } }, { 'realisasi': 1, 'nmitem': 1 }, function(err, reals) {
         _.each(reals, function(detail, index, list) {
-            var sum = 0;
-            var total_sampai_bln_ini = 0;
-            _.each(detail.realisasi, function(realisasi, index, list) {
-                if (bypass) {
-                    sum += realisasi.jumlah;
-                } else if (realisasi.tgl_timestamp >= lower_ts && realisasi.tgl_timestamp <= upper_ts) {
-                    sum += realisasi.jumlah;
-                }
-                if (realisasi.tgl_timestamp <= upper_ts) total_sampai_bln_ini += realisasi.jumlah;
-            });
-            client.emit('pok_entry_update_realisasi', {
-                'parent_id': detail._id,
-                'realisasi': sum,
-                'total_sampai_bln_ini': total_sampai_bln_ini,
-                'sum': true
-            });
+            if (detail.nmitem.charAt(0) != '>') {
+                var sum = 0;
+                var total_sampai_bln_ini = 0;
+                _.each(detail.realisasi, function(realisasi, index, list) {
+                    if (bypass) {
+                        sum += realisasi.jumlah;
+                    } else if (realisasi.tgl_timestamp >= lower_ts && realisasi.tgl_timestamp <= upper_ts) {
+                        sum += realisasi.jumlah;
+                    }
+                    if (realisasi.tgl_timestamp <= upper_ts) total_sampai_bln_ini += realisasi.jumlah;
+                });
+                client.emit('pok_entry_update_realisasi', {
+                    'parent_id': detail._id,
+                    'realisasi': sum,
+                    'total_sampai_bln_ini': total_sampai_bln_ini,
+                    'sum': true
+                });
+            }
         })
     })
 }
@@ -4108,6 +4131,10 @@ function unrar_pok_file(path) {
 
 function proses_xml(xml_stream, roots_var, var_array, current_timestamp, Model, username, cb, user_id) {
     var thang;
+    var tanggal = new Date().getDate();
+    var bulan = new Date().toLocaleString('default', { month: 'long' });
+    var tahun = new Date().getFullYear();
+    var current_tanggal = tanggal + ' ' + bulan + ' ' + tahun;
     async.auto({
 
         xml_to_json: function(callback) {
@@ -4167,8 +4194,10 @@ function proses_xml(xml_stream, roots_var, var_array, current_timestamp, Model, 
                                 if (!_.isEmpty(old)) {
                                     //timestamp utk unique revisi
                                     old['timestamp'] = result['timestamp'];
-                                    //timestemp update terbaru
+                                    old['tanggal'] = result['tanggal']
+                                        //timestemp update terbaru
                                     new_item['timestamp'] = current_timestamp;
+                                    new_item['tanggal'] = current_tanggal;
                                     //old yg lama ditransfer
                                     new_item['old'] = result['old'];
                                     //penambahan old
@@ -4220,6 +4249,10 @@ function proses_xml(xml_stream, roots_var, var_array, current_timestamp, Model, 
 
 function objToDB(Model, obj, var_array, cb, user_id, current_timestamp) {
     var item = new Model(obj);
+    var tanggal = new Date().getDate();
+    var bulan = new Date().toLocaleString('default', { month: 'long' });
+    var tahun = new Date().getFullYear();
+    var current_tanggal = tanggal + ' ' + bulan + ' ' + tahun;
     item.isExist(function(err, result) {
         if (err) errorHandler(user_id, 'Item isExist error. Mohon hubungi admin.');
         //jika sudah pernah ada
@@ -4244,8 +4277,10 @@ function objToDB(Model, obj, var_array, cb, user_id, current_timestamp) {
             if (!_.isEmpty(old)) {
                 //timestamp utk unique revisi
                 old['timestamp'] = result['timestamp'];
-                //timestemp update terbaru
+                old['tanggal'] = result['tanggal']
+                    //timestemp update terbaru
                 new_item['timestamp'] = current_timestamp;
+                new_item['tanggal'] = current_tanggal;
                 //old yg lama ditransfer
                 new_item['old'] = result['old'];
                 //penambahan old
@@ -4369,6 +4404,10 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id) {
 
     //timestamp utk wkt penyimpanan
     var current_timestamp = Math.round(new Date().getTime() / 1000);
+    var tanggal = new Date().getDate();
+    var bulan = new Date().toLocaleString('default', { month: 'long' });
+    var tahun = new Date().getFullYear();
+    var current_tanggal = tanggal + ' ' + bulan + ' ' + tahun;
     //nomor utk detail
     var current_kdprogram = '';
     var current_kdgiat = '';
@@ -4615,6 +4654,7 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id) {
                     //init new item
                     var new_item = {};
                     new_item.timestamp = current_timestamp;
+                    new_item.tanggal = current_tanggal;
                     //tahun anggaran
                     new_item.thang = thang;
 
@@ -4668,8 +4708,10 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id) {
                                     if (!_.isEmpty(old)) {
                                         //timestamp utk unique revisi
                                         old['timestamp'] = matched['timestamp'];
+                                        old['tanggal'] = new_item.tanggal;
                                         //timestemp update terbaru
                                         new_item['timestamp'] = current_timestamp;
+                                        new_item['tanggal'] = current_tanggal;
                                         //old yg lama ditransfer
                                         new_item['old'] = matched['old'];
                                         //penambahan old
@@ -4723,13 +4765,14 @@ function XlsxPOK(file_path, pok_name, username, thang, user_id) {
                         '<button type="button" class="kembalikan-detail" title="kembalikan detail"><i class="icon-action-undo"></i></button> <button type="button" class="lihat-akun" title="lihat semua detail dalam akun detail ini"><i class="icon-layers"></i></button>'
                     ]);
                     var old = {};
-                    old.timestamp = removed.timestamp
-                    old.volkeg = removed.volkeg
-                    old.jumlah = removed.jumlah
+                    old.timestamp = removed.timestamp;
+                    old.tanggal = current_tanggal;
+                    //old.volkeg = removed.volkeg
+                    //old.jumlah = removed.jumlah
                     removed.old.push(old);
                     removed.timestamp = current_timestamp;
-                    removed.volkeg = 0;
-                    removed.jumlah = 0;
+                    //removed.volkeg = 0;
+                    //removed.jumlah = 0;
                     removed.save();
                 } else {
                     pok.connections[user_id].emit('pok_unduh_finish_xlsx_add_change', [removed._id, '<span class="badge badge-danger">dihapus</span>', removed.kdprogram + '>' + removed.kdgiat + '>' + removed.kdoutput + '>' + removed.kdsoutput + '>' + removed.kdkmpnen + '>' + removed.kdskmpnen + '>' + removed.kdakun, removed.nmitem,
@@ -4792,7 +4835,7 @@ function POK(file_path, pok_name, username, user_id) {
         var akun_var = ['thang', 'kdprogram', 'kdgiat', 'kdoutput', 'kdsoutput', 'kdkmpnen', 'kdskmpnen', 'kdakun'];
 
         var root_index_detail_belanja_var = ['VFPData', 'c_item'];
-        var detail_belanja_var = ['thang', 'kdprogram', 'kdgiat', 'kdoutput', 'kdsoutput', 'kdkmpnen', 'kdskmpnen', 'kdakun', 'noitem', 'nmitem', 'volkeg', 'satkeg', 'hargasat', 'jumlah'];
+        var detail_belanja_var = ['thang', 'tanggal', 'kdprogram', 'kdgiat', 'kdoutput', 'kdsoutput', 'kdkmpnen', 'kdskmpnen', 'kdakun', 'noitem', 'nmitem', 'volkeg', 'satkeg', 'hargasat', 'jumlah'];
 
         var archive = unrar_pok_file(file_path);
 
