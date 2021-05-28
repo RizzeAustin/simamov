@@ -32,7 +32,7 @@
                                         <div class="col-11">
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketProgram" class="form-label">Program</label>
+                                                    <label for="loketProgram" class="form-label">Program <strong style="color: red;">*</strong></label>
                                                     <select name="loketProgram" id="loketProgram" class="form-select">
                                                         <option>Pilih Program</option>
                                                         {{#if data.pok.kdprogram}}
@@ -46,7 +46,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketKegiatan" class="form-label">Aktivitas</label>
+                                                    <label for="loketKegiatan" class="form-label">Aktivitas <strong style="color: red;">*</strong></label>
                                                     <select name="loketKegiatan" id="loketKegiatan" class="form-select">
                                                         <option>Pilih Aktivitas</option>
                                                         {{#if data.pok.kdaktivitas}}
@@ -60,7 +60,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketOutput" class="form-label">KRO</label>
+                                                    <label for="loketOutput" class="form-label">KRO <strong style="color: red;">*</strong></label>
                                                     <select name="loketOutput" id="loketOutput" class="form-select">
                                                         <option>Pilih KRO</option>
                                                         {{#if data.pok.kdkro}}
@@ -74,7 +74,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketOutput" class="form-label">RO</label>
+                                                    <label for="loketOutput" class="form-label">RO <strong style="color: red;">*</strong></label>
                                                     <select name="loketsOutput" id="loketsOutput" class="form-select">
                                                         <option>Pilih RO</option>
                                                         {{#if data.pok.kdkro}}
@@ -88,7 +88,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketKomponen" class="form-label">Komponen</label>
+                                                    <label for="loketKomponen" class="form-label">Komponen <strong style="color: red;">*</strong></label>
                                                     <select name="loketKomponen" id="loketKomponen" class="form-select">
                                                         <option>Pilih Komponen</option>
                                                         {{#if data.pok.kdkomponen}}
@@ -102,7 +102,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketsKomponen" class="form-label">Sub Komponen</label>
+                                                    <label for="loketsKomponen" class="form-label">Sub Komponen <strong style="color: red;">*</strong></label>
                                                     <select name="loketsKomponen" id="loketsKomponen" class="form-select">
                                                         <option>Pilih Sub Komponen</option>
                                                         {{#if data.pok.kdsubkomponen}}
@@ -116,7 +116,7 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col">
-                                                    <label for="loketAkun" class="form-label">Akun</label>
+                                                    <label for="loketAkun" class="form-label">Akun <strong style="color: red;">*</strong></label>
                                                     <select name="loketAkun" id="loketAkun" class="form-select">
                                                         <option>Pilih Akun</option>
                                                         {{#if data.pok.kdakun}}
@@ -135,9 +135,9 @@
                                         <div class="col-11">
                                             <div class="form-group row">
                                                 <div class="col-6">
-                                                    <label for="loketDetailPok" class="form-label">Detil POK 1</label>
+                                                    <label for="loketDetailPok" class="form-label">Detil POK 1 <strong style="color: red;">*</strong></label>
                                                     <select name="loketDetailPok1" id="loketDetailPok1" class="form-select">
-                                                        <option>Pilih Detail</option>
+                                                        <option>Pilih Detil</option>
                                                         {{#if data.pok.detil}}
                                                             <option value="{{data.pok.detil.u1}}" selected>{{data.pok.detil.u1}}</option>
                                                         {{/if}}
@@ -147,7 +147,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
-                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto</label>
+                                                    <label for="nilaiDetil" class="form-label">Nilai Bruto <strong style="color: red;">*</strong></label>
                                                     <input type="number" name="nilaiDetil1" id="nilaiDetil1" class="form-control" placeholder="Contoh: 1000000" autocomplete="off" value="{{data.pok.detil.n1}}">
                                                 </div>
                                                 <div class="col-2">
@@ -388,7 +388,7 @@
                                             <div class="row">
                                                 <label class="col-1 form-label" for="" style="text-align: right;">Rp</label>
                                                 <div class="col">
-                                                    <input type="number" name="loketNilaiPajak" id="loketNilaiPajak" class="form-control" placeholder="Contoh: 100000" required>
+                                                    <input type="number" name="loketNilaiPajak" id="loketNilaiPajak" class="form-control" placeholder="Contoh: 100000" autocomplete="off" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -397,7 +397,7 @@
                                             <div class="row">
                                                 <label class="col-1 form-label" for="" style="text-align: right;">Rp</label>
                                                 <div class="col">
-                                                    <input type="number" name="loketNilaiTransfer" id="loketNilaiTransfer" class="form-control" placeholder="Contoh: 900000" required>
+                                                    <input type="number" name="loketNilaiTransfer" id="loketNilaiTransfer" class="form-control" placeholder="Contoh: 900000" autocomplete="off" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -606,12 +606,20 @@
             $("#kirimFormBendaharaArsiparis").prop("hidden", true)
             $("#kirimFormBendaharaOperatorBmn").prop("hidden", true)
             $("#loketInputRealisasi").prop("hidden", true)
+            $("label[for='loketSpp']").text('SPP')
+            $("label[for='loketSpp']").append(' <strong style="color: red;">*</strong>')
         } else if ($("#loketSpp").val()=='Sudah'){
             $("#loketSpp").prop("disabled", true)
             //pengaturan form by kode akun
             if ($("#loketAkun").val()=="521811" || $("#loketAkun").val().slice(0,3)=="532") {
                 $("#kirimFormBendaharaOperatorBmn").prop("hidden", false)
             } else {$("#kirimFormBendaharaOperatorBmn").prop("hidden", true)}
+            $("label[for='loketMetodeTransfer']").text('Metode Transfer')
+            $("label[for='loketMetodeTransfer']").append(' <strong style="color: red;">*</strong>')
+            $("label[for='loketNilaiPajak']").text('Nilai Pajak')
+            $("label[for='loketNilaiPajak']").append(' <strong style="color: red;">*</strong>')
+            $("label[for='loketNilaiTransfer']").text('Nilai Transfer')
+            $("label[for='loketNilaiTransfer']").append(' <strong style="color: red;">*</strong>')
         }
         //pengaturan form by kode akun
         $("#loketAkun").change(function(){
@@ -701,7 +709,7 @@
             } else if ($('#loketAkun').val()=="Pilih Akun"){
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
-            } else if ($('#loketDetailPok1').val()=="Pilih Detail"){
+            } else if ($('#loketDetailPok1').val()=="Pilih Detil"){
                 generalAlert("Silahkan pilih setidaknya 1 detail")
                 $('#loketDetailPok1').focus()
             } else if (!$('#nilaiDetil1').val()){
@@ -720,16 +728,16 @@
                             text: 'Yakin',
                             btnClass: 'btn-success',
                             action: function () {
-                                if ($('#loketDetailPok2').val()=="Pilih Detail"){
+                                if ($('#loketDetailPok2').val()=="Pilih Detil"){
                                     $('#loketDetailPok2').attr('disabled', true)
                                 }
-                                if ($('#loketDetailPok3').val()=="Pilih Detail"){
+                                if ($('#loketDetailPok3').val()=="Pilih Detil"){
                                     $('#loketDetailPok3').attr('disabled', true)
                                 }
-                                if ($('#loketDetailPok4').val()=="Pilih Detail"){
+                                if ($('#loketDetailPok4').val()=="Pilih Detil"){
                                     $('#loketDetailPok4').attr('disabled', true)
                                 }
-                                if ($('#loketDetailPok5').val()=="Pilih Detail"){
+                                if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                     $('#loketDetailPok5').attr('disabled', true)
                                 }
                                 generalAlert("Permintaan akan diteruskan ke PPSPM dan Redirect ke dashboard dalam 5 detik")
@@ -771,16 +779,16 @@
                                         generalAlert("Pemrosesan gagal, database bermasalah")
                                     },
                                     success: function(){
-                                        if ($('#loketDetailPok2').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok2').val()=="Pilih Detil"){
                                             $('#loketDetailPok2').attr('disabled', true)
                                         }
-                                        if ($('#loketDetailPok3').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok3').val()=="Pilih Detil"){
                                             $('#loketDetailPok3').attr('disabled', true)
                                         }
-                                        if ($('#loketDetailPok4').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok4').val()=="Pilih Detil"){
                                             $('#loketDetailPok4').attr('disabled', true)
                                         }
-                                        if ($('#loketDetailPok5').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                             $('#loketDetailPok5').attr('disabled', true)
                                         }
                                         generalAlert("Permintaan telah diteruskan ke Operator Bank")
@@ -820,7 +828,7 @@
             } else if ($('#loketAkun').val()=="Pilih Akun"){
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
-            } else if ($('#loketDetailPok1').val()=="Pilih Detail"){
+            } else if ($('#loketDetailPok1').val()=="Pilih Detil"){
                 generalAlert("Silahkan pilih setidaknya 1 detail")
                 $('#loketDetailPok1').focus()
             } else if (!$('#nilaiDetil1').val()){
@@ -853,16 +861,16 @@
                                         generalAlert("Pengiriman gagal, database bermasalah")
                                     },
                                     success: function(){
-                                        if ($('#loketDetailPok2').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok2').val()=="Pilih Detil"){
                                             $('#loketDetailPok2').attr('disabled', true)
                                         }
-                                        if ($('#loketDetailPok3').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok3').val()=="Pilih Detil"){
                                             $('#loketDetailPok3').attr('disabled', true)
                                         }
-                                        if ($('#loketDetailPok4').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok4').val()=="Pilih Detil"){
                                             $('#loketDetailPok4').attr('disabled', true)
                                         }
-                                        if ($('#loketDetailPok5').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                             $('#loketDetailPok5').attr('disabled', true)
                                         }
                                         generalAlert("Permintaan telah diteruskan ke Arsiparis")
@@ -902,7 +910,7 @@
             } else if ($('#loketAkun').val()=="Pilih Akun"){
                 generalAlert("Silahkan pilih akun")
                 $('#loketAkun').focus()
-            } else if ($('#loketDetailPok1').val()=="Pilih Detail"){
+            } else if ($('#loketDetailPok1').val()=="Pilih Detil"){
                 generalAlert("Silahkan pilih setidaknya 1 detail")
                 $('#loketDetailPok1').focus()
             } else if (!$('#nilaiDetil1').val()){
@@ -935,16 +943,16 @@
                                         generalAlert("Pengiriman gagal, database bermasalah")
                                     },
                                     success: function(){
-                                        if ($('#loketDetailPok2').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok2').val()=="Pilih Detil"){
                                             $('#loketDetailPok2').attr('disabled', true)
                                         }
-                                        if ($('#loketDetailPok3').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok3').val()=="Pilih Detil"){
                                             $('#loketDetailPok3').attr('disabled', true)
                                         }
-                                        if ($('#loketDetailPok4').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok4').val()=="Pilih Detil"){
                                             $('#loketDetailPok4').attr('disabled', true)
                                         }
-                                        if ($('#loketDetailPok5').val()=="Pilih Detail"){
+                                        if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                             $('#loketDetailPok5').attr('disabled', true)
                                         }
                                         generalAlert("Permintaan telah diteruskan ke Operator BMN")

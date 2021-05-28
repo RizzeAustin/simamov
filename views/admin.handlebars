@@ -9,6 +9,12 @@
                                 <a id="User" class="nav-link active" data-toggle="tab" href="#Userchild" role="tab" aria-control="Userchild"><i class="icon-user"></i> Pengguna</a>
                             </li>
                             <li class="nav-item">
+                                <a id="Jabatan" class="nav-link" data-toggle="tab" href="#Jabatanchild" role="tab" aria-control="Jabatanchild"><i class="icon-people"></i> Jabatan</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="Role" class="nav-link" data-toggle="tab" href="#Rolechild" role="tab" aria-control="Rolechild"><i class="icon-people"></i> Role</a>
+                            </li>
+                            <li class="nav-item">
                                 <a id="Unit" class="nav-link" data-toggle="tab" href="#Unitchild" role="tab" aria-control="Unitchild"><i class="icon-people"></i> Unit</a>
                             </li>
                         </ul> 
@@ -17,56 +23,57 @@
                                 <h5><i class="icon-user-follow"></i> Tambah Pengguna:</h5>
                                 <form id="tambah_user" action="/admin/tambah_user" method="POST">
                                     <div class="row">
-                                            <div class="form-group col-sm-2">
-                                                <label for="username">Nama Pengguna</label>
-                                                <input type="text" class="form-control" id="username" name='username' autocomplete="off" required>
-                                            </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="username">Nama Pengguna</label>
+                                            <input type="text" class="form-control" id="username" name='username' autocomplete="off" required>
+                                        </div>
 
-                                            <div class="form-group col-sm-2">
-                                                <label for="password">Password</label>
-                                                <input type="password" class="form-control" id="password" autocomplete="off" name='password' placeholder="Minimal 6 karakter" required>
-                                            </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="password">Password</label>
+                                            <input type="password" class="form-control" id="password" autocomplete="off" name='password' placeholder="Minimal 6 karakter" required>
+                                        </div>
 
-                                            <div class="form-group col-sm-2">
-                                                <label for="jenis_user">Jenis</label>
-                                                <select id="jenis_user" name="jenis" class="form-control" size="1" id='jenis_user' required>
-                                                    <option></option>
-                                                    <option value="1">Administrator</option>
-                                                    <option value="0">Pengguna</option>
-                                                </select>
-                                            </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="jenis_user">Jenis</label>
+                                            <select id="jenis_user" name="jenis" class="form-control" size="1" id='jenis_user' required>
+                                                <option></option>
+                                                <option value="1">Administrator</option>
+                                                <option value="0">Pengguna</option>
+                                            </select>
+                                        </div>
 
-                                            <div class="form-group col-sm-2">
-                                                <label for="jabatanUser">Jabatan</label>
-                                                <select id="jabatanUser" name="jabatan" class="form-control" size="1" disabled>
-                                                    <option></option>
-                                                </select>
-                                            </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="jabatanUser">Jabatan</label>
+                                            <select id="jabatanUser" name="jabatan" class="form-control" size="1" disabled>
+                                                <option></option>
+                                            </select>
+                                        </div>
 
-                                            <div class="form-group col-sm-2">
-                                                <label for="roleUser">Role</label>
-                                                <select id="roleUser" name="role" class="form-control" size="1" disabled>
-                                                    <option></option>
-                                                </select>
-                                            </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="roleUser">Role</label>
+                                            <select id="roleUser" name="role" class="form-control" size="1" disabled>
+                                                <option></option>
+                                            </select>
+                                        </div>
 
-                                            <div class="form-group col-sm-2">
-                                                <label for="unitUser">Unit</label>
-                                                <select id="unitUser" name="unit" class="form-control" size="1" disabled>
-                                                    <option></option>
-                                                </select>
-                                            </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="unitUser">Unit</label>
+                                            <select id="unitUser" name="unit" class="form-control" size="1" disabled>
+                                                <option></option>
+                                            </select>
+                                            <small><i>* Untuk membagi POK yang ditampilkan</i></small>
+                                        </div>
 
-                                            <div class="form-group col-sm-2">
-                                                <label for="emailUser">Email</label>
-                                                <input type="text" id="emailUser" name="email" class="form-control" placeholder="contoh@stis.ac.id" autocomplete="off">
-                                            </div>
+                                        <div class="form-group col-sm-2">
+                                            <label for="emailUser">Email</label>
+                                            <input type="text" id="emailUser" name="email" class="form-control" placeholder="contoh@stis.ac.id" autocomplete="off">
+                                            <small><i>* Untuk pemberitahuan</i></small>
+                                        </div>
 
-                                            <div class="form-group col-sm-2">
-                                                <label for="cvv">&nbsp;</label>
-                                                <input type="submit" class="btn btn-primary form-control" value="Tambah User">
-                                            </div>
-
+                                        <div class="form-group col-sm-2">
+                                            <label for="cvv">&nbsp;</label>
+                                            <input type="submit" class="btn btn-primary form-control" value="Tambah User">
+                                        </div>
                                     </div> 
                                 <!--/.row-->    
                                 </form>
@@ -125,32 +132,133 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="tab-pane" id="Unitchild" role="tabpanel">
-                                <form id="formTambahUnit" action="/admin/tambahUnit" method="POST">
+                            <div class="tab-pane" id="Jabatanchild" role="tabpanel">
+                                <form id="formTambahJabatan" action="/admin/tambahJabatan" method="POST">
                                     <div class="row">
-                                        <div class="form-group col-sm-1">
-                                            <button type="submit" class="btn btn-success" id="tambahUnit"><i class="icon-plus"></i></button>
+                                        <div class="form-group col-1">
+                                            <label for="kodeJabatan">Kode Jabatan</label>
+                                            <input type="text" class="form-control" name="kodeJabatan" id="kodeJabatan" required>
                                         </div>
-                                        <div class="form-group col-sm-2">
-                                            <input type="text" class="form-control" name="kodeUnit" id="kodeUnit" placeholder="Kode unit" required>
+                                        <div class="form-group col-2">
+                                            <label for="namaJabatan">Nama Jabatan</label>
+                                            <input type="text" class="form-control" name="namaJabatan" id="namaJabatan" required>
                                         </div>
-                                        <div class="form-group col-sm-2">
-                                            <input type="text" class="form-control" name="namaUnit" id="namaUnit" placeholder="Nama Unit" required>
+                                        <div class="form-group col-1">
+                                            <label for="tambahJabatan">&nbsp;</label>
+                                            <button type="submit" class="btn btn-success form-control" id="tambahJabatan"><i class="icon-plus"></i></button>
                                         </div>
                                     </div> 
                                 </form>
-                                <table class="borderless row col" style="text-align: center;" id="tabelDaftarUnit">
+                                <table class="borderless table-striped" style="text-align: left; font-size: medium; width: 35%;" id="tabelDaftarJabatan">
+                                    <small><i>* Kode digunakan untuk validasi, silahkan sesuaikan juga validasi pada source-code</i></small>
+                                    <thead>
+                                        <tr style="background-color: #20a8d8; color: white;">
+                                            <th style="text-align: center;">Kode Jabatan</th>
+                                            <th style="text-align: center;">Nama Jabatan</th>
+                                            <th style="text-align: center;">Hapus</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each jabatan}}
+                                            <tr id="{{this._id}}">
+                                                <td width="20%" style="text-align: center;">
+                                                    {{this.kodeJabatan}}
+                                                </td>
+                                                <td width="65%">
+                                                    {{this.namaJabatan}}
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger form-control" id="hapusJabatan"><i class="icon-minus"></i></button>
+                                                </td>
+                                            </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="Rolechild" role="tabpanel">
+                                <form id="formTambahRole" action="/admin/tambahRole" method="POST">
+                                    <div class="row">
+                                        <div class="form-group col-2">
+                                            <label for="kodeJabatanRole">Jabatan</label>
+                                            <select class="form-control" name="kodeJabatanRole" id="kodeJabatanRole" required>
+                                                {{#each jabatan}}
+                                                    <option value="{{this.kodeJabatan}}">{{this.namaJabatan}}</option>
+                                                {{/each}}
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-1">
+                                            <label for="kodeRole">kode Role</label>
+                                            <input type="text" class="form-control" name="kodeRole" id="kodeRole" required>
+                                        </div>
+                                        <div class="form-group col-2">
+                                            <label for="namaRole">Nama Role</label>
+                                            <input type="text" class="form-control" name="namaRole" id="namaRole" required>
+                                        </div>
+                                        <div class="form-group col-1">
+                                            <label for="tambahRole">&nbsp;</label>
+                                            <button type="submit" class="btn btn-success form-control" id="tambahRole"><i class="icon-plus"></i></button>
+                                        </div>
+                                    </div> 
+                                </form>
+                                <table class="borderless table-striped" style="text-align: left; font-size: medium; width: 35%;" id="tabelDaftarRole">
+                                    <small><i>* Kode digunakan untuk validasi, silahkan sesuaikan juga validasi pada source-code</i></small>
+                                    <thead>
+                                        <tr style="background-color: #20a8d8; color: white;">
+                                            <th style="text-align: center;">Kode Jabatan</th>
+                                            <th style="text-align: center;">Kode Role</th>
+                                            <th style="text-align: center;">Nama Role</th>
+                                            <th style="text-align: center;">Hapus</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each role}}
+                                            <tr id="{{this._id}}">
+                                                <td width="20%" style="text-align: center;">
+                                                    {{this.kodeJabatan}}
+                                                </td>
+                                                <td width="20%" style="text-align: center;">
+                                                    {{this.kodeRole}}
+                                                </td>
+                                                <td width="45%">
+                                                    {{this.namaRole}}
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger form-control" id="hapusRole"><i class="icon-minus"></i></button>
+                                                </td>
+                                            </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="tab-pane" id="Unitchild" role="tabpanel">
+                                <form id="formTambahUnit" action="/admin/tambahUnit" method="POST">
+                                    <div class="row">
+                                        <div class="form-group col-2">
+                                            <label for="namaUnit">Nama Unit</label>
+                                            <input type="text" class="form-control" name="namaUnit" id="namaUnit" required>
+                                        </div>
+                                        <div class="form-group col-1">
+                                            <label for="tambahUnit">&nbsp;</label>
+                                            <button type="submit" class="btn btn-success form-control" id="tambahUnit"><i class="icon-plus"></i></button>
+                                        </div>
+                                    </div> 
+                                </form>
+                                <table class="borderless table-striped" style="text-align: left; font-size: medium; width: 35%;" id="tabelDaftarUnit">
+                                    <small><i>&nbsp;</i></small>
+                                    <thead>
+                                        <tr style="background-color: #20a8d8; color: white;">
+                                            <th style="text-align: center;">Nama Unit</th>
+                                            <th style="text-align: center;">Hapus</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         {{#each unit}}
                                             <tr id="{{this._id}}">
-                                                <td>
-                                                    <button type="button" class="btn btn-danger" id="hapusUnit"><i class="icon-minus"></i></button>
-                                                </td>
-                                                <td>
-                                                    {{this.kodeUnit}}
-                                                </td>
-                                                <td>
+                                                <td class="col-10">
                                                     {{this.namaUnit}}
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger form-control" id="hapusUnit"><i class="icon-minus"></i></button>
                                                 </td>
                                             </tr>
                                         {{/each}}
@@ -194,13 +302,11 @@
                         </div>
 
                         <div class="form-group row">
-
                             <label for="jenis_user">Jenis</label>
                             <select id="jenis_user_edit" name="jenis" class="form-control" size="1" id='jenis_user'>
                                 <option value="1">Administrator</option>
                                 <option value="0">User</option>
                             </select>
-
                         </div> 
                     </div>
                 </div>
@@ -311,125 +417,355 @@
     $(document).ready(function () {
         //convert role dan jabatan pada tabel
         $("#editor_table tr").each(function(){
-            $(this).find("td:eq(1)").each(function(){
-                //console.log($(this).text())
-                switch ($(this).text()){
-                    case "1":
-                        $(this).text("Petugas BAU")
-                        break
-                    case "2":
-                        $(this).text("Pimpinan")
-                        break
-                    case "3":
-                        $(this).text("Unit")
-                        break
+            let ini = $(this)
+            socket.emit('mintaJabatan', function(response){
+                for (let i=0;i<response.length;i++){
+                    if (ini.find("td:eq(1)").text()==response[i].kodeJabatan){
+                        ini.find("td:eq(1)").text(response[i].namaJabatan)
+                    }
                 }
             })
-            $(this).find("td:eq(2)").each(function(){
-                switch ($(this).text()){
-                    case "11":
-                        $(this).text("Verifikator")
-                        break
-                    case "12":
-                        $(this).text("PPK")
-                        break
-                    case "13":
-                        $(this).text("PPSPM")
-                        break
-                    case "14":
-                        $(this).text("Reviewer")
-                        break
-                    case "15":
-                        $(this).text("Bendahara")
-                        break
-                    case "16":
-                        $(this).text("Operator Bank")
-                        break
-                    case "21":
-                        $(this).text("Direktur")
-                        break
-                    case "22":
-                        $(this).text("Wakil Direktur")
-                        break
-                    case "31":
-                        $(this).text("Pimpinan Unit")
-                        break
-                    case "32":
-                        $(this).text("Operator Unit")
-                        break
+            socket.emit('mintaRole', function(response){
+                for (let i=0;i<response.length;i++){
+                    if (ini.find("td:eq(2)").text()==response[i].kodeRole){
+                        ini.find("td:eq(2)").text(response[i].namaRole)
+                    }
                 }
             })
-            
         })
-    })
 
-    //iterasi role dan jabatan
-    $("#jenis_user").change(function(){
-        //console.log($("#jenis_user").val())
-        if ($("#jenis_user").val()=='0'){
-            $("#jabatanUser").attr('disabled', false).empty().append(
-                '<option></option>'+
-                '<option value="1">Petugas BAU</option>'+
-                '<option value="2">Pimpinan</option>'+
-                '<option value="3">Unit</option>'
-            )
-        } else {
-            $("#jabatanUser").empty().attr('disabled', true)
-            $("#roleUser").empty().attr('disabled', true)
-            $("#unitUser").empty().attr('disabled', true)
-        }
-    })
+        //iterasi jabatan, role, unit ketika tambah user
+        $("#jenis_user").change(function(){
+            if ($("#jenis_user").val()=='0'){
+                socket.emit('mintaJabatan', function(result){
+                    $("#jabatanUser").attr('disabled', false).empty().append(`<option value=""></option>`)
+                    for (let i=0;i<result.length;i++){
+                        $("#jabatanUser").append(`<option value="${result[i].kodeJabatan}">${result[i].namaJabatan}</option>`)
+                    }
+                })
+            } else {
+                $("#jabatanUser").empty().attr('disabled', true)
+                $("#roleUser").empty().attr('disabled', true)
+                $("#unitUser").empty().attr('disabled', true)
+            }
+        })
 
-    $("#jabatanUser").change(function(){
-        if ($("#jabatanUser").val()=='1'){
-            $("#roleUser").empty().attr('disabled', false).append(
-                '<option></option>'+
-                '<option value="11">Verifikator</option>'+
-                '<option value="12">PPK</option>'+
-                '<option value="13">PPSPM</option>'+
-                '<option value="14">Reviewer</option>'+
-                '<option value="15">Bendahara</option>'+
-                '<option value="16">Operator Bank</option>'
-            )
+        $("#jabatanUser").change(function(){
+            if ($("#jabatanUser").val()){
+                socket.emit('mintaRoleKhusus', $("#jabatanUser").val(), function(result){
+                    $("#roleUser").empty().attr('disabled', false).append(`<option value=""></option>`)
+                    for (let i=0;i<result.length;i++){
+                        $("#roleUser").append(`<option value="${result[i].kodeRole}">${result[i].namaRole}</option>`)
+                    }
+                })
+            } else {
+                $("#roleUser").empty().attr('disabled', true)
+            }
+            
             $("#unitUser").empty().attr('disabled', true)
-        } else if ($("#jabatanUser").val()=='2'){
-            $("#roleUser").empty().attr('disabled', false).append(
-                '<option value="21" selected>Direktur</option>'+
-                '<option value="22">Wakil Direktur</option>'
-            )
-            $("#unitUser").empty().attr('disabled', true)
-        } else if ($("#jabatanUser").val()=='3'){
-            $("#roleUser").empty().attr('disabled', false).append(
-                '<option></option>'+
-                '<option value="31">Pimpinan Unit</option>'+
-                '<option value="32">Operator Unit</option>'
-            )
-            $("#unitUser").empty().attr('disabled', true)
-        } else {
-            $("#roleUser").empty().attr('disabled', true)
-            $("#unitUser").empty().attr('disabled', true)
-        }
-    })
+        })
 
-    $("#roleUser").change(function(){
-        let r = $("#roleUser").val()
-        if (r=='11'||r=='12'||r=='13'||r=='14'||r=='15'||r=='16') {
-            $("#unitUser").empty().attr('disabled', false).append(
-                '<option value="BAU" selected>BAU</option>'
-            )
-        } else if (r=='21'||r=='22') {
-            $("#unitUser").empty().attr('disabled', true)
-        } else if (r=='31'||r=='32') {
-            socket.emit('mintaUnit', function(result){
-                $("#unitUser").empty().append(`<option value=""></option>`)
-                for (let i=0;i<result.length;i++){
-                    $("#unitUser").attr('disabled', false).append(`<option value="${result[i].namaUnit}">${result[i].namaUnit}</option>`)
+        $("#roleUser").change(function(){
+            let r = $("#roleUser").val()
+            if (r=='11'||r=='12'||r=='13'||r=='14'||r=='15'||r=='16'||r=='21'||r=='22') {
+                $("#unitUser").empty().attr('disabled', true)
+            } else if (r) {
+                socket.emit('mintaUnit', function(result){
+                    $("#unitUser").empty().attr('disabled', false).append(`<option value=""></option>`)
+                    for (let i=0;i<result.length;i++){
+                        $("#unitUser").append(`<option value="${result[i].namaUnit}">${result[i].namaUnit}</option>`)
+                    }
+                })
+            } else {
+                socket.emit('mintaUnit', function(result){
+                    $("#unitUser").empty().attr('disabled', true).append(`<option value=""></option>`)
+                    for (let i=0;i<result.length;i++){
+                        $("#unitUser").append(`<option value="${result[i].namaUnit}">${result[i].namaUnit}</option>`)
+                    }
+                })
+            }
+        })
+
+        //hapus button untuk daftar fix (berkaitan dengan controller)
+        $("#tabelDaftarJabatan tr").each(function(){
+            let kode = $(this).find('td:eq(0)').text()
+            if (kode==1 || kode==2 || kode==3) {
+                $(this).find('td:eq(2)').text('')
+            }
+        })
+        $("#tabelDaftarRole tr").each(function(){
+            let kode = $(this).find('td:eq(1)').text()
+            if (kode==11 || kode==12 || kode==13 || kode==14 || kode==15 || kode==16 || kode==21 || kode==31) {
+                $(this).find('td:eq(3)').text('')
+            }
+        })
+        $("#tabelDaftarUnit tr").each(function(){
+            let kode = $(this).find('td:eq(0)').text().replace(/\s/g, '')
+            if (kode=='BAU') {
+                $(this).find('td:eq(1)').text('')
+            }
+        })
+
+        //JABATAN
+        $('#tambahJabatan').click(function (e) {
+            e.preventDefault()
+
+            //validasi
+            if (!$('#kodeJabatan').val()){
+                generalAlert('Kode jabatan tidak boleh kosong')
+                $('#kodeJabatan').focus()
+            } else if (!$('#namaJabatan').val()){
+                generalAlert('Nama jabatan tidak boleh kosong')
+                $('#namaJabatan').focus()
+            } else {
+                let sama = false
+                socket.emit('mintaJabatan', function(response){
+                    for (let i=0; i<response.length; i++){
+                        if (response[i].kodeJabatan == $('#kodeJabatan').val() || response[i].namaJabatan == $('#namaJabatan').val()){
+                            generalAlert('Kode atau nama jabatan tidak boleh sama')
+                            sama = true
+                        }
+                    }
+                    if (!sama){
+                        $.ajax({
+                            url: '/admin/tambahJabatan', 
+                            type: 'POST',
+                            data: $("#formTambahJabatan").serialize(),
+                            error: function(){
+                                generalAlert("Gagal menambahkan, jaringan bermasalah")
+                            },
+                            success: function(){
+                                generalAlert("Berhasil menambahkan")
+                                $("#tabelDaftarJabatan tbody").append(
+                                    '<tr>'
+                                    +   '<td class="col-2" style="text-align: center;">'
+                                    +       $('#kodeJabatan').val()
+                                    +   '</td>'
+                                    +   '<td class="col-6">'
+                                    +       $('#namaJabatan').val()
+                                    +   '</td>'
+                                    +   '<td>'
+                                    +       '<button type="submit" class="btn btn-danger form-control" id="hapusJabatan"><i class="icon-minus"></i></button>'
+                                    +   '</td>'
+                                    +'</tr>'
+                                )
+                                $("#kodeJabatanRole").append(`<option value="${$('#kodeJabatan').val()}">${$('#namaJabatan').val()}</option>`)
+                                $('#kodeJabatan').val('')
+                                $('#namaJabatan').val('')
+                            }
+                        })
+                    }
+                })
+            }
+        })
+        $('table #hapusJabatan').click(function (){
+            var idun = $(this).closest('tr').attr('id')
+            var namaun = $(this).closest('tr').find('td:eq(1)').text()
+            var target_delete = $(this).closest('tr')
+            target_delete.hide()
+            state_undo = false
+            $.toast({
+                text: 'Jabatan '+namaun+' akan dihapus dalam 5 detik | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm"></i> Batal</a>',
+                hideAfter: 5000,
+                loader: false,
+                stack: false,
+                position: 'bottom-right',
+                allowToastClose: false,
+                afterHidden: function () {
+                    if(!state_undo){
+                        $.ajax({
+                            url: '/admin/hapusJabatan/'+idun,
+                            type: 'DELETE',
+                            success: function(data) {
+                                generalAlert(data)
+                                target_delete.remove()
+                                target_delete = null
+                                socket.emit('mintaJabatan', function(response){
+                                    $("#kodeJabatanRole").empty()
+                                    for (let i=0; i<response.length; i++){
+                                        $("#kodeJabatanRole").append(`<option value="${response[i].kodeJabatan}">${response[i].namaJabatan}</option>`)
+                                    }
+                                })
+                            },
+                            error: function (jXHR, textStatus, errorThrown) {
+                                generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+                            }
+                        })
+                    }
                 }
             })
-        } else {
-            $("#unitUser").empty().attr('disabled', true)
-        }
-    })
+            $('#undo_delete').click(function(){
+                state_undo = true;
+                target_delete.show();
+                target_delete = null;
+                $.toast().reset('all')
+            })
+        })
+
+        //ROLE
+        $('#tambahRole').click(function (e) {
+            e.preventDefault()
+            console.log($('#formTambahRole').serialize())
+
+            //validasi
+            if (!$('#kodeRole').val()){
+                generalAlert('Kode role tidak boleh kosong')
+                $('#kodeRole').focus()
+            } else if (!$('#namaRole').val()){
+                generalAlert('Nama role tidak boleh kosong')
+                $('#namaRole').focus()
+            } else {
+                let sama = false
+                socket.emit('mintaRole', function(response){
+                    for (let i=0; i<response.length; i++){
+                        if (response[i].kodeRole == $('#kodeRole').val() || response[i].namaRole == $('#namaRole').val()){
+                            generalAlert('Kode atau nama role tidak boleh sama')
+                            sama = true
+                        }
+                    }
+                    if (!sama){
+                        $.ajax({
+                            url: '/admin/tambahRole', 
+                            type: 'POST',
+                            data: $('#formTambahRole').serialize(),
+                            error: function(){
+                                generalAlert("Gagal menambahkan, jaringan bermasalah")
+                            },
+                            success: function(){
+                                generalAlert("Berhasil menambahkan")
+                                $("#tabelDaftarRole tbody").append(
+                                    '<tr>'
+                                    +   '<td class="col-2" style="text-align: center;">'
+                                    +       $('#kodeJabatanRole').val()
+                                    +   '</td>'
+                                    +   '<td class="col-2" style="text-align: center;">'
+                                    +       $('#kodeRole').val()
+                                    +   '</td>'
+                                    +   '<td class="col-6">'
+                                    +       $('#namaRole').val()
+                                    +   '</td>'
+                                    +   '<td>'
+                                    +       '<button type="submit" class="btn btn-danger form-control" id="hapusRole"><i class="icon-minus"></i></button>'
+                                    +   '</td>'
+                                    +'</tr>'
+                                )
+                                $('#kodeRole').val('')
+                                $('#namaRole').val('')
+                            }
+                        });
+                    }
+                })
+            }
+        })
+        $('table #hapusRole').click(function (){
+            var idun = $(this).closest('tr').attr('id')
+            var namaun = $(this).closest('tr').find('td:eq(2)').text()
+            var target_delete = $(this).closest('tr')
+            target_delete.hide()
+            state_undo = false
+            $.toast({
+                text: 'Role '+namaun+' akan dihapus dalam 5 detik | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm"></i> Batal</a>',
+                hideAfter: 5000,
+                loader: false,
+                stack: false,
+                position: 'bottom-right',
+                allowToastClose: false,
+                afterHidden: function () {
+                    if(!state_undo){
+                        $.ajax({
+                            url: '/admin/hapusRole/'+idun,
+                            type: 'DELETE',
+                            success: function(data) {
+                                generalAlert(data);
+                                target_delete.remove()
+                                target_delete = null;
+                            },
+                            error: function (jXHR, textStatus, errorThrown) {
+                                generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+                            }
+                        });
+                    }
+                }
+            })
+            $('#undo_delete').click(function(){
+                state_undo = true;
+                target_delete.show();
+                target_delete = null;
+                $.toast().reset('all')
+            })
+        })
+
+        //UNIT
+        $('#tambahUnit').click(function (e) {
+            e.preventDefault()
+            let form = $(this).closest('form').serialize()
+
+            //validasi
+            if (!$('#namaUnit').val()){
+                generalAlert('Nama unit tidak boleh kosong')
+            } else {
+                $.ajax({
+                    url: '/admin/tambahUnit', 
+                    type: 'POST',
+                    data: $(this).closest("form").serialize(),
+                    error: function(){
+                        generalAlert("Gagal menambahkan, jaringan bermasalah")
+                    },
+                    success: function(){
+                        generalAlert("Berhasil menambahkan")
+                        $("#tabelDaftarUnit tbody").append(
+                            '<tr>'
+                            +   '<td class="col-8">'
+                            +       $('#namaUnit').val()
+                            +   '</td>'
+                            +   '<td>'
+                            +       '<button type="submit" class="btn btn-danger form-control" id="hapusUnit"><i class="icon-minus"></i></button>'
+                            +   '</td>'
+                            +'</tr>'
+                        )
+                        $('#namaUnit').val('')
+                    }
+                });
+            }
+        })
+        $('table #hapusUnit').click(function (){
+            var idun = $(this).closest('tr').attr('id')
+            var namaun = $(this).closest('tr').find('td:eq(0)').text()
+            var target_delete = $(this).closest('tr')
+            target_delete.hide()
+            state_undo = false
+            $.toast({
+                text: 'Unit '+namaun+' akan dihapus dalam 5 detik | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm"></i> Batal</a>',
+                hideAfter: 5000,
+                loader: false,
+                stack: false,
+                position: 'bottom-right',
+                allowToastClose: false,
+                afterHidden: function () {
+                    if(!state_undo){
+                        $.ajax({
+                            url: '/admin/hapusUnit/'+idun,
+                            type: 'DELETE',
+                            success: function(data) {
+                                generalAlert(data);
+                                target_delete.remove()
+                                target_delete = null;
+                            },
+                            error: function (jXHR, textStatus, errorThrown) {
+                                generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
+                            }
+                        });
+                    }
+                }
+            })
+            $('#undo_delete').click(function(){
+                state_undo = true;
+                target_delete.show();
+                target_delete = null;
+                $.toast().reset('all')
+            })
+        })
+    })//doc ready
 
     //tambah user
     $('#tambah_user').on('submit', function(e) {
@@ -450,7 +786,7 @@
                 $("#roleUser").focus()
                 return false;
             }
-            if ($("#jabatanUser").val()!='2'){
+            if ($("#jabatanUser").val()=='3' || $("#jabatanUser").val()=='4'){
                 if (!$("#unitUser").val()){
                     generalAlert('User harus memiliki unit');
                     $("#jabatanUser").focus()
@@ -488,8 +824,8 @@
                         $('#editor_table > tbody:last-child').append(
                             '<tr>'+
                                 '<td class="username">'+$('#username').val()+'</td>'+
-                                '<td></td>'+
-                                '<td></td>'+
+                                `<td>${$('#jabatanUser').val()}</td>`+
+                                `<td>${$('#roleUser').val()}</td>`+
                                 '<td></td>'+
                                 '<td></td>'+
                                 '<td id="'+data+'" class="text-center"><button type="button" class="edit" data-toggle="modal" data-target="#editModal"><i class="icon-pencil"></i></button> <button type="button" class="del"><i class="icon-user-unfollow"></i></button> <button type="button" class="track"><i class="fa fa-history fa-lg"></i></button></td>'+
@@ -578,7 +914,7 @@
         target_delete = $(this).closest('tr');
         target_delete.hide();
         $.toast({
-            text: 'Terhapus | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
+            text: 'User akan dihapus beberapa saat lagi | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm mt-2"></i> Batal</a>',
             textAlign: 'right', 
             hideAfter: 4000,
             loader: false,
@@ -744,7 +1080,7 @@
         }
     })
 
-    //tooltip utk pass edit
+    //tooltip utk pass  dan email edit
     $('#password_edit').tooltip({
         placement: "right"
     });
@@ -752,91 +1088,6 @@
         placement: "right"
     });
 
-    //UNIT
-    $('#tambahUnit').click(function (e) {
-        e.preventDefault()
-        let cekKode = false
-        let form = $(this).closest('form').serialize()
-
-        //cek kesamaan kode unit
-        //$("#tabelDaftarUnit tbody tr").each(function(index){
-        //    $(this).find("td:eq(1)").each(function(){
-        //        if ($.trim($(this).text())==$('#kodeUnit').val()){
-        //            cekKode = true
-        //        }
-        //    })
-        //})
-
-        //validasi
-        if (!$.isNumeric($('#kodeUnit').val())){
-            generalAlert("Kode harus angka")
-        } else if (!$('#namaUnit').val()){
-            generalAlert('Nama unit tidak boleh kosong')
-        } else {
-            $.ajax({
-                url: '/admin/tambahUnit', 
-                type: 'POST',
-                data: $(this).closest("form").serialize(),
-                error: function(){
-                    generalAlert("Gagal menambahkan, jaringan bermasalah")
-                },
-                success: function(){
-                    generalAlert("Berhasil menambahkan")
-                    $("#tabelDaftarUnit tbody").append(
-                        '<tr>'
-                        +   '<td>'
-                        +       '<button type="submit" class="btn btn-danger"><i class="icon-minus"></i></button>'
-                        +   '</td>'
-                        +   '<td>'
-                        +       $('#kodeUnit').val()
-                        +   '</td>'
-                        +   '<td>'
-                        +       $('#namaUnit').val()
-                        +   '</td>'
-                        +'</tr>'
-                    )
-                }
-            });
-        }
-    })
-
-    $('table #hapusUnit').click(function (){
-        var idun = $(this).closest('tr').attr('id')
-        var namaun = $(this).closest('tr').find('td:eq(2)').text()
-        var target_delete = $(this).closest('tr')
-        target_delete.hide()
-        state_undo = false
-        $.toast({
-            text: 'Unit '+namaun+' akan dihapus dalam 5 detik | <a id="undo_delete" href="#"><i class="fa fa-undo fa-sm"></i> Batal</a>',
-            hideAfter: 5000,
-            loader: false,
-            stack: false,
-            position: 'bottom-right',
-            allowToastClose: false,
-            afterHidden: function () {
-                if(!state_undo){
-                    $.ajax({
-                        url: '/admin/hapusUnit/'+idun,
-                        type: 'DELETE',
-                        success: function(data) {
-                            generalAlert(data);
-                            target_delete.remove()
-                            target_delete = null;
-                        },
-                        error: function (jXHR, textStatus, errorThrown) {
-                            generalAlert('Jaringan dalam gangguan. Harap hubungi admin.');
-                        }
-                    });
-                }
-            }
-        })
-        $('#undo_delete').click(function(){
-            state_undo = true;
-            target_delete.show();
-            target_delete = null;
-            $.toast().reset('all')
-        })
-    })
     function generalAlert(message){
         $.toast({
             text: message,

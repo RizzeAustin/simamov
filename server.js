@@ -85,8 +85,8 @@ var handlebars = require('express-handlebars').create({
                 return opts.inverse(this);
             }
         },
-        if_neq: function(a, opts) {
-            if (!(a == 'tanpa sub komponen' || a == 'tanpa sub output')) {
+        if_neq: function(a, b, opts) {
+            if (a != b) {
                 return opts.fn(this);
             } else {
                 return opts.inverse(this);

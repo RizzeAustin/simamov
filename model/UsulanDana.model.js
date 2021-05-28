@@ -8,6 +8,7 @@ var UsulanSchema = new Schema({
         type: Boolean,
         default: true
     },
+    'nomorUsulan': String,
     'jenis': String,
     'eselon': {
         'i': {
@@ -58,8 +59,11 @@ var UsulanSchema = new Schema({
     'materi': String,
     'catatanUnit': String,
     'catatanPpk': String,
-    'status': String, //Belum disetujui PPK, Disetujui PPK, Ditolak, Proses permintaan dana
+    'status': String, //Belum disetujui PPK, Disetujui PPK, Ditolak, Proses permintaan dana, Permintaan dana selesai
     'unit': String,
+    'jabatan': String,
+    'userEmail': String,
+    'tanggalMasuk': Date,
     'timestamp': Number,
 }, { collection: 'usulan', strict: false })
 

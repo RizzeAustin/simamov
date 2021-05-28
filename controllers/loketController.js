@@ -338,21 +338,53 @@ loket.socket = function(io, connections, client) {
         Usulan.update({ _id: id }, { status: 'Disetujui PPK', timestamp: new Date().getTime() }, function(err, data) {
             if (err) {
                 response('gagal')
-                return
+                return false
             }
             response('berhasil')
+            Usulan.findById(id).lean().exec((err, data) => {
+                if (err) {
+                    console.log(err)
+                    throw new Error(err)
+                }
+                var mailOptions = {
+                    from: process.env.MAIL_NAME,
+                    to: data.userEmail,
+                    subject: 'Konfirmasi Usulan',
+                    html: tempUsulanUnit(data.nomorUsulan, formatTanggal(data.tanggalmasuk), 'dikonfirmasi'),
+                }
+                transporter.sendMail(mailOptions, (err, info) => {
+                    if (err) throw new Error(err)
+                    console.log('(Konfirm usulan ke unit) Email sent: ' + info.response)
+                })
+            })
             User.update({ _id: client.handshake.session.user_id }, { $push: { 'act': { label: 'Konfirmasi Usulan ' + id, timestamp: new Date().getTime() } } },
                 function(err, status) {}
             )
         })
     })
-    client.on('tolakUsulan', function(id, response) {
-        Usulan.update({ _id: id }, { status: 'Ditolak', timestamp: new Date().getTime() }, function(err, data) {
+    client.on('tolakUsulan', function(id, catatanPpk, response) {
+        Usulan.update({ _id: id }, { status: 'Ditolak', catatanPpk: catatanPpk, timestamp: new Date().getTime() }, function(err, data) {
             if (err) {
                 response('gagal')
-                return
+                return false
             }
             response('berhasil')
+            Usulan.findById(id).lean().exec((err, data) => {
+                if (err) {
+                    console.log(err)
+                    throw new Error(err)
+                }
+                var mailOptions = {
+                    from: process.env.MAIL_NAME,
+                    to: data.userEmail,
+                    subject: 'Konfirmasi Usulan',
+                    html: tempUsulanUnit(data.nomorUsulan, formatTanggal(data.tanggalmasuk), 'ditolak'),
+                }
+                transporter.sendMail(mailOptions, (err, info) => {
+                    if (err) throw new Error(err)
+                    console.log('(Konfirm usulan ke unit) Email sent: ' + info.response)
+                })
+            })
             User.update({ _id: client.handshake.session.user_id }, { $push: { 'act': { label: 'Konfirmasi Usulan ' + id, timestamp: new Date().getTime() } } },
                 function(err, status) {}
             )
@@ -371,12 +403,12 @@ loket.get('/dashboard', async function(req, res) {
     // console.log(req.session.userEmail)
 
     req.session.tiketId = ''
-    if (req.session.userJabatan == '3' && req.session.userRole == '31' && req.session.userUnit == 'BAU') {
+    if (req.session.jenis == '1' || req.session.userJabatan == '1' || req.session.userJabatan == '2' || (req.session.userRole == '31' && req.session.userUnit == 'BAU')) {
         try {
-            let daftarPengajuan = await Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: req.session.tahun_anggaran, active: true }).lean().sort('tanggal.pengajuan')
-            let daftarSelesai = await Loket.find({ status: 'Selesai', thang: req.session.tahun_anggaran, active: true }).lean().sort('tanggal.selesai')
-            let daftarUnit = await Unit.find({ active: true }).lean()
+            let daftarPengajuan = await Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: req.session.tahun_anggaran, active: true }).lean().sort({ 'tanggal.pengajuan': -1 })
+            let daftarSelesai = await Loket.find({ status: 'Selesai', thang: req.session.tahun_anggaran, active: true }).lean().sort({ 'tanggal.selesai': -1 })
             let daftarUsulan = await Usulan.find({ active: true, thang: req.session.tahun_anggaran }).lean().sort({ timestamp: -1 })
+            let daftarUnit = await Unit.find({ active: true }).lean()
                 // let listThang = await Loket.find({ status: 'Selesai', active: true }).sort('thang').distinct('thang')
             await res.render('loket/loket_dashboard', {
                 layout: false,
@@ -395,11 +427,11 @@ loket.get('/dashboard', async function(req, res) {
             console.log(err)
             res.status(500)
         }
-    } else if (req.session.userJabatan == '3' && (req.session.userRole == '31' || req.session.userRole == '32')) {
+    } else if (req.session.userJabatan == '3') {
         try {
             let daftarPengajuan = await Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, "unit.nama": { $regex: `${req.session.userUnit}`, $options: 'i' }, thang: req.session.tahun_anggaran, active: true }).lean().sort('tanggal.pengajuan')
             let daftarSelesai = await Loket.find({ status: 'Selesai', "unit.nama": { $regex: `${req.session.userUnit}`, $options: 'i' }, thang: req.session.tahun_anggaran, active: true }).lean().sort('tanggal.selesai')
-            let daftarUsulan = await Usulan.find({ active: true, thang: req.session.tahun_anggaran, unit: req.session.userUnit }).lean().sort({ timestamp: -1 })
+            let daftarUsulan = await Usulan.find({ unit: req.session.userUnit, thang: req.session.tahun_anggaran, active: true }).lean().sort({ timestamp: -1 })
             await res.render('loket/loket_dashboard', {
                 layout: false,
                 admin: req.session.jenis,
@@ -417,10 +449,9 @@ loket.get('/dashboard', async function(req, res) {
         }
     } else {
         try {
-            let daftarPengajuan = await Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, thang: req.session.tahun_anggaran, active: true }).lean().sort('tanggal.pengajuan')
-            let daftarSelesai = await Loket.find({ status: 'Selesai', thang: req.session.tahun_anggaran, active: true }).lean().sort('tanggal.selesai')
-            let daftarUnit = await Unit.find({ active: true }).lean()
-            let daftarUsulan = await Usulan.find({ active: true, thang: req.session.tahun_anggaran }).lean().sort({ timestamp: -1 })
+            let daftarPengajuan = await Loket.find({ status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }, "unit.nama": { $regex: `${req.session.userUnit}`, $options: 'i' }, jabatan: req.session.userJabatan, thang: req.session.tahun_anggaran, active: true }).lean().sort('tanggal.pengajuan')
+            let daftarSelesai = await Loket.find({ status: 'Selesai', "unit.nama": { $regex: `${req.session.userUnit}`, $options: 'i' }, jabatan: req.session.userJabatan, thang: req.session.tahun_anggaran, active: true }).lean().sort('tanggal.selesai')
+            let daftarUsulan = await Usulan.find({ unit: req.session.userUnit, jabatan: req.session.userJabatan, thang: req.session.tahun_anggaran, active: true }).lean().sort({ timestamp: -1 })
             await res.render('loket/loket_dashboard', {
                 layout: false,
                 admin: req.session.jenis,
@@ -429,7 +460,6 @@ loket.get('/dashboard', async function(req, res) {
                 unit: req.session.userUnit,
                 daftarPengajuan: daftarPengajuan,
                 daftarSelesai: daftarSelesai,
-                daftarUnit: daftarUnit,
                 tahunAktif: req.session.tahun_anggaran,
                 usulan: daftarUsulan,
             })
@@ -446,7 +476,7 @@ loket.get('/pengusulan', function(req, res) {
     //     res.status(404).send()
     // } else {
     // }
-    if (req.session.tiketId && req.session.userRole == 12) {
+    if (req.session.tiketId && (req.session.userRole == 12 || req.session.jenis == 1)) {
         Usulan.findById(req.session.tiketId).lean().exec(async(err, usulanData) => {
             if (err) {
                 console.log(err)
@@ -500,7 +530,7 @@ loket.post('/pengusulan', function(req, res) {
     if (req.session.userRole == 12 || req.session.jenis == 1) {
         req.session.tiketId = req.body.idUsulan
         res.redirect('/#loket/pengusulan')
-    } else if (req.session.userRole != 11) {
+    } else {
         res.redirect('/#loket/dashboard')
     }
 })
@@ -551,10 +581,10 @@ loket.get('/user', function(req, res) {
 })
 
 loket.post('/user', function(req, res) {
-    if (req.session.userRole == 31 || req.session.userRole == 32 || req.session.jenis == 1) {
+    if (req.session.userJabatan != 1 || req.session.userJabatan != 2 || req.session.jenis == 1) {
         req.session.tiketId = req.body.idUsulan
         res.redirect('/#loket/user')
-    } else if (req.session.userRole != 11) {
+    } else {
         res.redirect('/#loket/dashboard')
     }
 })
@@ -605,7 +635,7 @@ loket.post('/verifikator', function(req, res) {
     if (req.session.userRole == 11 || req.session.jenis == 1) {
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/verifikator')
-    } else if (req.session.userRole != 11) {
+    } else {
         res.redirect('/#loket/dashboard')
     }
 })
@@ -656,7 +686,7 @@ loket.post('/ppk', function(req, res) {
     if (req.session.userRole == 12 || req.session.jenis == 1) {
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/ppk')
-    } else if (req.session.userRole != 12) {
+    } else {
         res.redirect('/#loket/dashboard')
     }
 })
@@ -707,7 +737,7 @@ loket.post('/ppspm', function(req, res) {
     if (req.session.userRole == 13 || req.session.jenis == 1) {
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/ppspm')
-    } else if (req.session.userRole != 13) {
+    } else {
         res.redirect('/#loket/dashboard')
     }
 })
@@ -758,7 +788,7 @@ loket.post('/reviewer', function(req, res) {
     if (req.session.userRole == 14 || req.session.jenis == 1) {
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/reviewer')
-    } else if (req.session.userRole != 14) {
+    } else {
         res.redirect('/#loket/dashboard')
     }
 })
@@ -811,7 +841,7 @@ loket.post('/bendahara', function(req, res) {
     if (req.session.userRole == 15 || req.session.jenis == 1) {
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/bendahara')
-    } else if (req.session.userRole != 15) {
+    } else {
         res.redirect('/#loket/dashboard')
     }
 })
@@ -841,7 +871,7 @@ loket.post('/bank', function(req, res) {
     if (req.session.userRole == 16 || req.session.jenis == 1) {
         req.session.tiketId = req.body.tiketId
         res.redirect('/#loket/bank')
-    } else if (req.session.userRole != 16) {
+    } else {
         res.redirect('/#loket/dashboard')
     }
 })
@@ -889,40 +919,36 @@ loket.post('/usulanKirim', function(req, res) {
                 callback(null, pro.uraian)
             })
         },
+        function(callback) {
+            Usulan.countDocuments({ thang: new Date().getFullYear(), active: true }, function(err, count) {
+                var tahun = new Date().getFullYear()
+                var bulan = new Date().getMonth()
+                bulan++
+                if (bulan < 10) {
+                    bulan = '0' + bulan
+                }
+                if (err) {
+                    console.log(err)
+                    return
+                }
+                var noUrut = 1 + count
+                if (noUrut < 10) {
+                    noUrut = '000' + noUrut
+                } else if (noUrut < 100) {
+                    noUrut = '00' + noUrut
+                } else if (noUrut < 1000) {
+                    noUrut = '0' + noUrut
+                }
+                callback(null, `${tahun}${bulan}${noUrut}`)
+            })
+        },
     ], function(err, result) {
         if (err) {
             console.log(err)
-            res.status(500)
+            return false
         }
         if (req.body.tiketId) {
-            // Usulan.findById(req.body.tiketId).lean().exec((err, data) => {
-            //     if (err) {
-            //         console.log(err)
-            //         res.status(500)
-            //     }
-
-            //     data.pok.kdprogram = req.body.loketProgram
-            //     data.pok.uraianProgram = result[0]
-            //     data.pok.kdaktivitas = req.body.loketKegiatan
-            //     data.pok.uraianAktivitas = result[1]
-            //     data.pok.kdkro = req.body.loketOutput
-            //     data.pok.uraianKro = result[2]
-            //     data.pok.kdkomponen = req.body.loketKomponen
-            //     data.pok.uraianKomponen = result[3]
-            //     data.pok.kdsubkomponen = req.body.loketsKomponen || ''
-            //     data.pok.uraianSubKomponen = result[4]
-            //     data.pok.kdakun = req.body.loketAkun
-            //     data.pok.uraianAkun = result[5]
-            //     data.pok.uraianDetil = req.body.loketDetailPok
-
-            //     data.pok.status = "Disetujui PPK"
-            //     data.timestamp = new Date().getTime()
-            //     console.log(data)
-
-            //     data.save()
-
-            // })
-            Usulan.update({ _id: req.body.tiketId }, {
+            Usulan.update({ _id: req.session.tiketId }, {
                 pok: {
                     kdprogram: req.body.loketProgram,
                     uraianProgram: result[0],
@@ -955,13 +981,36 @@ loket.post('/usulanKirim', function(req, res) {
                 nilaiBruto: req.body.loketNilai,
                 status: "Disetujui PPK",
                 timestamp: new Date().getTime(),
-            }, function(err, status) {})
-            userAct(req, 'Mengubah dan konfirmasi POK Usulan ' + req.body.tiketId)
+            }, function(err, status) {
+                if (err) {
+                    console.log(err)
+                    throw new Error(err)
+                }
+                Usulan.findById(req.session.tiketId).lean().exec((err, data) => {
+                    if (err) {
+                        console.log(err)
+                        throw new Error(err)
+                    }
+                    var mailOptions = {
+                        from: process.env.MAIL_NAME,
+                        to: data.userEmail,
+                        subject: 'Konfirmasi Usulan',
+                        html: tempUsulanUnit(data.nomorUsulan, formatTanggal(data.tanggalmasuk), 'dikonfirmasi'),
+                    }
+                    transporter.sendMail(mailOptions, (err, info) => {
+                        if (err) throw new Error(err)
+                        console.log('(Konfirm usulan ke unit) Email sent: ' + info.response)
+                    })
+                })
+            })
+            userAct(req, 'Mengubah dan konfirmasi POK Usulan ' + req.session.tiketId)
             res.redirect('/#loket/dashboard')
         } else {
             const us = new Usulan({
                 thang: new Date().getFullYear(),
                 timestamp: new Date().getTime(),
+                nomorUsulan: `${result[7]}`,
+                jenis: req.body.jenisPermintaan,
                 penyelenggara: req.body.penyelenggara,
                 bagian: req.body.bagian,
                 pok: {
@@ -999,51 +1048,10 @@ loket.post('/usulanKirim', function(req, res) {
                 catatanUnit: req.body.loketCatatanUnit,
                 status: "Belum disetujui PPK",
                 unit: req.session.userUnit,
+                jabatan: req.session.userJabatan,
+                userEmail: req.session.userEmail,
+                tanggalmasuk: new Date(),
             })
-            switch (req.body.jenisPermintaan) {
-                case 'Bahan':
-                    us.jenis = 'Belanja Bahan Percetakan/Penggandaan/Perlengkapan'
-                    break
-                case 'Persediaan':
-                    us.jenis = 'Belanja Barang Persediaan ATK/ARK/Bahan Komputer'
-                    break
-                case 'Pemeliharaan':
-                    us.jenis = 'Belanja Pemeliharaan'
-                    break
-                case 'Modal':
-                    us.jenis = 'Belanja Modal'
-                    break
-                case 'Sewa':
-                    us.jenis = 'Belanja Sewa'
-                    break
-                case 'Jasa Konsultan':
-                    us.jenis = 'Belanja Jasa Konsultan'
-                    break
-                case 'Jasa Profesi':
-                    us.jenis = 'Belanja Jasa Profesi'
-                    break
-                case 'Honor':
-                    us.jenis = 'Honor yang Terkait dengan Output Kegiatan'
-                    break
-                case 'JLN':
-                    us.jenis = 'Belanja Perjalanan Dinas Biasa/Dalam Kota'
-                    break
-                case 'Fullday-Halfday':
-                    us.jenis = 'Paket Pertemuan Fullday/Halfday'
-                    break
-                case 'Fullboard Dalam Kota':
-                    us.jenis = 'Paket Meeting/Fullboard Dalam Kota'
-                    break
-                case 'Fullboard Luar Kota':
-                    us.jenis = 'Paket Meeting/Fullboard Luar Kota'
-                    break
-                case 'Rapat di Luar Jam Kerja':
-                    us.jenis = 'Rapat di Dalam Kantor (Di Luar Jam Kantor Minimal 3 Jam)'
-                    break
-                case 'Rapat Biasa':
-                    us.jenis = 'Rapat di Dalam Kantor (Di Dalam Jam Kerja)'
-                    break
-            }
 
             us.save();
             userAct(req, 'Mengusulkan kegiatan ' + us._id)
@@ -1102,7 +1110,6 @@ loket.post('/unitKirim', function(req, res) {
             },
             function(callback) {
                 SubOutput.findOne({ kdprogram: fields.loketProgram, kdgiat: fields.loketKegiatan, kdoutput: fields.loketOutput, kdsoutput: fields.loketsOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.ursoutput)
                 })
             },
@@ -1113,7 +1120,6 @@ loket.post('/unitKirim', function(req, res) {
             },
             function(callback) {
                 SubKomponen.findOne({ kdprogram: fields.loketProgram, kdgiat: fields.loketKegiatan, kdoutput: fields.loketOutput, kdkmpnen: fields.loketKomponen, kdskmpnen: fields.loketsKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.urskmpnen)
                 })
             },
@@ -1130,8 +1136,9 @@ loket.post('/unitKirim', function(req, res) {
             let noTrans = `${result[0]}${fields.loketKodeUnit}${result[1]}`
             const tiket = new Loket({
                 thang: new Date().getFullYear(),
-                idUsulan: fields.tiketId,
+                idUsulan: req.session.tiketId || '',
                 nomorTransaksi: noTrans,
+                jabatan: req.session.userJabatan,
                 unit: {
                     nama: fields.loketNamaUnit,
                     kode: fields.loketKodeUnit,
@@ -1212,7 +1219,7 @@ loket.post('/unitKirim', function(req, res) {
             });
 
             tiket.save();
-            Usulan.update({ _id: fields.tiketId }, { status: 'Proses permintaan dana' }, function(err, data) {})
+            Usulan.update({ _id: fields.tiketId }, { status: 'Proses permintaan dana', timestamp: new Date().getTime() }, function(err, data) {})
             userAct(req, 'Mengajukan permintaan ' + noTrans)
             res.redirect('/#loket/dashboard')
                 // User.update({ _id: req.session.user_id }, { $push: { "act": { label: 'Mengajukan tiket ' + noTrans, timestamp: new Date().getTime() } } },
@@ -1247,7 +1254,6 @@ loket.post('/verifikasi', function(req, res) {
             },
             function(callback) {
                 SubOutput.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdsoutput: req.body.loketsOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.ursoutput)
                 })
             },
@@ -1258,7 +1264,6 @@ loket.post('/verifikasi', function(req, res) {
             },
             function(callback) {
                 SubKomponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdskmpnen: req.body.loketsKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.urskmpnen)
                 })
             },
@@ -1379,7 +1384,6 @@ loket.post('/ppkKirim', function(req, res) {
             },
             function(callback) {
                 SubOutput.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdsoutput: req.body.loketsOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.ursoutput)
                 })
             },
@@ -1390,7 +1394,6 @@ loket.post('/ppkKirim', function(req, res) {
             },
             function(callback) {
                 SubKomponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdskmpnen: req.body.loketsKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.urskmpnen)
                 })
             },
@@ -1457,7 +1460,7 @@ loket.post('/ppkKirim', function(req, res) {
 })
 
 loket.post('/ppkKirimBinagram', function(req, res) {
-    if (req.session.tiketId) {
+    if (req.session.tiketId) { //permintaan dana
         Loket.findById(req.session.tiketId, (err, data) => {
             if (err) {
                 console.log(err)
@@ -1481,7 +1484,6 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                 },
                 function(callback) {
                     SubOutput.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdsoutput: req.body.loketsOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                        console.log(pro)
                         callback(null, pro.ursoutput)
                     })
                 },
@@ -1492,7 +1494,6 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                 },
                 function(callback) {
                     SubKomponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdskmpnen: req.body.loketsKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                        console.log(pro)
                         callback(null, pro.urskmpnen)
                     })
                 },
@@ -1579,7 +1580,7 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                     // res.redirect('/#loket/dashboard')
             })
         })
-    } else {
+    } else { //usulan
         Usulan.findById(req.body.idUsulan).lean().exec((err, data) => {
             if (err) {
                 console.log(err)
@@ -1678,7 +1679,6 @@ loket.post('/ppspmKirimReviewer', function(req, res) {
             },
             function(callback) {
                 SubOutput.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdsoutput: req.body.loketsOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.ursoutput)
                 })
             },
@@ -1689,7 +1689,6 @@ loket.post('/ppspmKirimReviewer', function(req, res) {
             },
             function(callback) {
                 SubKomponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdskmpnen: req.body.loketsKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.urskmpnen)
                 })
             },
@@ -1775,7 +1774,6 @@ loket.post('/reviewerPending', function(req, res) {
             },
             function(callback) {
                 SubOutput.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdsoutput: req.body.loketsOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.ursoutput)
                 })
             },
@@ -1786,7 +1784,6 @@ loket.post('/reviewerPending', function(req, res) {
             },
             function(callback) {
                 SubKomponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdskmpnen: req.body.loketsKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.urskmpnen)
                 })
             },
@@ -1864,7 +1861,6 @@ loket.post('/reviewerProses', function(req, res) {
             },
             function(callback) {
                 SubOutput.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdsoutput: req.body.loketsOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.ursoutput)
                 })
             },
@@ -1875,7 +1871,6 @@ loket.post('/reviewerProses', function(req, res) {
             },
             function(callback) {
                 SubKomponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdskmpnen: req.body.loketsKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.urskmpnen)
                 })
             },
@@ -1955,7 +1950,6 @@ loket.post('/bendaharaKirimSpp', function(req, res) {
             },
             function(callback) {
                 SubOutput.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdsoutput: req.body.loketsOutput, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.ursoutput)
                 })
             },
@@ -1966,7 +1960,6 @@ loket.post('/bendaharaKirimSpp', function(req, res) {
             },
             function(callback) {
                 SubKomponen.findOne({ kdprogram: req.body.loketProgram, kdgiat: req.body.loketKegiatan, kdoutput: req.body.loketOutput, kdkmpnen: req.body.loketKomponen, kdskmpnen: req.body.loketsKomponen, thang: new Date().getFullYear() }).lean().exec((err, pro) => {
-                    console.log(pro)
                     callback(null, pro.urskmpnen)
                 })
             },
@@ -2184,7 +2177,7 @@ loket.post('/bankKirim', function(req, res) {
                 })
             }
 
-            Usulan.update({ _id: data.tiketId }, { status: 'Permintaan dana selesai' }, function(err, data) {})
+            Usulan.update({ _id: data.idUsulan }, { status: 'Permintaan dana selesai', timestamp: new Date().getTime() }, function(err, data) {})
             userAct(req, 'Menyelesaikan permintaan ' + data.nomorTransaksi)
             saveRedirect(req, res, data)
                 // data.save()
@@ -2369,7 +2362,7 @@ function formatUang(x) {
 
 //format email
 function tempToBinagram(k1, k2, k3, k4, k5, k6, k7, u1, u2, u3, u4, u5, u6, u7, d1, d2, d3, d4, d5, nd1, nd2, nd3, nd4, nd5, cppk, nu, np, cu) { //usulan
-    return `<table width="100%" height="100" bgcolor="#F0F7F4" align="center" cellpadding="0" cellspacing="0">` +
+    return `<table width="100%" height="100" bgcolor="#E4F1EB" align="center" cellpadding="0" cellspacing="0">` +
         `<tbody>` +
         `<tr height="40"></tr>` +
         `<tr>` +
@@ -2386,6 +2379,7 @@ function tempToBinagram(k1, k2, k3, k4, k5, k6, k7, u1, u2, u3, u4, u5, u6, u7, 
         `<tr height="40"></tr>` +
         `</tbody>` +
         `</table>` +
+        `<div style="background-color: #F0F7F4;">` +
         `<table align="center" width="70%" border="0" cellspacing="0" cellpadding="0">` +
         `<tbody>` +
         `<tr>` +
@@ -2561,11 +2555,16 @@ function tempToBinagram(k1, k2, k3, k4, k5, k6, k7, u1, u2, u3, u4, u5, u6, u7, 
         `</tr>` +
         `</tbody>` +
         `</table>` +
-        `<table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">` +
+        `<table>` +
         `<tbody>` +
         `<tr height="50"></tr>` +
+        `</tbody>` +
+        `</table>` +
+        `</div>` +
+        `<table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">` +
+        `<tbody>` +
         `<tr>` +
-        `<td align="center" bgcolor="#F0F7F4">` +
+        `<td align="center" bgcolor="#E4F1EB">` +
         `<table class="col" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">` +
         `<tbody>` +
         `<tr height="15"></tr>` +
@@ -2582,7 +2581,7 @@ function tempToBinagram(k1, k2, k3, k4, k5, k6, k7, u1, u2, u3, u4, u5, u6, u7, 
 }
 
 function tempToBinagram2(k1, k2, k3, k4, k5, k6, k7, u1, u2, u3, u4, u5, u6, u7, d1, d2, d3, d4, d5, nd1, nd2, nd3, nd4, nd5, cppk, nu, np) { //pemrintaan dana
-    return `<table width="100%" height="100" bgcolor="#F0F7F4" align="center" cellpadding="0" cellspacing="0">` +
+    return `<table width="100%" height="100" bgcolor="#E4F1EB" align="center" cellpadding="0" cellspacing="0">` +
         `<tbody>` +
         `<tr height="40"></tr>` +
         `<tr>` +
@@ -2599,6 +2598,7 @@ function tempToBinagram2(k1, k2, k3, k4, k5, k6, k7, u1, u2, u3, u4, u5, u6, u7,
         `<tr height="40"></tr>` +
         `</tbody>` +
         `</table>` +
+        `<div style="background-color: #F0F7F4;">` +
         `<table align="center" width="70%" border="0" cellspacing="0" cellpadding="0">` +
         `<tbody>` +
         `<tr>` +
@@ -2774,11 +2774,72 @@ function tempToBinagram2(k1, k2, k3, k4, k5, k6, k7, u1, u2, u3, u4, u5, u6, u7,
         `</tr>` +
         `</tbody>` +
         `</table>` +
-        `<table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">` +
+        `<table>` +
         `<tbody>` +
         `<tr height="50"></tr>` +
+        `</tbody>` +
+        `</table>` +
+        `</div>` +
+        `<table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">` +
+        `<tbody>` +
         `<tr>` +
-        `<td align="center" bgcolor="#F0F7F4">` +
+        `<td align="center" bgcolor="#E4F1EB">` +
+        `<table class="col" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">` +
+        `<tbody>` +
+        `<tr height="15"></tr>` +
+        `<tr>` +
+        `<td align="left" style="font-family: 'Raleway',  sans-serif; font-size:26px; font-weight: 500; color:#3B3561; padding-left: 15px;">${new Date().getFullYear()} - SIMAMOV</td>` +
+        `</tr>` +
+        `<tr height="15"></tr>` +
+        `</tbody>` +
+        `</table>` +
+        `</td>` +
+        `</tr>` +
+        `</tbody>` +
+        `</table>`
+}
+
+function tempUsulanUnit(notrans, tanggalmasuk, keputusan) {
+    return `<table width="100%" height="100" bgcolor="#E4F1EB" align="center" cellpadding="0" cellspacing="0">` +
+        `<tbody>` +
+        `<tr height="40"></tr>` +
+        `<tr>` +
+        `<td align="center" style="font-family: 'Raleway', sans-serif; font-size:37px; color:#3B3561; line-height:44px; font-weight: bold; letter-spacing: 5px;">` +
+        `Konfirmasi Usulan` +
+        `</td>` +
+        `</tr>` +
+        `<tr height="40"></tr>` +
+        `</tbody>` +
+        `</table>` +
+        `<div style="background-color: #F0F7F4;">` +
+        `<table align="center" width="70%" border="0" cellspacing="0" cellpadding="0">` +
+        `<tbody>` +
+        `<tr>` +
+        `<td height="35"></td>` +
+        `</tr>` +
+        `<tr>` +
+        `<td align="center" style="font-family: 'Lato', sans-serif; font-size:14px; color:#757575; line-height:24px; font-weight: 300;">` +
+        `Email ini dikirimkan otomatis oleh sistem. <br> Email ini bertujuan untuk memberitahukan kepada Unit bahwa usulan kegiatan yang dilakukan pada SIMAMOV telah dikonfirmasi.` +
+        `</td>` +
+        `</tr>` +
+        `<tr height="50"></tr>` +
+        `</tbody>` +
+        `</table>` +
+        `<table align="center" width="50%" cellspacing="0" cellpadding="0">` +
+        `<tbody>` +
+        `<tr>` +
+        `<td style="font-family: 'Lato', sans-serif; font-size:14px; color:#3B3561; line-height:24px; font-weight: 300; text-align: justify;">` +
+        `Pengusulan kegiatan yang Anda lakukan pada SIMAMOV dengan nomor transaksi <strong>${notrans}</strong> pada ${tanggalmasuk} telah <strong>${keputusan}</strong> oleh PPK. Silahkan login pada SIMAMOV untuk mengeceknya.` +
+        `</td>` +
+        `</tr>` +
+        `<tr height="50"></tr>` +
+        `</tbody>` +
+        `</table>` +
+        `</div>` +
+        `<table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">` +
+        `<tbody>` +
+        `<tr>` +
+        `<td align="center" bgcolor="#E4F1EB">` +
         `<table class="col" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">` +
         `<tbody>` +
         `<tr height="15"></tr>` +
@@ -2795,7 +2856,7 @@ function tempToBinagram2(k1, k2, k3, k4, k5, k6, k7, u1, u2, u3, u4, u5, u6, u7,
 }
 
 function tempTolak(notrans, tanggal, catatan) {
-    return `<table width="100%" height="100" bgcolor="#F0F7F4" align="center" cellpadding="0" cellspacing="0">` +
+    return `<table width="100%" height="100" bgcolor="#E4F1EB" align="center" cellpadding="0" cellspacing="0">` +
         `<tbody>` +
         `<tr height="40"></tr>` +
         `<tr>` +
@@ -2806,6 +2867,7 @@ function tempTolak(notrans, tanggal, catatan) {
         `<tr height="40"></tr>` +
         `</tbody>` +
         `</table>` +
+        `<div style="background-color: #F0F7F4;">` +
         `<table align="center" width="70%" border="0" cellspacing="0" cellpadding="0">` +
         `<tbody>` +
         `<tr>` +
@@ -2823,16 +2885,17 @@ function tempTolak(notrans, tanggal, catatan) {
         `<tbody>` +
         `<tr>` +
         `<td style="font-family: 'Lato', sans-serif; font-size:14px; color:#3B3561; line-height:24px; font-weight: 300; text-align: justify;">` +
-        `Permintaan dana yang Anda lakukan pada SIMAMOV dengan nomor transaksi ${notrans} pada ${tanggal} terdapat kesalahan/dokumen tidak lengkap sehingga tidak dapat diproses. Permintaan telah dikembalikan kepada unit oleh petugas dengan catatan "${catatan}".` +
+        `Permintaan dana yang Anda lakukan pada SIMAMOV dengan nomor transaksi <strong>${notrans}</strong> pada ${tanggal} terdapat kesalahan/dokumen tidak lengkap sehingga tidak dapat diproses. Permintaan telah dikembalikan kepada unit oleh petugas dengan catatan "${catatan}".` +
         `</td>` +
         `</tr>` +
+        `<tr height="50"></tr>` +
         `</tbody>` +
         `</table>` +
+        `</div>` +
         `<table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">` +
         `<tbody>` +
-        `<tr height="50"></tr>` +
         `<tr>` +
-        `<td align="center" bgcolor="#F0F7F4">` +
+        `<td align="center" bgcolor="#E4F1EB">` +
         `<table class="col" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">` +
         `<tbody>` +
         `<tr height="15"></tr>` +
@@ -2849,7 +2912,7 @@ function tempTolak(notrans, tanggal, catatan) {
 }
 
 function tempSelesai(notrans, tanggalmasuk, tanggalselesai, nilaibayar) {
-    return `<table width="100%" height="100" bgcolor="#F0F7F4" align="center" cellpadding="0" cellspacing="0">` +
+    return `<table width="100%" height="100" bgcolor="#E4F1EB" align="center" cellpadding="0" cellspacing="0">` +
         `<tbody>` +
         `<tr height="40"></tr>` +
         `<tr>` +
@@ -2860,6 +2923,7 @@ function tempSelesai(notrans, tanggalmasuk, tanggalselesai, nilaibayar) {
         `<tr height="40"></tr>` +
         `</tbody>` +
         `</table>` +
+        `<div style="background-color: #F0F7F4;">` +
         `<table align="center" width="70%" border="0" cellspacing="0" cellpadding="0">` +
         `<tbody>` +
         `<tr>` +
@@ -2877,16 +2941,17 @@ function tempSelesai(notrans, tanggalmasuk, tanggalselesai, nilaibayar) {
         `<tbody>` +
         `<tr>` +
         `<td style="font-family: 'Lato', sans-serif; font-size:14px; color:#3B3561; line-height:24px; font-weight: 300; text-align: justify;">` +
-        `Permintaan dana yang Anda lakukan pada SIMAMOV dengan nomor transaksi ${notrans} pada ${tanggalmasuk} telah diselesaikan oleh petugas pada ${tanggalselesai} dengan nilai pembayaran sebesar Rp ${nilaibayar}` +
+        `Permintaan dana yang Anda lakukan pada SIMAMOV dengan nomor transaksi <strong>${notrans}</strong> pada ${tanggalmasuk} telah diselesaikan oleh petugas pada ${tanggalselesai} dengan nilai pembayaran sebesar <strong> Rp ${nilaibayar}</strong>` +
         `</td>` +
         `</tr>` +
+        `<tr height="50"></tr>` +
         `</tbody>` +
         `</table>` +
+        `</div>` +
         `<table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">` +
         `<tbody>` +
-        `<tr height="50"></tr>` +
         `<tr>` +
-        `<td align="center" bgcolor="#F0F7F4">` +
+        `<td align="center" bgcolor="#E4F1EB">` +
         `<table class="col" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">` +
         `<tbody>` +
         `<tr height="15"></tr>` +

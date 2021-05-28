@@ -241,16 +241,14 @@
                                         Operator Bank</a>
                                 </li>
                             {{else}}
-                                {{#if_eq jabatan '3'}}
-                                <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/pengusulan"><i class="icon-user"></i>
-                                        Pengusulan Kegiatan</a>
-                                </li>
-                                {{!-- <li class="nav-item">
-                                    <a id="loket" class="nav-link" href="loket/user"><i class="icon-user"></i>
-                                        Permintaan Dana</a>
-                                </li> --}}
-                                {{/if_eq}}
+                                {{#if_neq jabatan '1'}}
+                                    {{#if_neq jabatan '2'}}
+                                        <li class="nav-item">
+                                            <a id="loket" class="nav-link" href="loket/pengusulan"><i class="icon-user"></i>
+                                                Pengusulan Kegiatan</a>
+                                        </li>
+                                    {{/if_neq}}
+                                {{/if_neq}}
                             {{/if}}
                         </ul>
                     </li>

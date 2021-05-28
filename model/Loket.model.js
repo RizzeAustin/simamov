@@ -4,12 +4,14 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var LoketSchema = new Schema({
+    'idUsulan': String,
     'thang': Number,
     'active': {
         type: Boolean,
         default: true
     },
     'nomorTransaksi': String,
+    'jabatan': String,
     'unit': {
         'nama': String,
         'kode': String,
@@ -75,8 +77,6 @@ var LoketSchema = new Schema({
     },
     'posisi': String, //verifikator, ppk, ppspm, reviewer, bendahara, operatorBank
     'status': String, //belum selesai, selesai, dikembalikan ke unit
-    'idUsulan': String,
-
 
 }, { collection: 'loket', strict: false });
 
