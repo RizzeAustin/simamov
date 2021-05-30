@@ -2200,7 +2200,8 @@ loket.post('/downloadSpjTiket', function(req, res) {
             fs.access(file, fs.F_OK, (err) => {
                 if (err) {
                     console.log(err)
-                    throw new Error(err)
+                    res.status(404).send()
+                    return
                 }
                 res.download(file); // Set disposition and send it.
             })
@@ -2209,12 +2210,13 @@ loket.post('/downloadSpjTiket', function(req, res) {
             fs.access(file, fs.F_OK, (err) => {
                 if (err) {
                     console.log(err)
-                    throw new Error(err)
+                    res.status(404).send()
+                    return
                 }
                 res.download(file); // Set disposition and send it.
             })
         } else {
-            res.status(404);
+            res.status(404).send()
             return
         }
     })
@@ -2231,7 +2233,7 @@ loket.post('/downloadSpjTiketBank', function(req, res) {
             fs.access(file, fs.F_OK, (err) => {
                 if (err) {
                     console.log(err)
-                    res.status(404)
+                    res.status(404).send()
                     return
                 }
                 res.download(file); // Set disposition and send it.
@@ -2241,13 +2243,13 @@ loket.post('/downloadSpjTiketBank', function(req, res) {
             fs.access(file, fs.F_OK, (err) => {
                 if (err) {
                     console.log(err)
-                    res.status(404)
+                    res.status(404).send()
                     return
                 }
                 res.download(file); // Set disposition and send it.
             })
         } else {
-            res.status(404);
+            res.status(404).send()
             return
         }
         // const file = `${__dirname}/../uploaded/spj/${data.nomorTransaksi}-dokumenBank.xlsx`
