@@ -4154,7 +4154,7 @@ pok.get('/download/:type/:month', function(req, res) {
                             }
                             //hapus xlsx setelah terconvert
                             if (checkFS(input)) {
-                                fs.unlink(input);
+                                fs.unlink(input, (err)=>{});
                             }
                         })
 
@@ -4163,7 +4163,7 @@ pok.get('/download/:type/:month', function(req, res) {
                             res.on('finish', function() {
                                 //hapus pdf setelah didownload
                                 if (checkFS(output)) {
-                                    fs.unlink(output);
+                                    fs.unlink(output, (err)=>{});
                                 }
                             });
                         })
