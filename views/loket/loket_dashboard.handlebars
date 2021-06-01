@@ -1024,24 +1024,59 @@
         if ("{{admin}}" == "1" || "{{jabatan}}" == "1" || "{{jabatan}}" == "2" || ("{{role}}" == "31" && "{{unit}}" == "BAU")){
             $("#gunittitle").html(`a. Total Realisasi ${$("#grafikRealisasiUnit").val()}`)
             socket.emit('realisasiUnit', new Date().getMonth(), $('#grafikRealisasiUnit').val(), function(response){
-                chartRealisasi(response, 'unitRealisasi', 'unitTerendah');
-            });
+                chartRealisasi(response, 'unitRealisasi', 'unitTerendah')
+            })
             $("#grafikRealisasiUnit").change(function(){
                 socket.emit('realisasiUnit', new Date().getMonth(), $("#grafikRealisasiUnit").val(), function(response){
-                    chartRealisasi(response, 'unitRealisasi', 'unitTerendah');
-                });
+                    chartRealisasi(response, 'unitRealisasi', 'unitTerendah')
+                })
                 $("#gunittitle").html(`a. Total Realisasi ${$("#grafikRealisasiUnit").val()}`)
             })
         } else {
             $('#grafikRealisasiUnit').append(`<option value="${"{{unit}}"}">${"{{unit}}"}</option>`)
             socket.emit('realisasiUnit', new Date().getMonth(), "{{unit}}", function(response){
-                chartRealisasi(response, 'unitRealisasi', 'unitTerendah');
-            });
+                chartRealisasi(response, 'unitRealisasi', 'unitTerendah')
+            })
         }
         //realiasasi polstat
         socket.emit('realisasiAll', new Date().getMonth(), function(response){
-            chartRealisasi(response, 'allRealisasi', 'allTerendah');
-        });
+            chartRealisasi(response, 'allRealisasi', 'allTerendah')
+        })
+
+        var chartUpdate = setInterval(//every 10 second
+            function(){
+                //realiasasi unit
+                if ("{{admin}}" == "1" || "{{jabatan}}" == "1" || "{{jabatan}}" == "2" || ("{{role}}" == "31" && "{{unit}}" == "BAU")){
+                    socket.emit('realisasiUnit', new Date().getMonth(), $('#grafikRealisasiUnit').val(), function(response){
+                        chartRealisasi(response, 'unitRealisasi', 'unitTerendah')
+                        if (response){
+                            console.log('chart unit Updated!')
+                        }
+                    })
+                } else {
+                    socket.emit('realisasiUnit', new Date().getMonth(), "{{unit}}", function(response){
+                        chartRealisasi(response, 'unitRealisasi', 'unitTerendah')
+                        if (response){
+                            console.log('chart unit Updated!')
+                        }
+                    })
+                }
+                //realiasasi polstat
+                socket.emit('realisasiAll', new Date().getMonth(), function(response){
+                    chartRealisasi(response, 'allRealisasi', 'allTerendah')
+                    if (response){
+                        console.log('chart polstat Updated!')
+                    }
+                })
+            }
+        ,10000)
+        function clearChartUpdate() {
+            if (location.hash !== '#loket/dashboard'){
+                clearInterval(chartUpdate)
+                console.log('chart dashboard auto update disabled!')
+            }
+        }
+        window.addEventListener('hashchange', clearChartUpdate, false)
 
     });//doc ready
 

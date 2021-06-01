@@ -5125,14 +5125,24 @@
                 }
             });
 
-            setInterval(
-                function(){
-                    socket.emit('pok_summary', new Date().getMonth(), function(response){
-                        summaryUpdate(response);
-                    });
-                }
-            ,10000);
         });
+        var chartPokUpdate = setInterval(
+            function(){
+                socket.emit('pok_summary', new Date().getMonth(), function(response){
+                    summaryUpdate(response);
+                    if (response){
+                        console.log('Çhart beranda updated!')
+                    }
+                });
+            }
+        ,10000);
+        function clearChartPokUpdate() {
+            if (location.hash !== '#pok'){
+                clearInterval(chartPokUpdate)
+                console.log('chart beranda auto update disabled!')
+            }
+        }
+        window.addEventListener('hashchange', clearChartPokUpdate, false)
 
         $('#pok_entry_tab').one('click', function(e) {
             spinner.spin(target);
