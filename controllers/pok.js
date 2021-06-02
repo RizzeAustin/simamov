@@ -3247,61 +3247,119 @@ pok.socket = function(io, connections, client) {
     client.on('pok_summary', function(month, cb) {
         var y = thang || new Date().getFullYear();
         var lower_ts = Math.round(new Date(y, month, 1).getTime() / 1000);
-        DetailBelanja.aggregate([
-            { $match: { active: true, thang: +thang } },
-            { $project: { realisasi: { tgl_timestamp: 1, jumlah: 1 } } },
-            { $unwind: '$realisasi' },
-            {
-                $group: {
-                    _id: null,
-                    sampai_bln_lalu: { $sum: { $cond: [{ $lte: ['$realisasi.tgl_timestamp', lower_ts] }, '$realisasi.jumlah', 0] } },
-                    sampai_bln_ini: { $sum: '$realisasi.jumlah' }
-                }
-            }
-        ], function(err, result) {
-            if (err) {
-                console.log(err)
-                return;
-            }
-            if (result.length == 0) {
-                result.push({ sampai_bln_lalu: 0, sampai_bln_ini: 0 });
-            }
+        if (editor || admin == 1 || jabatan <= 2) {
             DetailBelanja.aggregate([
                 { $match: { active: true, thang: +thang } },
-                { $project: { jumlah: 1 } },
+                { $project: { realisasi: { tgl_timestamp: 1, jumlah: 1 } } },
+                { $unwind: '$realisasi' },
                 {
                     $group: {
                         _id: null,
-                        pagu: { $sum: '$jumlah' }
+                        sampai_bln_lalu: { $sum: { $cond: [{ $lte: ['$realisasi.tgl_timestamp', lower_ts] }, '$realisasi.jumlah', 0] } },
+                        sampai_bln_ini: { $sum: '$realisasi.jumlah' }
                     }
                 }
-            ], function(err, pagu) {
+            ], function(err, result) {
                 if (err) {
-                    console.log(err);
+                    console.log(err)
                     return;
                 }
+                if (result.length == 0) {
+                    result.push({ sampai_bln_lalu: 0, sampai_bln_ini: 0 });
+                }
                 DetailBelanja.aggregate([
-                    { $match: { active: true, thang: +thang, realisasi: { $exists: true, $ne: [] } } },
+                    { $match: { active: true, thang: +thang } },
+                    { $project: { jumlah: 1 } },
                     {
-                        $project: {
-                            nmitem: 1,
-                            sisa_dana: { $multiply: [100, { $divide: [{ $subtract: ['$jumlah', { $sum: '$realisasi.jumlah' }] }, '$jumlah'] }] },
-                            sisa_dana_rp: { $subtract: ['$jumlah', { $sum: '$realisasi.jumlah' }] }
+                        $group: {
+                            _id: null,
+                            pagu: { $sum: '$jumlah' }
                         }
-                    },
-                    { $sort: { sisa_dana: 1 } },
-                    { $limit: 5 }
-                ], function(err, res1) {
+                    }
+                ], function(err, pagu) {
                     if (err) {
-                        console.log(err)
+                        console.log(err);
                         return;
                     }
-                    result[0].pagu = (pagu.length == 0) ? 0 : pagu[0].pagu;
-                    result[0].top_mines = (res1.length == 0) ? [{ nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }] : res1;
-                    cb(result[0]);
-                })
+                    DetailBelanja.aggregate([
+                        { $match: { active: true, thang: +thang, realisasi: { $exists: true, $ne: [] } } },
+                        {
+                            $project: {
+                                nmitem: 1,
+                                sisa_dana: { $multiply: [100, { $divide: [{ $subtract: ['$jumlah', { $sum: '$realisasi.jumlah' }] }, '$jumlah'] }] },
+                                sisa_dana_rp: { $subtract: ['$jumlah', { $sum: '$realisasi.jumlah' }] }
+                            }
+                        },
+                        { $sort: { sisa_dana: 1 } },
+                        { $limit: 5 }
+                    ], function(err, res1) {
+                        if (err) {
+                            console.log(err)
+                            return;
+                        }
+                        result[0].pagu = (pagu.length == 0) ? 0 : pagu[0].pagu;
+                        result[0].top_mines = (res1.length == 0) ? [{ nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }] : res1;
+                        cb(result[0]);
+                    })
+                });
             });
-        });
+        } else {
+            DetailBelanja.aggregate([
+                { $match: { active: true, thang: +thang, unit: userunit } },
+                { $project: { realisasi: { tgl_timestamp: 1, jumlah: 1 } } },
+                { $unwind: '$realisasi' },
+                {
+                    $group: {
+                        _id: null,
+                        sampai_bln_lalu: { $sum: { $cond: [{ $lte: ['$realisasi.tgl_timestamp', lower_ts] }, '$realisasi.jumlah', 0] } },
+                        sampai_bln_ini: { $sum: '$realisasi.jumlah' }
+                    }
+                }
+            ], function(err, result) {
+                if (err) {
+                    console.log(err)
+                    return;
+                }
+                if (result.length == 0) {
+                    result.push({ sampai_bln_lalu: 0, sampai_bln_ini: 0 });
+                }
+                DetailBelanja.aggregate([
+                    { $match: { active: true, thang: +thang, unit: userunit } },
+                    { $project: { jumlah: 1 } },
+                    {
+                        $group: {
+                            _id: null,
+                            pagu: { $sum: '$jumlah' }
+                        }
+                    }
+                ], function(err, pagu) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    DetailBelanja.aggregate([
+                        { $match: { active: true, thang: +thang, unit: userunit, realisasi: { $exists: true, $ne: [] } } },
+                        {
+                            $project: {
+                                nmitem: 1,
+                                sisa_dana: { $multiply: [100, { $divide: [{ $subtract: ['$jumlah', { $sum: '$realisasi.jumlah' }] }, '$jumlah'] }] },
+                                sisa_dana_rp: { $subtract: ['$jumlah', { $sum: '$realisasi.jumlah' }] }
+                            }
+                        },
+                        { $sort: { sisa_dana: 1 } },
+                        { $limit: 5 }
+                    ], function(err, res1) {
+                        if (err) {
+                            console.log(err)
+                            return;
+                        }
+                        result[0].pagu = (pagu.length == 0) ? 0 : pagu[0].pagu;
+                        result[0].top_mines = (res1.length == 0) ? [{ nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }, { nmitem: 'Blm ada item', sisa_dana: 0 }] : res1;
+                        cb(result[0]);
+                    })
+                });
+            });
+        }
     })
 }
 
