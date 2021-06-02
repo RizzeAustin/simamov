@@ -51,4 +51,5 @@ Untuk Persyaratan Sistem, Instalasi, dan Panduan Penggunaan, klik <a href="https
 SIMAMOV v2.0
 
 Developer: Moh. Rifki Arif, M. Rizqi Aulia
+
 ENV yang digunakan: MAIL_SISTEM_NAME, MAIL_SISTEM_PASS, MAIL_BINAGRAM, PORT
