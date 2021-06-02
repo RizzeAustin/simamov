@@ -8,8 +8,9 @@ var async = require('async');
 
 //modul fs utk rw file
 var fs = require('fs');
-
 var xl = require('excel4node');
+//Xlsx to Pdf
+var msopdf = require('node-msoffice-pdf');
 
 var Program = require(__dirname + "/../model/Program.model");
 var Kegiatan = require(__dirname + "/../model/Kegiatan.model");
@@ -27,7 +28,7 @@ var Unit = require(__dirname + "/../model/Unit.model");
 var Loket = require(__dirname + "/../model/Loket.model");
 var Usulan = require(__dirname + "/../model/UsulanDana.model");
 
-const emailBinagram = '221709865@stis.ac.id'
+const emailBinagram = process.env.MAIL_BINAGRAM
 
 //Short syntax tool
 var _ = require('underscore');
@@ -40,8 +41,8 @@ var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.MAIL_NAME,
-        pass: process.env.MAIL_PASS,
+        user: process.env.MAIL_SISTEM_NAME,
+        pass: process.env.MAIL_SISTEM_PASS,
     }
 });
 
@@ -54,7 +55,7 @@ loket.socket = function(io, connections, client) {
     loket.io = io;
     loket.connections = connections;
 
-    var thang = client.handshake.session.tahun_anggaran || new Date().getFullYear();
+    var thang = client.handshake.session.tahun_anggaran || new Date().getFullYear()
 
     client.on('detailid', function(dt) {
         console.log(dt);
@@ -347,7 +348,7 @@ loket.socket = function(io, connections, client) {
                     throw new Error(err)
                 }
                 var mailOptions = {
-                    from: process.env.MAIL_NAME,
+                    from: process.env.MAIL_SISTEM_NAME,
                     to: data.userEmail,
                     subject: 'Konfirmasi Usulan',
                     html: tempUsulanUnit(data.nomorUsulan, formatTanggal(data.tanggalmasuk), 'dikonfirmasi'),
@@ -375,7 +376,7 @@ loket.socket = function(io, connections, client) {
                     throw new Error(err)
                 }
                 var mailOptions = {
-                    from: process.env.MAIL_NAME,
+                    from: process.env.MAIL_SISTEM_NAME,
                     to: data.userEmail,
                     subject: 'Konfirmasi Usulan',
                     html: tempUsulanUnit(data.nomorUsulan, formatTanggal(data.tanggalmasuk), 'ditolak'),
@@ -396,6 +397,11 @@ loket.socket = function(io, connections, client) {
 // --------------------    PAGE ROUTER   -----------------------
 
 loket.get('/dashboard', async function(req, res) {
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     // console.log(req.session.jenis)
     // console.log(req.session.userJabatan)
     // console.log(req.session.userRole)
@@ -992,7 +998,7 @@ loket.post('/usulanKirim', function(req, res) {
                         throw new Error(err)
                     }
                     var mailOptions = {
-                        from: process.env.MAIL_NAME,
+                        from: process.env.MAIL_SISTEM_NAME,
                         to: data.userEmail,
                         subject: 'Konfirmasi Usulan',
                         html: tempUsulanUnit(data.nomorUsulan, formatTanggal(data.tanggalmasuk), 'dikonfirmasi'),
@@ -1337,7 +1343,7 @@ loket.post('/ppkTolak', function(req, res) {
 
         //kirim email
         var mailOptions = {
-            from: process.env.MAIL_NAME,
+            from: process.env.MAIL_SISTEM_NAME,
             to: data.email,
             subject: 'Pengembalian Permintaan Dana dengan SIMAMOV',
             html: tempTolak(data.nomorTransaksi, formatTanggal(data.tanggal.pengajuan), data.catatan.ppk),
@@ -1544,7 +1550,7 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                 data.catatan.ppk = req.body.loketCatatanPpk
 
                 var mailOptions = {
-                    from: process.env.MAIL_NAME,
+                    from: process.env.MAIL_SISTEM_NAME,
                     to: emailBinagram,
                     subject: 'Permintaan Revisi POK',
                     html: tempToBinagram2(req.body.loketProgram, req.body.loketKegiatan, req.body.loketOutput, req.body.loketsOutput, req.body.loketKomponen, req.body.loketsKomponen, req.body.loketAkun,
@@ -1587,7 +1593,7 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                 throw new Error(err)
             }
             var mailOptions = {
-                from: process.env.MAIL_NAME,
+                from: process.env.MAIL_SISTEM_NAME,
                 to: emailBinagram,
                 subject: 'Permintaan Revisi POK',
                 html: tempToBinagram(data.pok.kdprogram, data.pok.kdaktivitas, data.pok.kdkro, data.pok.kdro, data.pok.kdkomponen, data.pok.kdsubkomponen, data.pok.kdakun,
@@ -1631,7 +1637,7 @@ loket.post('/ppspmTolak', function(req, res) {
         data.status = 'Dikembalikan ke unit'
 
         var mailOptions = {
-            from: process.env.MAIL_NAME,
+            from: process.env.MAIL_SISTEM_NAME,
             to: data.email,
             subject: 'Pengembalian Permintaan Dana dengan SIMAMOV',
             html: tempTolak(data.nomorTransaksi, formatTanggal(data.tanggal.pengajuan), data.catatan.ppspm),
@@ -2157,7 +2163,7 @@ loket.post('/bankKirim', function(req, res) {
             //kirim email ke penerima
             if (data.metodeTransfer != 'CMS') {
                 var mailOptions = {
-                    from: process.env.MAIL_NAME,
+                    from: process.env.MAIL_SISTEM_NAME,
                     to: data.email,
                     subject: 'Penyelesaian Permintaan Dana dengan SIMAMOV',
                     html: tempSelesai(data.nomorTransaksi, formatTanggal(data.tanggal.pengajuan), formatTanggal(data.tanggal.selesai), formatUang(data.nilai.transfer)),
@@ -2200,7 +2206,8 @@ loket.post('/downloadSpjTiket', function(req, res) {
             fs.access(file, fs.F_OK, (err) => {
                 if (err) {
                     console.log(err)
-                    throw new Error(err)
+                    res.status(404).send()
+                    return
                 }
                 res.download(file); // Set disposition and send it.
             })
@@ -2209,12 +2216,13 @@ loket.post('/downloadSpjTiket', function(req, res) {
             fs.access(file, fs.F_OK, (err) => {
                 if (err) {
                     console.log(err)
-                    throw new Error(err)
+                    res.status(404).send()
+                    return
                 }
                 res.download(file); // Set disposition and send it.
             })
         } else {
-            res.status(404);
+            res.status(404).send()
             return
         }
     })
@@ -2231,7 +2239,7 @@ loket.post('/downloadSpjTiketBank', function(req, res) {
             fs.access(file, fs.F_OK, (err) => {
                 if (err) {
                     console.log(err)
-                    res.status(404)
+                    res.status(404).send()
                     return
                 }
                 res.download(file); // Set disposition and send it.
@@ -2241,13 +2249,13 @@ loket.post('/downloadSpjTiketBank', function(req, res) {
             fs.access(file, fs.F_OK, (err) => {
                 if (err) {
                     console.log(err)
-                    res.status(404)
+                    res.status(404).send()
                     return
                 }
                 res.download(file); // Set disposition and send it.
             })
         } else {
-            res.status(404);
+            res.status(404).send()
             return
         }
         // const file = `${__dirname}/../uploaded/spj/${data.nomorTransaksi}-dokumenBank.xlsx`
@@ -2269,14 +2277,17 @@ loket.post('/downloadSpjTiketBank', function(req, res) {
     })
 })
 
-loket.get('/downloadTiketSelesai', function(req, res) { //belum selesai
+loket.get('/downloadPermintaanDana/:tabel/:format', function(req, res) { //belum selesai
+    var jenisTabel = req.params.tabel
+    var format = req.params.format;
     var wb = new xl.Workbook({
         defaultFont: {
-            size: 11
+            size: 11,
+            name: 'Times New Roman',
         }
     })
 
-    var ws = wb.addWorksheet('Rekap Pengajuan', {
+    var ws = wb.addWorksheet('Rekap Permintaan Dana', {
         'pageSetup': {
             'orientation': 'landscape',
             'paperHeight': '15in', // Value must a positive Float immediately followed by unit of measure from list mm, cm, in, pt, pc, pi. i.e. '10.5cm'
@@ -2287,30 +2298,254 @@ loket.get('/downloadTiketSelesai', function(req, res) { //belum selesai
             'bottom': 0.1,
             'footer': 0.1,
             'header': 0.1,
-            'left': 0.1,
-            'right': 0.1,
+            'left': 0.4,
+            'right': 0.4,
             'top': 0.1
         }
     })
 
-    //header
-    ws.cell(4, 1).string('No Transaksi').style()
-    ws.cell(4, 2).string('Tgl Pengajuan').style()
-    ws.cell(4, 3).string('Tgl Pelaksanaan').style()
-    ws.cell(4, 4).string('Tgl Pembayaran').style()
-    ws.cell(4, 5).string('Kode Unit').style()
-    ws.cell(4, 6).string('Operator').style()
-    ws.cell(4, 7).string('Kode Akun').style()
-    ws.cell(4, 8).string('Detail POK').style()
-    ws.cell(4, 9).string('Detail SPJ').style()
-    ws.cell(4, 10).string('Nilai Pengajuan (Bruto)').style()
-    ws.cell(4, 11).string('Metode Pembayaran').style()
-    ws.cell(4, 12).string('Nilai Pajak').style()
+    //style
+    var header = wb.createStyle({
+        font: {
+            bold: true,
+            color: 'white',
+        },
+        alignment: {
+            wrapText: true,
+            horizontal: 'center',
+            vertical: 'center',
+            shrinkToFit: true,
+        },
+        border: {
+            left: {
+                style: 'thin'
+            },
+            right: {
+                style: 'thin'
+            },
+            top: {
+                style: 'thin'
+            },
+            bottom: {
+                style: 'thin'
+            },
+        },
+        fill: {
+            type: 'pattern',
+            patternType: 'solid',
+            fgColor: '#20a8d8',
+        } 
+    })
+    var text_center = wb.createStyle({
+        alignment: {
+            wrapText: true,
+            horizontal: 'center',
+            vertical: 'center'
+        },
+        border: {
+            left: {
+                style: 'thin'
+            },
+            right: {
+                style: 'thin'
+            },
+            top: {
+                style: 'thin'
+            },
+            bottom: {
+                style: 'thin'
+            },
+        }
+    })
 
+    var text_left = wb.createStyle({
+        alignment: {
+            wrapText: true,
+            horizontal: 'left',
+            vertical: 'center'
+        },
+        border: {
+            left: {
+                style: 'thin'
+            },
+            right: {
+                style: 'thin'
+            },
+            top: {
+                style: 'thin'
+            },
+            bottom: {
+                style: 'thin'
+            },
+        }
+    })
 
+    var number = wb.createStyle({
+        alignment: {
+            wrapText: true,
+            horizontal: 'right',
+            vertical: 'center'
+        },
+        border: {
+            left: {
+                style: 'thin'
+            },
+            right: {
+                style: 'thin'
+            },
+            top: {
+                style: 'thin'
+            },
+            bottom: {
+                style: 'thin'
+            },
+        },
+        numberFormat: '_(* #,##0_);_(* (#,##0);_(* "-"??_);_(@_)',
+    })
+
+    var row_tolak = wb.createStyle({
+        fill: {
+            type: 'pattern',
+            patternType: 'solid',
+            fgColor: '#dce2c8',
+        } 
+    })
+
+    
     var row_pos = 6
+    
+    if(jenisTabel == 'proses'){
+        Loket.find({status: { $in: ['Belum selesai', 'Dikembalikan ke unit'] }}, {nomorTransaksi:1, tanggal:{pengajuan:1, pelaksanaan:1}, unit:1, operator:1, pok:{kdakun:1, detil:1}, detail:1, status:1, nilai:{bruto:1}}).lean().sort('tanggal.pengajuan').exec((err, data)=>{
+            //width
+            ws.column(1).setWidth(13)
+            ws.column(2).setWidth(12)
+            ws.column(3).setWidth(16)
+            ws.column(4).setWidth(16)
+            ws.column(5).setWidth(13)
+            ws.column(6).setWidth(13)
+            ws.column(7).setWidth(30)
+            ws.column(8).setWidth(13)
+            ws.column(9).setWidth(10)
+            ws.column(10).setWidth(30)
+        
+            //title
+            ws.cell(2, 1, 2, 10, true).string('Daftar Permintaan Dana').style({ font: { bold: true, size: 14 }, alignment: { horizontal: 'center' } });
+            //header
+            ws.cell(4, 1, 5, 1, true).string('Unit').style(header)
+            ws.cell(4, 2, 5, 2, true).string('No Transaksi').style(header)
+            ws.cell(4, 3, 4, 4, true).string('Tanggal').style(header)
+            ws.cell(5, 3).string('Pengajuan').style(header)
+            ws.cell(5, 4).string('Pelaksanaan').style(header)
+            ws.cell(4, 5, 5, 5, true).string('Nilai Pengajuan').style(header)
+            ws.cell(4, 6, 5, 6, true).string('Operator').style(header)
+            ws.cell(4, 7, 5, 7, true).string('Deskripsi').style(header)
+            ws.cell(4, 8, 5, 8, true).string('Status').style(header)
+            ws.cell(4, 9, 5, 9, true).string('Kode Akun').style(header)
+            ws.cell(4, 10, 5, 10, true).string('Detil POK').style(header)
+            //body
+            for (let i = 0; i < data.length; i++) {
+                let ddd = `="${data[i].pok.detil.u1}"`
+                if (data[i].pok.detil.u2){
+                    ddd = ddd + `&CHAR(10)&"${data[i].pok.detil.u2}"`
+                }
+                if (data[i].pok.detil.u3){
+                    ddd = ddd + `&CHAR(10)&"${data[i].pok.detil.u3}"`
+                }
+                if (data[i].pok.detil.u4){
+                    ddd = ddd + `&CHAR(10)&"${data[i].pok.detil.u4}"`
+                }
+                if (data[i].pok.detil.u5){
+                    ddd = ddd + `&CHAR(10)&"${data[i].pok.detil.u5}"`
+                }
+    
+                if (data[i].status == 'Dikembalikan ke unit'){
+                    ws.cell(row_pos+i, 1).string(data[i].unit.nama).style(text_center).style(row_tolak)
+                    ws.cell(row_pos+i, 2).string(data[i].nomorTransaksi).style(text_center).style(row_tolak)
+                    ws.cell(row_pos+i, 3).string(formatTanggal(data[i].tanggal.pengajuan)).style(text_center).style(row_tolak)
+                    ws.cell(row_pos+i, 4).string(formatTanggal(data[i].tanggal.pelaksanaan)).style(text_center).style(row_tolak)
+                    ws.cell(row_pos+i, 5).number(data[i].nilai.bruto).style(number).style(row_tolak)
+                    ws.cell(row_pos+i, 6).string(data[i].operator).style(text_center).style(row_tolak)
+                    ws.cell(row_pos+i, 7).string(data[i].detail).style(text_left).style(row_tolak)
+                    ws.cell(row_pos+i, 8).string(data[i].status).style(text_center).style(row_tolak)
+                    ws.cell(row_pos+i, 9).string(data[i].pok.kdakun).style(text_center).style(row_tolak)
+                    ws.cell(row_pos+i, 10).formula(ddd).style(text_left).style(row_tolak)
+                } else {
+                    ws.cell(row_pos+i, 1).string(data[i].unit.nama).style(text_center)
+                    ws.cell(row_pos+i, 2).string(data[i].nomorTransaksi).style(text_center)
+                    ws.cell(row_pos+i, 3).string(formatTanggal(data[i].tanggal.pengajuan)).style(text_center)
+                    ws.cell(row_pos+i, 4).string(formatTanggal(data[i].tanggal.pelaksanaan)).style(text_center)
+                    ws.cell(row_pos+i, 5).number(data[i].nilai.bruto).style(number)
+                    ws.cell(row_pos+i, 6).string(data[i].operator).style(text_center)
+                    ws.cell(row_pos+i, 7).string(data[i].detail).style(text_left)
+                    ws.cell(row_pos+i, 8).string(data[i].status).style(text_center)
+                    ws.cell(row_pos+i, 9).string(data[i].pok.kdakun).style(text_center)
+                    ws.cell(row_pos+i, 10).formula(ddd).style(text_left)
+                }
+            }
+    
+            UnduhPermintaan(format, wb, res)
+        })
+    } else if (jenisTabel == 'selesai'){
+        Loket.find({status: 'Selesai'}, {nomorTransaksi:1, tanggal:{transfer:1, selesai:1}, unit:1, pok:{kdakun:1, detil:1}, detail:1, metodeTransfer:1, nilai:{bruto:1, pajak:1}}).lean().sort('tanggal.selesai').exec((err, data)=>{
+            //width
+            ws.column(1).setWidth(13)
+            ws.column(2).setWidth(12)
+            ws.column(3).setWidth(16)
+            ws.column(4).setWidth(16)
+            ws.column(5).setWidth(13)
+            ws.column(6).setWidth(13)
+            ws.column(7).setWidth(13)
+            ws.column(8).setWidth(30)
+            ws.column(9).setWidth(10)
+            ws.column(10).setWidth(30)
+        
+            //title
+            ws.cell(2, 1, 2, 10, true).string('Daftar Permintaan Dana Selesai').style({ font: { bold: true, size: 14 }, alignment: { horizontal: 'center' } });
+            //header
+            ws.cell(4, 1, 5, 1, true).string('Unit').style(header)
+            ws.cell(4, 2, 5, 2, true).string('No Transaksi').style(header)
+            ws.cell(4, 3, 4, 4, true).string('Tanggal').style(header)
+            ws.cell(5, 3).string('Selesai').style(header)
+            ws.cell(5, 4).string('Pembayaran').style(header)
+            ws.cell(4, 5, 4, 6).string('Nilai').style(header)
+            ws.cell(5, 5).string('Pengajuan').style(header)
+            ws.cell(5, 6).string('Pajak').style(header)
+            ws.cell(4, 7, 5, 7, true).string('Metode Pembayaran').style(header)
+            ws.cell(4, 8, 5, 8, true).string('Deskripsi').style(header)
+            ws.cell(4, 9, 5, 9, true).string('Kode Akun').style(header)
+            ws.cell(4, 10, 5, 10, true).string('Detil POK').style(header)
+            //body
+            for (let i = 0; i < data.length; i++) {
+                let ddd = `="${data[i].pok.detil.u1}"`
+                if (data[i].pok.detil.u2){
+                    ddd = ddd + `&CHAR(10)&"${data[i].pok.detil.u2}"`
+                }
+                if (data[i].pok.detil.u3){
+                    ddd = ddd + `&CHAR(10)&"${data[i].pok.detil.u3}"`
+                }
+                if (data[i].pok.detil.u4){
+                    ddd = ddd + `&CHAR(10)&"${data[i].pok.detil.u4}"`
+                }
+                if (data[i].pok.detil.u5){
+                    ddd = ddd + `&CHAR(10)&"${data[i].pok.detil.u5}"`
+                }
+    
+                ws.cell(row_pos+i, 1).string(data[i].unit.nama).style(text_center)
+                ws.cell(row_pos+i, 2).string(data[i].nomorTransaksi).style(text_center)
+                ws.cell(row_pos+i, 3).string(formatTanggal(data[i].tanggal.selesai)).style(text_center)
+                ws.cell(row_pos+i, 4).string(formatTanggal(data[i].tanggal.transfer)).style(text_center)
+                ws.cell(row_pos+i, 5).number(data[i].nilai.bruto).style(number)
+                ws.cell(row_pos+i, 6).number(data[i].nilai.pajak).style(number)
+                ws.cell(row_pos+i, 7).string(data[i].metodeTransfer).style(text_center)
+                ws.cell(row_pos+i, 8).string(data[i].detail).style(text_left)
+                ws.cell(row_pos+i, 9).string(data[i].pok.kdakun).style(text_center)
+                ws.cell(row_pos+i, 10).formula(ddd).style(text_left)
+            }
+    
+            UnduhPermintaan(format, wb, res)
+        })
+    }
 
-    wb.write('Excel.xlsx');
 })
 
 // --------------------   FUNCTION   -----------------------
@@ -2348,16 +2583,56 @@ function formatTanggal(date) {
         "Agustus", "September", "Oktober",
         "November", "Desember"
     ];
-    let day = dat.getDate();
-    let monthIndex = dat.getMonth();
-    let year = dat.getFullYear();
-    return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    let day = dat.getDate()
+    let monthIndex = dat.getMonth()
+    let year = dat.getFullYear()
+    if (date) {
+        return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    } else {
+        return ''
+    }
 }
 
 function formatUang(x) {
     if (x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
     } else return ''
+}
+
+function UnduhPermintaan(format, wb, res){
+    if (format == 'xlsx')
+        wb.write('Daftar Permintaan Dana.xlsx', res)
+    else {
+        msopdf(null, function(error, office) {
+            let input = __dirname + '/../temp_file/Daftar Permintaan Dana.xlsx'
+            let output = __dirname + '/../temp_file/Daftar Permintaan Dana.pdf'
+
+            wb.write(input, function(err, stats) {
+                if (err) {
+                    console.log(err)
+                    res.status(500).send()
+                }
+                office.excel({ input: input, output: output }, function(err, pdf) {
+                    if (err) {
+                        console.log(err)
+                    }
+                    fs.unlink(input, (err)=>{})
+                })
+                office.close(null, function(err) { 
+                    if (err) { 
+                        console.log(err);
+                    } else { 
+                        res.download(output, (err)=>{
+                            if (err) {
+                                console.log(err)
+                            }
+                            fs.unlink(output, (err)=>{})
+                        })
+                    }
+                });
+            })
+        })
+    }
 }
 
 //format email

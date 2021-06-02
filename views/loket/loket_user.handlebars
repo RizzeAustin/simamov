@@ -327,43 +327,82 @@
                     '<option value="BAU">BAU</option>'+
                     '<option value="BAU-Kepegawaian">- Kepegawaian</option>'+
                     '<option value="BAU-TU RT">- TU RT</option>'+
-                    '<option value="BAU-Keuangan">- Keuangan</option>'
+                    '<option value="BAU-Keuangan">- Keuangan</option>'+
+                    '<option value="Lainnya">Lainnya</option>'
                 )
                 break
             case "BAAK":
                 $('#loketNamaUnit').append(
                     '<option value="BAAK">BAAK</option>'+
                     '<option value="BAAK-Akademik">- Akademik</option>'+
-                    '<option value="BAAK-Kemahasiswaan">- Kemahasiswaan</option>'
+                    '<option value="BAAK-Kemahasiswaan">- Kemahasiswaan</option>'+
+                    '<option value="Lainnya">Lainnya</option>'
                 )
                 break
             case "PRODI-D4":
                 $('#loketNamaUnit').append(
                     '<option value="PRODI-D4">PRODI</option>'+
                     '<option value="PRODI-D4 Statistika">- D4 Statistika</option>'+
-                    '<option value="PRODI-D4 Komputasi">- D4 Komputasi</option>'
+                    '<option value="PRODI-D4 Komputasi">- D4 Komputasi</option>'+
+                    '<option value="Lainnya">Lainnya</option>'
                 )
                 break
             case "PRODI-D3":
                 $('#loketNamaUnit').append(
                     '<option value="PRODI-D3">PRODI</option>'+
-                    '<option value="PRODI-D3 Statistika">- D3 Statistika</option>'
+                    '<option value="PRODI-D3 Statistika">- D3 Statistika</option>'+
+                    '<option value="Lainnya">Lainnya</option>'
                 )
                 break
             case "UPPPM":
-                $('#loketNamaUnit').append('<option value="UPPPM">UPPPM</option>')
+                $('#loketNamaUnit').append(
+                    '<option value="UPPPM">UPPPM</option>'+
+                    '<option value="Lainnya">Lainnya</option>'
+                )
                 break
             case "SPM":
-                $('#loketNamaUnit').append('<option value="SPM">SPM</option>')
+                $('#loketNamaUnit').append(
+                    '<option value="SPM">SPM</option>'+
+                    '<option value="Lainnya">Lainnya</option>'
+                )
                 break
             case "Perpustakaan":
-                $('#loketNamaUnit').append('<option value="Perpustakaan">Perpustakaan</option>')
+                $('#loketNamaUnit').append(
+                    '<option value="Perpustakaan">Perpustakaan</option>'+
+                    '<option value="Lainnya">Lainnya</option>'
+                )
                 break
             case "IT":
-                $('#loketNamaUnit').append('<option value="IT">IT</option>')
+                $('#loketNamaUnit').append(
+                    '<option value="IT">IT</option>'+
+                    '<option value="Lainnya">Lainnya</option>'
+                )
                 break
             case "Lainnya":
-                $('#loketNamaUnit').append('<option value="Lainnya">Lainnya</option>')
+                $('#loketNamaUnit').append(
+                    '<option value="Lainnya">Lainnya</option>'
+                )
+                break
+            default: 
+                if ("{{admin}}"=="1"){
+                    $('#loketNamaUnit').append(
+                        '<option value="BAU">BAU</option>'+
+                        '<option value="BAU-Kepegawaian">- Kepegawaian</option>'+
+                        '<option value="BAU-TU RT">- TU RT</option>'+
+                        '<option value="BAU-Keuangan">- Keuangan</option>'+
+                        '<option value="BAAK">BAAK</option>'+
+                        '<option value="BAAK-Akademik">- Akademik</option>'+
+                        '<option value="BAAK-Kemahasiswaan">- Kemahasiswaan</option>'+
+                        '<option value="PRODI-D4 Statistika">- D4 Statistika</option>'+
+                        '<option value="PRODI-D4 Komputasi">- D4 Komputasi</option>'+
+                        '<option value="PRODI-D3 Statistika">- D3 Statistika</option>'+
+                        '<option value="UPPPM">UPPPM</option>'+
+                        '<option value="SPM">SPM</option>'+
+                        '<option value="Perpustakaan">Perpustakaan</option>'+
+                        '<option value="IT">IT</option>'+
+                        '<option value="Lainnya">Lainnya</option>'
+                    )
+                }
                 break
         }
 

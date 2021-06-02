@@ -150,7 +150,7 @@
                                     </div> 
                                 </form>
                                 <table class="borderless table-striped" style="text-align: left; font-size: medium; width: 35%;" id="tabelDaftarJabatan">
-                                    <small><i>* Kode digunakan untuk validasi, silahkan sesuaikan juga validasi pada source-code</i></small>
+                                    <small><i>* Penambahan jabatan baru akan memiliki views sama dengan Unit <br>* Penghapusan jabatan tidak akan menghapus user yang sudah ada </i></small>
                                     <thead>
                                         <tr style="background-color: #20a8d8; color: white;">
                                             <th style="text-align: center;">Kode Jabatan</th>
@@ -201,7 +201,7 @@
                                     </div> 
                                 </form>
                                 <table class="borderless table-striped" style="text-align: left; font-size: medium; width: 35%;" id="tabelDaftarRole">
-                                    <small><i>* Kode digunakan untuk validasi, silahkan sesuaikan juga validasi pada source-code</i></small>
+                                    <small><i>* Penambahan role akan memiliki views sesuai dengan jabatan <br>* Penghapusan role tidak akan menghapus user yang sudah ada </i></small>
                                     <thead>
                                         <tr style="background-color: #20a8d8; color: white;">
                                             <th style="text-align: center;">Kode Jabatan</th>
@@ -245,6 +245,7 @@
                                 </form>
                                 <table class="borderless table-striped" style="text-align: left; font-size: medium; width: 35%;" id="tabelDaftarUnit">
                                     <small><i>&nbsp;</i></small>
+                                    <small><i>* Penghapusan unit tidak akan menghapus user yang sudah ada <br>* Namun dapat berdampak pada pembagian POK yang sudah dilakukan dan POK harus diset ulang </i></small>
                                     <thead>
                                         <tr style="background-color: #20a8d8; color: white;">
                                             <th style="text-align: center;">Nama Unit</th>
@@ -254,7 +255,7 @@
                                     <tbody>
                                         {{#each unit}}
                                             <tr id="{{this._id}}">
-                                                <td class="col-10">
+                                                <td width="85%">
                                                     {{this.namaUnit}}
                                                 </td>
                                                 <td>

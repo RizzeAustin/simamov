@@ -345,6 +345,7 @@
 
     <footer class="app-footer footer-fixed">
         &copy; 2017 Bagian Administrasi Umum STIS
+        <span class="float-right">AutoLogOut: <span id="logOutTimer"></span></span>
     </footer>
 
     <!-- Bootstrap and necessary plugins -->
@@ -421,6 +422,54 @@
             socket.on('messages', function (data) {
                 GlobalAlert(data)
             });
+
+            //AUTO LOGOUT
+            //initial idle time
+            var idleTime = 30
+            var loginTime = new Date().getTime()
+            // Decrement the idle time counter every minute.
+            var idleInterval = setInterval(function(){
+                timerDecrement()
+                idleMax()
+            }, 60 * 1000) // 1 minute
+
+            // Zero the idle timer on mouse movement.
+            $(this).mousemove(function (e) {
+                resetIdle()
+            })
+            $(this).keypress(function (e) {
+                resetIdle()
+            })
+
+            function resetIdle(){
+                idleTime = 30
+                loginTime = new Date().getTime()
+            }
+            function timerDecrement() {
+                idleTime = idleTime - 1;
+            }
+            function idleMax(){
+                switch (idleTime){
+                    case 10: 
+                        GlobalAlert('Anda akan logout otomatis dalam 10 menit')
+                        break
+                    case 5: 
+                        GlobalAlert('Anda akan logout otomatis dalam 5 menit')
+                        break
+                    case 1:
+                        GlobalAlert('Anda akan logout otomatis dalam 1 menit')
+                        break
+                }
+                if (idleTime == 0){
+                    window.location.href = 'logout'
+                }
+            }
+            var idleTimer = setInterval(function(){
+                var now = new Date().getTime()
+                var timeleft = loginTime-now
+                var second = 60 + Math.floor((timeleft % (1000 * 60)) / 1000)
+                $("#logOutTimer").html(`${idleTime-1}:${second}`)
+            }, 1000)
 
         })
 
