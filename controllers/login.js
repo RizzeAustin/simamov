@@ -14,6 +14,8 @@ var login = express.Router();
 var ExpressBrute = require('express-brute');
 var MongoStore = require('express-brute-mongo');
 var MongoClient = require('mongodb').MongoClient;
+const { socket } = require('./loketController');
+const loket = require('./loketController');
 
 var store = new MongoStore(function(ready) {
     MongoClient('mongodb://127.0.0.1:27017/', { useNewUrlParser: true, useUnifiedTopology: true }).connect(function(err, client) {
@@ -29,17 +31,21 @@ var bruteforce = new ExpressBrute(store, {
     maxWait: 5 * 60 * 1000
 });
 
+//autoLogout
+var idle = true
+
 //Socket.io
 login.connections;
-
 login.io;
 
 login.socket = function(io, connections, client) {
     login.connections = connections;
-
     login.io = io;
-}
 
+    client.on('idleReset', function(){
+        idle = false
+    })
+}
 
 //route GET /login
 login.get('/', function(req, res) {
@@ -128,6 +134,18 @@ login.post('/', bruteforce.prevent, function(req, res) {
             last_login_time: formatDate(new Date()),
             $push: { "act": { label: 'Login', timestamp: new Date().getTime() } }
         }, function(err, status) {})
+
+        //autologout
+        var setIdle = setInterval(() => {
+            idle = true
+            setTimeout(()=>{
+                if (idle && req.session){
+                    req.session.destroy()
+                    clearInterval(setIdle)
+                }
+                //login.io.emit('outRedirect')
+            }, 10 * 1000)
+        }, 60 * 1000)
     });
 });
 

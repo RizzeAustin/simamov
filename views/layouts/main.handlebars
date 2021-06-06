@@ -345,7 +345,7 @@
 
     <footer class="app-footer footer-fixed">
         &copy; 2017 Bagian Administrasi Umum STIS
-        <span class="float-right">AutoLogOut: <span id="logOutTimer"></span></span>
+        <span class="float-right">Sesi akan berakhir dalam: <span id="logOutTimer"></span></span>
     </footer>
 
     <!-- Bootstrap and necessary plugins -->
@@ -424,54 +424,65 @@
             });
 
             //AUTO LOGOUT
-            //initial idle time
-            var idleTime = 30
-            var loginTime = new Date().getTime()
-            // Decrement the idle time counter every minute.
+            var idleTime = 0
+            var loadIdle = new Date().getTime()
+
+            //check idletime
             var idleInterval = setInterval(function(){
-                timerDecrement()
-                idleMax()
+                idleDrecement()
+                if (idleTime==-1){
+                    clearInterval(idleInterval)
+                    clearInterval(idleTimer)
+                }
             }, 60 * 1000) // 1 minute
 
-            // Zero the idle timer on mouse movement.
-            $(this).mousemove(function (e) {
-                resetIdle()
-            })
-            $(this).keypress(function (e) {
-                resetIdle()
-            })
-
-            function resetIdle(){
-                idleTime = 30
-                loginTime = new Date().getTime()
-            }
-            function timerDecrement() {
-                idleTime = idleTime - 1;
-            }
-            function idleMax(){
-                switch (idleTime){
-                    case 10: 
-                        GlobalAlert('Anda akan logout otomatis dalam 10 menit')
-                        break
-                    case 5: 
-                        GlobalAlert('Anda akan logout otomatis dalam 5 menit')
-                        break
-                    case 1:
-                        GlobalAlert('Anda akan logout otomatis dalam 1 menit')
-                        break
-                }
-                if (idleTime == 0){
-                    window.location.href = 'logout'
-                }
-            }
+            //show time left
             var idleTimer = setInterval(function(){
-                var now = new Date().getTime()
-                var timeleft = loginTime-now
-                var second = 60 + Math.floor((timeleft % (1000 * 60)) / 1000)
-                $("#logOutTimer").html(`${idleTime-1}:${second}`)
+                socket.emit('idleReset')
+                $("#logOutTimer").html(showTimeLeft())
             }, 1000)
 
-        })
+            // Zero the idle timer on event.
+            $(this).mousemove(function () {
+                resetIdle()
+            })
+            $(this).keypress(function () {
+                resetIdle()
+            })
+
+            function idleDrecement(){
+                idleTime = idleTime -1
+                switch (idleTime){
+                    case 9: 
+                        GlobalAlert('Anda akan logout otomatis dalam 10 menit')
+                        break
+                    case 4: 
+                        GlobalAlert('Anda akan logout otomatis dalam 5 menit')
+                        break
+                    case 0:
+                        GlobalAlert('Anda akan logout otomatis dalam 1 menit')
+                        break
+                    case -1:
+                        window.location.href = 'logout'
+                        break
+                }
+            }
+            function showTimeLeft(){
+                var now = new Date().getTime()
+                var timeleft = loadIdle-now
+                var second = 60 + Math.floor((timeleft % (1000 * 60)) / 1000)
+                return `${idleTime}:${second}`
+            }
+            function resetIdle(){
+                idleTime = 29
+            }
+
+            socket.on('outRedirect', function(){
+                window.location.href = 'logout'
+            })
+
+        }) //doc ready
+
 
     </script>
 </body>
