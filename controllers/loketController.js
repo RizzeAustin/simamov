@@ -2604,6 +2604,10 @@ function UnduhPermintaan(format, wb, res){
         wb.write('Daftar Permintaan Dana.xlsx', res)
     else {
         msopdf(null, function(error, office) {
+            if (error) { 
+                console.log("Init failed", error);
+                return
+            }
             let input = __dirname + '/../temp_file/Daftar Permintaan Dana.xlsx'
             let output = __dirname + '/../temp_file/Daftar Permintaan Dana.pdf'
 
@@ -2616,7 +2620,6 @@ function UnduhPermintaan(format, wb, res){
                     if (err) {
                         console.log(err)
                     }
-                    fs.unlink(input, (err)=>{})
                 })
                 office.close(null, function(err) { 
                     if (err) { 
@@ -2626,6 +2629,7 @@ function UnduhPermintaan(format, wb, res){
                             if (err) {
                                 console.log(err)
                             }
+                            fs.unlink(input, (err)=>{})
                             fs.unlink(output, (err)=>{})
                         })
                     }
