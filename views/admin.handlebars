@@ -468,7 +468,7 @@
 
         $("#roleUser").change(function(){
             let r = $("#roleUser").val()
-            if (r=='11'||r=='12'||r=='13'||r=='14'||r=='15'||r=='16'||r=='21'||r=='22') {
+            if (r=='11'||r=='12'||r=='13'||r=='14'||r=='15'||r=='16'||r=='17'||r=='21'||r=='22') {
                 $("#unitUser").empty().attr('disabled', true)
             } else if (r) {
                 socket.emit('mintaUnit', function(result){
