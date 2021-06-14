@@ -36,27 +36,70 @@ const { json } = require('body-parser');
 const { db, count, translateAliases } = require('../model/Loket.model');
 
 //const { JSONParser } = require('formidable');
+
 //untuk mengirimkan email
-var nodemailer = require('nodemailer');
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.MAIL_SISTEM_NAME,
-        pass: process.env.MAIL_SISTEM_PASS,
-    }
-});
+const nodemailer = require('nodemailer');
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+const createTransporter = async () => {
+    const oauth2Client = new OAuth2(
+        process.env.CLIENT_ID,
+        process.env.CLIENT_SECRET,
+        "https://developers.google.com/oauthplayground"
+    );
+    oauth2Client.setCredentials({
+        refresh_token: process.env.REFRESH_TOKEN
+    });
+    const accessToken = await new Promise((resolve, reject) => {
+        oauth2Client.getAccessToken((err, token) => {
+            if (err) {
+                reject("Failed to create access token :(");
+            }
+            resolve(token);
+        });
+    });
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            type: 'OAuth2',
+            user: process.env.MAIL_SISTEM_NAME,
+            //pass: process.env.MAIL_SISTEM_PASS,
+            accessToken,
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            refreshToken: process.env.REFRESH_TOKEN
+        }
+    });
+    return transporter;
+};
+const sendEmail = async (emailOptions, message) => {
+    let emailTransporter = await createTransporter();
+    await emailTransporter.sendMail(emailOptions, (err, info) => {
+        if (err) throw new Error(err)
+        console.log('(' + message + ') Email sent: ' + info.response)
+    });
+};
+
+
 
 //Socket.io
 loket.io;
 loket.connections;
 
 loket.socket = function(io, connections, client) {
-
+    
     loket.io = io;
     loket.connections = connections;
-
+    
     var thang = client.handshake.session.tahun_anggaran || new Date().getFullYear()
 
+    sendEmail({
+        subject: "Testing",
+        from: process.env.MAIL_SISTEM_NAME,
+        to: "221709865@stis.ac.id",
+        html: '<h1>HAI APA KABAR?</h1>',
+    }, 'usual tes');
+    
     client.on('detailid', function(dt) {
         console.log(dt);
         DetailBelanja.findOne({ kdprogram: dt.kdprogram, kdgiat: dt.kdgiat, kdoutput: dt.kdoutput, kdsoutput: dt.kdsoutput, kdkmpnen: dt.kdkmpnen, kdskmpnen: dt.kdskmpnen, kdakun: dt.kdakun, nmitem: dt.nmitem }, function(err, detail) {
@@ -347,16 +390,12 @@ loket.socket = function(io, connections, client) {
                     console.log(err)
                     throw new Error(err)
                 }
-                var mailOptions = {
+                sendEmail({
                     from: process.env.MAIL_SISTEM_NAME,
                     to: data.userEmail,
                     subject: 'Konfirmasi Usulan',
                     html: tempUsulanUnit(data.nomorUsulan, formatTanggal(data.tanggalmasuk), 'dikonfirmasi'),
-                }
-                transporter.sendMail(mailOptions, (err, info) => {
-                    if (err) throw new Error(err)
-                    console.log('(Konfirm usulan ke unit) Email sent: ' + info.response)
-                })
+                }, 'Konfirm usulan ke unit');
             })
             User.update({ _id: client.handshake.session.user_id }, { $push: { 'act': { label: 'Konfirmasi Usulan ' + id, timestamp: new Date().getTime() } } },
                 function(err, status) {}
@@ -375,16 +414,12 @@ loket.socket = function(io, connections, client) {
                     console.log(err)
                     throw new Error(err)
                 }
-                var mailOptions = {
+                sendEmail({
                     from: process.env.MAIL_SISTEM_NAME,
                     to: data.userEmail,
                     subject: 'Konfirmasi Usulan',
                     html: tempUsulanUnit(data.nomorUsulan, formatTanggal(data.tanggalmasuk), 'ditolak'),
-                }
-                transporter.sendMail(mailOptions, (err, info) => {
-                    if (err) throw new Error(err)
-                    console.log('(Konfirm usulan ke unit) Email sent: ' + info.response)
-                })
+                }, 'Konfirm usulan ke unit');
             })
             User.update({ _id: client.handshake.session.user_id }, { $push: { 'act': { label: 'Konfirmasi Usulan ' + id, timestamp: new Date().getTime() } } },
                 function(err, status) {}
@@ -997,16 +1032,12 @@ loket.post('/usulanKirim', function(req, res) {
                         console.log(err)
                         throw new Error(err)
                     }
-                    var mailOptions = {
+                    sendEmail({
                         from: process.env.MAIL_SISTEM_NAME,
                         to: data.userEmail,
                         subject: 'Konfirmasi Usulan',
                         html: tempUsulanUnit(data.nomorUsulan, formatTanggal(data.tanggalmasuk), 'dikonfirmasi'),
-                    }
-                    transporter.sendMail(mailOptions, (err, info) => {
-                        if (err) throw new Error(err)
-                        console.log('(Konfirm usulan ke unit) Email sent: ' + info.response)
-                    })
+                    }, 'Konfirm usulan ke unit');
                 })
             })
             userAct(req, 'Mengubah dan konfirmasi POK Usulan ' + req.session.tiketId)
@@ -1342,7 +1373,7 @@ loket.post('/ppkTolak', function(req, res) {
         data.status = 'Dikembalikan ke unit'
 
         //kirim email
-        var mailOptions = {
+        sendEmail({
             from: process.env.MAIL_SISTEM_NAME,
             to: data.email,
             subject: 'Pengembalian Permintaan Dana dengan SIMAMOV',
@@ -1352,11 +1383,7 @@ loket.post('/ppkTolak', function(req, res) {
             attachments: [{
                 path: __dirname + '/../uploaded/spj/' + data.nomorTransaksi + '-SpjUnit.' + data.fileSpj.match(/[^.]\w*$/i)[0]
             }]
-        }
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) throw new Error(err)
-            console.log('(Tolak Unit) Email sent: ' + info.response)
-        })
+        }, 'Tolak unit');
 
         userAct(req, 'Menolak permintaan ' + data.nomorTransaksi)
         saveRedirect(req, res, data)
@@ -1549,7 +1576,7 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                 data.checklist.cvNarasumber = [data.checklist.cvNarasumber[0], data.checklist.cvNarasumber[1], bol(req.body.checklistCvPpspm)]
                 data.catatan.ppk = req.body.loketCatatanPpk
 
-                var mailOptions = {
+                sendEmail({
                     from: process.env.MAIL_SISTEM_NAME,
                     to: emailBinagram,
                     subject: 'Permintaan Revisi POK',
@@ -1573,11 +1600,7 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                     attachments: [{
                         path: __dirname + '/../uploaded/spj/' + data.nomorTransaksi + '-SpjUnit.' + data.fileSpj.match(/[^.]\w*$/i)[0]
                     }]
-                }
-                transporter.sendMail(mailOptions, (err, info) => {
-                    if (err) throw new Error(err)
-                    console.log('(Binagram) Email sent: ' + info.response)
-                })
+                }, 'Binagram');
 
                 userAct(req, 'Meneruskan permintaan ' + data.nomorTransaksi + ' ke Binagram')
                 saveRedirect(req, res, data)
@@ -1592,7 +1615,7 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                 console.log(err)
                 throw new Error(err)
             }
-            var mailOptions = {
+            sendEmail({
                 from: process.env.MAIL_SISTEM_NAME,
                 to: emailBinagram,
                 subject: 'Permintaan Revisi POK',
@@ -1613,11 +1636,7 @@ loket.post('/ppkKirimBinagram', function(req, res) {
                 // '.....Unit                  : ' + data.unit + '<br>' +
                 // '.....Nilai pengajuan bruto : ' + data.nilaiBruto + '<br>' +
                 // '.....Catatan Unit          : ' + data.catatanUnit + '<br>'
-            }
-            transporter.sendMail(mailOptions, (err, info) => {
-                if (err) throw new Error(err)
-                console.log('(Binagram) Email sent: ' + info.response)
-            })
+            }, 'Binagram');
             userAct(req, 'Meneruskan usulan ' + data._id + ' ke Binagram')
             res.status(200).send()
         })
@@ -1636,7 +1655,7 @@ loket.post('/ppspmTolak', function(req, res) {
         data.catatan.ppspm = req.body.loketCatatanPpspm
         data.status = 'Dikembalikan ke unit'
 
-        var mailOptions = {
+        sendEmail({
             from: process.env.MAIL_SISTEM_NAME,
             to: data.email,
             subject: 'Pengembalian Permintaan Dana dengan SIMAMOV',
@@ -1646,11 +1665,7 @@ loket.post('/ppspmTolak', function(req, res) {
             attachments: [{
                 path: __dirname + '/../uploaded/spj/' + data.nomorTransaksi + '-SpjUnit.' + data.fileSpj.match(/[^.]\w*$/i)[0]
             }]
-        }
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) throw new Error(err)
-            console.log('Email sent: ' + info.response)
-        })
+        }, 'Pengembalian permintaan dana');
 
         userAct(req, 'Menolak permintaan ' + data.nomorTransaksi)
         saveRedirect(req, res, data)
@@ -2162,7 +2177,7 @@ loket.post('/bankKirim', function(req, res) {
 
             //kirim email ke penerima
             if (data.metodeTransfer != 'CMS') {
-                var mailOptions = {
+                sendEmail({
                     from: process.env.MAIL_SISTEM_NAME,
                     to: data.email,
                     subject: 'Penyelesaian Permintaan Dana dengan SIMAMOV',
@@ -2176,11 +2191,7 @@ loket.post('/bankKirim', function(req, res) {
                             path: __dirname + '/../uploaded/spj/' + data.nomorTransaksi + '-SpjUnit.' + data.fileSpj.match(/[^.]\w*$/i)[0]
                         }
                     ]
-                }
-                transporter.sendMail(mailOptions, (err, info) => {
-                    if (err) throw new Error(err)
-                    console.log('(Permintaan selesai) Email sent: ' + info.response)
-                })
+                }, 'Penyelesaian permintaan dana');
             }
 
             Usulan.update({ _id: data.idUsulan }, { status: 'Permintaan dana selesai', timestamp: new Date().getTime() }, function(err, data) {})
