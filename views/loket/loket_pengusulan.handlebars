@@ -312,6 +312,12 @@
                                             <th width="10%">Sisa Anggaran yang dapat digunakan</th>
                                             <th width="10%">Anggaran yang akan digunakan</th>
                                             <th width="10%">Sisa Anggaran</th>
+                                            <th hidden>program</th>
+                                            <th hidden>aktivitas</th>
+                                            <th hidden>ro</th>
+                                            <th hidden>kro</th>
+                                            <th hidden>komponen</th>
+                                            <th hidden>sub komponen</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -351,6 +357,12 @@
                 +   `<td>Rp ${formatUang(data.sisa)}</td>`
                 +   `<td>Rp </td>`
                 +   `<td>Rp ${formatUang(data.sisa)}</td>`
+                +   `<td hidden>${data.kdprogram}</td>`
+                +   `<td hidden>${data.kdgiat}</td>`
+                +   `<td hidden>${data.kdoutput}</td>`
+                +   `<td hidden>${data.kdsoutput}</td>`
+                +   `<td hidden>${data.kdkmpnen}</td>`
+                +   `<td hidden>${data.kdskmpnen}</td>`
                 +'</tr>'
             )
             if ("{{data}}"){
@@ -358,6 +370,16 @@
                 let akun = "{{data.pok.kdakun}}"
                 let takun = row.find("td:eq(1)").text().slice(0,6)
                 let tdetail = row.find("td:eq(1)").text().slice(7)
+                if (row.find("td:eq(7)").text()!="{{data.pok.kdprogram}}"
+                    && row.find("td:eq(8)").text()!="{{data.pok.kdaktivitas}}"
+                    && row.find("td:eq(9)").text()!="{{data.pok.kdkro}}"
+                    && row.find("td:eq(10)").text()!="{{data.pok.kdro}}"
+                    && row.find("td:eq(11)").text()!="{{data.pok.kdkomponen}}"
+                ){
+                    row.hide()
+                } else {
+                    row.show()
+                }
                 switch (takun, tdetail){
                     case akun, "{{data.pok.detil.u1}}": 
                         row.css("background-color", "#b0efeb")
@@ -438,6 +460,39 @@
                 $("label[for='loketsKomponen']").text('Sub Komponen')
             }
         })
+        
+        //filter tabel
+        $('#loketProgram').change(function(){
+            $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(7)").text()!=$('#loketProgram').val() ? $(this).hide() : $(this).show()
+            })
+        })
+        $('#loketKegiatan').change(function(){
+            $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(8)").text()!=$('#loketKegiatan').val() ? $(this).hide() : $(this).show()
+            })
+        })
+        $('#loketOutput').change(function(){
+            $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(9)").text()!=$('#loketOutput').val() ? $(this).hide() : $(this).show()
+            })
+        })
+        $('#loketsOutput').change(function(){
+            $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(10)").text()!=$('#loketsOutput').val() ? $(this).hide() : $(this).show()
+            })
+        })
+        $('#loketKomponen').change(function(){
+            $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(11)").text()!=$('#loketKomponen').val() ? $(this).hide() : $(this).show()
+            })
+        })
+        $('#loketsKomponen').change(function(){
+            $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(12)").text()!=$('#loketsKomponen').val() ? $(this).hide() : $(this).show()
+            })
+        })
+        
 
         //highlight tabel dan jumlah total nilai bruto
         if ("{{data}}"){

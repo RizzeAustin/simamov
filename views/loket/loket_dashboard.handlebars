@@ -649,20 +649,27 @@
             })
         })
         socket.on('tabelRealisasiUnitRes', function(data, responseUsulan){
-            $('#penggunaanUnit tbody').append(
-                '<tr>'
-                +   `<td>${$('#penggunaanUnit tr').length}</td>`
-                +   `<td>${data.kdakun} ${data.nmitem}</td>`
-                +   `<td>Rp ${formatUang(data.pagu)}</td>`
-                +   `<td>Rp ${formatUang(data.realis)}</td>`
-                +   `<td>Rp ${formatUang(data.sisa)}</td>`
-                +   `<td>Rp </td>`
-                +   `<td>Rp ${formatUang(data.sisa)}</td>`
-                +'</tr>'
-            )
-            highlight(responseUsulan.pok.kdakun, 
-                responseUsulan.pok.detil.u1, responseUsulan.pok.detil.u2, responseUsulan.pok.detil.u3, responseUsulan.pok.detil.u4, responseUsulan.pok.detil.u5, 
-                responseUsulan.pok.detil.n1, responseUsulan.pok.detil.n2, responseUsulan.pok.detil.n3, responseUsulan.pok.detil.n4, responseUsulan.pok.detil.n5)            
+            if (data.kdprogram == responseUsulan.pok.kdprogram
+                && data.kdgiat == responseUsulan.pok.kdaktivitas
+                && data.kdoutput == responseUsulan.pok.kdkro
+                && data.kdsoutput == responseUsulan.pok.kdro
+                && data.kdkmpnen == responseUsulan.pok.kdkomponen
+            ){
+                $('#penggunaanUnit tbody').append(
+                    '<tr>'
+                    +   `<td>${$('#penggunaanUnit tr').length}</td>`
+                    +   `<td>${data.kdakun} ${data.nmitem}</td>`
+                    +   `<td>Rp ${formatUang(data.pagu)}</td>`
+                    +   `<td>Rp ${formatUang(data.realis)}</td>`
+                    +   `<td>Rp ${formatUang(data.sisa)}</td>`
+                    +   `<td>Rp </td>`
+                    +   `<td>Rp ${formatUang(data.sisa)}</td>`
+                    +'</tr>'
+                )
+                highlight(responseUsulan.pok.kdakun, 
+                    responseUsulan.pok.detil.u1, responseUsulan.pok.detil.u2, responseUsulan.pok.detil.u3, responseUsulan.pok.detil.u4, responseUsulan.pok.detil.u5, 
+                    responseUsulan.pok.detil.n1, responseUsulan.pok.detil.n2, responseUsulan.pok.detil.n3, responseUsulan.pok.detil.n4, responseUsulan.pok.detil.n5)            
+            }
         })
 
         $("#tablePengajuan tbody").on('click', 'button', function(){

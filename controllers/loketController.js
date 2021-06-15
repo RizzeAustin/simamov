@@ -60,6 +60,12 @@ const createTransporter = async () => {
     });
     const transporter = nodemailer.createTransport({
         service: 'gmail',
+        // host: 'smtp.gmail.com',
+        // port: 587,
+        // secure: false,
+        // logger: true,
+        // debug: true,
+        // secureConnection: false,
         auth: {
             type: 'OAuth2',
             user: process.env.MAIL_SISTEM_NAME,
@@ -68,7 +74,10 @@ const createTransporter = async () => {
             clientId: process.env.CLIENT_ID,
             clientSecret: process.env.CLIENT_SECRET,
             refreshToken: process.env.REFRESH_TOKEN
-        }
+        },
+        // tls:{
+        //     rejectUnauthorized:false
+        // },
     });
     return transporter;
 };
@@ -93,12 +102,12 @@ loket.socket = function(io, connections, client) {
     
     var thang = client.handshake.session.tahun_anggaran || new Date().getFullYear()
 
-    sendEmail({
-        subject: "Testing",
-        from: process.env.MAIL_SISTEM_NAME,
-        to: "221709865@stis.ac.id",
-        html: '<h1>HAI APA KABAR?</h1>',
-    }, 'usual tes');
+    // sendEmail({
+    //    subject: "Testing",
+    //    from: process.env.MAIL_SISTEM_NAME,
+    //    to: "221709865@stis.ac.id",
+    //    html: '<h1>HAI APA KABAR?</h1>',
+    // }, 'usual tes');
     
     client.on('detailid', function(dt) {
         console.log(dt);
@@ -334,7 +343,7 @@ loket.socket = function(io, connections, client) {
     client.on('tabelRealisasiUnit', function(unit, responseUsulan) {
         DetailBelanja.aggregate([
             { $match: { active: true, thang: +thang, unit: { $regex: `${unit}`, $options: 'i' } } },
-            { $project: { kdakun: 1, nmitem: 1, pagu: '$jumlah' } },
+            { $project: { kdprogram: 1, kdgiat: 1, kdoutput: 1, kdsoutput: 1, kdkmpnen:1, kdskmpnen: 1, kdakun: 1, nmitem: 1, pagu: '$jumlah' } },
             { $sort: { _id: 1 } }
         ], function(err, listItem) {
             if (err) {

@@ -52,4 +52,20 @@ SIMAMOV v2.0
 
 Developer: Moh. Rifki Arif, M. Rizqi Aulia
 
-ENV yang digunakan: MAIL_SISTEM_NAME, MAIL_SISTEM_PASS, MAIL_BINAGRAM, PORT
+ENV yang digunakan: 
+
+- MAIL_SISTEM_NAME=simamov@stis.ac.id,    //merupakan email simamov yang digunakan untuk mengirim notifikasi kepada user 
+
+- MAIL_BINAGRAM,                          //merupakan email binagram untuk dikirimkan permintaan revisi pok
+
+- PORT, 
+
+- //karena menggunakan library nodemailer untuk mengirim email dengan type 'OAuth2' dan service 'gmail', maka menggunakan googleapi
+
+- REFRESH_TOKEN,
+
+- CLIENT_SECRET,
+    
+- CLIENT_ID
+
+//
