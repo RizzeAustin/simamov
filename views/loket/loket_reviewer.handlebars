@@ -462,7 +462,7 @@
             $("form").attr('action', 'loket/reviewerPending')
             $.confirm({
                 title: 'Konfirmasi Pending Permintaan',
-                content: 'Apakah Anda yakin akan mempending permintaan dana?',
+                content: 'Apakah Anda yakin akan mempending permintaan dana?<br>Permintaan akan dipending dan Halaman dialihkan ke dashboard',
                 buttons: {
                     confirm: {
                         text: 'Yakin',
@@ -485,10 +485,10 @@
                                 if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                     $('#loketDetailPok5').attr('disabled', true)
                                 }
-                                generalAlert('Permintaan akan dipending dan Redirect ke dashboard dalam 5 detik')
-                                setTimeout( function () { 
-                                    $('form').submit()
-                                }, 5000)
+                                $('form').submit()
+                                //generalAlert('Permintaan akan dipending dan Redirect ke dashboard dalam 5 detik')
+                                //setTimeout( function () { 
+                                //}, 5000)
                             }
                         },
                     },
@@ -532,7 +532,7 @@
             } else {
                 $.confirm({
                     title: 'Konfirmasi permintaan',
-                    content: 'Apakah Anda yakin isian sudah benar?',
+                    content: 'Apakah Anda yakin isian sudah benar?<br>Permintaan akan diteruskan ke Bendahara dan Halaman dialihkan ke dashboard',
                     buttons: {
                         confirm: {
                             text: 'Yakin',
@@ -550,10 +550,10 @@
                                 if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                     $('#loketDetailPok5').attr('disabled', true)
                                 }
-                                generalAlert("Permintaan akan diteruskan ke Bendahara dan Redirect ke dashboard dalam 5 detik")
-                                setTimeout( function () { 
-                                    $('form').submit()
-                                }, 5000)
+                                $('form').submit()
+                                //generalAlert("Permintaan akan diteruskan ke Bendahara dan Redirect ke dashboard dalam 5 detik")
+                                //setTimeout( function () { 
+                                //}, 5000)
                             },
                         },
                         cancel: {

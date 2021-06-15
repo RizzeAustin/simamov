@@ -482,7 +482,7 @@
             } else {
                 $.confirm({
                     title: 'Konfirmasi Permintaan',
-                    content: 'Apakah Anda yakin isian sudah benar?',
+                    content: 'Apakah Anda yakin isian sudah benar?<br>Permintaan akan diteruskan ke PPK dan Halaman dialihkan ke dashboard',
                     buttons: {
                         confirm: {
                             text: 'Yakin',
@@ -500,10 +500,10 @@
                                 if ($('#loketDetailPok5').val()=="Pilih Detiil"){
                                     $('#loketDetailPok5').attr('disabled', true)
                                 }
-                                generalAlert("Permintaan akan diteruskan ke PPK dan Redirect ke dashboard dalam 5 detik")
-                                setTimeout( function () { 
-                                    $('form').submit()
-                                }, 5000)
+                                $('form').submit()
+                                //generalAlert("Permintaan akan diteruskan ke PPK dan Redirect ke dashboard dalam 5 detik")
+                                //setTimeout( function () { 
+                                //}, 5000)
                             },
                         },
                         cancel: {

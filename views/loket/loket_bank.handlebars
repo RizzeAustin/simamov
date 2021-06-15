@@ -380,16 +380,16 @@
             } else {
                 $.confirm({
                     title: 'Konfirmasi permintaan',
-                    content: 'Apakah Anda yakin isian sudah benar?',
+                    content: 'Apakah Anda yakin isian sudah benar?<br>Permintaan akan diselesaikan dan Halaman dialihkan ke dashboard',
                     buttons: {
                         confirm: {
                             text: 'Yakin',
                             btnClass: 'btn-success',
                             action: function () {
-                                generalAlert("Permintaan akan diselesaikan dan Redirect ke dashboard dalam 5 detik")
-                                setTimeout( function () { 
-                                    $('form').submit()
-                                }, 5000)
+                                $('form').submit()
+                                //generalAlert("Permintaan akan diselesaikan dan Redirect ke dashboard dalam 5 detik")
+                                //setTimeout( function () { 
+                                //}, 5000)
                             },
                         },
                         cancel: {

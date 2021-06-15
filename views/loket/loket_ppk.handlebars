@@ -461,7 +461,7 @@
             $('form').attr('action', 'loket/ppkTolak') //loket/ppkKirim
             $.confirm({
                 title: 'Konfirmasi Tolak Permintaan',
-                content: 'Apakah Anda yakin akan menolak permintaan dana?',
+                content: 'Apakah Anda yakin akan menolak permintaan dana?<br>Permintaan akan dikembalikan ke Unit dan Halaman dialihkan ke dashboard',
                 buttons: {
                     confirm: {
                         text: 'Yakin',
@@ -484,10 +484,10 @@
                                 if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                     $('#loketDetailPok5').attr('disabled', true)
                                 }
-                                generalAlert('Permintaan akan dikembalikan ke Unit dan Redirect ke dashboard dalam 5 detik')
-                                setTimeout( function () { 
-                                    $('form').submit()
-                                }, 5000)
+                                $('form').submit()
+                                //generalAlert('Permintaan akan dikembalikan ke Unit dan Redirect ke dashboard dalam 5 detik')
+                                //setTimeout( function () { 
+                                //}, 5000)
                             }
                         },
                     },
@@ -543,7 +543,7 @@
             } else if ($('#loketSpp').val()=='Belum') {
                 $.confirm({
                     title: 'Konfirmasi permintaan (ke Bendahara)',
-                    content: 'Apakah Anda yakin isian sudah benar?',
+                    content: 'Apakah Anda yakin isian sudah benar?<br>Permintaan akan diteruskan ke Bendahara dan Halaman dialihkan ke dashboard',
                     buttons: {
                         confirm: {
                             text: 'Yakin',
@@ -561,10 +561,10 @@
                                 if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                     $('#loketDetailPok5').attr('disabled', true)
                                 }
-                                generalAlert("Permintaan akan diteruskan ke Bendahara dan Redirect ke dashboard dalam 5 detik")
-                                setTimeout( function () { 
-                                    $('form').submit()
-                                }, 5000)
+                                $('form').submit()
+                                //generalAlert("Permintaan akan diteruskan ke Bendahara dan Redirect ke dashboard dalam 5 detik")
+                                //setTimeout( function () { 
+                                //}, 5000)
                             },
                         },
                         cancel: {
@@ -576,7 +576,7 @@
             } else {
                 $.confirm({
                     title: 'Konfirmasi permintaan (ke PPSPM)',
-                    content: 'Apakah Anda yakin isian sudah benar?',
+                    content: 'Apakah Anda yakin isian sudah benar?<br>Permintaan akan diteruskan ke PPSPM dan Halaman dialihkan ke dashboard',
                     buttons: {
                         confirm: {
                             text: 'Yakin',
@@ -594,10 +594,10 @@
                                 if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                     $('#loketDetailPok5').attr('disabled', true)
                                 }
-                                generalAlert("Permintaan akan diteruskan ke PPSPM dan Redirect ke dashboard dalam 5 detik")
-                                setTimeout( function () { 
-                                    $('form').submit()
-                                }, 5000)
+                                $('form').submit()
+                                //generalAlert("Permintaan akan diteruskan ke PPSPM dan Redirect ke dashboard dalam 5 detik")
+                                //setTimeout( function () { 
+                                //}, 5000)
                             },
                         },
                         cancel: {
@@ -645,7 +645,7 @@
             } else {
                 $.confirm({
                     title: 'Pengiriman rincian ke binagram',
-                    content: 'Apakah Anda yakin isian sudah benar?',
+                    content: 'Apakah Anda yakin isian sudah benar?<br>Permintaan akan diteruskan ke Binagram dan Halaman dialihkan ke dashboard',
                     buttons: {
                         confirm: {
                             text: 'Yakin',
@@ -663,10 +663,10 @@
                                 if ($('#loketDetailPok5').val()=="Pilih Detil"){
                                     $('#loketDetailPok5').attr('disabled', true)
                                 }
-                                generalAlert("Permintaan akan diteruskan ke Binagram dan Redirect ke dashboard dalam 5 detik")
-                                setTimeout( function () { 
-                                    $('form').submit()
-                                }, 5000)
+                                $('form').submit()
+                                //generalAlert("Permintaan akan diteruskan ke Binagram dan Redirect ke dashboard dalam 5 detik")
+                                //setTimeout( function () { 
+                                //}, 5000)
                             },
                         },
                         cancel: {

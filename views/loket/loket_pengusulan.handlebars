@@ -469,26 +469,71 @@
         })
         $('#loketKegiatan').change(function(){
             $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(7)").text()!=$('#loketProgram').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
                 $(this).find("td:eq(8)").text()!=$('#loketKegiatan').val() ? $(this).hide() : $(this).show()
             })
         })
         $('#loketOutput').change(function(){
             $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(7)").text()!=$('#loketProgram').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(8)").text()!=$('#loketKegiatan').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
                 $(this).find("td:eq(9)").text()!=$('#loketOutput').val() ? $(this).hide() : $(this).show()
             })
         })
         $('#loketsOutput').change(function(){
             $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(7)").text()!=$('#loketProgram').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(8)").text()!=$('#loketKegiatan').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(9)").text()!=$('#loketOutput').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
                 $(this).find("td:eq(10)").text()!=$('#loketsOutput').val() ? $(this).hide() : $(this).show()
             })
         })
         $('#loketKomponen').change(function(){
             $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(7)").text()!=$('#loketProgram').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(8)").text()!=$('#loketKegiatan').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(9)").text()!=$('#loketOutput').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(10)").text()!=$('#loketsOutput').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
                 $(this).find("td:eq(11)").text()!=$('#loketKomponen').val() ? $(this).hide() : $(this).show()
             })
         })
         $('#loketsKomponen').change(function(){
             $("#penggunaanUnit tbody tr").each(function(){
+                $(this).find("td:eq(7)").text()!=$('#loketProgram').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(8)").text()!=$('#loketKegiatan').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(9)").text()!=$('#loketOutput').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(10)").text()!=$('#loketsOutput').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
+                $(this).find("td:eq(11)").text()!=$('#loketKomponen').val() ? $(this).hide() : $(this).show()
+            })
+            $("#penggunaanUnit tbody tr:visible").each(function(){
                 $(this).find("td:eq(12)").text()!=$('#loketsKomponen').val() ? $(this).hide() : $(this).show()
             })
         })
@@ -636,7 +681,7 @@
                 if ("{{data}}"){
                     $.confirm({
                         title: 'Konfirmasi Usulan',
-                        content: 'Apakah Anda yakin?',
+                        content: 'Apakah Anda yakin?<br>Usulan akan dikonfirmasi dan Halaman dialihkan ke dashboard',
                         buttons: {
                             confirm: {
                                 text: 'Yakin',
@@ -658,10 +703,10 @@
                                         $('#loketDetailPok5').attr('disabled', true)
                                         $('#loketDetailPokUnit5').attr('disabled', true)
                                     }
-                                    generalAlert("Usulan akan dikonfirmasi dan Redirect ke dashboard dalam 5 detik")
-                                    setTimeout( function () { 
-                                        $('form').submit()
-                                    }, 5000)
+                                    $('form').submit()
+                                    //generalAlert("Usulan akan dikonfirmasi dan Redirect ke dashboard dalam 5 detik")
+                                    //setTimeout( function () { 
+                                    //}, 5000)
                                 },
                             },
                             cancel: {
@@ -673,7 +718,7 @@
                 } else {
                     $.confirm({
                         title: 'Konfirmasi Usulan',
-                        content: 'Apakah Anda yakin isian sudah benar?',
+                        content: 'Apakah Anda yakin isian sudah benar?<br>Usulan akan diteruskan ke PPK dan Halaman dialihkan ke dashboard',
                         buttons: {
                             confirm: {
                                 text: 'Yakin',
@@ -695,10 +740,10 @@
                                         $('#loketDetailPok5').attr('disabled', true)
                                         $('#loketDetailPokUnit5').attr('disabled', true)
                                     }
-                                    generalAlert("Usulan akan diteruskan ke PPK dan Redirect ke dashboard dalam 5 detik")
-                                    setTimeout( function () { 
-                                        $('form').submit()
-                                    }, 5000)
+                                    $('form').submit()
+                                    //generalAlert("Usulan akan diteruskan ke PPK dan Redirect ke dashboard dalam 5 detik")
+                                    //setTimeout( function () { 
+                                    //}, 5000)
                                 },
                             },
                             cancel: {
