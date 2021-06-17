@@ -14,8 +14,8 @@ var login = express.Router();
 var ExpressBrute = require('express-brute');
 var MongoStore = require('express-brute-mongo');
 var MongoClient = require('mongodb').MongoClient;
-const { socket } = require('./loketController');
-const loket = require('./loketController');
+// const { socket } = require('./loketController');
+// const loket = require('./loketController');
 
 var store = new MongoStore(function(ready) {
     MongoClient('mongodb://127.0.0.1:27017/', { useNewUrlParser: true, useUnifiedTopology: true }).connect(function(err, client) {
