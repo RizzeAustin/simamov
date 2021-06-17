@@ -2500,7 +2500,7 @@ loket.get('/downloadPermintaanDana/:tabel/:format', function(req, res) { //belum
                 }
             }
     
-            UnduhPermintaan(format, wb, res)
+            UnduhPermintaan(format, wb, res, 'diproses')
         })
     } else if (jenisTabel == 'selesai'){
         Loket.find({status: 'Selesai'}, {nomorTransaksi:1, tanggal:{transfer:1, selesai:1}, unit:1, pok:{kdakun:1, detil:1}, detail:1, metodeTransfer:1, nilai:{bruto:1, pajak:1}}).lean().sort('tanggal.selesai').exec((err, data)=>{
@@ -2559,7 +2559,7 @@ loket.get('/downloadPermintaanDana/:tabel/:format', function(req, res) { //belum
                 ws.cell(row_pos+i, 10).formula(ddd).style(text_left)
             }
     
-            UnduhPermintaan(format, wb, res)
+            UnduhPermintaan(format, wb, res, 'selesai')
         })
     }
 
@@ -2616,12 +2616,12 @@ function formatUang(x) {
     } else return ''
 }
 
-function UnduhPermintaan(format, wb, res){
+function UnduhPermintaan(format, wb, res, tabel){
+    let time = new Date().getTime()
     if (format == 'xlsx')
-        wb.write('Daftar Permintaan Dana.xlsx', res)
+        wb.write(`Daftar Permintaan Dana ${tabel} - ${time}.xlsx`, res)
     else {
-        let time = new Date().getTime()
-        let input = __dirname + `/../temp_file/Daftar Permintaan Dana - ${time}.xlsx`
+        let input = __dirname + `/../temp_file/Daftar Permintaan Dana ${tabel} - ${time}.xlsx`
         wb.writeToBuffer().then(function(buffer) {
             fs.writeFile(input, buffer, function(err) {
                 if(err) {
@@ -2630,7 +2630,7 @@ function UnduhPermintaan(format, wb, res){
                 console.log("excel ready to convert")
                 const libre = require('libreoffice-convert');
                 const path = require('path');
-                var fs = require('fs').promises;
+                var fsp = require('fs').promises;
                 const { promisify } = require('bluebird');
                 let lib_convert = promisify(libre.convert)
                 async function convert(name) {
@@ -2639,19 +2639,19 @@ function UnduhPermintaan(format, wb, res){
                         const enterPath = path.join(__dirname, `/../temp_file/${name}`);
                         const outputPath = path.join(__dirname, `/../temp_file/${arr[0]}.pdf`);
                         // Read file
-                        let data = await fs.readFile(enterPath)
+                        let data = await fsp.readFile(enterPath)
                         let done = await lib_convert(data, '.pdf', undefined)
-                        await fs.writeFile(outputPath, done)
+                        await fsp.writeFile(outputPath, done)
                         await res.download(outputPath)
-                        await fs.unlink(enterPath, (err)=>{console.log("excel temp removed")})
-                        await fs.unlink(outputPath, (err)=>{console.log("pdf temp removed")})
+                        await fsp.unlink(enterPath, (err)=>{console.log("excel temp removed")})
+                        await fsp.unlink(outputPath, (err)=>{console.log("pdf temp removed")})
                         return { success: true, fileName: arr[0] };
                     } catch (err) {
                         console.log(err)
                         return { success: false }
                     }
                 }
-                convert(`Daftar Permintaan Dana - ${time}.xlsx`)
+                convert(`Daftar Permintaan Dana ${tabel} - ${time}.xlsx`)
             })
         })
 
@@ -2660,6 +2660,9 @@ function UnduhPermintaan(format, wb, res){
         //         console.log("Init failed", error);
         //         return
         //     }
+        //     let time = new Date().getTime()
+        //     let input = __dirname + `/../temp_file/Daftar Permintaan Dana - ${time}.xlsx`
+        //     let output = __dirname + `/../temp_file/Daftar Permintaan Dana - ${time}.xlsx`
         //     // wb.write(input, function(err, stats) {
         //     //     if (err) {
         //     //         console.log(err)
