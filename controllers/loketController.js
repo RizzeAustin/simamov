@@ -11,11 +11,6 @@ var fs = require('fs');
 var xl = require('excel4node');
 //Xlsx to Pdf
 //var msopdf = require('node-msoffice-pdf');
-const libre = require('libreoffice-convert');
-const path = require('path');
-var fs = require('fs').promises;
-const { promisify } = require('bluebird');
-let lib_convert = promisify(libre.convert)
 
 var Program = require(__dirname + "/../model/Program.model");
 var Kegiatan = require(__dirname + "/../model/Kegiatan.model");
@@ -2633,7 +2628,11 @@ function UnduhPermintaan(format, wb, res){
                     return console.log(err)
                 }
                 console.log("excel ready to convert")
-                
+                const libre = require('libreoffice-convert');
+                const path = require('path');
+                var fs = require('fs').promises;
+                const { promisify } = require('bluebird');
+                let lib_convert = promisify(libre.convert)
                 async function convert(name) {
                     try {
                         let arr = name.split('.')
@@ -2655,7 +2654,6 @@ function UnduhPermintaan(format, wb, res){
                 convert(`Daftar Permintaan Dana - ${time}.xlsx`)
             })
         })
-
 
         // msopdf(null, function(error, office) {
         //     if (error) { 
